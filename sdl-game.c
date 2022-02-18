@@ -1,9 +1,16 @@
-#include <SDL2/SDL.h>
 #include "sdl-game.h"
 
-struct game_window game;
+SDL_Window *window;
+SDL_Renderer *renderer;
+SDL_Event event;
+float delta_t;
+float fps;
+float max_fps;
+char quit;
+char pause;
+const unsigned char *keystate;
 
-int init_game_window(int width, int height, const char *title)
+int init_game(int width, int height, const char *title)
 {
     int wflags = 0; // window flags
     int rflags = 0; // render flags
@@ -11,80 +18,79 @@ int init_game_window(int width, int height, const char *title)
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         return -1;
 
-    game.window = SDL_CreateWindow(title, 0, 0, width, height, wflags);
+    window = SDL_CreateWindow(title, 0, 0, width, height, wflags);
 
-    if (!game.window)
+    if (!window)
     {
-        SDL_Quit();
+        close_game();
         return -2;
     }
 
-    game.renderer = SDL_CreateRenderer(game.window, -1, rflags);
+    renderer = SDL_CreateRenderer(window, -1, rflags);
 
-    if (!game.renderer)
+    if (!renderer)
     {
-        SDL_DestroyWindow(game.window);
-        SDL_Quit();
+        close_game();
         return -3;
     }
 
     // init data
-    game.width = width;
-    game.height = height;
-    game.running = 1;
-    game.pause = 0;
-    game.delta_t = 0;
-    game.max_fps = 60;
-    game.fps = 0;
-    game.keystate = SDL_GetKeyboardState(NULL);
+    quit = 0;
+    pause = 0;
+    delta_t = 0;
+    max_fps = 60;
+    fps = 0;
+    keystate = SDL_GetKeyboardState(NULL);
 
-    SDL_RenderPresent(game.renderer);
-    on_game_creation();
+    SDL_RenderPresent(renderer);
 
     return 0;
 }
 
-void close_game_window()
+int close_game()
 {
-    // clean up
-    SDL_DestroyWindow(game.window);
-    SDL_DestroyRenderer(game.renderer);
+    if ( window )
+        SDL_DestroyWindow(window);
+
+    if ( renderer )
+        SDL_DestroyRenderer(renderer);
+
     SDL_Quit();
 
-    game.window = NULL;
-    game.renderer = NULL;
+    window = NULL;
+    renderer = NULL;
+
+    return 0;
 }
 
-void handle_events()
+int handle_events()
 {
-    while (SDL_PollEvent(&(game.event)))
+    while ( SDL_PollEvent( &event ) )
     {
-        switch (game.event.type)
-        {
-            case SDL_QUIT:
-                game.running = 0;
-                break;
-        };
+        if ( event.type == SDL_QUIT ) quit = 1;
+        handle();
     }
+
+    return 0;
 }
 
 int start_game()
 {
     unsigned int start, end;
-    while (game.running)
+    while (!quit)
     {
         start = SDL_GetTicks();
 
         handle_events();
-        on_game_update();
+        update();
 
-        if (game.max_fps > 0 && game.max_fps < 1000.0f)
-            SDL_Delay((1000.0f / game.max_fps) - (SDL_GetTicks() - start));
+        if ( max_fps > 0 && max_fps < 1000.0f )
+            SDL_Delay( ( 1000.0f / max_fps ) - ( SDL_GetTicks() - start ) );
 
         end = SDL_GetTicks();
 
-        game.delta_t = (float)(end - start) / 1000.0f;
-        game.fps = 1 / game.delta_t;
+        delta_t = ( float ) ( end - start ) / 1000.0f;
+        fps = 1.0f / delta_t;
     }
 
     return 0;

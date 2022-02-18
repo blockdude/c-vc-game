@@ -1,38 +1,23 @@
 #ifndef GAME_WINDOW
 #define GAME_WINDOW
 
-typedef struct game_window game_window;
+#include <SDL2/SDL.h>
 
-struct game_window
-{
-    // window stuff
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_Event event;
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
+extern SDL_Event event;
+extern float delta_t;
+extern float fps;
+extern float max_fps;
+extern char quit;
+extern char pause;
+extern const unsigned char *keystate;
 
-    // settings
-    int width;
-    int height;
+int init_game           (int width, int height, const char *title);
+int close_game          ();
+int start_game          ();
 
-    // frame info
-    double delta_t;
-    double fps;
-    float max_fps;
-
-    // bools
-    char running;
-    char pause;
-
-    // key handle
-    const unsigned char *keystate;
-};
-
-extern struct game_window game;
-
-int init_game_window       (int width, int height, const char *title);
-void close_game_window     ();
-int start_game             ();
-int on_game_update         ();
-int on_game_creation       ();
+int update              ();
+int handle              ();
 
 #endif
