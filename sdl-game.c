@@ -5,9 +5,13 @@ SDL_Renderer *renderer;
 SDL_Event event;
 float delta_t;
 float fps;
-float max_fps;
+float fps_avg;
+float fps_cap;
 char quit;
 char pause;
+int mouse_x;
+int mouse_y;
+int mouse_state;
 const unsigned char *keystate;
 
 int init_game(int width, int height, const char *title)
@@ -38,8 +42,10 @@ int init_game(int width, int height, const char *title)
     quit = 0;
     pause = 0;
     delta_t = 0;
-    max_fps = 60;
     fps = 0;
+    fps_avg = 0;
+    fps_cap = 60;
+    mouse_state = SDL_GetMouseState( &mouse_x, &mouse_y );
     keystate = SDL_GetKeyboardState(NULL);
 
     SDL_RenderPresent(renderer);
@@ -81,16 +87,19 @@ int start_game()
     {
         start = SDL_GetTicks();
 
+        mouse_state = SDL_GetMouseState( &mouse_x, &mouse_y );
+
         handle_events();
         update();
 
-        if ( max_fps > 0 && max_fps < 1000.0f )
-            SDL_Delay( ( 1000.0f / max_fps ) - ( SDL_GetTicks() - start ) );
+        if ( fps_cap > 0 && fps_cap < 1000.0f )
+            SDL_Delay( ( 1000.0f / fps_cap ) - ( SDL_GetTicks() - start ) );
 
         end = SDL_GetTicks();
 
         delta_t = ( float ) ( end - start ) / 1000.0f;
         fps = 1.0f / delta_t;
+        fps_avg = ( fps + fps_avg ) / 2.0f;
     }
 
     return 0;

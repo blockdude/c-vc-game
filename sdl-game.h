@@ -8,9 +8,13 @@ extern SDL_Renderer *renderer;
 extern SDL_Event event;
 extern float delta_t;
 extern float fps;
-extern float max_fps;
+extern float fps_avg;
+extern float fps_cap;
 extern char quit;
 extern char pause;
+extern int mouse_x;
+extern int mouse_y;
+extern int mouse_state;
 extern const unsigned char *keystate;
 
 int init_game           (int width, int height, const char *title);

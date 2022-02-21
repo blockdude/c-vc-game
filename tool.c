@@ -4,6 +4,7 @@
 
 #include "primitives.h"
 #include "linkedlist.h"
+#include "kd-tree.h"
 #include "sdl-draw.h"
 #include "sdl-game.h"
 
@@ -18,9 +19,9 @@ enum object_type
     WALL,
     DOOR,
     ENEMY,
-    BOSS,
     TRAP,
-    KEY
+    WEAPON,
+    ITEM
 };
 
 struct object
@@ -38,10 +39,7 @@ struct object
 };
 
 
-linkedlist *objects;
-int mouse_x;
-int mouse_y;
-int mouse_state;
+kd_tree *objects;
 float scale_x;
 float scale_y;
 float camera_x;
@@ -85,26 +83,28 @@ int handle()
              * zooming
              */
 
+            const float zs = 1.3f;
+
             float bzx, bzy;
             float azx, azy;
 
-            screen_to_world( mouse_x, mouse_y, &bzx, &bzy );
+            screen_to_world( 350, 350, &bzx, &bzy );
 
             if ( event.wheel.y > 0 ) // scroll up (zoom in)
             {
-                scale_x += scale_x / 3;
-                scale_y += scale_y / 3;
+                scale_x = ceil( scale_x * zs );
+                scale_y = ceil( scale_y * zs );
             }
             else if ( event.wheel.y < 0 ) // scroll down (zoom out)
             {
-                if ( scale_x > 1 )
-                {
-                    scale_x -= scale_x / 4;
-                    scale_y -= scale_y / 4;
-                }
+                if ( scale_x != 1 )
+                    scale_x = floor( scale_x / zs );
+
+                if ( scale_y != 1 )
+                    scale_y = floor( scale_y / zs );
             }
 
-            screen_to_world( mouse_x, mouse_y, &azx, &azy );
+            screen_to_world( 350, 350, &azx, &azy );
 
             camera_x += bzx - azx;
             camera_y += bzy - azy;
@@ -115,15 +115,62 @@ int handle()
     return 0;
 }
 
+int draw_objects( kd_node *n )
+{
+    if ( n == NULL )
+        return 1;
+
+    object *obj = ( object * ) n->item;
+    SDL_Rect temp;
+    temp.x = ( obj->x - camera_x ) * scale_x;
+    temp.y = ( obj->y - camera_y ) * scale_y;
+    temp.w = scale_x;
+    temp.h = scale_y;
+
+    SDL_SetRenderDrawColor( renderer, 0, 0, 255, 255 );
+    SDL_RenderFillRect( renderer, &temp );
+
+    int r = draw_objects( n->r );
+    int l = draw_objects( n->l );
+    return r + l;
+}
+
+int draw_query()
+{
+    float x, y;
+    screen_to_world( mouse_x, mouse_y, &x, &y );
+    x = floor( x );
+    y = floor( y );
+    int point[] = { x, y };
+    void **query = kd_query( objects, point, 350 );
+
+    int i = 0;
+    while ( query[ i ] )
+    {
+        object *obj = ( object * ) query[ i ];
+        SDL_Rect temp;
+        temp.x = ( obj->x - camera_x ) * scale_x;
+        temp.y = ( obj->y - camera_y ) * scale_y;
+        temp.w = scale_x;
+        temp.h = scale_y;
+
+        SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
+        SDL_RenderFillRect( renderer, &temp );
+        
+        i++;
+    }
+
+    free( query );
+
+    return i;
+}
+
 int update()
 {
     SDL_RenderClear( renderer );
-    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
 
     static int prev_mouse_x = 0;
     static int prev_mouse_y = 0;
-
-    mouse_state = SDL_GetMouseState( &mouse_x, &mouse_y );
 
     /*
      * panning
@@ -139,7 +186,7 @@ int update()
     prev_mouse_y = mouse_y;
 
     /*
-     * place objects
+     * place / remove objects
      */
 
     if ( ( mouse_state & SDL_BUTTON_LMASK ) != 0 )
@@ -149,29 +196,26 @@ int update()
         x = floor( x );
         y = floor( y );
         object *obj = new_object( x, y, 0, WALL, NULL, 100, 0 );
-        insert_node( objects, ( void * ) obj );
+        int point[] = { x, y };
+        kd_insert( objects, point, ( void * ) obj );
+    }
+
+    if ( ( mouse_state & SDL_BUTTON_RMASK ) != 0 )
+    {
+        float x, y;
+        screen_to_world( mouse_x, mouse_y, &x, &y );
+        x = floor( x );
+        y = floor( y );
+        int point[] = { x, y };
+        kd_remove( objects, point );
     }
 
     /*
      * draw objects
      */
 
-    node *n = objects->head;
-
-    while ( n )
-    {
-        SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-        object *obj = ( object * ) n->item;
-        SDL_Rect temp;
-        temp.x = ( obj->x - camera_x ) * scale_x;
-        temp.y = ( obj->y - camera_y ) * scale_y;
-        temp.w = scale_x;
-        temp.h = scale_y;
-
-        SDL_RenderDrawRect( renderer, &temp );
-        n = n->next;
-    }
-
+    //int ro = draw_objects( objects->root );
+    int ro = draw_query();
     SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
     SDL_RenderPresent( renderer );
 
@@ -181,10 +225,14 @@ int update()
 
     float world_x, world_y;
     screen_to_world( mouse_x, mouse_y, &world_x, &world_y );
+    world_x = floor( world_x );
+    world_y = floor( world_y );
 
     printf( "---------------------------\n" );
     printf( "fps                :%3.4f\n", fps );
-    printf( "objects            :%3d\n", objects->length );
+    printf( "fps_avg            :%3.4f\n", fps_avg );
+    printf( "objects            :%3d\n", objects->size );
+    printf( "objects_rendered   :%3d\n", ro );
     printf( "mouse_screen_pos   :%3d, %3d\n", mouse_x, mouse_y );
     printf( "mouse_world_pos    :%3.0f, %3.0f\n", world_x, world_y );
     printf( "camera_pos         :%3.0f, %3.0f\n", camera_x, camera_y );
@@ -195,22 +243,27 @@ int update()
 
 int main()
 {
-    objects = new_linkedlist();
+    init_game( 700, 700, "world creation tool" );
 
+    objects = new_kd_tree( 2, NULL );
     scale_x = 100;
     scale_y = 100;
     camera_x = 0;
     camera_y = 0;
-    mouse_x = 0;
-    mouse_y = 0;
-    mouse_state = 0;
 
-    init_game( 700, 700, "world creation tool" );
+    fps_cap = 60;
 
-    max_fps = 0;
+    //for ( int i = 0; i < 1000000; i++ )
+    //{
+    //    int point[] = { rand() % 1000 - 500, rand() % 1000 - 500 };
+    //    object *obj = new_object( point[ 0 ], point[ 1 ], 0, WALL, NULL, 100, 0 );
+    //    kd_insert( objects, point, obj );
+    //}
 
     start_game();
     close_game();
+
+    kd_free( objects );
 
     return 0;
 }
