@@ -92,8 +92,9 @@ int start_game()
         handle_events();
         update();
 
-        if ( fps_cap > 0 && fps_cap < 1000.0f )
-            SDL_Delay( ( 1000.0f / fps_cap ) - ( SDL_GetTicks() - start ) );
+        int delay = ( 1000.0f / fps_cap ) - ( SDL_GetTicks() - start );
+        if ( delay > 0 && fps_cap > 0 && fps_cap < 1000.0f )
+            SDL_Delay( delay );
 
         end = SDL_GetTicks();
 

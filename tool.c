@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "primitives.h"
-#include "linkedlist.h"
 #include "kd-tree.h"
-#include "sdl-draw.h"
 #include "sdl-game.h"
 
 #define CAMERA_SPEED    300
@@ -115,37 +112,39 @@ int handle()
     return 0;
 }
 
-int draw_objects( kd_node *n )
-{
-    if ( n == NULL )
-        return 1;
+//int draw_objects( kd_node *n )
+//{
+//    if ( n == NULL )
+//        return 1;
+//
+//    object *obj = ( object * ) n->item;
+//    SDL_Rect temp;
+//    temp.x = ( obj->x - camera_x ) * scale_x;
+//    temp.y = ( obj->y - camera_y ) * scale_y;
+//    temp.w = scale_x;
+//    temp.h = scale_y;
+//
+//    SDL_SetRenderDrawColor( renderer, 0, 0, 255, 255 );
+//    SDL_RenderFillRect( renderer, &temp );
+//
+//    int r = draw_objects( n->r );
+//    int l = draw_objects( n->l );
+//    return r + l;
+//}
 
-    object *obj = ( object * ) n->item;
-    SDL_Rect temp;
-    temp.x = ( obj->x - camera_x ) * scale_x;
-    temp.y = ( obj->y - camera_y ) * scale_y;
-    temp.w = scale_x;
-    temp.h = scale_y;
-
-    SDL_SetRenderDrawColor( renderer, 0, 0, 255, 255 );
-    SDL_RenderFillRect( renderer, &temp );
-
-    int r = draw_objects( n->r );
-    int l = draw_objects( n->l );
-    return r + l;
-}
-
-int draw_query()
+void draw_query( int *obj_count, int *array_size )
 {
     float x, y;
     screen_to_world( mouse_x, mouse_y, &x, &y );
     x = floor( x );
     y = floor( y );
     int point[] = { x, y };
-    void **query = kd_query( objects, point, 350 );
+    int dim[] = { 50, 50 };
+    int length;
+    void **query = kd_query_dim( objects, point, dim, &length );
 
-    int i = 0;
-    while ( query[ i ] )
+    int i;
+    for ( i = 0; i < length; i++ )
     {
         object *obj = ( object * ) query[ i ];
         SDL_Rect temp;
@@ -156,13 +155,12 @@ int draw_query()
 
         SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
         SDL_RenderFillRect( renderer, &temp );
-        
-        i++;
     }
 
     free( query );
 
-    return i;
+    *obj_count = i;
+    *array_size = length;
 }
 
 int update()
@@ -215,7 +213,8 @@ int update()
      */
 
     //int ro = draw_objects( objects->root );
-    int ro = draw_query();
+    int i, j;
+    draw_query( &i, &j );
     SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
     SDL_RenderPresent( renderer );
 
@@ -231,8 +230,9 @@ int update()
     printf( "---------------------------\n" );
     printf( "fps                :%3.4f\n", fps );
     printf( "fps_avg            :%3.4f\n", fps_avg );
-    printf( "objects            :%3d\n", objects->size );
-    printf( "objects_rendered   :%3d\n", ro );
+    printf( "objects            :%3d\n", kd_size( objects ) );
+    printf( "objects_rendered   :%3d\n", i );
+    printf( "objects_rendered2  :%3d\n", j );
     printf( "mouse_screen_pos   :%3d, %3d\n", mouse_x, mouse_y );
     printf( "mouse_world_pos    :%3.0f, %3.0f\n", world_x, world_y );
     printf( "camera_pos         :%3.0f, %3.0f\n", camera_x, camera_y );
@@ -251,14 +251,14 @@ int main()
     camera_x = 0;
     camera_y = 0;
 
-    fps_cap = 60;
+    fps_cap = 0;
 
-    //for ( int i = 0; i < 1000000; i++ )
-    //{
-    //    int point[] = { rand() % 1000 - 500, rand() % 1000 - 500 };
-    //    object *obj = new_object( point[ 0 ], point[ 1 ], 0, WALL, NULL, 100, 0 );
-    //    kd_insert( objects, point, obj );
-    //}
+    for ( int i = 0; i < 1000000; i++ )
+    {
+        int point[] = { rand() % 5000 - 2500, rand() % 5000 - 2500 };
+        object *obj = new_object( point[ 0 ], point[ 1 ], 0, WALL, NULL, 100, 0 );
+        kd_insert( objects, point, obj );
+    }
 
     start_game();
     close_game();
