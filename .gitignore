@@ -7,6 +7,12 @@
 # Unignore all directories
 !*/*
 
+# leak detector
+leak_detector_c.*
+
+# text files
+*.txt
+
 # Ignore test files
 *.test.c
 *.test

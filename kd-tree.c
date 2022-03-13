@@ -536,4 +536,5 @@ void kd_free( kd_tree *tree )
         return;
 
     kd_free_util( tree, tree->root );
+    free( tree );
 }

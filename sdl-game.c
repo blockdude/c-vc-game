@@ -1,3 +1,6 @@
+#ifndef SDL_QUICK_SETUP
+#define SDL_QUICK_SETUP
+
 #include "sdl-game.h"
 
 SDL_Window *window;
@@ -45,7 +48,7 @@ int init_game(int width, int height, const char *title)
     fps = 0;
     fps_avg = 0;
     fps_cap = 60;
-    mouse_state = SDL_GetMouseState( &mouse_x, &mouse_y );
+    mouse_state = SDL_GetMouseState(&mouse_x, &mouse_y);
     keystate = SDL_GetKeyboardState(NULL);
 
     SDL_RenderPresent(renderer);
@@ -87,7 +90,7 @@ int start_game()
     {
         start = SDL_GetTicks();
 
-        mouse_state = SDL_GetMouseState( &mouse_x, &mouse_y );
+        mouse_state = SDL_GetMouseState(&mouse_x, &mouse_y);
 
         handle_events();
         update();
@@ -105,3 +108,5 @@ int start_game()
 
     return 0;
 }
+
+#endif

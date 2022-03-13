@@ -15,9 +15,12 @@ struct linkedlist
     node *head;
     node *tail;
     int length;
+
+    void ( *free_item )( void *item );
 };
 
-linkedlist *new_linkedlist();
-int insert_node( linkedlist *ll, void *item );
+linkedlist *new_linkedlist( void ( *free_item )( void *item ) );
+int insert_node( linkedlist *list, void *item );
+void list_free( linkedlist *list );
 
 #endif
