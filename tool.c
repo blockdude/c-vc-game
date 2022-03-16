@@ -2,13 +2,18 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "linked-list.h"
-#include "kd-tree.h"
+//#include "kd-tree.h"
 #include "sdl-game.h"
-#include "objects.h"
-#include "grid-map.h"
+
+#include "grid-map-util.h"
+#include "collision-util.h"
+#include "vc-world-util.h"
 
 // game info
+float scale_x;
+float scale_y;
+float camera_x;
+float camera_y;
 float mouse_world_x;
 float mouse_world_y;
 int sel_def;
@@ -21,24 +26,17 @@ int window_h;
 SDL_Rect main_view;
 SDL_Rect button_view;
 
+// world
+vc_world *world;
+
 // settings
 const float zoom_speed = 1.3f;
 const int button_view_width = 150;
 
-int pt_in_rect( int x, int y, SDL_Rect *port )
-{
-    return ( x >= port->x && x <= port->x + port->w && y >= port->y && y <= port->y + port->h );
-}
-
-int pt_in_rect_f( int x, int y, SDL_FRect *port )
-{
-    return ( x >= port->x && x <= port->x + port->w && y >= port->y && y <= port->y + port->h );
-}
-
 int render()
 {
     /*
-     * main view
+     * main view render
      */
 
     SDL_RenderSetViewport( renderer, &main_view );
@@ -46,33 +44,38 @@ int render()
     int point[] = { floor( camera_x ), floor( camera_y ) };
     int dim[] = { ceil( main_view.w / scale_x ) + 1, ceil( main_view.h / scale_y ) + 1 };
 
-    int length;
-    void **query = kd_query_dim( objects, point, dim, &length );
-
-    for ( int i = 0; i < length; i++ )
+    int length = 0;
+    vc_result *query = vc_query_rect( world, point[ 0 ], point[ 1 ], dim[ 0 ], dim[ 1 ] );
+    vc_object *obj = vc_poll_result( query );
+    while( obj )
     {
-        object *obj = query[ i ];
         SDL_FRect temp;
-        world_to_screen_f( obj->x, obj->y, &temp.x, &temp.y );
+        double x, y;
+        vc_get_object_pos( obj, &x, &y );
+        world_to_screen_f( x, y, &temp.x, &temp.y );
         temp.w = scale_x;
         temp.h = scale_y;
 
         char r, g, b, a;
-        split_color( obj->def->color, &r, &g, &b, &a );
+        int color = vc_get_object_comp( obj, VC_COMP_COLOR );
+        vc_split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
         SDL_RenderFillRectF( renderer, &temp );
+
+        obj = vc_poll_result( query );
+        length++;
     }
 
-    free( query );
+    vc_free_result( query );
 
     /*
-     * button view
+     * button view render
      */
 
     SDL_RenderSetViewport( renderer, &button_view );
 
-    float button_height = ( float ) window_h / def_c;
+    float button_height = ( float ) window_h / VC_DEF_LAST;
     SDL_FRect button;
 
     button.x = 1;
@@ -80,10 +83,11 @@ int render()
     button.w = button_view.w - 1;
     button.h = button_height;
 
-    for ( int i = 0; i < def_c; i++ )
+    for ( int i = 0; i < VC_DEF_LAST; i++ )
     {
         char r, g, b, a;
-        split_color( defs[ i ].color, &r, &g, &b, &a );
+        int color = vc_get_def_comp( i, VC_COMP_COLOR );
+        vc_split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
         SDL_RenderFillRectF( renderer, &button );
@@ -140,7 +144,7 @@ int handle()
      * main view handle
      */
 
-    if ( pt_in_rect( mouse_x, mouse_y, &main_view ) )
+    if ( pt_in_rect( mouse_x, mouse_y, main_view.x, main_view.y, main_view.w, main_view.h ) )
     {
         switch ( event.type )
         {
@@ -183,7 +187,7 @@ int handle()
      * button view handle
      */
 
-    else if ( pt_in_rect( mouse_x, mouse_y, &button_view ) )
+    else if ( pt_in_rect( mouse_x, mouse_y, button_view.x, button_view.y, button_view.w, button_view.h ) )
     {
         switch ( event.type )
         {
@@ -191,7 +195,7 @@ int handle()
 
                 if ( event.button.button == SDL_BUTTON_LEFT )
                 {
-                    float button_height = ( float ) window_h / def_c;
+                    float button_height = ( float ) window_h / VC_DEF_LAST;
                     SDL_FRect button;
 
                     button.x = 0;
@@ -200,9 +204,9 @@ int handle()
                     button.h = button_height;
 
                     // check if mouse is over any button from defs
-                    for ( int i = 0; i < def_c; i++ )
+                    for ( int i = 0; i < VC_DEF_LAST; i++ )
                     {
-                        if ( pt_in_rect_f( mouse_x - button_view.x, mouse_y - button_view.y, &button ) )
+                        if ( pt_in_rect_f( mouse_x - button_view.x, mouse_y - button_view.y, button.x, button.y, button.w, button.h ) )
                         {
                             sel_def = i;
                             break;
@@ -233,7 +237,7 @@ int update()
      * main view update
      */
 
-    if ( pt_in_rect( mouse_x, mouse_y, &main_view ) )
+    if ( pt_in_rect( mouse_x, mouse_y, main_view.x, main_view.y, main_view.w, main_view.h ) )
     {
         /*
          * panning
@@ -257,12 +261,20 @@ int update()
 
         if ( ( mouse_state & SDL_BUTTON_LMASK ) != 0 )
         {
-            place_object( mouse_world_x, mouse_world_y, sel_def );
+            vc_object *new_obj = vc_new_object( floor( mouse_world_x ), floor( mouse_world_y ), sel_def );
+            if ( !vc_insert_object( world, new_obj ) )
+                vc_free_object( new_obj );
         }
 
         if ( ( mouse_state & SDL_BUTTON_RMASK ) != 0 )
         {
-            remove_object( mouse_world_x, mouse_world_y );
+            vc_result *query = vc_query_point( world, ( int ) mouse_world_x, ( int ) mouse_world_y );
+            vc_object *obj = vc_poll_result( query );
+
+            vc_remove_object( world, obj );
+            vc_free_object( obj );
+
+            vc_free_result( query );
         }
     }
 
@@ -270,7 +282,7 @@ int update()
      * button view update
      */
 
-    else if ( pt_in_rect( mouse_x, mouse_y, &button_view ) )
+    else if ( pt_in_rect( mouse_x, mouse_y, button_view.x, button_view.y, button_view.w, button_view.h ) )
     {
     }
 
@@ -290,7 +302,7 @@ int update()
     printf( "---------------------------\n" );
     printf( "fps                :%3.4f\n", fps );
     printf( "fps_avg            :%3.4f\n", fps_avg );
-    printf( "objects            :%3d\n", kd_size( objects ) );
+    printf( "objects            :%3d\n", vc_get_object_count( world ) );
     printf( "objects_rendered   :%3d\n", i );
     printf( "mouse_screen_pos   :%3d, %3d\n", mouse_x, mouse_y );
     printf( "mouse_world_pos    :%3.0f, %3.0f\n", mouse_world_x, mouse_world_y );
@@ -301,39 +313,46 @@ int update()
     return 0;
 }
 
-void test_random_points( int w, int h, int c )
+//void test_random_points( int w, int h, int c )
+//{
+//    for ( int i = 0; i < c; i++ )
+//    {
+//        int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
+//        kd_insert( objects, point, new_object( point[ 0 ], point[ 1 ], rand() % LAST ) );
+//    }
+//}
+//
+void test_memory_leak_points( int w, int h, int c )
 {
     for ( int i = 0; i < c; i++ )
     {
+        srand( i );
         int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
-        kd_insert( objects, point, new_object( point[ 0 ], point[ 1 ], rand() % LAST ) );
+
+        vc_object *new_obj = vc_new_object( point[ 0 ], point[ 1 ], VC_DEF_WALL );
+        if ( !vc_insert_object( world, new_obj ) )
+            vc_free_object( new_obj );
     }
-}
 
-void test_memory_leak_points( int w, int h, int c )
-{
-    for ( int j = 0; j < c; j++ )
+    for ( int i = 0; i < c; i++ )
     {
-        for ( int i = 0; i < 100; i++ )
-        {
-            srand( i );
-            int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
-            kd_insert( objects, point, new_object( point[ 0 ], point[ 1 ], rand() % LAST ) );
-        }
+        srand( i );
+        int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
 
-        for ( int i = 0; i < 100; i++ )
-        {
-            srand( i );
-            int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
-            kd_remove( objects, point );
-        }
+        vc_result *query = vc_query_point( world, point[ 0 ], point[ 1 ] );
+        vc_object *obj = vc_poll_result( query );
+
+        vc_remove_object( world, obj );
+        vc_free_object( obj );
+
+        vc_free_result( query );
     }
 }
 
 int main()
 {
     /*
-     * pre window
+     * pre init
      */
 
     window_w = 850;
@@ -349,25 +368,29 @@ int main()
     button_view.w = window_w - main_view.w;
     button_view.h = window_h;
 
+    /*
+     * init
+     */
+
     init_game( window_w, window_h, "world creation tool" );
 
     /*
-     * post window
+     * post init
      */
 
-    load_defs( NULL );
-    load_level( NULL );
+    world = vc_load_world( NULL );
 
-    sel_def = 0;
-    objects = new_kd_tree( 2, NULL );
     scale_x = 100;
     scale_y = 100;
     camera_x = 0;
     camera_y = 0;
+    sel_def = 0;
 
     fps_cap = 60;
 
     SDL_SetWindowResizable( window, SDL_TRUE );
+
+    test_memory_leak_points( 1000, 1000, 1000000 );
 
     /*
      * game
@@ -380,8 +403,7 @@ int main()
      */
 
     close_game();
-    free_defs();
-    free_level();
+    vc_free_world( world );
 
     return 0;
 }
