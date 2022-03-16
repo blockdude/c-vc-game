@@ -57,11 +57,13 @@ vc_object *vc_new_object( double x, double y, enum vc_def_type def )
     vc_object *object = ( vc_object * ) malloc( sizeof( vc_object ) );
     object->x = x;
     object->y = y;
+
     object->world = NULL;
     object->next = NULL;
     object->prev = NULL;
     object->above = NULL;
     object->below = NULL;
+
     object->comp = ( int * ) malloc( sizeof( int ) * VC_COMP_LAST );
     
     // copy comp from def
@@ -302,7 +304,7 @@ int vc_insert_object_nc( vc_world *world, vc_object *object )
 // add object with no collision
 int vc_insert_object( vc_world *world, vc_object *object )
 {
-    if ( world == NULL || object == NULL )
+    if ( world == NULL || object == NULL || object->world != NULL )
         return 0;
 
     int point[] = { floor( object->x ), floor( object->y ) };
@@ -363,6 +365,15 @@ static int remove_object_util( vc_list *list, vc_object *node )
             node->above->below = NULL;
             node->above->next = node->next;
             node->above->prev = node->prev;
+
+            if ( node->next != NULL )
+                node->next->prev = node->above;
+
+            // check if we are at the root of list
+            if ( node->prev != NULL )
+                node->prev->next = node->above;
+            else
+                list->root = node->above;
         }
     }
     else

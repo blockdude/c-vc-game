@@ -390,7 +390,7 @@ int main()
 
     SDL_SetWindowResizable( window, SDL_TRUE );
 
-    test_memory_leak_points( 1000, 1000, 1000000 );
+    //test_memory_leak_points( 1000, 1000, 100000 );
 
     /*
      * game

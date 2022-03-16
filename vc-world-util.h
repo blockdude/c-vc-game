@@ -42,11 +42,11 @@ int vc_set_object_comp      ( vc_object *object, enum vc_comp comp, int new_val 
  * object insertion
  */
 
-int vc_insert_object_nc     ( vc_world *world, vc_object *object );
-int vc_insert_object        ( vc_world *world, vc_object *object );
-int vc_remove_object        ( vc_world *world, vc_object *object );
-int vc_delete_object        ( vc_world *world, int x, int y );
-int vc_delete_objects       ( vc_world *world, int x, int y );
+int vc_insert_object_nc     ( vc_world *world, vc_object *object ); // inserts object to world. does not allow mutiple objects on same x,y.
+int vc_insert_object        ( vc_world *world, vc_object *object ); // inserts object to world. allows mutiple objects on same x,y.
+int vc_remove_object        ( vc_world *world, vc_object *object ); // removes object from world.
+int vc_delete_object        ( vc_world *world, int x, int y );      // removes/frees the first object at x,y.
+int vc_delete_objects       ( vc_world *world, int x, int y );      // removes/frees all objects at x,y.
 
 /*
  * util
