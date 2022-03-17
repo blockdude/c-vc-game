@@ -273,10 +273,13 @@ static int insert_object_util( vc_list *list, vc_object *node )
     return 1;
 }
 
-static int insert_object_above_util( vc_object *a, vc_object *b )
+static int insert_object_above_util( vc_list *list, vc_object *a, vc_object *b )
 {
     if ( a == NULL || b == NULL )
         return 0;
+
+    if ( list->root == b )
+        list->root = a;
 
     a->next = b->next;
     a->prev = b->prev;
@@ -336,7 +339,7 @@ int vc_insert_object( vc_world *world, vc_object *object )
     }
     else
     {
-        insert_object_above_util( object, res );
+        insert_object_above_util( world->obj_list, object, res );
     }
 
     world->obj_c++;
