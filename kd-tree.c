@@ -611,7 +611,7 @@ static void kd_free_util( kd_tree *tree, kd_node *node )
 
 void kd_free( kd_tree *tree )
 {
-    if ( tree->root == NULL )
+    if ( tree == NULL )
         return;
 
     kd_free_util( tree, tree->root );

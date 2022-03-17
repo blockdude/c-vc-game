@@ -6,7 +6,11 @@
 
 typedef struct vc_list vc_list;
 
-// complete object
+/*
+ * structs
+ */
+
+// object node
 struct vc_object
 {
     double x;
@@ -44,6 +48,10 @@ struct vc_result
     int length;
 };
 
+/*
+ * util functions
+ */
+
 static vc_list *new_vc_list()
 {
     vc_list *list = ( vc_list * ) malloc( sizeof( vc_list ) );
@@ -52,25 +60,16 @@ static vc_list *new_vc_list()
     return list;
 }
 
-vc_object *vc_new_object( double x, double y, enum vc_def_type def )
+/*
+ * world
+ */
+
+int vc_save_world( vc_world *world, char *outfile )
 {
-    vc_object *object = ( vc_object * ) malloc( sizeof( vc_object ) );
-    object->x = x;
-    object->y = y;
+    if ( outfile == NULL || world == NULL )
+        return 0;
 
-    object->world = NULL;
-    object->next = NULL;
-    object->prev = NULL;
-    object->above = NULL;
-    object->below = NULL;
-
-    object->comp = ( int * ) malloc( sizeof( int ) * VC_COMP_LAST );
-    
-    // copy comp from def
-    for ( int i = 0; i < VC_COMP_LAST; i++ )
-        object->comp[ i ] = vc_get_def_comp( def, i );
-
-    return object;
+    return 1;
 }
 
 vc_world *vc_load_world( char *infile )
@@ -97,13 +96,9 @@ vc_world *vc_load_world( char *infile )
     return world;
 }
 
-int vc_save_world( vc_world *world, char *outfile )
-{
-    if ( outfile == NULL || world == NULL )
-        return 0;
-
-    return 1;
-}
+/*
+ * world getters and setters
+ */
 
 int vc_get_object_count( vc_world *world )
 {
@@ -113,48 +108,9 @@ int vc_get_object_count( vc_world *world )
     return world->obj_c;
 }
 
-void vc_get_object_pos( vc_object *object, double *x, double *y )
-{
-    if ( object == NULL )
-        return;
-
-    if ( x ) *x = object->x;
-    if ( y ) *y = object->y;
-}
-
-int vc_set_object_pos( vc_object *object, double x, double y )
-{
-    if ( object == NULL )
-        return 0;
-
-    if ( object->world == NULL )
-    {
-        object->x = x;
-        object->y = y;
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-int vc_get_object_comp( vc_object *object, enum vc_comp comp )
-{
-    if ( object == NULL )
-        return -1;
-
-    return object->comp[ comp ];
-}
-
-int vc_set_object_comp( vc_object *object, enum vc_comp comp, int value )
-{
-    if (object == NULL )
-        return 0;
-
-    object->comp[ comp ] = value;
-    return 1;
-}
+/*
+ * query
+ */
 
 vc_result *vc_query_point( vc_world *world, int x, int y )
 {
@@ -199,8 +155,6 @@ vc_object *vc_poll_result( vc_result *result )
     if ( result == NULL || result->current == NULL )
         return NULL;
 
-    if ( result->i == result->length )
-        return NULL;
 
     vc_object *object = result->current;
 
@@ -211,8 +165,11 @@ vc_object *vc_poll_result( vc_result *result )
     }
     else
     {
-        if ( result->objects != NULL )
-            result->current = result->objects[ ++result->i ];
+        result->i++;
+        if ( result->i == result->length )
+            result->current = NULL;
+        else if ( result->objects != NULL )
+            result->current = result->objects[ result->i ];
         else
             result->current = NULL;
     }
@@ -220,24 +177,78 @@ vc_object *vc_poll_result( vc_result *result )
     return object;
 }
 
-int vc_result_length( vc_result *result )
+/*
+ * object create, get, and set
+ */
+
+vc_object *vc_new_object( double x, double y, enum vc_def_type def )
 {
-    if ( result == NULL )
+    vc_object *object = ( vc_object * ) malloc( sizeof( vc_object ) );
+    object->x = x;
+    object->y = y;
+
+    object->world = NULL;
+    object->next = NULL;
+    object->prev = NULL;
+    object->above = NULL;
+    object->below = NULL;
+
+    object->comp = ( int * ) malloc( sizeof( int ) * VC_COMP_LAST );
+    
+    // copy comp from def
+    for ( int i = 0; i < VC_COMP_LAST; i++ )
+        object->comp[ i ] = vc_get_def_comp( def, i );
+
+    return object;
+}
+
+void vc_get_object_pos( vc_object *object, double *x, double *y )
+{
+    if ( object == NULL )
+        return;
+
+    if ( x ) *x = object->x;
+    if ( y ) *y = object->y;
+}
+
+int vc_set_object_pos( vc_object *object, double x, double y )
+{
+    if ( object == NULL )
         return 0;
 
-    return result->length;
+    // currently objects cannot be set if it is attached to a world
+    if ( object->world == NULL )
+    {
+        object->x = x;
+        object->y = y;
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
-vc_object *vc_result_get( vc_result *result, int i )
+int vc_get_object_comp( vc_object *object, enum vc_comp comp )
 {
-    if ( result == NULL )
-        return NULL;
+    if ( object == NULL )
+        return -1;
 
-    if ( i >= result->length || i < 0 )
-        return NULL;
-
-    return result->objects[ i ];
+    return object->comp[ comp ];
 }
+
+int vc_set_object_comp( vc_object *object, enum vc_comp comp, int value )
+{
+    if (object == NULL )
+        return 0;
+
+    object->comp[ comp ] = value;
+    return 1;
+}
+
+/*
+ * world object attaching
+ */
 
 static int insert_object_util( vc_list *list, vc_object *node )
 {
@@ -336,6 +347,7 @@ static int remove_object_util( vc_list *list, vc_object *node )
     // if it is at very bottom
     if ( node->below == NULL )
     {
+        // if there is no replacement node
         if ( node->above == NULL )
         {
             vc_object *root = list->root;
@@ -360,6 +372,7 @@ static int remove_object_util( vc_list *list, vc_object *node )
             list->root = root;
             list->length--;
         }
+        // if there is a replacement node
         else
         {
             node->above->below = NULL;
@@ -397,16 +410,19 @@ int vc_remove_object( vc_world *world, vc_object *object )
 
     int point[] = { floor( object->x ), floor( object->y ) };
 
+    // if there is a replacement node
     if ( object->above != NULL && object->below == NULL )
     {
         kd_replace( world->obj_tree, point, object->above );
         remove_object_util( world->obj_list, object );
     }
+    // if there is no replacement node
     else if ( object->above == NULL && object->below == NULL )
     {
         kd_remove( world->obj_tree, point );
         remove_object_util( world->obj_list, object );
     }
+    // if node is not in root list
     else if ( object->below != NULL )
     {
         remove_object_util( world->obj_list, object );
@@ -424,6 +440,10 @@ int vc_remove_object( vc_world *world, vc_object *object )
     return 1;
 }
 
+/*
+ * general util function
+ */
+
 void vc_split_color( int color, char *r, char *g, char *b, char *a )
 {
     if ( r ) *r = color >> 24 & 0xff;
@@ -431,6 +451,15 @@ void vc_split_color( int color, char *r, char *g, char *b, char *a )
     if ( b ) *b = color >> 8 & 0xff;
     if ( a ) *a = color & 0xff;
 }
+
+int vc_get_def_comp( enum vc_def_type def, enum vc_comp comp )
+{
+    return defs[ def ][ comp ];
+}
+
+/*
+ * memory management
+ */
 
 static void free_list( vc_list *list )
 {
@@ -454,12 +483,6 @@ static void free_list( vc_list *list )
 
 void vc_free_world( vc_world *world )
 {
-    /*
-     * kd_free should free the list because i passed a
-     * function pointer to tell the kd_tree how to free the
-     * node
-     */
-
     if ( world == NULL )
         return;
 
@@ -484,9 +507,4 @@ void vc_free_object( vc_object *object )
 
     free( object->comp );
     free( object );
-}
-
-int vc_get_def_comp( enum vc_def_type def, enum vc_comp comp )
-{
-    return defs[ def ][ comp ];
 }

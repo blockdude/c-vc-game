@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-//#include "kd-tree.h"
 #include "sdl-game.h"
 
 #include "grid-map-util.h"
