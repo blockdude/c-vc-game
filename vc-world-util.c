@@ -278,14 +278,19 @@ static int insert_object_above_util( vc_object *a, vc_object *b )
     if ( a == NULL || b == NULL )
         return 0;
 
-    b->above = a->above;
-    b->below = a;
+    a->next = b->next;
+    a->prev = b->prev;
     a->above = b;
+    b->below = a;
 
-    if ( b->above )
-    {
-        b->above->below = b;
-    }
+    b->next = NULL;
+    b->prev = NULL;
+
+    if ( a->next )
+        a->next->prev = a;
+
+    if ( a->prev )
+        a->prev->next = a;
 
     return 1;
 }
@@ -319,7 +324,7 @@ int vc_insert_object( vc_world *world, vc_object *object )
         return 0;
 
     int point[] = { floor( object->x ), floor( object->y ) };
-    vc_object *res = kd_insert( world->obj_tree, point, object );
+    vc_object *res = kd_replace( world->obj_tree, point, object );
 
     if ( res == NULL )
     {
@@ -331,7 +336,7 @@ int vc_insert_object( vc_world *world, vc_object *object )
     }
     else
     {
-        insert_object_above_util( res, object );
+        insert_object_above_util( object, res );
     }
 
     world->obj_c++;
