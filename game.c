@@ -12,7 +12,6 @@ float camera_x;
 float camera_y;
 float mouse_world_x;
 float mouse_world_y;
-int sel_def;
 
 // window info
 int window_w;
@@ -24,14 +23,79 @@ SDL_Rect button_view;
 
 // world
 vc_world *world;
+vc_object *player;
+float pvx = 0;
+float pvy = 0;
 
 // settings
 const float zoom_speed = 1.3f;
-const int button_view_width = 150;
+const float player_speed = 9.0f;
+const int button_view_width = 0;
 
 /*
  * util
  */
+
+float magnitude( float x, float y )
+{
+    return sqrt( x * x + y * y );
+}
+
+void normalize( float *x, float *y )
+{
+    float xsq = ( *x ) * ( *x );
+    float ysq = ( *y ) * ( *y );
+    float mag = sqrt( xsq + ysq );
+
+    *x = *x != 0 ? *x / mag : 0;
+    *y = *y != 0 ? *y / mag : 0;
+}
+
+float min( float a, float b )
+{
+    return a < b ? a : b;
+}
+
+float max( float a, float b )
+{
+    return a > b ? a : b;
+}
+
+void draw_circle_f( SDL_Renderer *renderer, float x0, float y0, float radius )
+{
+    float diameter = radius * 2;
+    int x = radius - 1;
+    int y = 0;
+    int dx = 1;
+    int dy = 1;
+    int err = dx - diameter;
+
+    while (x >= y)
+    {
+        SDL_RenderDrawPoint( renderer, x0 + x, y0 + y );
+        SDL_RenderDrawPoint( renderer, x0 + y, y0 + x );
+        SDL_RenderDrawPoint( renderer, x0 - y, y0 + x );
+        SDL_RenderDrawPoint( renderer, x0 - x, y0 + y );
+        SDL_RenderDrawPoint( renderer, x0 - x, y0 - y );
+        SDL_RenderDrawPoint( renderer, x0 - y, y0 - x );
+        SDL_RenderDrawPoint( renderer, x0 + y, y0 - x );
+        SDL_RenderDrawPoint( renderer, x0 + x, y0 - y );
+
+        if (err <= 0)
+        {
+            y++;
+            err += dy;
+            dy += 2;
+        }
+
+        if (err > 0)
+        {
+            x--;
+            dx += 2;
+            err += dx - diameter;
+        }
+    }
+}
 
 int pt_in_rect( int ax, int ay, int bx, int by, int w, int h )
 {
@@ -41,6 +105,15 @@ int pt_in_rect( int ax, int ay, int bx, int by, int w, int h )
 int pt_in_rect_f( int ax, int ay, float bx, float by, float w, float h )
 {
     return ( ax >= bx && ax <= bx + w && ay >= by && ay <= by + h );
+}
+
+int rect_in_rect( SDL_FRect a, SDL_FRect b )
+{
+    return (
+            a.x + a.w > b.x &&
+            a.x < b.x + b.w &&
+            a.y + a.h > b.y &&
+            a.y < b.y + b.h );
 }
 
 void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
@@ -73,11 +146,31 @@ void world_to_screen_f( float world_x, float world_y, float *screen_x, float *sc
 
 int render()
 {
+    SDL_RenderSetViewport( renderer, &main_view );
+
     /*
-     * main view render
+     * render player
      */
 
-    SDL_RenderSetViewport( renderer, &main_view );
+    {
+        SDL_FRect temp;
+        float x, y;
+        vc_get_object_pos( player, &x, &y );
+        world_to_screen_f( x, y, &temp.x, &temp.y );
+        temp.w = scale_x;
+        temp.h = scale_y;
+
+        char r, g, b, a;
+        int color = vc_get_object_comp( player, VC_COMP_COLOR );
+        vc_split_color( color, &r, &g, &b, &a );
+
+        SDL_SetRenderDrawColor( renderer, r, g, b, a );
+        draw_circle_f( renderer, temp.x, temp.y, scale_x / 2 );
+    }
+
+    /*
+     * render world
+     */
 
     int point[] = { floor( camera_x ), floor( camera_y ) };
     int dim[] = { ceil( main_view.w / scale_x ) + 1, ceil( main_view.h / scale_y ) + 1 };
@@ -107,42 +200,6 @@ int render()
 
     vc_free_result( query );
 
-    /*
-     * button view render
-     */
-
-    SDL_RenderSetViewport( renderer, &button_view );
-
-    float button_height = ( float ) window_h / VC_DEF_LAST;
-    SDL_FRect button;
-
-    button.x = 1;
-    button.y = 0;
-    button.w = button_view.w - 1;
-    button.h = button_height;
-
-    for ( int i = 0; i < VC_DEF_LAST; i++ )
-    {
-        char r, g, b, a;
-        int color = vc_get_def_comp( i, VC_COMP_COLOR );
-        vc_split_color( color, &r, &g, &b, &a );
-
-        SDL_SetRenderDrawColor( renderer, r, g, b, a );
-        SDL_RenderFillRectF( renderer, &button );
-
-        // highlight if selected
-        if ( i == sel_def )
-        {
-            SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-            SDL_RenderDrawRectF( renderer, &button );
-        }
-
-        button.y += button_height;
-    }
-
-    SDL_SetRenderDrawColor( renderer, 0x80, 0x80, 0x80, 255 );
-    SDL_RenderDrawLine( renderer, 0, 0, 0, button_view.h );
-
     return length;
 }
 
@@ -162,9 +219,14 @@ int handle()
 
                     SDL_GetWindowSize( window, &window_w, &window_h );
 
+                    float x, y;
+                    vc_get_object_pos( player, &x, &y );
+                    camera_x = x - window_w / 2 / scale_x;
+                    camera_y = y - window_h / 2 / scale_y;
+
                     main_view.x = 0;
                     main_view.y = 0;
-                    main_view.w = window_w - 150;
+                    main_view.w = window_w - button_view_width;
                     main_view.h = window_h;
 
                     button_view.x = main_view.w;
@@ -221,43 +283,6 @@ int handle()
         }
     }
 
-    /*
-     * button view handle
-     */
-
-    else if ( pt_in_rect( mouse_x, mouse_y, button_view.x, button_view.y, button_view.w, button_view.h ) )
-    {
-        switch ( event.type )
-        {
-            case SDL_MOUSEBUTTONDOWN:
-
-                if ( event.button.button == SDL_BUTTON_LEFT )
-                {
-                    float button_height = ( float ) window_h / VC_DEF_LAST;
-                    SDL_FRect button;
-
-                    button.x = 0;
-                    button.y = 0;
-                    button.w = button_view.w;
-                    button.h = button_height;
-
-                    // check if mouse is over any button from defs
-                    for ( int i = 0; i < VC_DEF_LAST; i++ )
-                    {
-                        if ( pt_in_rect_f( mouse_x - button_view.x, mouse_y - button_view.y, button.x, button.y, button.w, button.h ) )
-                        {
-                            sel_def = i;
-                            break;
-                        }
-
-                        button.y += button_height;
-                    }
-                }
-
-                break;
-        }
-    }
-
     return 0;
 }
 
@@ -275,59 +300,125 @@ int update()
      * main view update
      */
 
+    pvx = 0;
+    pvy = 0;
+
     if ( pt_in_rect( mouse_x, mouse_y, main_view.x, main_view.y, main_view.w, main_view.h ) )
     {
         /*
-         * panning
+         * player movement
          */
 
-        static int prev_mouse_x = 0;
-        static int prev_mouse_y = 0;
-
-        if ( ( mouse_state & SDL_BUTTON_MMASK ) != 0)
+        if ( keystate[ SDL_SCANCODE_W ] )
         {
-            camera_x += ( prev_mouse_x - mouse_x ) / scale_x;
-            camera_y += ( prev_mouse_y - mouse_y ) / scale_y;
+            pvy -= 1.0f;
         }
 
-        prev_mouse_x = mouse_x;
-        prev_mouse_y = mouse_y;
-
-        /*
-         * place / remove objects
-         */
-
-        if ( ( mouse_state & SDL_BUTTON_LMASK ) != 0 )
+        if ( keystate[ SDL_SCANCODE_S ] )
         {
-            vc_object *new_obj = vc_new_object( mouse_world_x, mouse_world_y, sel_def );
-            if ( !vc_insert_object_nc( world, new_obj ) )
-                vc_free_object( new_obj );
+            pvy += 1.0f;
         }
 
-        if ( ( mouse_state & SDL_BUTTON_RMASK ) != 0 )
+        if ( keystate[ SDL_SCANCODE_A ] )
         {
-            vc_result *query = vc_query_point( world, ( int ) mouse_world_x, ( int ) mouse_world_y );
-            vc_object *obj = vc_poll_result( query );
-            vc_remove_object( world, obj );
-            vc_free_object( obj );
-            vc_free_result( query );
+            pvx -= 1.0f;
+        }
+
+        if ( keystate[ SDL_SCANCODE_D ] )
+        {
+            pvx += 1.0f;
         }
     }
 
     /*
-     * button view update
+     * collision detection and resolution
      */
 
-    else if ( pt_in_rect( mouse_x, mouse_y, button_view.x, button_view.y, button_view.w, button_view.h ) )
+    // variables
+    normalize( &pvx, &pvy );
+
+    float player_x;
+    float player_y;
+    vc_get_object_pos( player, &player_x, &player_y );
+    float potpos_x = player_x + pvx * player_speed * delta_t;
+    float potpos_y = player_y + pvy * player_speed * delta_t;
+
+    int collision = 0;
+    SDL_FRect rect_player;
+    SDL_FRect rect_object;
+    SDL_Rect query_dim;
+
+    // init player and object
+    vc_get_object_pos( player, &rect_player.x, &rect_player.y );
+    rect_player.w = 1;
+    rect_player.h = 1;
+    rect_object.w = 1;
+    rect_object.h = 1;
+
+    // init query_dim
+    query_dim.x = floor( rect_player.x ) - 1;
+    query_dim.y = floor( rect_player.y ) - 1;
+    query_dim.w = 3;
+    query_dim.h = 3;
+
+    // check collision
+    vc_result *result = vc_query_dim( world, query_dim.x, query_dim.y, query_dim.w, query_dim.h );
+    vc_object *object = vc_poll_result( result );
+    while ( object )
     {
+        vc_get_object_pos( object, &rect_object.x, &rect_object.y );
+
+        float near_x = max( rect_object.x, min( potpos_x, rect_object.x + 1 ) );
+        float near_y = max( rect_object.y, min( potpos_y, rect_object.y + 1 ) );
+
+        float raynear_x = near_x - potpos_x;
+        float raynear_y = near_y - potpos_y;
+
+        float overlap = 0.5f - magnitude( raynear_x, raynear_y );
+
+        // check for nan
+        if ( overlap != overlap ) overlap = 0;
+
+        if ( overlap > 0 )
+        {
+            normalize( &raynear_x, &raynear_y );
+            potpos_x = potpos_x - raynear_x * overlap;
+            potpos_y = potpos_y - raynear_y * overlap;
+        }
+
+        //if ( rect_in_rect( rect_player, rect_object ) )
+        //{
+        //    collision = 1;
+        //    break;
+        //}
+
+        object = vc_poll_result( result );
     }
+    vc_free_result( result );
+
+    vc_set_object_pos( player, potpos_x, potpos_y );
+    camera_x = potpos_x - window_w / 2 / scale_x;
+    camera_y = potpos_y - window_h / 2 / scale_y;
 
     /*
      * draw objects
      */
 
     SDL_RenderClear( renderer );
+
+    // debug stuff
+
+    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+
     int i = render();
+
+    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 33 );
+    SDL_FRect screen_dim;
+    world_to_screen_f( query_dim.x, query_dim.y, &screen_dim.x, &screen_dim.y );
+    screen_dim.w = scale_x * query_dim.w;
+    screen_dim.h = scale_y * query_dim.h;
+    SDL_RenderFillRectF( renderer, &screen_dim );
+
     SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
     SDL_RenderPresent( renderer );
 
@@ -342,45 +433,12 @@ int update()
     printf( "objects_rendered   :%3d\n", i );
     printf( "mouse_screen_pos   :%3d, %3d\n", mouse_x, mouse_y );
     printf( "mouse_world_pos    :%3.0f, %3.0f\n", floor( mouse_world_x ), floor( mouse_world_y ) );
-    printf( "camera_pos         :%3.0f, %3.0f\n", camera_x, camera_y );
+    printf( "player_pos         :%3.2f, %3.2f\n", rect_player.x, rect_player.y );
+    printf( "camera_pos         :%3.0f, %3.0f\n", floor( camera_x ), floor( camera_y ) );
     printf( "scaling            :%3.0f, %3.0f\n", scale_x, scale_y );
-    printf( "selected def       :%2d\n", sel_def );
+    printf( "collision          :%d\n", collision );
 
     return 0;
-}
-
-//void test_random_points( int w, int h, int c )
-//{
-//    for ( int i = 0; i < c; i++ )
-//    {
-//        int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
-//        kd_insert( objects, point, new_object( point[ 0 ], point[ 1 ], rand() % LAST ) );
-//    }
-//}
-//
-void test_memory_leak_points( int w, int h, int c )
-{
-    for ( int i = 0; i < c; i++ )
-    {
-        srand( i );
-        int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
-
-        vc_object *new_obj = vc_new_object( point[ 0 ], point[ 1 ], VC_DEF_WALL );
-        if ( !vc_insert_object( world, new_obj ) )
-            vc_free_object( new_obj );
-    }
-
-    for ( int i = 0; i < c; i++ )
-    {
-        srand( i );
-        int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
-
-        vc_result *query = vc_query_point( world, point[ 0 ], point[ 1 ] );
-        vc_object *obj = vc_poll_result( query );
-        vc_remove_object( world, obj );
-        vc_free_object( obj );
-        vc_free_result( query );
-    }
 }
 
 int main()
@@ -389,7 +447,7 @@ int main()
      * pre init
      */
 
-    window_w = 850;
+    window_w = 700;
     window_h = 700;
 
     main_view.x = 0;
@@ -416,15 +474,20 @@ int main()
     scale_y = 100;
     camera_x = 0;
     camera_y = 0;
-    sel_def = 0;
 
     fps_cap = 60;
 
     SDL_SetWindowResizable( window, SDL_TRUE );
-    
+    SDL_SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_ADD );
+
     /*
      * load world
      */
+
+    player = vc_new_object(
+            ( ( camera_x + ( main_view.w / 2 ) ) / scale_x ) - 0.5f,
+            ( ( camera_y + ( main_view.h / 2 ) ) / scale_y ) - 0.5f,
+            VC_DEF_PLAYER );
 
     world = vc_load_world( "world.level" );
 

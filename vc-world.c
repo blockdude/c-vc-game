@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include "kd-tree.h"
-#include "vc-world-util.h"
+#include "vc-world.h"
+
+/*
+ * typedefs
+ */
 
 typedef struct vc_list vc_list;
 
@@ -10,11 +14,10 @@ typedef struct vc_list vc_list;
  * structs
  */
 
-// object node
 struct vc_object
 {
-    double x;
-    double y;
+    float x;
+    float y;
 
     vc_world *world;
     vc_object *next;
@@ -25,14 +28,12 @@ struct vc_object
     int *comp;
 };
 
-// list
 struct vc_list
 {
     vc_object *root;
     int length;
 };
 
-// world
 struct vc_world
 {
     kd_tree *obj_tree;
@@ -44,8 +45,8 @@ struct vc_result
 {
     vc_object **objects;
     vc_object *current;
-    int i;
     int length;
+    int i;
 };
 
 /*
@@ -64,36 +65,112 @@ static vc_list *new_vc_list()
  * world
  */
 
+vc_world *vc_load_world( char *infile )
+{
+    vc_world *world = ( vc_world * ) malloc( sizeof( vc_world ) );
+    world->obj_tree = new_kd_tree( 2, NULL );
+    world->obj_list = new_vc_list();
+    world->obj_c = 0;
+
+    if ( infile != NULL )
+    {
+        FILE *wfile = fopen( infile, "r" );
+
+        if ( wfile != NULL )
+        {
+            /*
+             * load world
+             */
+
+            int obj_count;
+            fscanf( wfile, "%d", &obj_count );
+
+            for ( int i = 0; i < obj_count; i++ )
+            {
+                // allocate object
+                vc_object *obj = ( vc_object * ) malloc( sizeof( vc_object ) );
+                obj->comp = ( int * ) malloc( sizeof( int ) * VC_COMP_LAST );
+                obj->world = NULL;
+                obj->next = NULL;
+                obj->prev = NULL;
+                obj->above = NULL;
+                obj->below = NULL;
+
+                // get pos
+                fscanf( wfile, "%f", &obj->x );
+                fscanf( wfile, "%f", &obj->y );
+
+                // get comp
+                for ( int j = 0; j < VC_COMP_LAST; j++ )
+                {
+                    fscanf( wfile, "%d", &obj->comp[ j ] );
+                }
+
+                if ( !vc_insert_object( world, obj ) )
+                {
+                    vc_free_object( obj );
+                }
+            }
+        }
+
+        if ( wfile ) fclose( wfile );
+    }
+    
+    return world;
+}
+
 int vc_save_world( vc_world *world, char *outfile )
 {
     if ( outfile == NULL || world == NULL )
         return 0;
 
-    return 1;
-}
+    int status;
+    FILE *wfile = fopen( outfile, "w" );
 
-vc_world *vc_load_world( char *infile )
-{
-    vc_world *world = ( vc_world * ) malloc( sizeof( vc_world ) );
-
-    if ( infile == NULL )
+    if ( wfile != NULL )
     {
-        world->obj_tree = new_kd_tree( 2, NULL );
-        world->obj_list = new_vc_list();
-        world->obj_c = 0;
+        /*
+         * save world
+         */
+        
+        fprintf( wfile, "%d\n", vc_get_object_count( world ) );
+
+        vc_object *x = world->obj_list->root;
+
+        while ( x )
+        {
+            vc_object *y = x;
+
+            while ( y )
+            {
+                /*
+                 * write object to file
+                 */
+
+                // not precise but good enough i guess
+                fprintf( wfile, "%f\n", y->x );
+                fprintf( wfile, "%f\n", y->y );
+
+                for ( int i = 0; i < VC_COMP_LAST; i++ )
+                {
+                    fprintf( wfile, "%d\n", y->comp[ i ] );
+                }
+
+                y = y->above;
+            }
+
+            x = x->next;
+        }
+
+        status = 1;
     }
     else
     {
-        /*
-         * place holder. need to create a way to save and
-         * load worlds to a file
-         */
-
-        vc_free_world( world );
-        world = NULL;
+        status = 0;
     }
 
-    return world;
+    if ( wfile ) fclose( wfile );
+    return status;
 }
 
 /*
@@ -137,7 +214,7 @@ vc_result *vc_query_range( vc_world *world, int x, int y, int r )
     return result;
 }
 
-vc_result *vc_query_rect( vc_world *world, int x, int y, int w, int h )
+vc_result *vc_query_dim( vc_world *world, int x, int y, int w, int h )
 {
     int point[] = { x, y };
     int dim[] = { w, h };
@@ -181,7 +258,7 @@ vc_object *vc_poll_result( vc_result *result )
  * object create, get, and set
  */
 
-vc_object *vc_new_object( double x, double y, enum vc_def_type def )
+vc_object *vc_new_object( float x, float y, enum vc_def_type def )
 {
     vc_object *object = ( vc_object * ) malloc( sizeof( vc_object ) );
     object->x = x;
@@ -194,7 +271,7 @@ vc_object *vc_new_object( double x, double y, enum vc_def_type def )
     object->below = NULL;
 
     object->comp = ( int * ) malloc( sizeof( int ) * VC_COMP_LAST );
-    
+
     // copy comp from def
     for ( int i = 0; i < VC_COMP_LAST; i++ )
         object->comp[ i ] = vc_get_def_comp( def, i );
@@ -202,7 +279,7 @@ vc_object *vc_new_object( double x, double y, enum vc_def_type def )
     return object;
 }
 
-void vc_get_object_pos( vc_object *object, double *x, double *y )
+void vc_get_object_pos( vc_object *object, float *x, float *y )
 {
     if ( object == NULL )
         return;
@@ -211,7 +288,7 @@ void vc_get_object_pos( vc_object *object, double *x, double *y )
     if ( y ) *y = object->y;
 }
 
-int vc_set_object_pos( vc_object *object, double x, double y )
+int vc_set_object_pos( vc_object *object, float x, float y )
 {
     if ( object == NULL )
         return 0;
@@ -221,6 +298,23 @@ int vc_set_object_pos( vc_object *object, double x, double y )
     {
         object->x = x;
         object->y = y;
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int vc_add_object_pos( vc_object *object, float x, float y )
+{
+    if ( object == NULL )
+        return 0;
+
+    if ( object->world == NULL )
+    {
+        object->x += x;
+        object->y += y;
         return 1;
     }
     else
@@ -239,7 +333,16 @@ int vc_get_object_comp( vc_object *object, enum vc_comp comp )
 
 int vc_set_object_comp( vc_object *object, enum vc_comp comp, int value )
 {
-    if (object == NULL )
+    if ( object == NULL )
+        return 0;
+
+    object->comp[ comp ] = value;
+    return 1;
+}
+
+int vc_add_object_comp( vc_object *object, enum vc_comp comp, int value )
+{
+    if ( object == NULL )
         return 0;
 
     object->comp[ comp ] = value;
