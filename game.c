@@ -109,11 +109,7 @@ int pt_in_rect_f( int ax, int ay, float bx, float by, float w, float h )
 
 int rect_in_rect( SDL_FRect a, SDL_FRect b )
 {
-    return (
-            a.x + a.w > b.x &&
-            a.x < b.x + b.w &&
-            a.y + a.h > b.y &&
-            a.y < b.y + b.h );
+    return ( a.x + a.w > b.x && a.x < b.x + b.w && a.y + a.h > b.y && a.y < b.y + b.h );
 }
 
 void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
@@ -183,7 +179,7 @@ int render()
         SDL_FRect temp;
         float x, y;
         vc_get_object_pos( obj, &x, &y );
-        world_to_screen_f( x, y, &temp.x, &temp.y );
+        world_to_screen_f( x - 0.5f, y - 0.5f, &temp.x, &temp.y );
         temp.w = scale_x;
         temp.h = scale_y;
 
@@ -293,8 +289,8 @@ int update()
      */
 
     screen_to_world( mouse_x, mouse_y, &mouse_world_x, &mouse_world_y );
-    mouse_world_x = floor( mouse_world_x );
-    mouse_world_y = floor( mouse_world_y );
+    mouse_world_x = round( mouse_world_x );
+    mouse_world_y = round( mouse_world_y );
 
     /*
      * main view update
@@ -356,8 +352,8 @@ int update()
     rect_object.h = 1;
 
     // init query_dim
-    query_dim.x = floor( rect_player.x ) - 1;
-    query_dim.y = floor( rect_player.y ) - 1;
+    query_dim.x = round( rect_player.x ) - 1;
+    query_dim.y = round( rect_player.y ) - 1;
     query_dim.w = 3;
     query_dim.h = 3;
 
@@ -367,6 +363,8 @@ int update()
     while ( object )
     {
         vc_get_object_pos( object, &rect_object.x, &rect_object.y );
+        rect_object.x -= 0.5f;
+        rect_object.y -= 0.5f;
 
         float near_x = max( rect_object.x, min( potpos_x, rect_object.x + 1 ) );
         float near_y = max( rect_object.y, min( potpos_y, rect_object.y + 1 ) );
@@ -397,8 +395,8 @@ int update()
     vc_free_result( result );
 
     vc_set_object_pos( player, potpos_x, potpos_y );
-    camera_x = potpos_x - window_w / 2 / scale_x;
-    camera_y = potpos_y - window_h / 2 / scale_y;
+    camera_x += potpos_x - player_x;
+    camera_y += potpos_y - player_y;
 
     /*
      * draw objects
@@ -414,7 +412,7 @@ int update()
 
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 33 );
     SDL_FRect screen_dim;
-    world_to_screen_f( query_dim.x, query_dim.y, &screen_dim.x, &screen_dim.y );
+    world_to_screen_f( query_dim.x - 0.5f, query_dim.y - 0.5f, &screen_dim.x, &screen_dim.y );
     screen_dim.w = scale_x * query_dim.w;
     screen_dim.h = scale_y * query_dim.h;
     SDL_RenderFillRectF( renderer, &screen_dim );
@@ -434,6 +432,7 @@ int update()
     printf( "mouse_screen_pos   :%3d, %3d\n", mouse_x, mouse_y );
     printf( "mouse_world_pos    :%3.0f, %3.0f\n", floor( mouse_world_x ), floor( mouse_world_y ) );
     printf( "player_pos         :%3.2f, %3.2f\n", rect_player.x, rect_player.y );
+    printf( "player_speed       :%3.2f\n", magnitude( pvx, pvy ) );
     printf( "camera_pos         :%3.0f, %3.0f\n", floor( camera_x ), floor( camera_y ) );
     printf( "scaling            :%3.0f, %3.0f\n", scale_x, scale_y );
     printf( "collision          :%d\n", collision );
@@ -475,7 +474,7 @@ int main()
     camera_x = 0;
     camera_y = 0;
 
-    fps_cap = 60;
+    fps_cap = 0;
 
     SDL_SetWindowResizable( window, SDL_TRUE );
     SDL_SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_ADD );
@@ -485,8 +484,8 @@ int main()
      */
 
     player = vc_new_object(
-            ( ( camera_x + ( main_view.w / 2 ) ) / scale_x ) - 0.5f,
-            ( ( camera_y + ( main_view.h / 2 ) ) / scale_y ) - 0.5f,
+            ( ( camera_x + ( main_view.w / 2 ) ) / scale_x ),
+            ( ( camera_y + ( main_view.h / 2 ) ) / scale_y ),
             VC_DEF_PLAYER );
 
     world = vc_load_world( "world.level" );

@@ -6,17 +6,19 @@
 #include "vc-world.h"
 
 // game info
-float scale_x;
-float scale_y;
-float camera_x;
-float camera_y;
-float mouse_world_x;
-float mouse_world_y;
-int sel_def;
+float scale_x = 100;
+float scale_y = 100;
+float camera_x = 0;
+float camera_y = 0;
+int sel_def = 0;
 
 // window info
-int window_w;
-int window_h;
+int window_w = 850;
+int window_h = 700;
+
+// trackers
+float mouse_world_x;
+float mouse_world_y;
 
 // viewports
 SDL_Rect main_view;
@@ -80,7 +82,7 @@ int render()
     SDL_RenderSetViewport( renderer, &main_view );
 
     int point[] = { floor( camera_x ), floor( camera_y ) };
-    int dim[] = { ceil( main_view.w / scale_x ) + 1, ceil( main_view.h / scale_y ) + 1 };
+    int dim[] = { ceil( main_view.w / scale_x ) + 2, ceil( main_view.h / scale_y ) + 2 };
 
     int length = 0;
     vc_result *query = vc_query_dim( world, point[ 0 ], point[ 1 ], dim[ 0 ], dim[ 1 ] );
@@ -90,7 +92,7 @@ int render()
         SDL_FRect temp;
         float x, y;
         vc_get_object_pos( obj, &x, &y );
-        world_to_screen_f( x, y, &temp.x, &temp.y );
+        world_to_screen_f( x - 0.5f, y - 0.5f, &temp.x, &temp.y );
         temp.w = scale_x;
         temp.h = scale_y;
 
@@ -196,7 +198,7 @@ int handle()
                 float bzx, bzy;
                 float azx, azy;
 
-                screen_to_world( window_w / 2, window_h / 2, &bzx, &bzy );
+                screen_to_world( main_view.w / 2, main_view.h / 2, &bzx, &bzy );
 
                 if ( event.wheel.y > 0 ) // scroll up (zoom in)
                 {
@@ -212,7 +214,7 @@ int handle()
                         scale_y = floor( scale_y / zoom_speed );
                 }
 
-                screen_to_world( window_w / 2, window_h / 2, &azx, &azy );
+                screen_to_world( main_view.w / 2, main_view.h / 2, &azx, &azy );
 
                 camera_x += bzx - azx;
                 camera_y += bzy - azy;
@@ -268,8 +270,8 @@ int update()
      */
 
     screen_to_world( mouse_x, mouse_y, &mouse_world_x, &mouse_world_y );
-    mouse_world_x = floor( mouse_world_x );
-    mouse_world_y = floor( mouse_world_y );
+    mouse_world_x = round( mouse_world_x );
+    mouse_world_y = round( mouse_world_y );
 
     /*
      * main view update
@@ -389,9 +391,6 @@ int main()
      * pre init
      */
 
-    window_w = 850;
-    window_h = 700;
-
     main_view.x = 0;
     main_view.y = 0;
     main_view.w = window_w - button_view_width;
@@ -411,12 +410,6 @@ int main()
     /*
      * post init
      */
-
-    scale_x = 100;
-    scale_y = 100;
-    camera_x = 0;
-    camera_y = 0;
-    sel_def = 0;
 
     fps_cap = 60;
 

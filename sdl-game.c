@@ -20,7 +20,7 @@ const unsigned char *keystate;
 int init_game(int width, int height, const char *title)
 {
     int wflags = 0; // window flags
-    int rflags = 0; // render flags
+    int rflags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC; // render flags
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         return -1;
