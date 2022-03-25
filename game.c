@@ -4,6 +4,7 @@
 
 #include "sdl-game.h"
 #include "vc-world.h"
+#include "vc-util.h"
 
 // game info
 float scale_x;
@@ -35,31 +36,6 @@ const int button_view_width = 0;
 /*
  * util
  */
-
-float magnitude( float x, float y )
-{
-    return sqrt( x * x + y * y );
-}
-
-void normalize( float *x, float *y )
-{
-    float xsq = ( *x ) * ( *x );
-    float ysq = ( *y ) * ( *y );
-    float mag = sqrt( xsq + ysq );
-
-    *x = *x != 0 ? *x / mag : 0;
-    *y = *y != 0 ? *y / mag : 0;
-}
-
-float min( float a, float b )
-{
-    return a < b ? a : b;
-}
-
-float max( float a, float b )
-{
-    return a > b ? a : b;
-}
 
 void draw_circle_f( SDL_Renderer *renderer, float x0, float y0, float radius )
 {
@@ -95,21 +71,6 @@ void draw_circle_f( SDL_Renderer *renderer, float x0, float y0, float radius )
             err += dx - diameter;
         }
     }
-}
-
-int pt_in_rect( int ax, int ay, int bx, int by, int w, int h )
-{
-    return ( ax >= bx && ax <= bx + w && ay >= by && ay <= by + h );
-}
-
-int pt_in_rect_f( int ax, int ay, float bx, float by, float w, float h )
-{
-    return ( ax >= bx && ax <= bx + w && ay >= by && ay <= by + h );
-}
-
-int rect_in_rect( SDL_FRect a, SDL_FRect b )
-{
-    return ( a.x + a.w > b.x && a.x < b.x + b.w && a.y + a.h > b.y && a.y < b.y + b.h );
 }
 
 void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
@@ -151,14 +112,14 @@ int render()
     {
         SDL_FRect temp;
         float x, y;
-        vc_get_object_pos( player, &x, &y );
+        vc_get_object_center( player, &x, &y );
         world_to_screen_f( x, y, &temp.x, &temp.y );
         temp.w = scale_x;
         temp.h = scale_y;
 
         char r, g, b, a;
         int color = vc_get_object_comp( player, VC_COMP_COLOR );
-        vc_split_color( color, &r, &g, &b, &a );
+        split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
         draw_circle_f( renderer, temp.x, temp.y, scale_x / 2 );
@@ -179,13 +140,13 @@ int render()
         SDL_FRect temp;
         float x, y;
         vc_get_object_pos( obj, &x, &y );
-        world_to_screen_f( x - 0.5f, y - 0.5f, &temp.x, &temp.y );
+        world_to_screen_f( x, y, &temp.x, &temp.y );
         temp.w = scale_x;
         temp.h = scale_y;
 
         char r, g, b, a;
         int color = vc_get_object_comp( obj, VC_COMP_COLOR );
-        vc_split_color( color, &r, &g, &b, &a );
+        split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
         SDL_RenderDrawRectF( renderer, &temp );
@@ -240,7 +201,6 @@ int handle()
      * main view handle
      */
 
-    if ( pt_in_rect( mouse_x, mouse_y, main_view.x, main_view.y, main_view.w, main_view.h ) )
     {
         switch ( event.type )
         {
@@ -289,8 +249,8 @@ int update()
      */
 
     screen_to_world( mouse_x, mouse_y, &mouse_world_x, &mouse_world_y );
-    mouse_world_x = round( mouse_world_x );
-    mouse_world_y = round( mouse_world_y );
+    mouse_world_x = floor( mouse_world_x );
+    mouse_world_y = floor( mouse_world_y );
 
     /*
      * main view update
@@ -299,7 +259,6 @@ int update()
     pvx = 0;
     pvy = 0;
 
-    if ( pt_in_rect( mouse_x, mouse_y, main_view.x, main_view.y, main_view.w, main_view.h ) )
     {
         /*
          * player movement
@@ -352,8 +311,8 @@ int update()
     rect_object.h = 1;
 
     // init query_dim
-    query_dim.x = round( rect_player.x ) - 1;
-    query_dim.y = round( rect_player.y ) - 1;
+    query_dim.x = floor( rect_player.x ) - 1;
+    query_dim.y = floor( rect_player.y ) - 1;
     query_dim.w = 3;
     query_dim.h = 3;
 
@@ -412,7 +371,7 @@ int update()
 
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 33 );
     SDL_FRect screen_dim;
-    world_to_screen_f( query_dim.x - 0.5f, query_dim.y - 0.5f, &screen_dim.x, &screen_dim.y );
+    world_to_screen_f( query_dim.x, query_dim.y, &screen_dim.x, &screen_dim.y );
     screen_dim.w = scale_x * query_dim.w;
     screen_dim.h = scale_y * query_dim.h;
     SDL_RenderFillRectF( renderer, &screen_dim );

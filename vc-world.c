@@ -288,6 +288,15 @@ void vc_get_object_pos( vc_object *object, float *x, float *y )
     if ( y ) *y = object->y;
 }
 
+void vc_get_object_center( vc_object *object, float *x, float *y )
+{
+    if ( object == NULL )
+        return;
+
+    if ( x ) *x = object->x + 0.5f;
+    if ( y ) *y = object->y + 0.5f;
+}
+
 int vc_set_object_pos( vc_object *object, float x, float y )
 {
     if ( object == NULL )
@@ -554,14 +563,6 @@ int vc_remove_object( vc_world *world, vc_object *object )
 /*
  * general util function
  */
-
-void vc_split_color( int color, char *r, char *g, char *b, char *a )
-{
-    if ( r ) *r = color >> 24 & 0xff;
-    if ( g ) *g = color >> 16 & 0xff;
-    if ( b ) *b = color >> 8 & 0xff;
-    if ( a ) *a = color & 0xff;
-}
 
 int vc_get_def_comp( enum vc_def_type def, enum vc_comp comp )
 {

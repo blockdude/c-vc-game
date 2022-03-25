@@ -4,13 +4,15 @@
 
 #include "sdl-game.h"
 #include "vc-world.h"
+#include "vc-util.h"
+#include "vc-grid.h"
 
-// game info
+// vc-grid
 float scale_x = 100;
 float scale_y = 100;
 float camera_x = 0;
 float camera_y = 0;
-int sel_def = 0;
+SDL_Rect view;
 
 // window info
 int window_w = 850;
@@ -19,9 +21,9 @@ int window_h = 700;
 // trackers
 float mouse_world_x;
 float mouse_world_y;
+int sel_def = 0;
 
 // viewports
-SDL_Rect main_view;
 SDL_Rect button_view;
 
 // world
@@ -30,44 +32,6 @@ vc_world *world;
 // settings
 const float zoom_speed = 1.3f;
 const int button_view_width = 150;
-
-/*
- * util
- */
-
-int pt_in_rect( int ax, int ay, int bx, int by, int w, int h )
-{
-    return ( ax >= bx && ax <= bx + w && ay >= by && ay <= by + h );
-}
-
-int pt_in_rect_f( int ax, int ay, float bx, float by, float w, float h )
-{
-    return ( ax >= bx && ax <= bx + w && ay >= by && ay <= by + h );
-}
-
-void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
-{
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
-}
-
-void world_to_screen( float world_x, float world_y, int *screen_x, int *screen_y )
-{
-    *screen_x = ( int ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( int ) ( ( world_y - camera_y ) * scale_y );
-}
-
-void screen_to_world_f( float screen_x, float screen_y, float *world_x, float *world_y )
-{
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
-}
-
-void world_to_screen_f( float world_x, float world_y, float *screen_x, float *screen_y )
-{
-    *screen_x = ( float ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( float ) ( ( world_y - camera_y ) * scale_y );
-}
 
 /*
  * window stuff
@@ -89,20 +53,7 @@ int render()
     vc_object *obj = vc_poll_result( query );
     while( obj )
     {
-        SDL_FRect temp;
-        float x, y;
-        vc_get_object_pos( obj, &x, &y );
-        world_to_screen_f( x - 0.5f, y - 0.5f, &temp.x, &temp.y );
-        temp.w = scale_x;
-        temp.h = scale_y;
-
-        char r, g, b, a;
-        int color = vc_get_object_comp( obj, VC_COMP_COLOR );
-        vc_split_color( color, &r, &g, &b, &a );
-
-        SDL_SetRenderDrawColor( renderer, r, g, b, a );
-        SDL_RenderDrawRectF( renderer, &temp );
-
+        draw_object( renderer, obj );
         obj = vc_poll_result( query );
         length++;
     }
@@ -127,7 +78,7 @@ int render()
     {
         char r, g, b, a;
         int color = vc_get_def_comp( i, VC_COMP_COLOR );
-        vc_split_color( color, &r, &g, &b, &a );
+        split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
         SDL_RenderFillRectF( renderer, &button );
@@ -198,7 +149,8 @@ int handle()
                 float bzx, bzy;
                 float azx, azy;
 
-                screen_to_world( main_view.w / 2, main_view.h / 2, &bzx, &bzy );
+                bzx = scale_x;
+                bzy = scale_y;
 
                 if ( event.wheel.y > 0 ) // scroll up (zoom in)
                 {
@@ -270,8 +222,8 @@ int update()
      */
 
     screen_to_world( mouse_x, mouse_y, &mouse_world_x, &mouse_world_y );
-    mouse_world_x = round( mouse_world_x );
-    mouse_world_y = round( mouse_world_y );
+    mouse_world_x = floor( mouse_world_x );
+    mouse_world_y = floor( mouse_world_y );
 
     /*
      * main view update
@@ -414,7 +366,7 @@ int main()
     fps_cap = 60;
 
     SDL_SetWindowResizable( window, SDL_TRUE );
-    
+
     /*
      * load world
      */
