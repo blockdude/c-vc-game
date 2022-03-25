@@ -5,6 +5,7 @@
 #include "sdl-game.h"
 #include "vc-world.h"
 #include "vc-util.h"
+#include "vc-grid.h"
 
 // game info
 float scale_x;
@@ -36,66 +37,6 @@ const int button_view_width = 0;
 /*
  * util
  */
-
-void draw_circle_f( SDL_Renderer *renderer, float x0, float y0, float radius )
-{
-    float diameter = radius * 2;
-    int x = radius - 1;
-    int y = 0;
-    int dx = 1;
-    int dy = 1;
-    int err = dx - diameter;
-
-    while (x >= y)
-    {
-        SDL_RenderDrawPoint( renderer, x0 + x, y0 + y );
-        SDL_RenderDrawPoint( renderer, x0 + y, y0 + x );
-        SDL_RenderDrawPoint( renderer, x0 - y, y0 + x );
-        SDL_RenderDrawPoint( renderer, x0 - x, y0 + y );
-        SDL_RenderDrawPoint( renderer, x0 - x, y0 - y );
-        SDL_RenderDrawPoint( renderer, x0 - y, y0 - x );
-        SDL_RenderDrawPoint( renderer, x0 + y, y0 - x );
-        SDL_RenderDrawPoint( renderer, x0 + x, y0 - y );
-
-        if (err <= 0)
-        {
-            y++;
-            err += dy;
-            dy += 2;
-        }
-
-        if (err > 0)
-        {
-            x--;
-            dx += 2;
-            err += dx - diameter;
-        }
-    }
-}
-
-void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
-{
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
-}
-
-void world_to_screen( float world_x, float world_y, int *screen_x, int *screen_y )
-{
-    *screen_x = ( int ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( int ) ( ( world_y - camera_y ) * scale_y );
-}
-
-void screen_to_world_f( float screen_x, float screen_y, float *world_x, float *world_y )
-{
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
-}
-
-void world_to_screen_f( float world_x, float world_y, float *screen_x, float *screen_y )
-{
-    *screen_x = ( float ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( float ) ( ( world_y - camera_y ) * scale_y );
-}
 
 /*
  * window stuff

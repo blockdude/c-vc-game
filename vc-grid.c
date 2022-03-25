@@ -1,4 +1,5 @@
 #include "vc-grid.h"
+#include "vc-util.h"
 
 void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
 {
@@ -34,13 +35,13 @@ void draw_object( SDL_Renderer *renderer, vc_object *object )
 
     char r, g, b, a;
     int color = vc_get_object_comp( object, VC_COMP_COLOR );
-    vc_split_color( color, &r, &g, &b, &a );
+    split_color( color, &r, &g, &b, &a );
 
     SDL_SetRenderDrawColor( renderer, r, g, b, a );
     SDL_RenderDrawRectF( renderer, &rect_obj );
 }
 
-void draw_entity( SDL_Renderer *renderer, vc_object *entity )
+void draw_entity( SDL_Renderer *renderer, vc_object *object )
 {
     float x, y;
     vc_get_object_pos( object, &x, &y );
@@ -48,7 +49,7 @@ void draw_entity( SDL_Renderer *renderer, vc_object *entity )
 
     char r, g, b, a;
     int color = vc_get_object_comp( object, VC_COMP_COLOR );
-    vc_split_color( color, &r, &g, &b, &a );
+    split_color( color, &r, &g, &b, &a );
 
     SDL_SetRenderDrawColor( renderer, r, g, b, a );
     draw_circle_f( renderer, x, y, scale_x / 2 );
