@@ -288,15 +288,6 @@ void vc_get_object_pos( vc_object *object, float *x, float *y )
     if ( y ) *y = object->y;
 }
 
-void vc_get_object_center( vc_object *object, float *x, float *y )
-{
-    if ( object == NULL )
-        return;
-
-    if ( x ) *x = object->x + 0.5f;
-    if ( y ) *y = object->y + 0.5f;
-}
-
 int vc_set_object_pos( vc_object *object, float x, float y )
 {
     if ( object == NULL )

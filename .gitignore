@@ -7,10 +7,11 @@
 # Unignore all directories
 !*/*
 
-*.level
-
 # leak detector
 leak_detector_c.*
+
+# world
+*.level
 
 # text files
 *.txt

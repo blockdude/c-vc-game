@@ -37,7 +37,6 @@ int vc_reset_result         ( vc_result *result );
 
 vc_object *vc_new_object    ( float x, float y, enum vc_def_type def );
 void vc_get_object_pos      ( vc_object *object, float *x, float *y );
-void vc_get_object_center   ( vc_object *object, float *x, float *y );
 int vc_set_object_pos       ( vc_object *object, float x, float y );
 int vc_add_object_pos       ( vc_object *object, float x, float y );
 int vc_get_object_comp      ( vc_object *object, enum vc_comp comp );
