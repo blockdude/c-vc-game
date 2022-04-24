@@ -3,28 +3,19 @@
 #include <math.h>
 
 #include "sdl-game.h"
-#include "vc-world.h"
+#include "scene.h"
 #include "util.h"
 
-// game info
-float scale_x;
-float scale_y;
-float camera_x;
-float camera_y;
-float mouse_world_x;
-float mouse_world_y;
 int sel_def;
 
 // window info
 int window_w;
 int window_h;
 
-// viewports
-SDL_Rect main_view;
 SDL_Rect button_view;
 
-// world
-vc_world *world;
+// main_scene
+scene *main_scene;
 
 // settings
 const float zoom_speed = 1.3f;
@@ -44,30 +35,6 @@ int pt_in_rect_f( int ax, int ay, float bx, float by, float w, float h )
     return ( ax >= bx && ax <= bx + w && ay >= by && ay <= by + h );
 }
 
-void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
-{
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
-}
-
-void world_to_screen( float world_x, float world_y, int *screen_x, int *screen_y )
-{
-    *screen_x = ( int ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( int ) ( ( world_y - camera_y ) * scale_y );
-}
-
-void screen_to_world_f( float screen_x, float screen_y, float *world_x, float *world_y )
-{
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
-}
-
-void world_to_screen_f( float world_x, float world_y, float *screen_x, float *screen_y )
-{
-    *screen_x = ( float ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( float ) ( ( world_y - camera_y ) * scale_y );
-}
-
 /*
  * window stuff
  */
@@ -80,33 +47,33 @@ int render()
 
     SDL_RenderSetViewport( renderer, &main_view );
 
-    int point[] = { floor( camera_x ), floor( camera_y ) };
-    int dim[] = { ceil( main_view.w / scale_x ) + 1, ceil( main_view.h / scale_y ) + 1 };
+    int point[] = { floor( camera.x ), floor( camera.y ) };
+    int dim[] = { ceil( main_view.w / scale.x ) + 1, ceil( main_view.h / scale.y ) + 1 };
 
     int length = 0;
-    vc_result *query = vc_query_dim( world, point[ 0 ], point[ 1 ], dim[ 0 ], dim[ 1 ] );
-    vc_object *obj = vc_poll_result( query );
+    result *res = query_dim( main_scene, point[ 0 ], point[ 1 ], dim[ 0 ], dim[ 1 ] );
+    object *obj = poll_result( res );
     while( obj )
     {
         SDL_FRect temp;
         float x, y;
-        vc_get_object_pos( obj, &x, &y );
+        get_object_pos( obj, &x, &y );
         world_to_screen_f( x, y, &temp.x, &temp.y );
-        temp.w = scale_x;
-        temp.h = scale_y;
+        temp.w = scale.x;
+        temp.h = scale.y;
 
         char r, g, b, a;
-        int color = vc_get_object_comp( obj, VC_COMP_COLOR );
+        int color = get_object_comp( obj, COMP_COLOR );
         split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
         SDL_RenderDrawRectF( renderer, &temp );
 
-        obj = vc_poll_result( query );
+        obj = poll_result( res );
         length++;
     }
 
-    vc_free_result( query );
+    free_result( res );
 
     /*
      * button view render
@@ -114,7 +81,7 @@ int render()
 
     SDL_RenderSetViewport( renderer, &button_view );
 
-    float button_height = ( float ) window_h / VC_DEF_LAST;
+    float button_height = ( float ) window_h / DEF_LAST;
     SDL_FRect button;
 
     button.x = 1;
@@ -122,10 +89,10 @@ int render()
     button.w = button_view.w - 1;
     button.h = button_height;
 
-    for ( int i = 0; i < VC_DEF_LAST; i++ )
+    for ( int i = 0; i < DEF_LAST; i++ )
     {
         char r, g, b, a;
-        int color = vc_get_def_comp( i, VC_COMP_COLOR );
+        int color = get_def_comp( i, COMP_COLOR );
         split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
@@ -183,7 +150,7 @@ int handle()
      * main view handle
      */
 
-    if ( pt_in_rect( mouse_x, mouse_y, main_view.x, main_view.y, main_view.w, main_view.h ) )
+    if ( pt_in_rect( mouse_screen.x, mouse_screen.y, main_view.x, main_view.y, main_view.w, main_view.h ) )
     {
         switch ( event.type )
         {
@@ -201,22 +168,22 @@ int handle()
 
                 if ( event.wheel.y > 0 ) // scroll up (zoom in)
                 {
-                    scale_x = ceil( scale_x * zoom_speed );
-                    scale_y = ceil( scale_y * zoom_speed );
+                    scale.x = ceil( scale.x * zoom_speed );
+                    scale.y = ceil( scale.y * zoom_speed );
                 }
                 else if ( event.wheel.y < 0 ) // scroll down (zoom out)
                 {
-                    if ( scale_x != 1 )
-                        scale_x = floor( scale_x / zoom_speed );
+                    if ( scale.x != 1 )
+                        scale.x = floor( scale.x / zoom_speed );
 
-                    if ( scale_y != 1 )
-                        scale_y = floor( scale_y / zoom_speed );
+                    if ( scale.y != 1 )
+                        scale.y = floor( scale.y / zoom_speed );
                 }
 
                 screen_to_world( window_w / 2, window_h / 2, &azx, &azy );
 
-                camera_x += bzx - azx;
-                camera_y += bzy - azy;
+                camera.x += bzx - azx;
+                camera.y += bzy - azy;
 
                 break;
         }
@@ -226,7 +193,7 @@ int handle()
      * button view handle
      */
 
-    else if ( pt_in_rect( mouse_x, mouse_y, button_view.x, button_view.y, button_view.w, button_view.h ) )
+    else if ( pt_in_rect( mouse_screen.x, mouse_screen.y, button_view.x, button_view.y, button_view.w, button_view.h ) )
     {
         switch ( event.type )
         {
@@ -234,7 +201,7 @@ int handle()
 
                 if ( event.button.button == SDL_BUTTON_LEFT )
                 {
-                    float button_height = ( float ) window_h / VC_DEF_LAST;
+                    float button_height = ( float ) window_h / DEF_LAST;
                     SDL_FRect button;
 
                     button.x = 0;
@@ -243,9 +210,9 @@ int handle()
                     button.h = button_height;
 
                     // check if mouse is over any button from defs
-                    for ( int i = 0; i < VC_DEF_LAST; i++ )
+                    for ( int i = 0; i < DEF_LAST; i++ )
                     {
-                        if ( pt_in_rect_f( mouse_x - button_view.x, mouse_y - button_view.y, button.x, button.y, button.w, button.h ) )
+                        if ( pt_in_rect_f( mouse_screen.x - button_view.x, mouse_screen.y - button_view.y, button.x, button.y, button.w, button.h ) )
                         {
                             sel_def = i;
                             break;
@@ -265,34 +232,26 @@ int handle()
 int update()
 {
     /*
-     * get input
-     */
-
-    screen_to_world( mouse_x, mouse_y, &mouse_world_x, &mouse_world_y );
-    mouse_world_x = floor( mouse_world_x );
-    mouse_world_y = floor( mouse_world_y );
-
-    /*
      * main view update
      */
 
-    if ( pt_in_rect( mouse_x, mouse_y, main_view.x, main_view.y, main_view.w, main_view.h ) )
+    if ( pt_in_rect( mouse_screen.x, mouse_screen.y, main_view.x, main_view.y, main_view.w, main_view.h ) )
     {
         /*
          * panning
          */
 
-        static int prev_mouse_x = 0;
-        static int prev_mouse_y = 0;
+        static int prev_mouse_screen_x = 0;
+        static int prev_mouse_screen_y = 0;
 
         if ( ( mouse_state & SDL_BUTTON_MMASK ) != 0)
         {
-            camera_x += ( prev_mouse_x - mouse_x ) / scale_x;
-            camera_y += ( prev_mouse_y - mouse_y ) / scale_y;
+            camera.x += ( prev_mouse_screen_x - mouse_screen.x ) / scale.x;
+            camera.y += ( prev_mouse_screen_y - mouse_screen.y ) / scale.y;
         }
 
-        prev_mouse_x = mouse_x;
-        prev_mouse_y = mouse_y;
+        prev_mouse_screen_x = mouse_screen.x;
+        prev_mouse_screen_y = mouse_screen.y;
 
         /*
          * place / remove objects
@@ -300,18 +259,18 @@ int update()
 
         if ( ( mouse_state & SDL_BUTTON_LMASK ) != 0 )
         {
-            vc_object *new_obj = vc_new_object( mouse_world_x, mouse_world_y, sel_def );
-            if ( !vc_insert_object_nc( world, new_obj ) )
-                vc_free_object( new_obj );
+            object *new_obj = new_object( mouse_world_floor.x, mouse_world_floor.y, sel_def );
+            if ( !insert_object_nc( main_scene, new_obj ) )
+                free_object( new_obj );
         }
 
         if ( ( mouse_state & SDL_BUTTON_RMASK ) != 0 )
         {
-            vc_result *query = vc_query_point( world, ( int ) mouse_world_x, ( int ) mouse_world_y );
-            vc_object *obj = vc_poll_result( query );
-            vc_remove_object( world, obj );
-            vc_free_object( obj );
-            vc_free_result( query );
+            result *res = query_point( main_scene, mouse_world_floor.x, mouse_world_floor.y );
+            object *obj = poll_result( res );
+            remove_object( main_scene, obj );
+            free_object( obj );
+            free_result( res );
         }
     }
 
@@ -319,7 +278,7 @@ int update()
      * button view update
      */
 
-    else if ( pt_in_rect( mouse_x, mouse_y, button_view.x, button_view.y, button_view.w, button_view.h ) )
+    else if ( pt_in_rect( mouse_screen.x, mouse_screen.y, button_view.x, button_view.y, button_view.w, button_view.h ) )
     {
     }
 
@@ -337,14 +296,14 @@ int update()
      */
 
     printf( "---------------------------\n" );
-    printf( "fps                :%3.4f\n", fps );
+    printf( "fps                :%3.4f\n", fps_cur );
     printf( "fps_avg            :%3.4f\n", fps_avg );
-    printf( "objects            :%3d\n", vc_get_object_count( world ) );
+    printf( "objects            :%3d\n", get_object_count( main_scene ) );
     printf( "objects_rendered   :%3d\n", i );
-    printf( "mouse_screen_pos   :%3d, %3d\n", mouse_x, mouse_y );
-    printf( "mouse_world_pos    :%3.0f, %3.0f\n", floor( mouse_world_x ), floor( mouse_world_y ) );
-    printf( "camera_pos         :%3.0f, %3.0f\n", camera_x, camera_y );
-    printf( "scaling            :%3.0f, %3.0f\n", scale_x, scale_y );
+    printf( "mouse_screen_pos   :%3d, %3d\n", mouse_screen.x, mouse_screen.y );
+    printf( "mouse_world_pos    :%3.0f, %3.0f\n", floor( mouse_world.x ), floor( mouse_world.y ) );
+    printf( "camera_pos         :%3.0f, %3.0f\n", camera.x, camera.y );
+    printf( "scaling            :%3.0f, %3.0f\n", scale.x, scale.y );
     printf( "selected def       :%2d\n", sel_def );
 
     return 0;
@@ -366,9 +325,9 @@ void test_memory_leak_points( int w, int h, int c )
         srand( i );
         int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
 
-        vc_object *new_obj = vc_new_object( point[ 0 ], point[ 1 ], VC_DEF_WALL );
-        if ( !vc_insert_object( world, new_obj ) )
-            vc_free_object( new_obj );
+        object *new_obj = new_object( point[ 0 ], point[ 1 ], DEF_WALL );
+        if ( !insert_object( main_scene, new_obj ) )
+            free_object( new_obj );
     }
 
     for ( int i = 0; i < c; i++ )
@@ -376,11 +335,11 @@ void test_memory_leak_points( int w, int h, int c )
         srand( i );
         int point[] = { rand() % w - w / 2, rand() % h - h / 2 };
 
-        vc_result *query = vc_query_point( world, point[ 0 ], point[ 1 ] );
-        vc_object *obj = vc_poll_result( query );
-        vc_remove_object( world, obj );
-        vc_free_object( obj );
-        vc_free_result( query );
+        result *res = query_point( main_scene, point[ 0 ], point[ 1 ] );
+        object *obj = poll_result( res );
+        remove_object( main_scene, obj );
+        free_object( obj );
+        free_result( res );
     }
 }
 
@@ -407,16 +366,16 @@ int main()
      * init
      */
 
-    init_game( window_w, window_h, "world creation tool" );
+    init_game( window_w, window_h, "main_scene creation tool" );
 
     /*
      * post init
      */
 
-    scale_x = 100;
-    scale_y = 100;
-    camera_x = 0;
-    camera_y = 0;
+    scale.x = 100;
+    scale.y = 100;
+    camera.x = 0;
+    camera.y = 0;
     sel_def = 0;
 
     fps_cap = 60;
@@ -424,10 +383,10 @@ int main()
     SDL_SetWindowResizable( window, SDL_TRUE );
     
     /*
-     * load world
+     * load main_scene
      */
 
-    world = vc_load_world( "world.level" );
+    main_scene = load_scene( "world.level" );
 
     /*
      * game
@@ -436,17 +395,17 @@ int main()
     start_game();
 
     /*
-     * save world
+     * save main_scene
      */
 
-    vc_save_world( world, "world.level" );
+    save_scene( main_scene, "world.level" );
 
     /*
      * clean up
      */
 
     close_game();
-    vc_free_world( world );
+    free_scene( main_scene );
 
     return 0;
 }
