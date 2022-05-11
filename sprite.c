@@ -66,3 +66,19 @@ void render_sprite( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, SDL_Rende
 
     SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, flip );
 }
+
+void render_sprite_last_frame( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, SDL_RendererFlip flip )
+{
+    SDL_Rect src = { 0, 0, sp->frame_width, sp->frame_height };
+    src.x = sp->last_frame * sp->frame_width;
+
+    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, flip );
+}
+
+void render_sprite_frame( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, int frame, SDL_RendererFlip flip )
+{
+    SDL_Rect src = { 0, 0, sp->frame_width, sp->frame_height };
+    src.x = ( frame % sp->frame_count ) * sp->frame_width;
+
+    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, flip );
+}

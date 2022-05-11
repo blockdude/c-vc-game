@@ -30,8 +30,12 @@ const int button_view_width = 0;
 sprite *player_sprite[4];
 object *player;
 int player_direction = 0;
-float frame_time = 0.2f;
+int frame_time = 100;
 float hitbox = 0.4f;
+
+// player tracker
+float player_speed_cur = 0;
+int draw_player_hitbox = 1;
 
 // fram counter
 int frame = 0;
@@ -53,18 +57,17 @@ int render()
         get_object_pos( player, &x, &y );
 
         SDL_Rect rect = { 0, 0, scale.x, scale.y };
+        SDL_RendererFlip flip = 0;
         switch ( player_direction )
         {
             // north
             case 0:
                 world_to_screen( x, y, &rect.x, &rect.y );
-                render_sprite( renderer, player_sprite[ player_direction ], &rect, 0 );
                 break;
 
             // south
             case 1:
                 world_to_screen( x + 0.1f, y - 0.1f, &rect.x, &rect.y );
-                render_sprite( renderer, player_sprite[ player_direction ], &rect, 0 );
                 break;
 
             // west
@@ -72,7 +75,7 @@ int render()
                 rect.w /= 1.25f;
                 rect.h /= 1.25f;
                 world_to_screen( x + 0.09f, y + 0.1f, &rect.x, &rect.y );
-                render_sprite( renderer, player_sprite[ player_direction ], &rect, SDL_FLIP_HORIZONTAL );
+                flip = SDL_FLIP_HORIZONTAL;
                 break;
 
             // east
@@ -80,18 +83,25 @@ int render()
                 rect.w /= 1.25f;
                 rect.h /= 1.25f;
                 world_to_screen( x + 0.11f, y + 0.1f, &rect.x, &rect.y );
-                render_sprite( renderer, player_sprite[ player_direction ], &rect, 0 );
                 break;
         }
 
-        center_pos( x, y, &x, &y );
+        if ( player_speed_cur > 0.1f )
+            render_sprite( renderer, player_sprite[ player_direction ], &rect, flip );
+        else
+            render_sprite_last_frame( renderer, player_sprite[ player_direction ], &rect, flip );
 
-        char r, g, b, a;
-        int color = get_object_comp( player, COMP_COLOR );
-        split_color( color, &r, &g, &b, &a );
+        // draw hitbox for player
+        if ( draw_player_hitbox )
+        {
+            center_pos( x, y, &x, &y );
 
-        SDL_SetRenderDrawColor( renderer, r, g, b, a );
-        draw_circle_world( renderer, x, y, hitbox );
+            char r, g, b, a;
+            int color = get_object_comp( player, COMP_COLOR );
+            split_color( color, &r, &g, &b, &a );
+            SDL_SetRenderDrawColor( renderer, r, g, b, a );
+            draw_circle_world( renderer, x, y, hitbox );
+        }
     }
 
     /*
@@ -201,6 +211,15 @@ int handle()
                 camera.x += bzx - azx;
                 camera.y += bzy - azy;
 
+                break;
+
+            case SDL_KEYDOWN:
+                switch ( event.key.keysym.sym )
+                {
+                    case SDLK_h:
+                        draw_player_hitbox = !draw_player_hitbox;
+                        break;
+                }
                 break;
         }
     }
@@ -316,6 +335,8 @@ int update()
     camera.x += potpos_x - player_x;
     camera.y += potpos_y - player_y;
 
+    player_speed_cur = magnitude( potpos_x - player_x, potpos_y - player_y ) * fps_cur;
+
     /*
      * draw objects
      */
@@ -344,7 +365,7 @@ int update()
     printf( "mouse_screen_pos   :%3d, %3d\n",       mouse_screen.x, mouse_screen.y );
     printf( "mouse_world_pos    :%3d, %3d\n",       mouse_world_floor.x, mouse_world_floor.y );
     printf( "player_pos         :%3.2f, %3.2f\n",   player_x, player_y );
-    printf( "player_speed       :%3.2f\n",          magnitude( potpos_x - player_x, potpos_y - player_y ) * fps_cur );
+    printf( "player_speed       :%3.2f\n",          player_speed_cur );
     printf( "camera_pos         :%3.0f, %3.0f\n",   floor( camera.x ), floor( camera.y ) );
     printf( "scaling            :%3.0f, %3.0f\n",   scale.x, scale.y );
 
@@ -394,19 +415,19 @@ int main()
      * load main_scene
      */
 
+    // create and center player obj
     player = new_object(
             ( ( camera.x + ( main_view.w / 2 ) ) / scale.x ) - 0.5f,
             ( ( camera.y + ( main_view.h / 2 ) ) / scale.y ) - 0.5f,
             DEF_PLAYER );
 
-    player_sprite[ 0 ] = load_sprite( renderer, "textures/player-north.bmp", 250, 250, 3, 100 ); // north
-    player_sprite[ 1 ] = load_sprite( renderer, "textures/player-south.bmp", 250, 250, 3, 100 ); // south
-    player_sprite[ 2 ] = load_sprite( renderer, "textures/player-east.bmp", 250, 250, 2, 100 );  // west
-    player_sprite[ 3 ] = load_sprite( renderer, "textures/player-east.bmp", 250, 250, 2, 100 );  // east
+    // load player sprite
+    player_sprite[ 0 ] = load_sprite( renderer, "textures/player-north.bmp", 250, 250, 3, frame_time ); // north
+    player_sprite[ 1 ] = load_sprite( renderer, "textures/player-south.bmp", 250, 250, 3, frame_time ); // south
+    player_sprite[ 2 ] = load_sprite( renderer, "textures/player-east.bmp", 250, 250, 2, frame_time );  // west
+    player_sprite[ 3 ] = load_sprite( renderer, "textures/player-east.bmp", 250, 250, 2, frame_time );  // east
 
-    if ( player_sprite == NULL )
-        return 1;
-
+    // load world
     main_scene = load_scene( "world.level" );
 
     /*
@@ -427,6 +448,13 @@ int main()
 
     close_game();
     free_scene( main_scene );
+
+    free_object( player );
+
+    free_sprite( player_sprite[ 0 ] );
+    free_sprite( player_sprite[ 1 ] );
+    free_sprite( player_sprite[ 2 ] );
+    free_sprite( player_sprite[ 3 ] );
 
     return 0;
 }
