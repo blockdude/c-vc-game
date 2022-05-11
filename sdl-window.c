@@ -1,4 +1,4 @@
-#include "sdl-game.h"
+#include "sdl-window.h"
 
 SDL_Window *window;
 SDL_Renderer *renderer;

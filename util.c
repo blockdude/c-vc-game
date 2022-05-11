@@ -13,17 +13,17 @@ void normalize( float x, float y, float *x_out, float *y_out )
     if ( y_out ) *y_out = y != 0 ? y / mag : 0;
 }
 
-inline float min( float a, float b )
+float min( float a, float b )
 {
     return ( a < b ? a : b );
 }
 
-inline float max( float a, float b )
+float max( float a, float b )
 {
     return ( a > b ? a : b );
 }
 
-inline float clamp( float val, float min, float max )
+float clamp( float val, float min, float max )
 {
     float t = val < min ? min : val;
     return t > max ? max : t;

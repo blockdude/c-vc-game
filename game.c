@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "sdl-game.h"
+#include <SDL2/SDL.h>
+
+#include "sdl-window.h"
 #include "scene.h"
 #include "util.h"
+#include "sprite.h"
 
 // window info
 int window_w;
@@ -15,7 +18,6 @@ SDL_Rect button_view;
 
 // main_scene
 scene *main_scene;
-object *player;
 float pvx = 0;
 float pvy = 0;
 
@@ -23,6 +25,16 @@ float pvy = 0;
 const float zoom_speed = 1.3f;
 const float player_speed = 10.0f;
 const int button_view_width = 0;
+
+// player
+sprite *player_sprite[4];
+object *player;
+int player_direction = 0;
+float frame_time = 0.2f;
+float hitbox = 0.4f;
+
+// fram counter
+int frame = 0;
 
 /*
  * window stuff
@@ -39,6 +51,39 @@ int render()
     {
         float x, y;
         get_object_pos( player, &x, &y );
+
+        SDL_Rect rect = { 0, 0, scale.x, scale.y };
+        switch ( player_direction )
+        {
+            // north
+            case 0:
+                world_to_screen( x, y, &rect.x, &rect.y );
+                render_sprite( renderer, player_sprite[ player_direction ], &rect, 0 );
+                break;
+
+            // south
+            case 1:
+                world_to_screen( x + 0.1f, y - 0.1f, &rect.x, &rect.y );
+                render_sprite( renderer, player_sprite[ player_direction ], &rect, 0 );
+                break;
+
+            // west
+            case 2:
+                rect.w /= 1.25f;
+                rect.h /= 1.25f;
+                world_to_screen( x + 0.09f, y + 0.1f, &rect.x, &rect.y );
+                render_sprite( renderer, player_sprite[ player_direction ], &rect, SDL_FLIP_HORIZONTAL );
+                break;
+
+            // east
+            case 3:
+                rect.w /= 1.25f;
+                rect.h /= 1.25f;
+                world_to_screen( x + 0.11f, y + 0.1f, &rect.x, &rect.y );
+                render_sprite( renderer, player_sprite[ player_direction ], &rect, 0 );
+                break;
+        }
+
         center_pos( x, y, &x, &y );
 
         char r, g, b, a;
@@ -46,7 +91,7 @@ int render()
         split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
-        draw_circle_world( renderer, x, y, 0.5f );
+        draw_circle_world( renderer, x, y, hitbox );
     }
 
     /*
@@ -69,7 +114,7 @@ int render()
         split_color( color, &r, &g, &b, &a );
 
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
-        draw_rect_world( renderer, &temp );
+        fill_rect_world( renderer, &temp );
 
         obj = poll_result( query );
         length++;
@@ -182,24 +227,32 @@ int update()
          * player movement
          */
 
+        // north
         if ( keystate[ SDL_SCANCODE_W ] )
         {
             pvy -= 1.0f;
+            player_direction = 0;
         }
 
+        // south
         if ( keystate[ SDL_SCANCODE_S ] )
         {
             pvy += 1.0f;
+            player_direction = 1;
         }
 
+        // west
         if ( keystate[ SDL_SCANCODE_A ] )
         {
             pvx -= 1.0f;
+            player_direction = 2;
         }
 
+        // east
         if ( keystate[ SDL_SCANCODE_D ] )
         {
             pvx += 1.0f;
+            player_direction = 3;
         }
     }
 
@@ -214,6 +267,8 @@ int update()
     float player_y;
     get_object_pos( player, &player_x, &player_y );
     center_pos( player_x, player_y, &player_x, &player_y );
+
+    // potential position
     float potpos_x = player_x + pvx * player_speed * delta_t;
     float potpos_y = player_y + pvy * player_speed * delta_t;
 
@@ -225,7 +280,7 @@ int update()
     rect_query.w = 3;
     rect_query.h = 3;
 
-    // check collision
+    // check and resolve collision
     result *r = query_dim( main_scene, rect_query.x, rect_query.y, rect_query.w, rect_query.h );
     object *obj = poll_result( r );
     while ( obj )
@@ -241,7 +296,7 @@ int update()
         float raynear_x = near_x - potpos_x;
         float raynear_y = near_y - potpos_y;
 
-        float overlap = 0.5f - magnitude( raynear_x, raynear_y );
+        float overlap = hitbox - magnitude( raynear_x, raynear_y );
 
         // check for nan
         if ( overlap != overlap ) overlap = 0;
@@ -265,18 +320,15 @@ int update()
      * draw objects
      */
 
+    // clear screen with white
+    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderClear( renderer );
-
-    // debug stuff
-
-    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
 
     int i = render();
 
-    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 33 );
+    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 33 );
     fill_rect_world( renderer, &rect_query );
 
-    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
     SDL_RenderPresent( renderer );
 
     /*
@@ -284,14 +336,15 @@ int update()
      */
 
     printf( "---------------------------\n" );
+    printf( "frame              :%3d\n",           frame++ );
     printf( "fps                :%3.4f\n",          fps_cur );
     printf( "fps_avg            :%3.4f\n",          fps_avg );
     printf( "objects            :%3d\n",            get_object_count( main_scene ) );
     printf( "objects_rendered   :%3d\n",            i );
     printf( "mouse_screen_pos   :%3d, %3d\n",       mouse_screen.x, mouse_screen.y );
-    printf( "mouse_world_pos    :%3.0f, %3.0f\n",   floor( mouse_world.x ), floor( mouse_world.y ) );
+    printf( "mouse_world_pos    :%3d, %3d\n",       mouse_world_floor.x, mouse_world_floor.y );
     printf( "player_pos         :%3.2f, %3.2f\n",   player_x, player_y );
-    printf( "player_speed       :%3.2f\n",          magnitude( pvx, pvy ) );
+    printf( "player_speed       :%3.2f\n",          magnitude( potpos_x - player_x, potpos_y - player_y ) * fps_cur );
     printf( "camera_pos         :%3.0f, %3.0f\n",   floor( camera.x ), floor( camera.y ) );
     printf( "scaling            :%3.0f, %3.0f\n",   scale.x, scale.y );
 
@@ -335,7 +388,7 @@ int main()
     fps_cap = 60;
 
     SDL_SetWindowResizable( window, SDL_TRUE );
-    SDL_SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_ADD );
+    SDL_SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
 
     /*
      * load main_scene
@@ -345,6 +398,14 @@ int main()
             ( ( camera.x + ( main_view.w / 2 ) ) / scale.x ) - 0.5f,
             ( ( camera.y + ( main_view.h / 2 ) ) / scale.y ) - 0.5f,
             DEF_PLAYER );
+
+    player_sprite[ 0 ] = load_sprite( renderer, "textures/player-north.bmp", 250, 250, 3, 100 ); // north
+    player_sprite[ 1 ] = load_sprite( renderer, "textures/player-south.bmp", 250, 250, 3, 100 ); // south
+    player_sprite[ 2 ] = load_sprite( renderer, "textures/player-east.bmp", 250, 250, 2, 100 );  // west
+    player_sprite[ 3 ] = load_sprite( renderer, "textures/player-east.bmp", 250, 250, 2, 100 );  // east
+
+    if ( player_sprite == NULL )
+        return 1;
 
     main_scene = load_scene( "world.level" );
 
@@ -358,7 +419,7 @@ int main()
      * save main_scene
      */
 
-    save_scene( main_scene, "scene.level" );
+    save_scene( main_scene, "world.level" );
 
     /*
      * clean up

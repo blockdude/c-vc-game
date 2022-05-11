@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "sdl-game.h"
+#include "sdl-window.h"
 #include "scene.h"
 #include "util.h"
 
