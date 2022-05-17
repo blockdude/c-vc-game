@@ -1,8 +1,6 @@
 #ifndef VC_WORLD_UTIL
 #define VC_WORLD_UTIL
 
-#include "defs.h"
-
 struct scene;
 struct object;
 struct result;
@@ -10,6 +8,10 @@ struct result;
 typedef struct scene scene;
 typedef struct object object;
 typedef struct result result;
+
+/*
+ * defs
+ */
 
 /*
  * world
@@ -35,13 +37,13 @@ int reset_result         ( result *res );
  * object
  */
 
-object *new_object       ( float x, float y, enum def d );
+object *new_object       ( float x, float y, int d );
 void get_object_pos      ( object *obj, float *x, float *y );
 int set_object_pos       ( object *obj, float x, float y );
 int add_object_pos       ( object *obj, float x, float y );
-int get_object_comp      ( object *obj, enum comp c );
-int set_object_comp      ( object *obj, enum comp c, int value );
-int add_object_comp      ( object *obj, enum comp c, int value );
+//int get_object_comp      ( object *obj, enum comp c );
+//int set_object_comp      ( object *obj, enum comp c, int value );
+//int add_object_comp      ( object *obj, enum comp c, int value );
 
 /*
  * object insertion
@@ -57,7 +59,7 @@ int delete_objects       ( scene *s, int x, int y ); // removes/frees all object
  * util
  */
 
-int get_def_comp         ( enum def d, enum comp c );
+//int get_def_comp         ( enum def d, enum comp c );
 
 /*
  * memory

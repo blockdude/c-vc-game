@@ -125,10 +125,6 @@ int start_game()
     return 0;
 }
 
-/*
- * util
- */
-
 void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
 {
     *world_x = ( float ) ( screen_x / scale.x + camera.x );
@@ -153,64 +149,78 @@ void world_to_screen_f( float world_x, float world_y, float *screen_x, float *sc
     *screen_y = ( float ) ( ( world_y - camera.y ) * scale.y );
 }
 
-void draw_circle_screen( SDL_Renderer *renderer, float x0, float y0, float radius )
+void draw_circle_screen( float x, float y, float r )
 {
-    float diameter = radius * 2;
-    int x = radius - 1;
-    int y = 0;
+    float diameter = r * 2;
+    int x0 = r - 1;
+    int y0 = 0;
     int dx = 1;
     int dy = 1;
     int err = dx - diameter;
 
-    while (x >= y)
+    while (x0 >= y0)
     {
-        SDL_RenderDrawPoint( renderer, x0 + x, y0 + y );
-        SDL_RenderDrawPoint( renderer, x0 + y, y0 + x );
-        SDL_RenderDrawPoint( renderer, x0 - y, y0 + x );
-        SDL_RenderDrawPoint( renderer, x0 - x, y0 + y );
-        SDL_RenderDrawPoint( renderer, x0 - x, y0 - y );
-        SDL_RenderDrawPoint( renderer, x0 - y, y0 - x );
-        SDL_RenderDrawPoint( renderer, x0 + y, y0 - x );
-        SDL_RenderDrawPoint( renderer, x0 + x, y0 - y );
+        SDL_RenderDrawPoint( renderer, x + x0, y + y0 );
+        SDL_RenderDrawPoint( renderer, x + y0, y + x0 );
+        SDL_RenderDrawPoint( renderer, x - y0, y + x0 );
+        SDL_RenderDrawPoint( renderer, x - x0, y + y0 );
+        SDL_RenderDrawPoint( renderer, x - x0, y - y0 );
+        SDL_RenderDrawPoint( renderer, x - y0, y - x0 );
+        SDL_RenderDrawPoint( renderer, x + y0, y - x0 );
+        SDL_RenderDrawPoint( renderer, x + x0, y - y0 );
 
         if (err <= 0)
         {
-            y++;
+            y0++;
             err += dy;
             dy += 2;
         }
 
         if (err > 0)
         {
-            x--;
+            x0--;
             dx += 2;
             err += dx - diameter;
         }
     }
 }
 
-void draw_circle_world( SDL_Renderer *renderer, float x, float y, float r )
+void draw_circle_world( float x, float y, float r )
 {
     world_to_screen_f( x, y, &x, &y );
     r = r * scale.x;
 
-    draw_circle_screen( renderer, x, y, r );
+    draw_circle_screen( x, y, r );
 }
 
-void draw_rect_world( SDL_Renderer *renderer, SDL_FRect *rect )
+void draw_rect_screen( float x, float y, float w, float h )
 {
-    world_to_screen_f( rect->x, rect->y, &rect->x, &rect->y );
-    rect->w = rect->w * scale.x;
-    rect->h = rect->h * scale.y;
-
-    SDL_RenderDrawRectF( renderer, rect );
+    SDL_FRect rect = { x, y, w, h };
+    SDL_RenderDrawRectF( renderer, &rect );
 }
 
-void fill_rect_world( SDL_Renderer *renderer, SDL_FRect *rect )
+void fill_rect_screen( float x, float y, float w, float h )
 {
-    world_to_screen_f( rect->x, rect->y, &rect->x, &rect->y );
-    rect->w = rect->w * scale.x;
-    rect->h = rect->h * scale.y;
+    SDL_FRect rect = { x, y, w, h };
+    SDL_RenderFillRectF( renderer, &rect );
+}
 
-    SDL_RenderFillRectF( renderer, rect );
+void draw_rect_world( float x, float y, float w, float h )
+{
+    world_to_screen_f( x, y, &x, &y );
+    w = w * scale.x;
+    h = h * scale.y;
+
+    SDL_FRect rect = { x, y, w, h };
+    SDL_RenderDrawRectF( renderer, &rect );
+}
+
+void fill_rect_world( float x, float y, float w, float h )
+{
+    world_to_screen_f( x, y, &x, &y );
+    w = w * scale.x;
+    h = h * scale.y;
+
+    SDL_FRect rect = { x, y, w, h };
+    SDL_RenderFillRectF( renderer, &rect );
 }

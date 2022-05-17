@@ -1,4 +1,4 @@
-#include "math.h"
+#include <math.h>
 #include "util.h"
 
 float magnitude( float x, float y )
@@ -42,3 +42,14 @@ void center_pos( float x, float y, float *x_out, float *y_out )
     if ( x_out ) *x_out = x + 0.5f;
     if ( y_out ) *y_out = y + 0.5f;
 }
+
+float center_x( float x )
+{
+    return x + 0.5f;
+}
+
+float center_y( float y )
+{
+    return y + 0.5f;
+}
+

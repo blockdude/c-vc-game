@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
 #include "kd-tree.h"
 #include "scene.h"
+#include "core.h"
 
 /*
  * typedefs
@@ -18,6 +20,8 @@ struct object
 {
     float x;
     float y;
+    float w;
+    float h;
 
     scene *s;
     object *next;
@@ -26,6 +30,9 @@ struct object
     object *below;
     
     int *comp;
+
+    int type;
+    void *obj;
 };
 
 struct sl_list
@@ -62,7 +69,7 @@ static sl_list *new_sl_list()
 }
 
 /*
- * s
+ * scene
  */
 
 scene *load_scene( char *infile )
@@ -72,106 +79,106 @@ scene *load_scene( char *infile )
     s->obj_list = new_sl_list();
     s->obj_c = 0;
 
-    if ( infile != NULL )
-    {
-        FILE *wfile = fopen( infile, "r" );
+    //if ( infile != NULL )
+    //{
+    //    FILE *wfile = fopen( infile, "r" );
 
-        if ( wfile != NULL )
-        {
-            /*
-             * load s
-             */
+    //    if ( wfile != NULL )
+    //    {
+    //        /*
+    //         * load s
+    //         */
 
-            int obj_count;
-            fscanf( wfile, "%d", &obj_count );
+    //        int obj_count;
+    //        fscanf( wfile, "%d", &obj_count );
 
-            for ( int i = 0; i < obj_count; i++ )
-            {
-                // allocate obj
-                object *obj = ( object * ) malloc( sizeof( object ) );
-                obj->comp = ( int * ) malloc( sizeof( int ) * COMP_LAST );
-                obj->s = NULL;
-                obj->next = NULL;
-                obj->prev = NULL;
-                obj->above = NULL;
-                obj->below = NULL;
+    //        for ( int i = 0; i < obj_count; i++ )
+    //        {
+    //            // allocate obj
+    //            object *obj = ( object * ) malloc( sizeof( object ) );
+    //            obj->comp = ( int * ) malloc( sizeof( int ) * COMP_LAST );
+    //            obj->s = NULL;
+    //            obj->next = NULL;
+    //            obj->prev = NULL;
+    //            obj->above = NULL;
+    //            obj->below = NULL;
 
-                // get pos
-                fscanf( wfile, "%f", &obj->x );
-                fscanf( wfile, "%f", &obj->y );
+    //            // get pos
+    //            fscanf( wfile, "%f", &obj->x );
+    //            fscanf( wfile, "%f", &obj->y );
 
-                // get comp
-                for ( int j = 0; j < COMP_LAST; j++ )
-                {
-                    fscanf( wfile, "%d", &obj->comp[ j ] );
-                }
+    //            // get comp
+    //            for ( int j = 0; j < COMP_LAST; j++ )
+    //            {
+    //                fscanf( wfile, "%d", &obj->comp[ j ] );
+    //            }
 
-                if ( !insert_object( s, obj ) )
-                {
-                    free_object( obj );
-                }
-            }
-        }
+    //            if ( !insert_object( s, obj ) )
+    //            {
+    //                free_object( obj );
+    //            }
+    //        }
+    //    }
 
-        if ( wfile ) fclose( wfile );
-    }
+    //    if ( wfile ) fclose( wfile );
+    //}
     
     return s;
 }
-
-int save_scene( scene *s, char *outfile )
-{
-    if ( outfile == NULL || s == NULL )
-        return 0;
-
-    int status;
-    FILE *wfile = fopen( outfile, "w" );
-
-    if ( wfile != NULL )
-    {
-        /*
-         * save s
-         */
-        
-        fprintf( wfile, "%d\n", get_object_count( s ) );
-
-        object *x = s->obj_list->root;
-
-        while ( x )
-        {
-            object *y = x;
-
-            while ( y )
-            {
-                /*
-                 * write obj to file
-                 */
-
-                // not precise but good enough i guess
-                fprintf( wfile, "%f\n", y->x );
-                fprintf( wfile, "%f\n", y->y );
-
-                for ( int i = 0; i < COMP_LAST; i++ )
-                {
-                    fprintf( wfile, "%d\n", y->comp[ i ] );
-                }
-
-                y = y->above;
-            }
-
-            x = x->next;
-        }
-
-        status = 1;
-    }
-    else
-    {
-        status = 0;
-    }
-
-    if ( wfile ) fclose( wfile );
-    return status;
-}
+//
+//int save_scene( scene *s, char *outfile )
+//{
+//    if ( outfile == NULL || s == NULL )
+//        return 0;
+//
+//    int status;
+//    FILE *wfile = fopen( outfile, "w" );
+//
+//    if ( wfile != NULL )
+//    {
+//        /*
+//         * save s
+//         */
+//        
+//        fprintf( wfile, "%d\n", get_object_count( s ) );
+//
+//        object *x = s->obj_list->root;
+//
+//        while ( x )
+//        {
+//            object *y = x;
+//
+//            while ( y )
+//            {
+//                /*
+//                 * write obj to file
+//                 */
+//
+//                // not precise but good enough i guess
+//                fprintf( wfile, "%f\n", y->x );
+//                fprintf( wfile, "%f\n", y->y );
+//
+//                for ( int i = 0; i < COMP_LAST; i++ )
+//                {
+//                    fprintf( wfile, "%d\n", y->comp[ i ] );
+//                }
+//
+//                y = y->above;
+//            }
+//
+//            x = x->next;
+//        }
+//
+//        status = 1;
+//    }
+//    else
+//    {
+//        status = 0;
+//    }
+//
+//    if ( wfile ) fclose( wfile );
+//    return status;
+//}
 
 /*
  * s getters and setters
@@ -258,7 +265,7 @@ object *poll_result( result *res )
  * obj create, get, and set
  */
 
-object *new_object( float x, float y, enum def d )
+object *new_object( float x, float y, int d )
 {
     object *obj = ( object * ) malloc( sizeof( object ) );
     obj->x = x;
@@ -270,11 +277,9 @@ object *new_object( float x, float y, enum def d )
     obj->above = NULL;
     obj->below = NULL;
 
-    obj->comp = ( int * ) malloc( sizeof( int ) * COMP_LAST );
-
-    // copy comp from d
-    for ( int i = 0; i < COMP_LAST; i++ )
-        obj->comp[ i ] = get_def_comp( d, i );
+    obj->comp = NULL;
+    obj->type = d;
+    obj->obj = def_list[ d ].create_object();
 
     return obj;
 }
@@ -323,31 +328,31 @@ int add_object_pos( object *obj, float x, float y )
     }
 }
 
-int get_object_comp( object *obj, enum comp comp )
-{
-    if ( obj == NULL )
-        return -1;
-
-    return obj->comp[ comp ];
-}
-
-int set_object_comp( object *obj, enum comp comp, int value )
-{
-    if ( obj == NULL )
-        return 0;
-
-    obj->comp[ comp ] = value;
-    return 1;
-}
-
-int add_object_comp( object *obj, enum comp comp, int value )
-{
-    if ( obj == NULL )
-        return 0;
-
-    obj->comp[ comp ] = value;
-    return 1;
-}
+//int get_object_comp( object *obj, enum comp comp )
+//{
+//    if ( obj == NULL )
+//        return -1;
+//
+//    return obj->comp[ comp ];
+//}
+//
+//int set_object_comp( object *obj, enum comp comp, int value )
+//{
+//    if ( obj == NULL )
+//        return 0;
+//
+//    obj->comp[ comp ] = value;
+//    return 1;
+//}
+//
+//int add_object_comp( object *obj, enum comp comp, int value )
+//{
+//    if ( obj == NULL )
+//        return 0;
+//
+//    obj->comp[ comp ] = value;
+//    return 1;
+//}
 
 /*
  * s obj attaching
@@ -555,10 +560,10 @@ int remove_object( scene *s, object *obj )
  * general util function
  */
 
-int get_def_comp( enum def d, enum comp comp )
-{
-    return defs[ d ][ comp ];
-}
+//int get_def_comp( enum def d, enum comp comp )
+//{
+//    return defs[ d ][ comp ];
+//}
 
 /*
  * memory management
@@ -608,6 +613,7 @@ void free_object( object *obj )
     if ( obj == NULL )
         return;
 
+    def_list[ obj->type ].free_object( obj->obj );
     free( obj->comp );
     free( obj );
 }

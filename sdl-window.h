@@ -36,18 +36,18 @@ int start_game          ();
 int update              ();
 int handle              ();
 
-/*
- * util functions
- */
-
 void screen_to_world    ( int screen_x, int screen_y, float *world_x, float *world_y );
 void world_to_screen    ( float world_x, float world_y, int *screen_x, int *screen_y );
 void screen_to_world_f  ( float screen_x, float screen_y, float *world_x, float *world_y );
 void world_to_screen_f  ( float world_x, float world_y, float *screen_x, float *screen_y );
 
-void draw_circle_screen ( SDL_Renderer *renderer, float x0, float y0, float radius );
-void draw_circle_world  ( SDL_Renderer *renderer, float x, float y, float r );
-void draw_rect_world    ( SDL_Renderer *renderer, SDL_FRect *rect );
-void fill_rect_world    ( SDL_Renderer *renderer, SDL_FRect *rect );
+void draw_circle_screen ( float x, float y, float r );
+void draw_circle_world  ( float x, float y, float r );
+
+void draw_rect_screen   ( float x, float y, float w, float h );
+void fill_rect_screen   ( float x, float y, float w, float h );
+
+void draw_rect_world    ( float x, float y, float w, float h );
+void fill_rect_world    ( float x, float y, float w, float h );
 
 #endif

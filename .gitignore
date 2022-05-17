@@ -7,6 +7,9 @@
 # Unignore all directories
 !*/*
 
+# shell scripts
+*.sh
+
 # leak detector
 leak_detector_c.*
 
