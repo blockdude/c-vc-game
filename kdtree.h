@@ -8,9 +8,7 @@
 #ifndef K_DIMENTIONAL_TREE
 #define K_DIMENTIONAL_TREE
 
-#ifndef KDT_DATA_TYPE
-#define KDT_DATA_TYPE int
-#endif
+#define KDT_DATA_TYPE float
 
 typedef struct kdtree kdtree;
 
@@ -22,10 +20,10 @@ int kdt_size                ( kdtree *tree );
 int kdt_dim                 ( kdtree *tree );
 
 // build tools
-void *kdt_replace           ( kdtree *tree, KDT_DATA_TYPE point[], void *item );
-void *kdt_insert            ( kdtree *tree, KDT_DATA_TYPE point[], void *item );
-void *kdt_remove            ( kdtree *tree, KDT_DATA_TYPE point[] );
-int kdt_delete              ( kdtree *tree, KDT_DATA_TYPE point[] );
+void *kdt_replace           ( kdtree *tree, KDT_DATA_TYPE point[], void *item ); // can return item on insertion or returns existing item on replacement
+void *kdt_insert            ( kdtree *tree, KDT_DATA_TYPE point[], void *item ); // can return item on success or returns existing item on failure
+void *kdt_remove            ( kdtree *tree, KDT_DATA_TYPE point[] ); // returns node item if point is found otherwise returns NULL
+int kdt_delete              ( kdtree *tree, KDT_DATA_TYPE point[] ); // returns 1 on success and 0 on failure
 
 // query tools
 void kdt_query_range_func   ( kdtree *tree, KDT_DATA_TYPE point[], KDT_DATA_TYPE range, void ( *func )( void * ) );

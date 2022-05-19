@@ -3,8 +3,9 @@
 
 #include "core.h"
 
-extern char *name;  // assign a name
-extern int id;      // id will be given
+extern char *name;
+extern int flags;
+extern int id;
 
 typedef struct entity_data entity_data;
 struct entity_data
@@ -12,7 +13,7 @@ struct entity_data
     int health;
     int armor;
 
-    // velocity
+    // vector
     float vx;
     float vy;
 };

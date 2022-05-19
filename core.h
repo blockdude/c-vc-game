@@ -82,6 +82,9 @@ entity **query_entities         ( float x, float y, float w, float h, int *l );
 
 void query_objects_func         ( float x, float y, float w, float h, void ( *func )( void * ) );
 void query_entities_func        ( float x, float y, float w, float h, void ( *func )( void * ) );
+void query_entities_range_func  ( float x, float y, float r, void ( *func )( void * ) );
+
+
 
 void free_object_query          ( object **query );
 void free_entity_query          ( entity **query );

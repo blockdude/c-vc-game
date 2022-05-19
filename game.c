@@ -37,8 +37,11 @@ static void handle()
 
 static void update()
 {
-    update_loaded_entities();
-    update_loaded_objects();
+    if ( !pause )
+    {
+        update_loaded_entities();
+        update_loaded_objects();
+    }
 }
 
 static void render()
@@ -46,8 +49,8 @@ static void render()
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderClear( renderer );
 
-    float x = 0;
-    float y = 0;
+    float x = 0.0f;
+    float y = 0.0f;
     float w = window_w / scale_x;
     float h = window_h / scale_y;
     screen_to_world_f( x, y, &x, &y );
@@ -65,7 +68,7 @@ static void render()
 
 static int start_game()
 {
-    while (!quit)
+    while ( !quit )
     {
         unsigned int start = SDL_GetTicks();
 

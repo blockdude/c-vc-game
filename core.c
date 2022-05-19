@@ -2,7 +2,6 @@
 #include <string.h>
 #include <SDL2/SDL.h>
 
-#define KDT_DATA_TYPE float
 #include "kdtree.h"
 #include "linkedlist.h"
 
@@ -182,6 +181,8 @@ static function_data *load_function_data_from_dir( char *path, int *len )
             fdata[ id ].render = dlsym( handle, "on_render" );
             fdata[ id ].interact = dlsym( handle, "on_interact" );
 
+            *( int * )dlsym( handle, "id" ) = id;
+
             id++;
         }
     }
@@ -257,6 +258,12 @@ void query_entities_func( float x, float y, float w, float h, void ( *func )( vo
     float point[] = { x, y };
     float dim[] = { w, h };
     kdt_query_dim_func( entity_tree, point, dim, func );
+}
+
+void query_entities_range_func( float x, float y, float r, void ( *func )( void * ) )
+{
+    float point[] = { x, y };
+    kdt_query_range_func( entity_tree, point, r, func );
 }
 
 void free_object_query( object **query )
@@ -575,26 +582,38 @@ void update_loaded_objects()
 
 void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
 {
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
+    float offset_x = window_w / 2.0f;
+    float offset_y = window_h / 2.0f;
+
+    *world_x = ( float ) ( ( screen_x - offset_x ) / scale_x + camera_x );
+    *world_y = ( float ) ( ( screen_y - offset_y ) / scale_y + camera_y );
 }
 
 void world_to_screen( float world_x, float world_y, int *screen_x, int *screen_y )
 {
-    *screen_x = ( int ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( int ) ( ( world_y - camera_y ) * scale_y );
+    float offset_x = window_w / 2.0f;
+    float offset_y = window_h / 2.0f;
+
+    *screen_x = ( int ) ( ( world_x - camera_x ) * scale_x + offset_x );
+    *screen_y = ( int ) ( ( world_y - camera_y ) * scale_y + offset_y );
 }
 
 void screen_to_world_f( float screen_x, float screen_y, float *world_x, float *world_y )
 {
-    *world_x = ( float ) ( screen_x / scale_x + camera_x );
-    *world_y = ( float ) ( screen_y / scale_y + camera_y );
+    float offset_x = window_w / 2.0f;
+    float offset_y = window_h / 2.0f;
+
+    *world_x = ( float ) ( ( screen_x - offset_x ) / scale_x + camera_x );
+    *world_y = ( float ) ( ( screen_y - offset_y ) / scale_y + camera_y );
 }
 
 void world_to_screen_f( float world_x, float world_y, float *screen_x, float *screen_y )
 {
-    *screen_x = ( float ) ( ( world_x - camera_x ) * scale_x );
-    *screen_y = ( float ) ( ( world_y - camera_y ) * scale_y );
+    float offset_x = window_w / 2.0f;
+    float offset_y = window_h / 2.0f;
+
+    *screen_x = ( float ) ( ( world_x - camera_x ) * scale_x + offset_x );
+    *screen_y = ( float ) ( ( world_y - camera_y ) * scale_y + offset_y );
 }
 
 void set_render_color( char r, char g, char b, char a )
