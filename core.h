@@ -28,15 +28,8 @@ extern const unsigned char *keystate;
  * object stuff
  */
 
-typedef struct unload unload;
 typedef struct object object;
 typedef struct entity entity;
-
-struct unload
-{
-    void *src;
-    int ( *can_unload )( void *, void * );
-};
 
 struct object
 {
@@ -47,9 +40,8 @@ struct object
 
     int id;
 
-    unload *l;
-
     void *data;
+    void *priv;
 };
 
 struct entity
@@ -61,9 +53,8 @@ struct entity
 
     int id;
 
-    unload *l;
-
     void *data;
+    void *priv;
 };
 
 /*
@@ -74,6 +65,13 @@ extern float scale_x;
 extern float scale_y;
 extern float camera_x;
 extern float camera_y;
+
+/*
+ * init functions
+ */
+
+void init_core                  ();
+void free_core                  ();
 
 /*
  * world query functions
@@ -100,10 +98,10 @@ void update_object              ( object *obj );
 void render_object              ( object *obj );
 void interact_object            ( object *obj );
 
-entity *add_entity              ( int id, float x, float y );
-object *add_object              ( int id, float x, float y );
-void del_entity                 ( entity *ent );
-void del_object                 ( object *obj );
+entity *create_entity           ( int id, float x, float y );
+object *create_object           ( int id, float x, float y );
+void delete_entity              ( entity *ent );
+void delete_object              ( object *obj );
 
 int entity_add_pos              ( entity *ent, float dx, float dy );
 int entity_set_pos              ( entity *ent, float x, float y );
@@ -115,13 +113,6 @@ void unload_object              ( object *obj );
 
 void update_loaded_entities     ();
 void update_loaded_objects      ();
-
-/*
- * init functions
- */
-
-void init_core                  ();
-void free_core                  ();
 
 /*
  * game state

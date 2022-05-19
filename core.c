@@ -1,12 +1,17 @@
 #include <stdlib.h>
+#include <string.h>
 #include <SDL2/SDL.h>
 
 #define KDT_DATA_TYPE float
 #include "kdtree.h"
 #include "linkedlist.h"
 
+#ifdef __linux__
+#define _GNU_SOURCE
 #include <dirent.h>
 #include <dlfcn.h>
+#include <sys/types.h>
+#endif
 
 #include "core.h"
 
@@ -14,19 +19,34 @@
  * structs
  */
 
-typedef struct handle handle;
-struct handle
+typedef struct function_data function_data;
+struct function_data
 {
+    void *handle;
     char *name;
 
-    void *( *create )();
-    void ( *delete )( void * );
+    void ( *static_constructor )();
+    void ( *static_destructor )();
 
-    void ( *init )();
-    void ( *exit )();
+    void *( *constructor )();
+    void ( *destructor )( void * );
+
+    void ( *on_creation )( void * );
+    void ( *on_deletion )( void * );
+
     void ( *update )( void * );
     void ( *render )( void * );
     void ( *interact )( void * );
+};
+
+typedef struct private_data private_data;
+struct private_data
+{
+    // load and unload stuff
+    char is_loaded;
+    linkedlist *node;
+    void *src;
+    int ( *can_unload )( void *, void * );
 };
 
 /*
@@ -82,8 +102,128 @@ kdtree *entity_tree = NULL;
 linkedlist *loaded_objs = NULL;
 linkedlist *loaded_ents = NULL;
 
-handle entity_handle[ 1 ];
-handle object_handle[ 1 ];
+int entity_count;
+int object_count;
+function_data *entity_handle;
+function_data *object_handle;
+
+/*
+ * init functions
+ */
+
+static function_data *load_function_data_from_dir( char *path, int *len )
+{
+#ifdef __linux__
+    function_data *fdata;
+
+    int file_count = 0;
+
+    DIR *dirp;
+    struct dirent *entry;
+
+    dirp = opendir( path );
+
+    if ( dirp == NULL )
+        return NULL;
+
+    while ( ( entry = readdir( dirp ) ) != NULL )
+    {
+        char *file_ex;
+        file_ex = strrchr( entry->d_name, '.' );
+
+        // check if it is a linux shared object file
+        if ( strcmp( file_ex, ".so" ) == 0 )
+        {
+            file_count++;
+        }
+    }
+
+    // setup
+    fdata = ( function_data * ) malloc( sizeof( function_data ) * file_count );
+    *len = file_count;
+
+    rewinddir( dirp );
+
+    int id = 0;
+    char buffer[ 256 ];
+    while ( ( entry = readdir( dirp ) ) != NULL )
+    {
+        char *file_ex;
+        file_ex = strrchr( entry->d_name, '.' );
+
+        // check if it is a linux shared object file
+        if ( strcmp( file_ex, ".so" ) == 0 )
+        {
+            strcpy( buffer, path );
+            strcat( buffer, "/" );
+            strcat( buffer, entry->d_name );
+
+            void *handle = dlopen( buffer, RTLD_LAZY );
+
+            if ( handle == NULL )
+            {
+                printf( "%s\n", dlerror() );
+                exit( 1 );
+            }
+
+            fdata[ id ].handle = handle;
+            fdata[ id ].name = dlsym( handle, "name" );
+
+            fdata[ id ].static_constructor = dlsym( handle, "static_constructor" );
+            fdata[ id ].static_destructor = dlsym( handle, "static_destructor" );
+
+            fdata[ id ].constructor = dlsym( handle, "constructor" );
+            fdata[ id ].destructor = dlsym( handle, "destructor" );
+
+            fdata[ id ].on_creation = dlsym( handle, "on_creation" );
+            fdata[ id ].on_deletion = dlsym( handle, "on_deletion" );
+
+            fdata[ id ].update = dlsym( handle, "on_update" );
+            fdata[ id ].render = dlsym( handle, "on_render" );
+            fdata[ id ].interact = dlsym( handle, "on_interact" );
+
+            id++;
+        }
+    }
+
+    closedir( dirp );
+
+    return fdata;
+#endif
+}
+
+static void call_static_constructors( function_data *fdata, int c )
+{
+    for ( int i = 0; i < c; i++ )
+        fdata[ i ].static_constructor();
+}
+
+void init_core()
+{
+    object_tree = new_kdtree( 2, NULL );
+    entity_tree = new_kdtree( 2, NULL );
+    entity_handle = load_function_data_from_dir( "./data/entities", &entity_count );
+    object_handle = load_function_data_from_dir( "./data/objects", &object_count );
+    call_static_constructors( entity_handle, entity_count );
+    call_static_constructors( object_handle, object_count );
+}
+
+void free_core()
+{
+    free_kdtree( object_tree );
+    free_kdtree( entity_tree );
+    free_linkedlist( loaded_objs, NULL );
+    free_linkedlist( loaded_ents, NULL );
+
+    /*
+     * still need to free memory for:
+     *
+     * * function data
+     * * all objects
+     * * all entities
+     */
+}
+
 
 /*
  * query functions
@@ -163,7 +303,23 @@ void interact_object( object *obj )
     object_handle[ obj->id ].interact( obj );
 }
 
-entity *add_entity( int id, float x, float y )
+static private_data *new_private_data()
+{
+    private_data *pd = ( private_data * ) malloc( sizeof( private_data ) );
+    pd->is_loaded = 0;
+    pd->node = NULL;
+    pd->src = NULL;
+    pd->can_unload = NULL;
+
+    return pd;
+}
+
+static void free_private_data( private_data *pd )
+{
+    free( pd );
+}
+
+entity *create_entity( int id, float x, float y )
 {
     entity *new_entity = ( entity * ) malloc( sizeof( entity ) );
     new_entity->x = x;
@@ -171,23 +327,25 @@ entity *add_entity( int id, float x, float y )
     new_entity->w = 1;
     new_entity->h = 1;
     new_entity->id = id;
-    new_entity->l = NULL;
-    new_entity->data = entity_handle[ id ].create();
+    new_entity->data = entity_handle[ id ].constructor();
+    new_entity->priv = new_private_data();
 
     float point[] = { x, y };
     void *res = kdt_insert( entity_tree, point, new_entity );
 
     if ( res != new_entity )
     {
-        entity_handle[ id ].delete( new_entity->data );
+        entity_handle[ id ].destructor( new_entity->data );
+        free_private_data( new_entity->priv );
         free( new_entity );
         return NULL;
     }
-    
+
+    entity_handle[ id ].on_creation( new_entity );
     return new_entity;
 }
 
-object *add_object( int id, float x, float y )
+object *create_object( int id, float x, float y )
 {
     object *new_object = ( object * ) malloc( sizeof( object ) );
     new_object->x = x;
@@ -195,23 +353,25 @@ object *add_object( int id, float x, float y )
     new_object->w = 1;
     new_object->h = 1;
     new_object->id = id;
-    new_object->l = NULL;
-    new_object->data = object_handle[ id ].create();
+    new_object->data = object_handle[ id ].constructor();
+    new_object->priv = new_private_data();
 
     float point[] = { x, y };
     void *res = kdt_insert( object_tree, point, new_object );
 
     if ( res != new_object )
     {
-        object_handle[ id ].delete( new_object->data );
+        object_handle[ id ].destructor( new_object->data );
+        free_private_data( new_object->priv );
         free( new_object );
         return NULL;
     }
-    
+
+    object_handle[ id ].on_creation( new_object );
     return new_object;
 }
 
-void del_entity( entity *ent )
+void delete_entity( entity *ent )
 {
     if ( !ent )
         return;
@@ -223,11 +383,13 @@ void del_entity( entity *ent )
         return;
 
     unload_entity( ent );
-    entity_handle[ ent->id ].delete( ent->data );
+    entity_handle[ ent->id ].on_deletion( ent );
+    entity_handle[ ent->id ].destructor( ent->data );
+    free_private_data( ent->priv );
     free( ent );
 }
 
-void del_object( object *obj )
+void delete_object( object *obj )
 {
     if ( !obj )
         return;
@@ -239,7 +401,9 @@ void del_object( object *obj )
         return;
 
     unload_object( obj );
-    object_handle[ obj->id ].delete( obj->data );
+    object_handle[ obj->id ].on_deletion( obj );
+    object_handle[ obj->id ].destructor( obj->data );
+    free_private_data( obj->priv );
     free( obj );
 }
 
@@ -301,44 +465,62 @@ int entity_set_pos( entity *ent, float x, float y )
 
 void load_entity( entity *ent, void *src, int ( *can_unload )( void *, void * ) )
 {
-    if ( ent->l != NULL )
+    private_data *pd = ent->priv;
+
+    if ( pd->is_loaded )
         return;
 
-    ent->l = ( unload * ) malloc( sizeof( unload ) );
-    ent->l->src = src;
-    ent->l->can_unload = can_unload;
-
     loaded_ents = linkedlist_insert( loaded_ents, ent );
+
+    pd->is_loaded = 1;
+    pd->node = loaded_ents; // the node we want will be at the front of the linked list
+    pd->src = src;
+    pd->can_unload = can_unload;
 }
 
 void load_object( object *obj, void *src, int ( *can_unload )( void *, void * ) )
 {
-    if ( obj->l != NULL )
+    private_data *pd = obj->priv;
+
+    if ( pd->is_loaded )
         return;
-        
-    obj->l = ( unload * ) malloc( sizeof( unload ) );
-    obj->l->src = src;
-    obj->l->can_unload = can_unload;
 
     loaded_objs = linkedlist_insert( loaded_objs, obj );
+
+    pd->is_loaded = 1;
+    pd->node = loaded_ents; // the node we want will be at the front of the linked list
+    pd->src = src;
+    pd->can_unload = can_unload;
 }
 
 void unload_entity( entity *ent )
 {
-    if ( ent->l == NULL )
+    private_data *pd = ent->priv;
+
+    if ( !pd->is_loaded )
         return;
 
-    free( ent->l );
-    ent->l = NULL;
+    loaded_ents = linkedlist_remove( loaded_ents, pd->node );
+
+    pd->is_loaded = 0;
+    pd->node = NULL;
+    pd->src = NULL;
+    pd->can_unload = NULL;
 }
 
 void unload_object( object *obj )
 {
-    if ( obj->l == NULL )
+    private_data *pd = obj->priv;
+
+    if ( !pd->is_loaded )
         return;
 
-    free( obj->l );
-    obj->l = NULL;
+    loaded_objs = linkedlist_remove( loaded_objs, pd->node );
+
+    pd->is_loaded = 0;
+    pd->node = NULL;
+    pd->src = NULL;
+    pd->can_unload = NULL;
 }
 
 void update_loaded_entities()
@@ -347,22 +529,17 @@ void update_loaded_entities()
     while ( cur )
     {
         entity *ent = cur->data;
+        private_data *pd = ent->priv;
+        cur = cur->next;
+
         update_entity( ent );
 
-        if ( ent->l != NULL )
+        if ( pd->is_loaded )
         {
-            int res = ent->l->can_unload( ent, ent->l->src );
-            if ( res )
+            if ( pd->can_unload == NULL || pd->can_unload( ent, pd->src ) )
             {
                 unload_entity( ent );
             }
-        }
-
-        linkedlist *tmp = cur;
-        cur = cur->next;
-        if ( ent->l == NULL )
-        {
-            loaded_ents = linkedlist_remove( loaded_ents, tmp );
         }
     }
 }
@@ -373,120 +550,19 @@ void update_loaded_objects()
     while ( cur )
     {
         object *obj = cur->data;
+        private_data *pd = obj->priv;
+        cur = cur->next;
+
         update_object( obj );
 
-        if ( obj->l != NULL )
+        if ( pd->is_loaded )
         {
-            int res = obj->l->can_unload( obj, obj->l->src );
-            if ( res )
+            if ( pd->can_unload == NULL || pd->can_unload( obj, pd->src ) )
             {
                 unload_object( obj );
             }
         }
-
-        linkedlist *tmp = cur;
-        cur = cur->next;
-        if ( obj->l == NULL )
-        {
-            loaded_objs = linkedlist_remove( loaded_objs, cur );
-        }
     }
-}
-
-/*
- * init functions
- */
-
-static void load_entity_handles_from_dir()
-{
-    void *handle = dlopen( "./data/entities/player.so", RTLD_LAZY );
-
-    if ( handle == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].name = dlsym( handle, "name" );
-
-    if ( entity_handle[ 0 ].name == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].create = dlsym( handle, "constructor" );
-
-    if ( entity_handle[ 0 ].create == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].delete = dlsym( handle, "destructor" );
-
-    if ( entity_handle[ 0 ].delete == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].init = dlsym( handle, "on_game_load" );
-
-    if ( entity_handle[ 0 ].init == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].exit = dlsym( handle, "on_game_exit" );
-
-    if ( entity_handle[ 0 ].exit == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].update = dlsym( handle, "on_update" );
-
-    if ( entity_handle[ 0 ].update == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].render = dlsym( handle, "on_render" );
-
-    if ( entity_handle[ 0 ].render == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].interact = dlsym( handle, "on_interact" );
-
-    if ( entity_handle[ 0 ].interact == NULL )
-    {
-        printf( "%s", dlerror() );
-        exit( 1 );
-    }
-
-    entity_handle[ 0 ].init();
-}
-
-void init_core()
-{
-    object_tree = new_kdtree( 2, NULL );
-    entity_tree = new_kdtree( 2, NULL );
-    load_entity_handles_from_dir();
-}
-
-void free_core()
-{
-    free_kdtree( object_tree );
-    free_kdtree( entity_tree );
-    free_linkedlist( loaded_objs, NULL );
-    free_linkedlist( loaded_ents, NULL );
 }
 
 /*

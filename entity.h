@@ -11,15 +11,23 @@ struct entity_data
 {
     int health;
     int armor;
+
+    // velocity
+    float vx;
+    float vy;
 };
 
-void *constructor   ();
-void destructor     ( void *data );
+void static_constructor     ();
+void static_destructor      ();
 
-void on_game_load   ();
-void on_game_exit   ();
-void on_update      ( entity *ent );
-void on_render      ( entity *ent );
-void on_interact    ( entity *ent );
+void *constructor           ();
+void destructor             ( void *data );
+
+void on_creation            ( entity *ent );
+void on_deletion            ( entity *ent );
+
+void on_update              ( entity *ent );
+void on_render              ( entity *ent );
+void on_interact            ( entity *ent );
 
 #endif
