@@ -23,7 +23,7 @@ struct function_data
 {
     void *handle;
     char *name;
-    int flags;
+    int type;
 
     void ( *static_constructor )();
     void ( *static_destructor )();
@@ -107,7 +107,7 @@ static void load_function_data_from_dir( char *path )
     dirp = opendir( path );
 
     if ( dirp == NULL )
-        return NULL;
+        return;
 
     static int id = 0;
     char buffer[ 256 ];
@@ -133,7 +133,7 @@ static void load_function_data_from_dir( char *path )
 
             object_handle[ id ].handle = handle;
             object_handle[ id ].name = dlsym( handle, "name" );
-            object_handle[ id ].flags = dlsym( handle, "flags" );
+            object_handle[ id ].type = *( int * )dlsym( handle, "type" );
 
             object_handle[ id ].static_constructor = dlsym( handle, "static_constructor" );
             object_handle[ id ].static_destructor = dlsym( handle, "static_destructor" );
@@ -200,7 +200,7 @@ object **query_objects( float x, float y, float w, float h, int *l )
     return res;
 }
 
-object **query_objects_radius   ( float x, float y, float r, int *l )
+object **query_objects_radius( float x, float y, float r, int *l )
 {
     float point[] = { x, y };
     object **res = ( object ** ) kdt_query_range( object_tree, point, r, l );
@@ -228,6 +228,16 @@ void free_object_query( object **query )
 /*
  * object & object functions
  */
+
+char *get_object_name( object *obj )
+{
+    return object_handle[ obj->id ].name;
+}
+
+int get_object_type( object *obj )
+{
+    return object_handle[ obj->id ].type;
+}
 
 void update_object( object *obj )
 {
@@ -309,25 +319,23 @@ int object_add_pos( object *obj, float dx, float dy )
     if ( !obj )
         return -1;
 
-    void *res;
+    int x = obj->x + dx;
+    int y = obj->y + dy;
 
-    float point_src[] = { obj->x, obj->y };
-    res = kdt_remove( object_tree, point_src );
+    if ( obj->x == x && obj->y == y )
+        return 1;
 
-    if ( res == NULL )
-        return -1;
-
-    obj->x += dx;
-    obj->y += dy;
-
-    float point_dst[] = { obj->x, obj->y };
-    res = kdt_insert( object_tree, point_dst, obj );
+    float point_dst[] = { x, y };
+    void *res = kdt_insert( object_tree, point_dst, obj );
 
     if ( res != obj )
-    {
-        kdt_insert( object_tree, point_src, obj );
         return 0;
-    }
+
+    float point_src[] = { obj->x, obj->y };
+    kdt_remove( object_tree, point_src );
+
+    obj->x = x;
+    obj->y = y;
 
     return 1;
 }
@@ -337,25 +345,20 @@ int object_set_pos( object *obj, float x, float y )
     if ( !obj )
         return -1;
 
-    void *res;
+    if ( obj->x == x && obj->y == y )
+        return 1;
+
+    float point_dst[] = { x, y };
+    void *res = kdt_insert( object_tree, point_dst, obj );
+
+    if ( res != obj )
+        return 0;
 
     float point_src[] = { obj->x, obj->y };
-    res = kdt_remove( object_tree, point_src );
-
-    if ( res == NULL )
-        return -1;
+    kdt_remove( object_tree, point_src );
 
     obj->x = x;
     obj->y = y;
-
-    float point_dst[] = { obj->x, obj->y };
-    res = kdt_insert( object_tree, point_dst, obj );
-
-    if ( res != obj )
-    {
-        kdt_insert( object_tree, point_src, obj );
-        return 0;
-    }
 
     return 1;
 }
