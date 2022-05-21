@@ -31,6 +31,27 @@ static void handle()
                 }
 
                 break;
+
+            case SDL_MOUSEWHEEL:
+
+                float zoom_speed = 1.1f;
+
+                if ( event.wheel.y > 0 ) // scroll up (zoom in)
+                {
+                    scale_x = scale_x * zoom_speed;
+                    scale_y = scale_y * zoom_speed;
+                }
+                else if ( event.wheel.y < 0 ) // scroll down (zoom out)
+                {
+                    if ( scale_x > 1 )
+                        scale_x = scale_x / zoom_speed;
+                    else scale_x = 1;
+                    if ( scale_y > 1 )
+                        scale_y = scale_y / zoom_speed;
+                    else scale_y = 1;
+                }
+
+                break;
         }
     }
 }
@@ -49,10 +70,10 @@ static void render()
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderClear( renderer );
 
-    float x = 0.0f;
-    float y = 0.0f;
-    float w = window_w / scale_x;
-    float h = window_h / scale_y;
+    float x = -scale_x;
+    float y = -scale_y;
+    float w = window_w / scale_x + scale_x;
+    float h = window_h / scale_y + scale_y;
     screen_to_world_f( x, y, &x, &y );
 
     query_objects_func( x, y, w, h, &render_object );

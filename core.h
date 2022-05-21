@@ -80,9 +80,14 @@ void free_core                  ();
 object **query_objects          ( float x, float y, float w, float h, int *l );
 entity **query_entities         ( float x, float y, float w, float h, int *l );
 
+object **query_objects_radius   ( float x, float y, float r, int *l );
+entity **query_entities_radius  ( float x, float y, float r, int *l );
+
+object *find_object             ( float x, float y );
+entity *find_entity             ( float x, float y );
+
 void query_objects_func         ( float x, float y, float w, float h, void ( *func )( void * ) );
 void query_entities_func        ( float x, float y, float w, float h, void ( *func )( void * ) );
-void query_entities_range_func  ( float x, float y, float r, void ( *func )( void * ) );
 
 
 
@@ -137,9 +142,9 @@ void save_world                 ( char *path );
 
 void set_scale                  ( float scl );
 
-void get_mouse_sreen_pos        ( int *x, int *y );
-void get_mouse_tile_pos         ( int *x, int *y );
-void get_mouse_world_pos        ( float *x, float *y );
+int get_mouse_sreen             ( int *x, int *y );
+int get_mouse_tile              ( int *x, int *y );
+int get_mouse_world             ( float *x, float *y );
 
 /*
  * drawing utils

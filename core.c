@@ -74,14 +74,6 @@ char pause = 0;
 
 const unsigned char *keystate;
 
-int mouse_state = 0;
-int mouse_screen_x = 0;
-int mouse_screen_y = 0;
-int mouse_tile_x = 0;
-int mouse_tile_y = 0;
-float mouse_world_x = 0;
-float mouse_world_y = 0;
-
 /*
  * world state variables
  */
@@ -244,6 +236,32 @@ entity **query_entities( float x, float y, float w, float h, int *l )
     float dim[] = { w, h };
     entity **res = ( entity ** ) kdt_query_dim( entity_tree, point, dim, l );
     return res;
+}
+
+object **query_objects_radius   ( float x, float y, float r, int *l )
+{
+    float point[] = { x, y };
+    object **res = ( object ** ) kdt_query_range( object_tree, point, r, l );
+    return res;
+}
+
+entity **query_entities_radius  ( float x, float y, float r, int *l )
+{
+    float point[] = { x, y };
+    entity **res = ( entity ** ) kdt_query_range( entity_tree, point, r, l );
+    return res;
+}
+
+object *find_object( float x, float y )
+{
+    float point[] = { x, y };
+    return kdt_search( object_tree, point );
+}
+
+entity *find_entity( float x, float y )
+{
+    float point[] = { x, y };
+    return kdt_search( entity_tree, point );
 }
 
 void query_objects_func( float x, float y, float w, float h, void ( *func )( void * ) )
@@ -579,6 +597,34 @@ void update_loaded_objects()
 /*
  * drawing util functions
  */
+
+int get_mouse_screen( int *x, int *y )
+{
+    return SDL_GetMouseState( x, y );
+}
+
+int get_mouse_tile( int *x, int *y )
+{
+    int ms = SDL_GetMouseState( x, y );
+
+    float tmp_x = *x;
+    float tmp_y = *y;
+
+    screen_to_world_f( tmp_x, tmp_y, &tmp_x, &tmp_y );
+    *x = floor( tmp_x );
+    *y = floor( tmp_y );
+
+    return ms;
+}
+
+int get_mouse_world( float *x, float *y )
+{
+    int tmp_x;
+    int tmp_y;
+    int ms = SDL_GetMouseState( &tmp_x, &tmp_y );
+    screen_to_world( tmp_x, tmp_y, x, y );
+    return ms;
+}
 
 void screen_to_world( int screen_x, int screen_y, float *world_x, float *world_y )
 {

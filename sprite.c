@@ -4,6 +4,7 @@
 struct sprite
 {
     SDL_Texture *sprite_sheet;
+    SDL_RendererFlip flip;
 
     // w and h of entire sheet
     int width;
@@ -74,7 +75,15 @@ void free_sprite( sprite *sp )
     free( sp );
 }
 
-void render_sprite( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, SDL_RendererFlip flip )
+void set_sprite_flip( sprite *sp, SDL_RendererFlip flip )
+{
+    if ( sp == NULL )
+        return;
+
+    sp->flip = flip;
+}
+
+void render_sprite( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst )
 {
     SDL_Rect src = { 0, 0, sp->frame_width, sp->frame_height };
     src.x = sp->last_frame * sp->frame_width;
@@ -87,21 +96,21 @@ void render_sprite( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, SDL_Rende
         sp->last_frame = ( sp->last_frame + 1 ) % sp->frame_count;
     }
 
-    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, flip );
+    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, sp->flip );
 }
 
-void render_sprite_last_frame( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, SDL_RendererFlip flip )
+void render_sprite_last_frame( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst )
 {
     SDL_Rect src = { 0, 0, sp->frame_width, sp->frame_height };
     src.x = sp->last_frame * sp->frame_width;
 
-    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, flip );
+    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, sp->flip );
 }
 
-void render_sprite_frame( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, int frame, SDL_RendererFlip flip )
+void render_sprite_frame( SDL_Renderer *renderer, sprite *sp, SDL_Rect *dst, int frame )
 {
     SDL_Rect src = { 0, 0, sp->frame_width, sp->frame_height };
     src.x = ( frame % sp->frame_count ) * sp->frame_width;
 
-    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, flip );
+    SDL_RenderCopyEx( renderer, sp->sprite_sheet, &src, dst, 0, NULL, sp->flip );
 }
