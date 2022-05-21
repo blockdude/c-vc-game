@@ -12,6 +12,9 @@ struct object_data
 {
     int health;
     int armor;
+
+    float vx;
+    float vy;
 };
 
 void static_constructor     ();

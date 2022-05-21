@@ -3,35 +3,35 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 
-#include "entity.h"
+#include "object.h"
 #include "util.h"
 #include "sprite.h"
 
 char *name = "player";
-int flags = 0;
+int flags = ENTITY;
 int id;
 
-float player_speed = 4.0f;
+float player_speed = 25.0f;
 float player_radius = 4.0f;
 
 float player_load_radius = 10.0f;
 
 sprite *player_sprite[ 4 ];
 
-int can_unload_player( void *dst, void *src )
+int can_unload_player( object *dst, object *src )
 {
     return 0;
 }
 
 void static_constructor()
 {
-    entity *player = create_entity( id, 0, 0 );
-    load_entity( player, NULL, &can_unload_player );
+    object *player = create_object( id, 0, 0 );
+    load_object( player, NULL, &can_unload_player );
 
-    player_sprite[ 0 ] = load_sprite( renderer, "data/textures/shrimp-north.bmp", 250, 250, 3, 100 );
-    player_sprite[ 1 ] = load_sprite( renderer, "data/textures/shrimp-south.bmp", 250, 250, 3, 100 );
-    player_sprite[ 2 ] = load_sprite( renderer, "data/textures/shrimp-east.bmp", 250, 250, 2, 100 );
-    player_sprite[ 3 ] = load_sprite( renderer, "data/textures/shrimp-east.bmp", 250, 250, 2, 100 );
+    player_sprite[ 0 ] = load_sprite( renderer, "data/textures/player-north.bmp", 250, 250, 3, 100 );
+    player_sprite[ 1 ] = load_sprite( renderer, "data/textures/player-south.bmp", 250, 250, 3, 100 );
+    player_sprite[ 2 ] = load_sprite( renderer, "data/textures/player-east.bmp", 250, 250, 2, 100 );
+    player_sprite[ 3 ] = load_sprite( renderer, "data/textures/player-east.bmp", 250, 250, 2, 100 );
     set_sprite_flip( player_sprite[ 3 ], SDL_FLIP_HORIZONTAL );
 }
 
@@ -41,7 +41,7 @@ void static_destructor()
 
 void *constructor()
 {
-    entity_data *data = ( entity_data * ) malloc( sizeof( entity_data ) );
+    object_data *data = ( object_data * ) malloc( sizeof( object_data ) );
 
     data->health = 100;
     data->armor = 0;
@@ -56,17 +56,17 @@ void destructor( void *data )
     free( data );
 }
 
-void on_creation( entity *ent )
+void on_creation( object *ent )
 {
 }
 
-void on_deletion( entity *ent )
+void on_deletion( object *ent )
 {
 }
 
-void on_update( entity *ent )
+void on_update( object *ent )
 {
-    entity_data *data = ent->data;
+    object_data *data = ent->data;
 
     /*
      * do player movement
@@ -107,6 +107,9 @@ void on_update( entity *ent )
 
         for ( int i = 0; i < l; i++ )
         {
+            if ( object_query[ i ] == ent )
+                continue;
+
             float object_x = object_query[ i ]->x;
             float object_y = object_query[ i ]->y;
 
@@ -131,7 +134,7 @@ void on_update( entity *ent )
 
         free_object_query( object_query );
 
-        entity_set_pos( ent, new_x, new_y );
+        object_set_pos( ent, new_x, new_y );
         camera_x = new_x;
         camera_y = new_y;
     }
@@ -146,7 +149,7 @@ void on_update( entity *ent )
 
         if ( ( ms & SDL_BUTTON_LMASK ) != 0 )
         {
-            create_object( 0, mx, my );
+            create_object( 1, mx, my );
         }
 
         if ( ( ms & SDL_BUTTON_RMASK ) != 0 )
@@ -188,9 +191,9 @@ static int get_direction( float vx, float vy )
     return direction;
 }
 
-void on_render( entity *ent )
+void on_render( object *ent )
 {
-    entity_data *data = ent->data;
+    object_data *data = ent->data;
 
     SDL_Rect rect = { ent->x, ent->y, player_radius * 2 * scale_x, player_radius * 2 * scale_y };
     world_to_screen( ent->x - player_radius, ent->y - player_radius, &rect.x, &rect.y );
@@ -210,6 +213,6 @@ void on_render( entity *ent )
     draw_circle_world( ent->x, ent->y, player_radius + 2.0f );
 }
 
-void on_interact( entity *ent )
+void on_interact( object *ent )
 {
 }

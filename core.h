@@ -29,7 +29,6 @@ extern const unsigned char *keystate;
  */
 
 typedef struct object object;
-typedef struct entity entity;
 
 struct object
 {
@@ -44,17 +43,10 @@ struct object
     void *priv;
 };
 
-struct entity
+enum OBJECT_FLAGS
 {
-    float x;
-    float y;
-    float w;
-    float h;
-
-    int id;
-
-    void *data;
-    void *priv;
+    OBJECT = 1,
+    ENTITY = 3
 };
 
 /*
@@ -78,48 +70,28 @@ void free_core                  ();
  */
 
 object **query_objects          ( float x, float y, float w, float h, int *l );
-entity **query_entities         ( float x, float y, float w, float h, int *l );
-
 object **query_objects_radius   ( float x, float y, float r, int *l );
-entity **query_entities_radius  ( float x, float y, float r, int *l );
-
 object *find_object             ( float x, float y );
-entity *find_entity             ( float x, float y );
-
-void query_objects_func         ( float x, float y, float w, float h, void ( *func )( void * ) );
-void query_entities_func        ( float x, float y, float w, float h, void ( *func )( void * ) );
-
-
-
+void query_objects_func         ( float x, float y, float w, float h, void ( *func )( object * ) );
 void free_object_query          ( object **query );
-void free_entity_query          ( entity **query );
 
 /*
- * object & entity functions
+ * object & object functions
  */
-
-void update_entity              ( entity *ent );
-void render_entity              ( entity *ent );
-void interact_entity            ( entity *ent );
 
 void update_object              ( object *obj );
 void render_object              ( object *obj );
 void interact_object            ( object *obj );
 
-entity *create_entity           ( int id, float x, float y );
 object *create_object           ( int id, float x, float y );
-void delete_entity              ( entity *ent );
 void delete_object              ( object *obj );
 
-int entity_add_pos              ( entity *ent, float dx, float dy );
-int entity_set_pos              ( entity *ent, float x, float y );
+int object_add_pos              ( object *obj, float dx, float dy );
+int object_set_pos              ( object *obj, float x, float y );
 
-void load_entity                ( entity *ent, void *src, int ( *can_unload )( void *, void * ) );
-void load_object                ( object *obj, void *src, int ( *can_unload )( void *, void * ) );
-void unload_entity              ( entity *ent );
+void load_object                ( object *obj, object *src, int ( *can_unload )( object *, object * ) );
 void unload_object              ( object *obj );
 
-void update_loaded_entities     ();
 void update_loaded_objects      ();
 
 /*

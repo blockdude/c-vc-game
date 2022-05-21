@@ -23,6 +23,7 @@ struct function_data
 {
     void *handle;
     char *name;
+    int flags;
 
     void ( *static_constructor )();
     void ( *static_destructor )();
@@ -44,8 +45,8 @@ struct private_data
     // load and unload stuff
     char is_loaded;
     linkedlist *node;
-    void *src;
-    int ( *can_unload )( void *, void * );
+    object *src;
+    int ( *can_unload )( object *, object * );
 };
 
 /*
@@ -88,27 +89,18 @@ float camera_y = 0;
  */
 
 kdtree *object_tree = NULL;
-kdtree *entity_tree = NULL;
-
 linkedlist *loaded_objs = NULL;
-linkedlist *loaded_ents = NULL;
 
-int entity_count;
-int object_count;
-function_data *entity_handle;
-function_data *object_handle;
+int object_count = 0;
+function_data object_handle[ 256 ];
 
 /*
  * init functions
  */
 
-static function_data *load_function_data_from_dir( char *path, int *len )
+static void load_function_data_from_dir( char *path )
 {
 #ifdef __linux__
-    function_data *fdata;
-
-    int file_count = 0;
-
     DIR *dirp;
     struct dirent *entry;
 
@@ -117,25 +109,7 @@ static function_data *load_function_data_from_dir( char *path, int *len )
     if ( dirp == NULL )
         return NULL;
 
-    while ( ( entry = readdir( dirp ) ) != NULL )
-    {
-        char *file_ex;
-        file_ex = strrchr( entry->d_name, '.' );
-
-        // check if it is a linux shared object file
-        if ( strcmp( file_ex, ".so" ) == 0 )
-        {
-            file_count++;
-        }
-    }
-
-    // setup
-    fdata = ( function_data * ) malloc( sizeof( function_data ) * file_count );
-    *len = file_count;
-
-    rewinddir( dirp );
-
-    int id = 0;
+    static int id = 0;
     char buffer[ 256 ];
     while ( ( entry = readdir( dirp ) ) != NULL )
     {
@@ -157,31 +131,31 @@ static function_data *load_function_data_from_dir( char *path, int *len )
                 exit( 1 );
             }
 
-            fdata[ id ].handle = handle;
-            fdata[ id ].name = dlsym( handle, "name" );
+            object_handle[ id ].handle = handle;
+            object_handle[ id ].name = dlsym( handle, "name" );
+            object_handle[ id ].flags = dlsym( handle, "flags" );
 
-            fdata[ id ].static_constructor = dlsym( handle, "static_constructor" );
-            fdata[ id ].static_destructor = dlsym( handle, "static_destructor" );
+            object_handle[ id ].static_constructor = dlsym( handle, "static_constructor" );
+            object_handle[ id ].static_destructor = dlsym( handle, "static_destructor" );
 
-            fdata[ id ].constructor = dlsym( handle, "constructor" );
-            fdata[ id ].destructor = dlsym( handle, "destructor" );
+            object_handle[ id ].constructor = dlsym( handle, "constructor" );
+            object_handle[ id ].destructor = dlsym( handle, "destructor" );
 
-            fdata[ id ].on_creation = dlsym( handle, "on_creation" );
-            fdata[ id ].on_deletion = dlsym( handle, "on_deletion" );
+            object_handle[ id ].on_creation = dlsym( handle, "on_creation" );
+            object_handle[ id ].on_deletion = dlsym( handle, "on_deletion" );
 
-            fdata[ id ].update = dlsym( handle, "on_update" );
-            fdata[ id ].render = dlsym( handle, "on_render" );
-            fdata[ id ].interact = dlsym( handle, "on_interact" );
+            object_handle[ id ].update = dlsym( handle, "on_update" );
+            object_handle[ id ].render = dlsym( handle, "on_render" );
+            object_handle[ id ].interact = dlsym( handle, "on_interact" );
 
             *( int * )dlsym( handle, "id" ) = id;
 
+            object_count++;
             id++;
         }
     }
 
     closedir( dirp );
-
-    return fdata;
 #endif
 }
 
@@ -194,19 +168,15 @@ static void call_static_constructors( function_data *fdata, int c )
 void init_core()
 {
     object_tree = new_kdtree( 2, NULL );
-    entity_tree = new_kdtree( 2, NULL );
-    entity_handle = load_function_data_from_dir( "./data/entities", &entity_count );
-    object_handle = load_function_data_from_dir( "./data/objects", &object_count );
-    call_static_constructors( entity_handle, entity_count );
+    load_function_data_from_dir( "./data/objects" );
+    load_function_data_from_dir( "./data/entities" );
     call_static_constructors( object_handle, object_count );
 }
 
 void free_core()
 {
     free_kdtree( object_tree );
-    free_kdtree( entity_tree );
     free_linkedlist( loaded_objs, NULL );
-    free_linkedlist( loaded_ents, NULL );
 
     /*
      * still need to free memory for:
@@ -230,25 +200,10 @@ object **query_objects( float x, float y, float w, float h, int *l )
     return res;
 }
 
-entity **query_entities( float x, float y, float w, float h, int *l )
-{
-    float point[] = { x, y };
-    float dim[] = { w, h };
-    entity **res = ( entity ** ) kdt_query_dim( entity_tree, point, dim, l );
-    return res;
-}
-
 object **query_objects_radius   ( float x, float y, float r, int *l )
 {
     float point[] = { x, y };
     object **res = ( object ** ) kdt_query_range( object_tree, point, r, l );
-    return res;
-}
-
-entity **query_entities_radius  ( float x, float y, float r, int *l )
-{
-    float point[] = { x, y };
-    entity **res = ( entity ** ) kdt_query_range( entity_tree, point, r, l );
     return res;
 }
 
@@ -258,30 +213,11 @@ object *find_object( float x, float y )
     return kdt_search( object_tree, point );
 }
 
-entity *find_entity( float x, float y )
-{
-    float point[] = { x, y };
-    return kdt_search( entity_tree, point );
-}
-
-void query_objects_func( float x, float y, float w, float h, void ( *func )( void * ) )
+void query_objects_func( float x, float y, float w, float h, void ( *func )( object * ) )
 {
     float point[] = { x, y };
     float dim[] = { w, h };
     kdt_query_dim_func( object_tree, point, dim, func );
-}
-
-void query_entities_func( float x, float y, float w, float h, void ( *func )( void * ) )
-{
-    float point[] = { x, y };
-    float dim[] = { w, h };
-    kdt_query_dim_func( entity_tree, point, dim, func );
-}
-
-void query_entities_range_func( float x, float y, float r, void ( *func )( void * ) )
-{
-    float point[] = { x, y };
-    kdt_query_range_func( entity_tree, point, r, func );
 }
 
 void free_object_query( object **query )
@@ -289,29 +225,9 @@ void free_object_query( object **query )
     free( query );
 }
 
-void free_entity_query( entity **query )
-{
-    free( query );
-}
-
 /*
- * object & entity functions
+ * object & object functions
  */
-
-void update_entity( entity *ent )
-{
-    entity_handle[ ent->id ].update( ent );
-}
-
-void render_entity( entity *ent )
-{
-    entity_handle[ ent->id ].render( ent );
-}
-
-void interact_entity( entity *ent )
-{
-    entity_handle[ ent->id ].interact( ent );
-}
 
 void update_object( object *obj )
 {
@@ -344,32 +260,6 @@ static void free_private_data( private_data *pd )
     free( pd );
 }
 
-entity *create_entity( int id, float x, float y )
-{
-    entity *new_entity = ( entity * ) malloc( sizeof( entity ) );
-    new_entity->x = x;
-    new_entity->y = y;
-    new_entity->w = 1;
-    new_entity->h = 1;
-    new_entity->id = id;
-    new_entity->data = entity_handle[ id ].constructor();
-    new_entity->priv = new_private_data();
-
-    float point[] = { x, y };
-    void *res = kdt_insert( entity_tree, point, new_entity );
-
-    if ( res != new_entity )
-    {
-        entity_handle[ id ].destructor( new_entity->data );
-        free_private_data( new_entity->priv );
-        free( new_entity );
-        return NULL;
-    }
-
-    entity_handle[ id ].on_creation( new_entity );
-    return new_entity;
-}
-
 object *create_object( int id, float x, float y )
 {
     object *new_object = ( object * ) malloc( sizeof( object ) );
@@ -396,24 +286,6 @@ object *create_object( int id, float x, float y )
     return new_object;
 }
 
-void delete_entity( entity *ent )
-{
-    if ( !ent )
-        return;
-
-    float point[] = { ent->x, ent->y };
-    void *res = kdt_remove( entity_tree, point );
-
-    if ( res == NULL )
-        return;
-
-    unload_entity( ent );
-    entity_handle[ ent->id ].on_deletion( ent );
-    entity_handle[ ent->id ].destructor( ent->data );
-    free_private_data( ent->priv );
-    free( ent );
-}
-
 void delete_object( object *obj )
 {
     if ( !obj )
@@ -432,78 +304,63 @@ void delete_object( object *obj )
     free( obj );
 }
 
-int entity_add_pos( entity *ent, float dx, float dy )
+int object_add_pos( object *obj, float dx, float dy )
 {
-    if ( !ent )
+    if ( !obj )
         return -1;
 
     void *res;
 
-    float point_src[] = { ent->x, ent->y };
-    res = kdt_remove( entity_tree, point_src );
+    float point_src[] = { obj->x, obj->y };
+    res = kdt_remove( object_tree, point_src );
 
     if ( res == NULL )
         return -1;
 
-    ent->x += dx;
-    ent->y += dy;
+    obj->x += dx;
+    obj->y += dy;
 
-    float point_dst[] = { ent->x, ent->y };
-    res = kdt_insert( entity_tree, point_dst, ent );
+    float point_dst[] = { obj->x, obj->y };
+    res = kdt_insert( object_tree, point_dst, obj );
 
-    if ( res != ent )
+    if ( res != obj )
     {
-        kdt_insert( entity_tree, point_src, ent );
+        kdt_insert( object_tree, point_src, obj );
         return 0;
     }
 
     return 1;
 }
 
-int entity_set_pos( entity *ent, float x, float y )
+int object_set_pos( object *obj, float x, float y )
 {
-    if ( !ent )
+    if ( !obj )
         return -1;
 
     void *res;
 
-    float point_src[] = { ent->x, ent->y };
-    res = kdt_remove( entity_tree, point_src );
+    float point_src[] = { obj->x, obj->y };
+    res = kdt_remove( object_tree, point_src );
 
     if ( res == NULL )
         return -1;
 
-    ent->x = x;
-    ent->y = y;
+    obj->x = x;
+    obj->y = y;
 
-    float point_dst[] = { ent->x, ent->y };
-    res = kdt_insert( entity_tree, point_dst, ent );
+    float point_dst[] = { obj->x, obj->y };
+    res = kdt_insert( object_tree, point_dst, obj );
 
-    if ( res != ent )
+    if ( res != obj )
     {
-        kdt_insert( entity_tree, point_src, ent );
+        kdt_insert( object_tree, point_src, obj );
         return 0;
     }
 
     return 1;
 }
 
-void load_entity( entity *ent, void *src, int ( *can_unload )( void *, void * ) )
-{
-    private_data *pd = ent->priv;
-
-    if ( pd->is_loaded )
-        return;
-
-    loaded_ents = linkedlist_insert( loaded_ents, ent );
-
-    pd->is_loaded = 1;
-    pd->node = loaded_ents; // the node we want will be at the front of the linked list
-    pd->src = src;
-    pd->can_unload = can_unload;
-}
-
-void load_object( object *obj, void *src, int ( *can_unload )( void *, void * ) )
+void load_object( object *obj, object *src, int ( *can_unload )( object *, object * ) )
 {
     private_data *pd = obj->priv;
 
@@ -513,24 +370,9 @@ void load_object( object *obj, void *src, int ( *can_unload )( void *, void * ) 
     loaded_objs = linkedlist_insert( loaded_objs, obj );
 
     pd->is_loaded = 1;
-    pd->node = loaded_ents; // the node we want will be at the front of the linked list
+    pd->node = loaded_objs; // the node we want will be at the front of the linked list
     pd->src = src;
     pd->can_unload = can_unload;
-}
-
-void unload_entity( entity *ent )
-{
-    private_data *pd = ent->priv;
-
-    if ( !pd->is_loaded )
-        return;
-
-    loaded_ents = linkedlist_remove( loaded_ents, pd->node );
-
-    pd->is_loaded = 0;
-    pd->node = NULL;
-    pd->src = NULL;
-    pd->can_unload = NULL;
 }
 
 void unload_object( object *obj )
@@ -546,27 +388,6 @@ void unload_object( object *obj )
     pd->node = NULL;
     pd->src = NULL;
     pd->can_unload = NULL;
-}
-
-void update_loaded_entities()
-{
-    linkedlist *cur = loaded_ents;
-    while ( cur )
-    {
-        entity *ent = cur->data;
-        private_data *pd = ent->priv;
-        cur = cur->next;
-
-        update_entity( ent );
-
-        if ( pd->is_loaded )
-        {
-            if ( pd->can_unload == NULL || pd->can_unload( ent, pd->src ) )
-            {
-                unload_entity( ent );
-            }
-        }
-    }
 }
 
 void update_loaded_objects()

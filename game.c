@@ -60,7 +60,6 @@ static void update()
 {
     if ( !pause )
     {
-        update_loaded_entities();
         update_loaded_objects();
     }
 }
@@ -75,9 +74,7 @@ static void render()
     float w = window_w / scale_x + scale_x;
     float h = window_h / scale_y + scale_y;
     screen_to_world_f( x, y, &x, &y );
-
     query_objects_func( x, y, w, h, &render_object );
-    query_entities_func( x, y, w, h, &render_entity );
 
     SDL_RenderPresent( renderer );
 
