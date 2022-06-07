@@ -7,6 +7,10 @@
 # Unignore all directories
 !*/*
 
+!src
+
+!Makefile
+
 # shell scripts
 *.sh
 

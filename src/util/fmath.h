@@ -1,11 +1,12 @@
-#ifndef UTIL_STUFF
-#define UTIL_STUFF
+#ifndef FMATH_H
+#define FMATH_H
 
 float magnitude         ( float x, float y );
-void normalize          ( float x, float y, float *x_out, float *y_out );
+void normalize          ( float x, float y, float *x_norm, float *y_norm );
+float clamp             ( float val, float min, float max );
+
 float min               ( float a, float b );
 float max               ( float a, float b );
-float clamp             ( float val, float min, float max );
 
 void split_color        ( int color, char *r, char *g, char *b, char *a );
 
