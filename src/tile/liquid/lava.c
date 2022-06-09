@@ -1,5 +1,4 @@
-
-#include "tile.h"
+#include "../tile.h"
 
 void lava_init()
 {

@@ -10,9 +10,9 @@ bool pause = false;
 // private variables
 static const char *title = "game";
 static const u32 wflags = SDL_WINDOW_RESIZABLE;
-static const u32 rflags = SDL_RENDERER_PRESENTVSYNC;
+static const u32 rflags = 0;//SDL_RENDERER_PRESENTVSYNC;
 
-#define FRAME_RATE 60.0f
+#define FRAME_RATE 100.0f
 #define TICK_RATE 60.0f
 
 static u32 target_frame_rate = FRAME_RATE;
@@ -77,7 +77,6 @@ static void update()
 {
     user_update();
     input_update();
-    window.frame++;
 }
 
 static void tick()
@@ -89,6 +88,7 @@ static void tick()
 static void render()
 {
     user_render();
+    window.frame++;
 }
 
 void window_init( WF init, WF close, WF update, WF tick, WF render )
@@ -127,25 +127,39 @@ void window_start()
 {
     init();
 
+    // note: cool game loop from "Game Programming Patterns"
+    u64 frame_previous = SDL_GetTicks64();
+    u64 tick_time = 0;
+
     while ( !quit )
     {
-        u64 frame_start = SDL_GetTicks64();
+        u64 frame_current = SDL_GetTicks64();
+        u64 frame_delta = frame_current - frame_previous;
+        frame_previous = frame_current;
+
+        tick_time += frame_delta;
 
         handle();
+
+        while( tick_time >= target_tick_delta )
+        {
+            tick();
+            tick_time -= target_tick_delta;
+        }
+
         update();
         render();
 
-        u64 frame_delta = SDL_GetTicks64() - frame_start;
+        // get timings
+        window.fdelta = ( f64 ) ( frame_delta ) / 1000.0f;
+        window.fps = 1.0f / window.fdelta;
 
         // apply fps cap
-        if ( target_frame_delta > frame_delta )
+        int delay = frame_current + target_frame_delta - SDL_GetTicks64();
+        if ( delay > 0 )
         {
-            SDL_Delay( target_frame_delta - frame_delta );
+            SDL_Delay( delay );
         }
-
-        // get timings
-        window.delta_t = ( f64 ) ( SDL_GetTicks64() - frame_start ) / 1000.0f;
-        window.fps = 1.0f / window.delta_t;
     }
 
     close();

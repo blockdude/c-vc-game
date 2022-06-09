@@ -15,12 +15,12 @@ struct Window
     int h;
 
     // frame timing (delta is in seconds)
-    f64 delta_t;
+    f64 fdelta;
     f64 fps;
     u64 frame;
 
     // tick timing (delta is in seconds)
-    f64 tdelta_t;
+    f64 tdelta;
     f64 tps;
     u64 tick;
 };

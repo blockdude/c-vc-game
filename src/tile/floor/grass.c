@@ -1,13 +1,13 @@
-#include "tile.h"
+#include "../tile.h"
 
-void stone_init()
+void grass_init()
 {
     struct Tile tile = DEFAULT_TILE;
-    enum TileId id = TILE_STONE;
+    enum TileId id = TILE_GRASS;
 
     tile.id = id;
     tile.use_color = true;
-    tile.color = 0x888C8DFF;
+    tile.color = 0x00FF00FF;
 
     TILES[ id ] = tile;
 }

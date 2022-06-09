@@ -17,8 +17,8 @@ enum TileId
     TILE_COBBLESTONE,
     TILE_LAVA,
 
-    TILE_COUNT
-    TILE_LAST = TILE_COUNT - 1,
+    TILE_COUNT,
+    TILE_LAST = TILE_COUNT - 1
 };
 
 // tile definitions
@@ -49,10 +49,10 @@ struct Tile
     float slip;
 
     // collision details (offset is relative to position)
-    int width;
-    int height;
-    int offset_x;
-    int offset_y;
+    float width;
+    float height;
+    float offset_x;
+    float offset_y;
 };
 
 extern struct Tile DEFAULT_TILE;

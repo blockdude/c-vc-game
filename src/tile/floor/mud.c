@@ -1,4 +1,4 @@
-#include "tile.h"
+#include "../tile.h"
 
 void mud_init()
 {
