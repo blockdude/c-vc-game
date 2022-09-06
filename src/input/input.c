@@ -7,9 +7,9 @@ static bool key_state_up = false;
 static bool mouse_state_down = false;
 static bool mouse_state_up = false;
 static bool mouse_state_move = false;
-static s32 mouse_state_scroll = 0;
+static i32 mouse_state_scroll = 0;
 
-void input_init()
+void input_init( void )
 {
     key_state = SDL_GetKeyboardState( NULL );
 }
@@ -58,7 +58,7 @@ void input_handle( SDL_Event *event )
     }
 }
 
-void input_update()
+void input_update( void )
 {
     // reset key state
     key_state_down = false;
@@ -71,40 +71,40 @@ void input_update()
     mouse_state_scroll = 0;
 }
 
-bool key_down( enum Key key )
+bool key_down( enum keyboard input )
 {
-    return key_state_down && key_state[ key ];
+    return key_state_down && key_state[ input ];
 }
 
-bool key_up( enum Key key )
+bool key_up( enum keyboard input )
 {
-    return key_state_up && key_state[ key ];
+    return key_state_up && key_state[ input ];
 }
 
-bool key_press( enum Key key )
+bool key_press( enum keyboard input )
 {
-    return key_state[ key ];
+    return key_state[ input ];
 }
 
-bool mouse_down( enum Button button )
-{
-    u32 mouse_state = SDL_GetMouseState( NULL, NULL );
-    return mouse_state_down && ( mouse_state & button );
-}
-
-bool mouse_up( enum Button button )
+bool mouse_down( enum mouse input )
 {
     u32 mouse_state = SDL_GetMouseState( NULL, NULL );
-    return mouse_state_up && ( mouse_state & button );
+    return mouse_state_down && ( mouse_state & input );
 }
 
-bool mouse_press( enum Button button )
+bool mouse_up( enum mouse input )
 {
     u32 mouse_state = SDL_GetMouseState( NULL, NULL );
-    return mouse_state & button;
+    return mouse_state_up && ( mouse_state & input );
 }
 
-bool mouse_move()
+bool mouse_press( enum mouse input )
+{
+    u32 mouse_state = SDL_GetMouseState( NULL, NULL );
+    return mouse_state & input;
+}
+
+bool mouse_move( void )
 {
     return mouse_state_move;
 }
@@ -114,7 +114,7 @@ void mouse_pos( int *x, int *y )
     SDL_GetMouseState( x, y );
 }
 
-s32 mouse_scroll()
+i32 mouse_scroll( void )
 {
     return mouse_state_scroll;
 }

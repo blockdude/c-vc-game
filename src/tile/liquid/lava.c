@@ -1,9 +1,9 @@
 #include "../tile.h"
 
-void lava_init()
+void lava_init( void )
 {
-    struct Tile tile = DEFAULT_TILE;
-    enum TileId id = TILE_LAVA;
+    struct tile tile = DEFAULT_TILE;
+    enum tile_id id = TILE_LAVA;
 
     tile.id = id;
     tile.liquid = true;

@@ -1,9 +1,9 @@
 #include "../tile.h"
 
-void water_init()
+void water_init( void )
 {
-    struct Tile tile = DEFAULT_TILE;
-    enum TileId id = TILE_WATER;
+    struct tile tile = DEFAULT_TILE;
+    enum tile_id id = TILE_WATER;
 
     tile.id = id;
     tile.liquid = true;

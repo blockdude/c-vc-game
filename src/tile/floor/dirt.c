@@ -1,9 +1,9 @@
 #include "../tile.h"
 
-void dirt_init()
+void dirt_init( void )
 {
-    struct Tile tile = DEFAULT_TILE;
-    enum TileId id = TILE_DIRT;
+    struct tile tile = DEFAULT_TILE;
+    enum tile_id id = TILE_DIRT;
 
     tile.id = id;
     tile.use_color = true;

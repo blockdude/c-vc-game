@@ -1,9 +1,9 @@
 #include "../tile.h"
 
-void grass_init()
+void grass_init( void )
 {
-    struct Tile tile = DEFAULT_TILE;
-    enum TileId id = TILE_GRASS;
+    struct tile tile = DEFAULT_TILE;
+    enum tile_id id = TILE_GRASS;
 
     tile.id = id;
     tile.use_color = true;

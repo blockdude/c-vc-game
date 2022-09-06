@@ -1,9 +1,9 @@
 #include "../tile.h"
 
-void mud_init()
+void mud_init( void )
 {
-    struct Tile tile = DEFAULT_TILE;
-    enum TileId id = TILE_MUD;
+    struct tile tile = DEFAULT_TILE;
+    enum tile_id id = TILE_MUD;
 
     tile.id = id;
     tile.use_color = true;

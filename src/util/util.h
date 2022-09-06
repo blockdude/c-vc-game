@@ -11,7 +11,5 @@
 #include "types.h"
 #include "fmath.h"
 #include "kdtree.h"
-#include "input.h"
-#include "window.h"
 
 #endif

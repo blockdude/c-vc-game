@@ -1,7 +1,8 @@
 #include "window.h"
+#include "../input/input.h"
 
 // global variables
-struct Window window;
+struct window window;
 SDL_Renderer *renderer;
 
 bool quit = false;
@@ -10,26 +11,23 @@ bool pause = false;
 // private variables
 static const char *title = "game";
 static const u32 wflags = SDL_WINDOW_RESIZABLE;
-static const u32 rflags = 0;//SDL_RENDERER_PRESENTVSYNC;
+static const u32 rflags = SDL_RENDERER_PRESENTVSYNC;
 
-#define FRAME_RATE 100.0f
-#define TICK_RATE 60.0f
+#define FRAME_RATE 100.0
+#define TICK_RATE 60.0
 
-static u32 target_frame_rate = FRAME_RATE;
-static u32 target_frame_delta = 1000.0f / FRAME_RATE;
-
-static u32 target_tick_rate = TICK_RATE;
-static u32 target_tick_delta = 1000.0f / TICK_RATE;
+static u64 target_frame_delta = 1000.0 / FRAME_RATE;
+static f64 target_tick_delta = 1000.0 / TICK_RATE;
 
 // user functions
-static WF user_init;
-static WF user_close;
-static WF user_update;
-static WF user_tick;
-static WF user_render;
+static window_event_fn user_init = NULL;
+static window_event_fn user_close = NULL;
+static window_event_fn user_update = NULL;
+static window_event_fn user_tick = NULL;
+static window_event_fn user_render = NULL;
 
 // handle input each frame
-static void handle()
+static void handle( void )
 {
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
@@ -60,38 +58,39 @@ static void handle()
     }
 }
 
-static void init()
+static void init( void )
 {
     window.frame = 0;
     window.tick = 0;
+    window.tdelta = target_tick_delta;
     user_init();
     input_init();
 }
 
-static void close()
+static void close( void )
 {
     user_close();
 }
 
-static void update()
+static void update( void )
 {
     user_update();
     input_update();
 }
 
-static void tick()
+static void tick( void )
 {
     user_tick();
     window.tick++;
 }
 
-static void render()
+static void render( void )
 {
     user_render();
     window.frame++;
 }
 
-void window_init( WF init, WF close, WF update, WF tick, WF render )
+void window_init( window_event_fn init, window_event_fn close, window_event_fn update, window_event_fn tick, window_event_fn render )
 {
     user_init = init;
     user_close = close;
@@ -123,24 +122,50 @@ void window_init( WF init, WF close, WF update, WF tick, WF render )
     SDL_SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
 }
 
-void window_start()
+void window_start( void )
 {
     init();
 
     // note: cool game loop from "Game Programming Patterns"
     u64 frame_previous = SDL_GetTicks64();
-    u64 tick_time = 0;
+    f64 tick_time = 0;
+
+    u64 tick_last = 0;
+    u64 frame_last = 0;
+
+    u64 frame_timer = frame_previous;
 
     while ( !quit )
     {
+        // get frame timing
         u64 frame_current = SDL_GetTicks64();
         u64 frame_delta = frame_current - frame_previous;
-        frame_previous = frame_current;
 
+        // update fps & tps every second
+        if ( frame_current - frame_timer >= 1000 )
+        {
+            // get variables
+            u64 ticks = window.tick - tick_last;
+            u64 frames = window.frame - frame_last;
+
+            // store timeings
+            window.tps = ticks;
+            window.fps = frames;
+
+            // store this frame/tick
+            tick_last = window.tick;
+            frame_last = window.frame;
+
+            // reset timer
+            frame_timer = frame_current;
+        }
+
+        frame_previous = frame_current;
         tick_time += frame_delta;
 
         handle();
 
+        // do ticks and maintain tick rate
         while( tick_time >= target_tick_delta )
         {
             tick();
@@ -150,9 +175,8 @@ void window_start()
         update();
         render();
 
-        // get timings
-        window.fdelta = ( f64 ) ( frame_delta ) / 1000.0f;
-        window.fps = 1.0f / window.fdelta;
+        // convert & store frame timing of current frame
+        window.delta = ( f64 ) frame_delta / 1000.0;
 
         // apply fps cap
         int delay = frame_current + target_frame_delta - SDL_GetTicks64();
@@ -165,7 +189,7 @@ void window_start()
     close();
 }
 
-void window_close()
+void window_close( void )
 {
     if ( window.handle )
         SDL_DestroyWindow( window.handle );
@@ -177,4 +201,5 @@ void window_close()
 
     window.handle = NULL;
     renderer = NULL;
+    quit = 1;
 }

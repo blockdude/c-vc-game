@@ -3,7 +3,7 @@
 
 #include "../util/util.h"
 
-enum TileId
+enum tile_id
 {
     TILE_FIRST = 0,
 
@@ -21,10 +21,14 @@ enum TileId
     TILE_LAST = TILE_COUNT - 1
 };
 
+// forward declaration
+struct world;
+
 // tile definitions
-struct Tile
+struct tile
 {
-    enum TileId id;
+    // id
+    enum tile_id id;
 
     // is the tile a liquid
     bool liquid;
@@ -53,16 +57,20 @@ struct Tile
     float height;
     float offset_x;
     float offset_y;
+
+    // texture location on atlas
+    void ( *texture )( struct world *world, i64 in_x, i64 in_y, i64 in_z, int *out_x, int *out_y );
 };
 
-extern struct Tile DEFAULT_TILE;
-extern struct Tile TILES[ TILE_COUNT ];
+extern struct tile DEFAULT_TILE;
+extern struct tile TILES[ TILE_COUNT ];
 
-#define _TILE_DECL(_name)\
-    extern void _name##_init();\
+#define _TILE_DECL( _name )\
+    extern void _name##_init( void );\
     _name##_init();
 
-static inline void tile_init() {
+static inline void tile_init()
+{
     _TILE_DECL( air );
     _TILE_DECL( grass );
     _TILE_DECL( dirt );

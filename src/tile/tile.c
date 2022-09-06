@@ -1,8 +1,8 @@
 #include "tile.h"
 
-struct Tile TILES[ TILE_COUNT ];
+struct tile TILES[ TILE_COUNT ];
 
-struct Tile DEFAULT_TILE = {
+struct tile DEFAULT_TILE = {
     .id         = -1,
     .liquid     = false,
     .animated   = false,
@@ -15,5 +15,6 @@ struct Tile DEFAULT_TILE = {
     .width      = 1.0f,
     .height     = 1.0f,
     .offset_x   = 0.0f,
-    .offset_y   = 0.0f
+    .offset_y   = 0.0f,
+    .texture    = NULL
 };
