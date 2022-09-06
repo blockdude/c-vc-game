@@ -1,6 +1,12 @@
 # ignore bin directory
 bin
 
+# ignore old files and directories
+*-old
+
+# ignore custom make script
+remote-make.sh
+
 # unignore vimspector
 !.vimspector.json
 
