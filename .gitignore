@@ -1,34 +1,8 @@
-# Ignore all
-*
+# ignore bin directory
+bin
 
-# Unignore all with extentions
-!*.*
-
-# Unignore all directories
-!*/*
-
-!src
-!res
-!Makefile
-
-# shell scripts
-*.sh
-
-# leak detector
-leak_detector_c.*
-
-# world
-*.level
-
-# text files
-*.txt
-
-# Ignore test files
-*.test.c
-*.test
-
-# Ignore lib
-test-lib/*
+# unignore vimspector
+!.vimspector.json
 
 # Prerequisites
 *.d
@@ -73,9 +47,6 @@ test-lib/*
 *.su
 *.idb
 *.pdb
-
-# Vimspector
-.vimspector.json
 
 # Kernel Module Compile Results
 *.mod*
