@@ -13,13 +13,6 @@
 // forward declartion of world
 struct world;
 
-// tile data for chunk
-struct tile_data
-{
-    int light_level;
-    enum tile_id id;
-};
-
 // chunk data
 struct chunk
 {
@@ -31,8 +24,12 @@ struct chunk
     // world where chunk is set in
     struct world *world;
 
-    // chunk data
-    struct tile_data data[ CHUNK_VOLUME ];
+    // tile data
+    struct
+    {
+        int light_level;
+        enum tile_id id;
+    } data[ CHUNK_VOLUME ];
 };
 
 void chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z );
