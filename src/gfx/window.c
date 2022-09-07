@@ -27,7 +27,7 @@ static window_event_fn user_tick = NULL;
 static window_event_fn user_render = NULL;
 
 // handle input each frame
-static void handle( void )
+static int handle( void )
 {
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
@@ -56,41 +56,53 @@ static void handle( void )
 
         input_handle( &event );
     }
+
+    return 0;
 }
 
-static void init( void )
+static int init( void )
 {
     window.frame = 0;
     window.tick = 0;
     window.tdelta = target_tick_delta;
     user_init();
     input_init();
+
+    return 0;
 }
 
-static void close( void )
+static int close( void )
 {
     user_close();
+
+    return 0;
 }
 
-static void update( void )
+static int update( void )
 {
     user_update();
     input_update();
+
+    return 0;
 }
 
-static void tick( void )
+static int tick( void )
 {
     user_tick();
     window.tick++;
+
+    return 0;
 }
 
-static void render( void )
+static int render( void )
 {
     user_render();
     window.frame++;
+
+    return 0;
 }
 
-void window_init( window_event_fn init, window_event_fn close, window_event_fn update, window_event_fn tick, window_event_fn render )
+int window_init( window_event_fn init, window_event_fn close, window_event_fn update, window_event_fn tick, window_event_fn render )
 {
     user_init = init;
     user_close = close;
@@ -102,13 +114,13 @@ void window_init( window_event_fn init, window_event_fn close, window_event_fn u
     window.h = 700;
 
     if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
-        return;
+        return 1;
 
     window.handle = SDL_CreateWindow( title, 0, 0, window.w, window.h, wflags );
     if ( !window.handle )
     {
         SDL_Quit();
-        return;
+        return 1;
     }
 
     renderer = SDL_CreateRenderer( window.handle, -1, rflags );
@@ -116,13 +128,15 @@ void window_init( window_event_fn init, window_event_fn close, window_event_fn u
     {
         SDL_DestroyWindow( window.handle );
         SDL_Quit();
-        return;
+        return 1;
     }
 
     SDL_SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
+
+    return 0;
 }
 
-void window_start( void )
+int window_start( void )
 {
     init();
 
@@ -187,9 +201,11 @@ void window_start( void )
     }
 
     close();
+
+    return 0;
 }
 
-void window_close( void )
+int window_close( void )
 {
     if ( window.handle )
         SDL_DestroyWindow( window.handle );
@@ -202,4 +218,6 @@ void window_close( void )
     window.handle = NULL;
     renderer = NULL;
     quit = 1;
+
+    return 0;
 }

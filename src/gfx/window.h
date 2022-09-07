@@ -4,7 +4,7 @@
 #include "../util/util.h"
 
 // window function
-typedef void ( *window_event_fn )( void );
+typedef int ( *window_event_fn )( void );
 
 // window struct
 struct window
@@ -35,8 +35,8 @@ extern struct window window;
 extern bool quit;
 extern bool pause;
 
-void window_init( window_event_fn init, window_event_fn close, window_event_fn update, window_event_fn tick, window_event_fn render );
-void window_start( void );
-void window_close( void );
+int window_init( window_event_fn init, window_event_fn close, window_event_fn update, window_event_fn tick, window_event_fn render );
+int window_start( void );
+int window_close( void );
 
 #endif

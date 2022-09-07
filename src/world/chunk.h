@@ -34,8 +34,5 @@ struct chunk
 
 void chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z );
 void chunk_free( struct chunk *self );
-void chunk_update( struct chunk *self );
-void chunk_tick( struct chunk *self );
-void chunk_render( struct chunk *self );
 
 #endif
