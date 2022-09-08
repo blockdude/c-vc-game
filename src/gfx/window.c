@@ -18,19 +18,7 @@ static int handle( void )
         switch ( event.type )
         {
             case SDL_QUIT:
-
                 window.running = false;
-
-                break;
-
-            case SDL_WINDOWEVENT:
-
-                switch ( event.window.event )
-                {
-                    case SDL_WINDOWEVENT_RESIZED:
-                        break;
-                }
-
                 break;
         }
 
