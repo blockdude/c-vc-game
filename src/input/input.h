@@ -2,6 +2,7 @@
 #define INPUT_H
 
 #include "../util/util.h"
+#include <SDL2/SDL.h>
 
 // keyboard buton input
 enum keyboard

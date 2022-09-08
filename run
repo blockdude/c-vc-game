@@ -1,0 +1,12 @@
+#!/bin/bash
+cpus=$(nproc)
+echo compiling with -j$cpus
+make -j$cpus
+
+if [[ $? == 0 ]]; then
+	echo successfully compiled.
+else
+	echo failed to compile error code $?.
+fi
+
+bin/main

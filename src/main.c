@@ -3,9 +3,9 @@
 
 int main( void )
 {
-    window_init( &game_init, &game_close, &game_update, &game_tick, &game_render );
-    window_start();
-    window_close();
+	window_init( &game_init, &game_quit, &game_update, &game_tick, &game_render );
+	window_loop();
+	window_quit();
 
-    return 0;
+	return 0;
 }

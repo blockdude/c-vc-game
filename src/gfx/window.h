@@ -2,6 +2,7 @@
 #define WINDOW_H
 
 #include "../util/util.h"
+#include <SDL2/SDL.h>
 
 // window function
 typedef int ( *window_event_fn )( void );
@@ -9,34 +10,80 @@ typedef int ( *window_event_fn )( void );
 // window struct
 struct window
 {
-    // sdl stuff
-    SDL_Window *handle;
-    
-    // tracks width and height. not needed but convenient for me
-    int w;
-    int h;
+	// handle to sdl window
+	SDL_Window *handle;
 
-    // frame timing (delta is in seconds)
-    f64 delta;
-    u64 fps;
-    u64 frame;
+	struct
+	{
+		// runs once when window_loop is called
+		window_event_fn init;
 
-    // tick timing (delta is in seconds)
-    f64 tdelta;
-    u64 tps;
-    u64 tick;
+		// runs when window exits or events change
+		window_event_fn quit;
+
+		// runs every frame
+		window_event_fn update;
+
+		// runs every tick
+		window_event_fn tick;
+
+		// runs after every update
+		window_event_fn render;
+	} event;
+
+	// better run
+	bool running;
+
+	struct
+	{
+		// target frame rate
+		unsigned int target_rate;
+
+		// frames per second
+		unsigned int rate;
+
+		// seconds per frame
+		f64 delta;
+
+		// frame count
+		u64 count;
+	} frame;
+
+	struct
+	{
+		// target frame rate
+		unsigned int target_rate;
+
+		// ticks per second
+		unsigned int rate;
+
+		// seconds per tick ( should be static )
+		f64 delta;
+		
+		// tick count
+		u64 count;
+	} tick;
 };
 
 // global renderer and window
 extern SDL_Renderer *renderer;
+// global window i guess
 extern struct window window;
 
-// state
-extern bool quit;
-extern bool pause;
+int window_init( window_event_fn init, window_event_fn quit, window_event_fn update, window_event_fn tick, window_event_fn render );
+int window_loop( void );
+int window_quit( void );
 
-int window_init( window_event_fn init, window_event_fn close, window_event_fn update, window_event_fn tick, window_event_fn render );
-int window_start( void );
-int window_close( void );
+// change all event functions. used when switching game states.
+int window_set_event_fn( window_event_fn init, window_event_fn clean, window_event_fn update, window_event_fn tick, window_event_fn render );
+
+// change target frame rate
+int window_set_target_frame_rate( unsigned int rate );
+
+// change target tick rate (avoid changing tick rate)
+int window_set_target_tick_rate( unsigned int rate );
+
+// get window width and height
+int window_get_size( int *w, int *h );
 
 #endif

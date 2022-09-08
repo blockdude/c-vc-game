@@ -11,7 +11,12 @@ int main( void )
     int real_x = 19;
     int real_y = 20;
     int real_z = 48;
-    int real_i = ( real_z * dim_x * dim_y ) + ( real_y * dim_x ) + real_x;
+	int real_i = 0;
+	
+	for ( int z = 0; z < real_z; z++ )
+		for ( int y = 0; y < real_y; y++ )
+			for ( int x = 0; x < real_x; x++ )
+				real_i++;
 
     union
     {
