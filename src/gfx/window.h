@@ -37,10 +37,10 @@ struct window
 	struct
 	{
 		// target frame rate
-		unsigned int target_rate;
+		int target_rate;
 
 		// frames per second
-		unsigned int rate;
+		int rate;
 
 		// seconds per frame
 		f64 delta;
@@ -52,10 +52,10 @@ struct window
 	struct
 	{
 		// target frame rate
-		unsigned int target_rate;
+		int target_rate;
 
 		// ticks per second
-		unsigned int rate;
+		int rate;
 
 		// seconds per tick ( should be static )
 		f64 delta;

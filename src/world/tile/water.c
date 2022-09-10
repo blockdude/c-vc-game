@@ -1,8 +1,10 @@
 #include "../tile.h"
 
+static char *name = "water";
+
 void water_init( void )
 {
-    struct tile tile = DEFAULT_TILE;
+    struct tile tile = *tile_get( TILE_DEFAULT );
     enum tile_id id = TILE_WATER;
 
     tile.id = id;

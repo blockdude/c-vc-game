@@ -3,20 +3,30 @@
 
 #include "../util/util.h"
 
+#define TILE_COUNT_MAX		256
+
 enum tile_id
 {
+	// first tile id
     TILE_FIRST = 0,
 
-    TILE_AIR = 0,
+	// default
+	TILE_DEFAULT = 0,
+
+	// non liquids
+    TILE_AIR,
     TILE_GRASS,
     TILE_DIRT,
     TILE_SAND,
     TILE_MUD,
-    TILE_WATER,
     TILE_STONE,
     TILE_COBBLESTONE,
+
+	// liquids
+    TILE_WATER,
     TILE_LAVA,
 
+	// count of all tiles
     TILE_COUNT,
     TILE_LAST = TILE_COUNT - 1
 };
@@ -28,7 +38,8 @@ struct world;
 struct tile
 {
     // id
-    enum tile_id id;
+	int id;
+	char *name;
 
     // is the tile a liquid
     bool liquid;
@@ -45,7 +56,7 @@ struct tile
     // applies color when rendered (useful for greyscale)
     bool use_color;
 
-    // default tile color
+    // tile color
     u32 color;
 
     // drag and sliperiness
@@ -58,28 +69,17 @@ struct tile
     float offset_x;
     float offset_y;
 
-    // texture location on atlas
-    void ( *texture )( struct world *world, i64 in_x, i64 in_y, i64 in_z, int *out_x, int *out_y );
+	// return the texture id for the tile
+    int ( *texture )( struct world *world, i64 x, i64 y, i64 z );
 };
 
-extern struct tile DEFAULT_TILE;
-extern struct tile TILES[ TILE_COUNT ];
+// init data for tiles
+void tile_init( void );
 
-#define _TILE_DECL( _name )\
-    extern void _name##_init( void );\
-    _name##_init();
+// create a new tile type
+struct tile *tile_new( char *name );
 
-static inline void tile_init()
-{
-    _TILE_DECL( air );
-    _TILE_DECL( grass );
-    _TILE_DECL( dirt );
-    _TILE_DECL( sand );
-    _TILE_DECL( mud );
-    _TILE_DECL( water );
-    _TILE_DECL( stone );
-    _TILE_DECL( cobblestone );
-    _TILE_DECL( lava );
-}
+// get tile data from id
+struct tile *tile_get( int id );
 
 #endif
