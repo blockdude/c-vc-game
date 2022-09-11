@@ -1,7 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "../util/util.h"
+#include "../../util/util.h"
 
 #define TILE_COUNT_MAX		256
 

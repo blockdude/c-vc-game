@@ -1,7 +1,7 @@
 #ifndef GENERATE_H
 #define GENERATE_H
 
-#include "../util/util.h"
+#include "../../util/util.h"
 
 // forward declaration
 struct world;

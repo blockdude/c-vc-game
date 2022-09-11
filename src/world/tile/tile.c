@@ -1,22 +1,6 @@
 #include "tile.h"
 
 static struct tile tiles[ TILE_COUNT_MAX ];
-static struct tile default_tile = {
-	.id         = 0,
-	.liquid     = false,
-	.animated   = false,
-	.solid      = true,
-	.collides   = false,
-	.use_color  = false,
-	.color      = 0,
-	.drag       = 1.0f,
-	.slip       = 1.0f,
-	.width      = 1.0f,
-	.height     = 1.0f,
-	.offset_x   = 0.0f,
-	.offset_y   = 0.0f,
-	.texture    = NULL
-};
 
 #define TILE_DECL( name ) \
 	extern void name##_init( void ); \
@@ -45,13 +29,31 @@ struct tile *tile_new( char *name )
 	if ( next_id >= TILE_COUNT_MAX )
 		return NULL;
 
-	// set tile id and return
-	struct tile *new_tile = &tiles[ next_id ];
-	new_tile->id = next_id++;
-	return new_tile;
+	int id = next_id++;
+
+	// default tile
+	tiles[ id ] = {
+		.id         = id,
+		.liquid     = false,
+		.animated   = false,
+		.solid      = true,
+		.collides   = false,
+		.use_color  = false,
+		.color      = 0,
+		.drag       = 1.0f,
+		.slip       = 1.0f,
+		.width      = 1.0f,
+		.height     = 1.0f,
+		.offset_x   = 0.0f,
+		.offset_y   = 0.0f,
+		.texture    = NULL
+	};
+
+	// return address of new tile
+	return &tiles[ id ];
 }
 
-struct tile *tile_get( enum tile_id id )
+struct tile *tile_get( int id )
 {
 	return &tiles[ id ];
 }

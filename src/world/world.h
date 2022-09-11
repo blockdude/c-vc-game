@@ -2,8 +2,8 @@
 #define WORLD_H
 
 #include "../util/util.h"
-#include "../tile/tile.h"
 #include "../entity/ecs.h"
+#include "tile/tile.h"
 #include "chunk.h"
 
 #define WORLD_SIZE_X 1

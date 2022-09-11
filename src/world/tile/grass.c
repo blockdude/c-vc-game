@@ -1,4 +1,4 @@
-#include "../tile.h"
+#include "tile.h"
 
 void grass_init( void )
 {

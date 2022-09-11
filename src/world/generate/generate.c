@@ -1,7 +1,6 @@
-#include <stdlib.h>
 #include "generate.h"
-#include "world.h"
-#include "chunk.h"
+#include "../world.h"
+#include "../chunk.h"
 #include "../tile/tile.h"
 
 /*

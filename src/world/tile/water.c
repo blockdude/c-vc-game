@@ -1,4 +1,4 @@
-#include "../tile.h"
+#include "tile.h"
 
 static char *name = "water";
 

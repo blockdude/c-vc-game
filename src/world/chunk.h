@@ -2,7 +2,7 @@
 #define CHUNK_H
 
 #include "../util/util.h"
-#include "../tile/tile.h"
+#include "tile/tile.h"
 
 #define CHUNK_SIZE_X 32
 #define CHUNK_SIZE_Y 32

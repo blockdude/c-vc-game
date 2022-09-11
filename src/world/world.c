@@ -1,5 +1,4 @@
 #include "world.h"
-#include "generate.h"
 
 void world_init( struct world *self )
 {

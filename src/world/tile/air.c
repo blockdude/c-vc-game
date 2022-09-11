@@ -1,4 +1,4 @@
-#include "../tile.h"
+#include "tile.h"
 
 void air_init( void )
 {
