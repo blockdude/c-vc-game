@@ -32,7 +32,9 @@ struct chunk
     } data[ CHUNK_VOLUME ];
 };
 
-void chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z );
-void chunk_free( struct chunk *self );
+int chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z );
+int chunk_free( struct chunk *self );
+int chunk_update( struct chunk *self );
+int chunk_tick( struct chunk *self );
 
 #endif

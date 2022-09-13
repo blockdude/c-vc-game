@@ -5,9 +5,9 @@
 
 struct component_position
 {
-    // x y coordinates
     f64 x;
     f64 y;
+	int z;
 };
 
 #endif

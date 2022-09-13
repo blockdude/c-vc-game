@@ -5,8 +5,8 @@
 
 struct kdtree;
 
-struct kdtree *new_kdtree   ( int k, void ( *free_item )( void * ) );
-void free_kdtree            ( struct kdtree *tree );
+struct kdtree *kdt_new		( int k, void ( *free_item )( void * ) );
+void kdt_free            	( struct kdtree *tree );
 
 // getters
 int kdt_size                ( struct kdtree *tree );

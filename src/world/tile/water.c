@@ -1,18 +1,12 @@
 #include "tile.h"
 
-static char *name = "water";
-
 void water_init( void )
 {
-    struct tile tile = *tile_get( TILE_DEFAULT );
-    enum tile_id id = TILE_WATER;
+    struct tile *tile = tile_get( TILE_WATER );
 
-    tile.id = id;
-    tile.liquid = true;
-    tile.solid = false;
-    tile.use_color = true;
-    tile.color = 0xD4F1F9FF;
-    tile.drag = 10.0f;
-
-    TILES[ id ] = tile;
+	tile->liquid = true;
+	tile->solid = false;
+	tile->use_color = true;
+	tile->color = 0xD4F1F9FF;
+	tile->drag = 10.0f;
 }

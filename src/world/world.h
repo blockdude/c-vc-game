@@ -35,8 +35,10 @@ struct world
     struct chunk chunks[ WORLD_VOLUME ];
 };
 
-void world_init( struct world *self );
-void world_free( struct world *self );
+int world_init( struct world *self );
+int world_free( struct world *self );
+int world_update( struct world *self );
+int world_tick( struct world *self );
 
 //void world_to_screen( float world_x, float world_y, int *screen_x, int *screen_y );
 //void screen_to_world( float world_x, float world_y, int *screen_x, int *screen_y );

@@ -4,8 +4,30 @@
 #include "../util/util.h"
 #include <SDL2/SDL.h>
 
+extern const char *g_window_title;
+extern const u32 g_window_flags;
+
 // window function
 typedef int ( *window_event_fn )( void );
+
+// game states
+struct window_state
+{
+	window_event_fn init;
+	window_event_fn free;
+	window_event_fn update;
+	window_event_fn tick;
+	window_event_fn render;
+};
+
+// track timing of frame and tick
+struct timing
+{
+	int target_rate;
+	int rate;
+	f64 delta;
+	u64 count;
+};
 
 // window struct
 struct window
@@ -13,69 +35,31 @@ struct window
 	// handle to sdl window
 	SDL_Window *handle;
 
-	struct
-	{
-		// runs once when window_loop is called
-		window_event_fn init;
-
-		// runs when window exits or events change
-		window_event_fn quit;
-
-		// runs every frame
-		window_event_fn update;
-
-		// runs every tick
-		window_event_fn tick;
-
-		// runs after every update
-		window_event_fn render;
-	} event;
-
-	// better run
+	// is the window running
 	bool running;
 
-	struct
-	{
-		// target frame rate
-		int target_rate;
+	// store window state
+	struct window_state state;
 
-		// frames per second
-		int rate;
-
-		// seconds per frame
-		f64 delta;
-
-		// frame count
-		u64 count;
-	} frame;
-
-	struct
-	{
-		// target frame rate
-		int target_rate;
-
-		// ticks per second
-		int rate;
-
-		// seconds per tick ( should be static )
-		f64 delta;
-		
-		// tick count
-		u64 count;
-	} tick;
+	// store timings
+	struct timing frame;
+	struct timing tick;
 };
 
-// global renderer and window
-extern SDL_Renderer *renderer;
-// global window i guess
+// global window because only one window should be opened for this game anyways
 extern struct window window;
 
-int window_init( window_event_fn init, window_event_fn quit, window_event_fn update, window_event_fn tick, window_event_fn render );
-int window_loop( void );
-int window_quit( void );
+// init window and open it
+int window_init( struct window_state *state );
+
+// start main loop
+int window_start( void );
+
+// close window and free memory
+int window_close( void );
 
 // change all event functions. used when switching game states.
-int window_set_event_fn( window_event_fn init, window_event_fn clean, window_event_fn update, window_event_fn tick, window_event_fn render );
+int window_set_state( struct window_state *state );
 
 // change target frame rate
 int window_set_target_frame_rate( unsigned int rate );

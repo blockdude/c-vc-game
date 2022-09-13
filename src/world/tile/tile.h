@@ -3,8 +3,6 @@
 
 #include "../../util/util.h"
 
-#define TILE_COUNT_MAX		256
-
 enum tile_id
 {
 	// first tile id
@@ -17,14 +15,10 @@ enum tile_id
     TILE_AIR,
     TILE_GRASS,
     TILE_DIRT,
-    TILE_SAND,
-    TILE_MUD,
     TILE_STONE,
-    TILE_COBBLESTONE,
 
 	// liquids
     TILE_WATER,
-    TILE_LAVA,
 
 	// count of all tiles
     TILE_COUNT,
@@ -39,7 +33,12 @@ struct tile
 {
     // id
 	int id;
-	char *name;
+	
+	// string ids
+	char *str_id;
+
+	// is the tile transparent (should the tiles below it be rendered)
+	bool transparent;
 
     // is the tile a liquid
     bool liquid;
@@ -50,20 +49,17 @@ struct tile
     // is the tile solid (unused)
     bool solid;
 
-    // does the tile have collision
-    bool collides;
-
-    // applies color when rendered (useful for greyscale)
+	// use tile color
     bool use_color;
 
     // tile color
     u32 color;
 
-    // drag and sliperiness
+    // drag and sliperiness to use with physics
     float drag;
     float slip;
 
-    // collision details (offset is relative to position)
+	// aabb
     float width;
     float height;
     float offset_x;
@@ -74,12 +70,12 @@ struct tile
 };
 
 // init data for tiles
-void tile_init( void );
+int tile_init( void );
 
-// create a new tile type
-struct tile *tile_new( char *name );
+// create tile type
+struct tile *tile_new( int id );
 
-// get tile data from id
+// get tile data
 struct tile *tile_get( int id );
 
 #endif

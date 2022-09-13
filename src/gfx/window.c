@@ -3,14 +3,13 @@
 
 // global variables
 struct window window;
-SDL_Renderer *renderer;
 
-#define WINDOW_TITLE "window"
-#define WINDOW_FLAGS SDL_WINDOW_RESIZABLE
-#define RENDER_FLAGS SDL_RENDERER_PRESENTVSYNC
+// window stuff
+const char *g_window_title = "window";
+const u32 g_window_flags = SDL_WINDOW_RESIZABLE;
 
-// handle input each frame
-static int handle( void )
+// base handle
+static int window_general_handle( void )
 {
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
@@ -28,98 +27,97 @@ static int handle( void )
     return 0;
 }
 
-static int init( void )
+// base init
+static int window_general_init( void )
 {
-    window.event.init();
+    window.state.init();
     input_init();
 
     return 0;
 }
 
-static int quit( void )
+// base clean
+static int window_general_free( void )
 {
-    window.event.quit();
+    window.state.free();
 
     return 0;
 }
 
-static int update( void )
+// base update
+static int window_general_update( void )
 {
-    window.event.update();
+    window.state.update();
     input_update();
 
     return 0;
 }
 
-static int tick( void )
+// base tick
+static int window_general_tick( void )
 {
-    window.event.tick();
+    window.state.tick();
     window.tick.count++;
 
     return 0;
 }
 
-static int render( void )
+// base render
+static int window_general_render( void )
 {
-	window.event.render();
+	window.state.render();
     window.frame.count++;
 
     return 0;
 }
 
-int window_init( window_event_fn init, window_event_fn quit, window_event_fn update, window_event_fn tick, window_event_fn render )
+int window_init( struct window_state *state )
 {
 	// init variables
 	window.running = true;
 
-    window.event.init = init;
-    window.event.quit = quit;
-    window.event.update = update;
-    window.event.tick = tick;
-    window.event.render = render;
+	if ( state == NULL )
+		window.state = ( struct window_state ) { 0 };
+	else
+		window.state = *state;
 
-	window.frame.target_rate = 60;
-	window.frame.rate = 0;
-	window.frame.delta = 0;
-	window.frame.count = 0;
+	window.frame = ( struct timing ) {
+		.target_rate	= 60,
+		.rate			= 0,
+		.delta			= 0,
+		.count			= 0
+	};
 
-	window.tick.target_rate = 60;
-	window.tick.rate = 0;
-	window.tick.delta = 1000.0 / window.tick.target_rate;
-	window.tick.count = 0;
+	window.tick = ( struct timing ) {
+		.target_rate	= 60,
+		.rate			= 0,
+		.delta			= 1000.0 / 60.0,
+		.count			= 0
+	};
 
-	// init sdl stuff
+	// sdl init and make window
     if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
         return 1;
 
-    window.handle = SDL_CreateWindow( WINDOW_TITLE, 0, 0, 700, 700, WINDOW_FLAGS );
+    window.handle = SDL_CreateWindow( g_window_title, 0, 0, 700, 700, g_window_flags );
     if ( !window.handle )
     {
         SDL_Quit();
         return 1;
     }
 
-    renderer = SDL_CreateRenderer( window.handle, -1, RENDER_FLAGS );
-    if ( !renderer )
-    {
-        SDL_DestroyWindow( window.handle );
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
-
     return 0;
 }
 
-int window_loop( void )
+int window_start( void )
 {
-    init();
+	// init
+    window_general_init();
 
+	// setup game loop
 	u64 target_frame_delta = 1000.0 / window.frame.target_rate;
 	f64 target_tick_delta = 1000.0 / window.tick.target_rate;
 
-    // note: cool game loop from "Game Programming Patterns"
     u64 frame_previous = SDL_GetTicks64();
     f64 tick_time = 0;
 
@@ -128,6 +126,7 @@ int window_loop( void )
 
     u64 frame_timer = frame_previous;
 
+	// begin main loop
     while ( window.running )
     {
         // get frame timing
@@ -156,17 +155,17 @@ int window_loop( void )
         frame_previous = frame_current;
         tick_time += frame_delta;
 
-        handle();
+        window_general_handle();
 
         // do ticks and maintain tick rate
         while( tick_time >= target_tick_delta )
         {
-            tick();
+            window_general_tick();
             tick_time -= target_tick_delta;
         }
 
-        update();
-        render();
+        window_general_update();
+        window_general_render();
 
         // convert & store frame timing of current frame
         window.frame.delta = ( f64 ) frame_delta / 1000.0;
@@ -179,24 +178,18 @@ int window_loop( void )
         }
     }
 
-    quit();
-
+	// clean up
+	window_general_free();
     return 0;
 }
 
-int window_quit( void )
+int window_close( void )
 {
-    if ( window.handle )
-        SDL_DestroyWindow( window.handle );
-
-    if ( renderer )
-        SDL_DestroyRenderer( renderer );
-
+    SDL_DestroyWindow( window.handle );
     SDL_Quit();
-	quit();
 
-    window.handle = NULL;
-    renderer = NULL;
+	// reset window
+	window = ( struct window ) { 0 };
 
     return 0;
 }

@@ -37,7 +37,7 @@ static int ptcmp( KDT_DATA_TYPE pt_a[], KDT_DATA_TYPE pt_b[], int k )
  * new kd tree
  */
 
-struct kdtree *new_kdtree( int k, void ( *free_item )( void * ) )
+struct kdtree *kdt_new( int k, void ( *free_item )( void * ) )
 {
     // sanity check
     if ( k < 2 )
@@ -76,7 +76,7 @@ static void kdt_free_util( struct kdtree *tree, struct node *node )
     free( node );
 }
 
-void free_kdtree( struct kdtree *tree )
+void kdt_free( struct kdtree *tree )
 {
     if ( tree == NULL )
         return;

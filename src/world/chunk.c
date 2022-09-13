@@ -1,7 +1,7 @@
 #include "chunk.h"
 #include "world.h"
 
-void chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z )
+int chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z )
 {
     // init all data of chunk to zero
     *self = ( struct chunk ) { 0 };
@@ -11,10 +11,14 @@ void chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z )
     self->x = x;
     self->y = y;
     self->z = z;
+
+	return 0;
 }
 
-void chunk_free( struct chunk *self )
+int chunk_free( struct chunk *self )
 {
     // just set data to zero
     *self = ( struct chunk ) { 0 };
+
+	return 0;
 }
