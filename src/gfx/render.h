@@ -10,13 +10,12 @@ extern const u32 g_render_flags;
 struct render
 {
 	SDL_Renderer *handle;
-	struct world *world;
 };
 
 // global render context
 extern struct render render;
 
-int render_init( struct world *world );
+int render_init( void );
 int render_free( void );
 
 int render_set_color( u8 r, u8 g, u8 b, u8 a );

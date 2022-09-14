@@ -23,9 +23,19 @@ struct window_state
 // track timing of frame and tick
 struct timing
 {
+	// target cycles per second
 	int target_rate;
+	
+	// target seconds per cycle
+	f64 target_delta;
+
+	// cycles per second (updated every second)
 	int rate;
+
+	// seconds per cycle (updated every cycle)
 	f64 delta;
+
+	// # of cycles that have occurred
 	u64 count;
 };
 

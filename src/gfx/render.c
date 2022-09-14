@@ -5,9 +5,8 @@ const u32 g_render_flags = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
 
 struct render render;
 
-int render_init( struct world *world )
+int render_init( void )
 {
-	render.world = world;
     render.handle = SDL_CreateRenderer( window.handle, -1, g_render_flags );
 
     if ( render.handle == NULL )
@@ -24,7 +23,6 @@ int render_free( void )
 		return 1;
 
 	SDL_DestroyRenderer( render.handle );
-	render.world = NULL;
 
 	return 0;
 }

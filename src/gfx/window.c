@@ -1,4 +1,5 @@
 #include "window.h"
+#include "render.h"
 #include "../input/input.h"
 
 // global variables
@@ -83,6 +84,7 @@ int window_init( struct window_state *state )
 
 	window.frame = ( struct timing ) {
 		.target_rate	= 60,
+		.target_delta	= 1000.0 / 60.0,
 		.rate			= 0,
 		.delta			= 0,
 		.count			= 0
@@ -90,8 +92,9 @@ int window_init( struct window_state *state )
 
 	window.tick = ( struct timing ) {
 		.target_rate	= 60,
+		.target_delta	= 1000.0 / 60.0,
 		.rate			= 0,
-		.delta			= 1000.0 / 60.0,
+		.delta			= 0,
 		.count			= 0
 	};
 
@@ -115,9 +118,6 @@ int window_start( void )
     window_general_init();
 
 	// setup game loop
-	u64 target_frame_delta = 1000.0 / window.frame.target_rate;
-	f64 target_tick_delta = 1000.0 / window.tick.target_rate;
-
     u64 frame_previous = SDL_GetTicks64();
     f64 tick_time = 0;
 
@@ -158,10 +158,10 @@ int window_start( void )
         window_general_handle();
 
         // do ticks and maintain tick rate
-        while( tick_time >= target_tick_delta )
+        while( tick_time >= window.tick.target_delta )
         {
             window_general_tick();
-            tick_time -= target_tick_delta;
+            tick_time -= window.tick.target_delta;
         }
 
         window_general_update();
@@ -171,15 +171,13 @@ int window_start( void )
         window.frame.delta = ( f64 ) frame_delta / 1000.0;
 
         // apply fps cap
-        int delay = frame_current + target_frame_delta - SDL_GetTicks64();
-        if ( delay > 0 )
-        {
-            SDL_Delay( delay );
-        }
+        int delay = frame_current + window.frame.target_delta - SDL_GetTicks64();
+        if ( delay > 0 ) SDL_Delay( delay );
     }
 
 	// clean up
 	window_general_free();
+
     return 0;
 }
 

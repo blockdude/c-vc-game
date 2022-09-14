@@ -5,7 +5,7 @@
 
 int game_init( void )
 {
-	render_init( NULL );
+	render_init();
     return 0;
 }
 
