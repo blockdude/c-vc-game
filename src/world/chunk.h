@@ -28,7 +28,7 @@ struct chunk
     struct
     {
         int light_level;
-        enum tile_id id;
+		int id;
     } data[ CHUNK_VOLUME ];
 };
 
@@ -36,5 +36,6 @@ int chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z );
 int chunk_free( struct chunk *self );
 int chunk_update( struct chunk *self );
 int chunk_tick( struct chunk *self );
+int chunk_render( struct chunk *self );
 
 #endif

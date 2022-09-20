@@ -9,6 +9,14 @@ static bool mouse_state_up = false;
 static bool mouse_state_move = false;
 static i32 mouse_state_scroll = 0;
 
+struct mouse_state
+{
+	bool down;
+	bool up;
+	bool moved;
+	int delta;
+} mouse_state;
+
 void input_init( void )
 {
     key_state = SDL_GetKeyboardState( NULL );

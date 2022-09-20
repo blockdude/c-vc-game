@@ -1,4 +1,5 @@
 #include "gfx/window.h"
+#include "gfx/render.h"
 #include "state/game.h"
 
 int main( void )
@@ -13,7 +14,11 @@ int main( void )
 	};
 
 	window_init( &state );
+	render_init();
+
 	window_start();
+
+	render_free();
 	window_close();
 
 	return 0;

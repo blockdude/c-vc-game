@@ -25,51 +25,51 @@ static int window_general_handle( void )
         input_handle( &event );
     }
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 // base init
 static int window_general_init( void )
 {
-    window.state.init();
+    if ( window.state.init ) window.state.init();
     input_init();
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 // base clean
 static int window_general_free( void )
 {
-    window.state.free();
+    if ( window.state.free ) window.state.free();
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 // base update
 static int window_general_update( void )
 {
-    window.state.update();
+    if ( window.state.update ) window.state.update();
     input_update();
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 // base tick
 static int window_general_tick( void )
 {
-    window.state.tick();
+    if ( window.state.tick ) window.state.tick();
     window.tick.count++;
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 // base render
 static int window_general_render( void )
 {
-	window.state.render();
+	if ( window.state.render ) window.state.render();
     window.frame.count++;
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 int window_init( struct window_state *state )
@@ -100,16 +100,16 @@ int window_init( struct window_state *state )
 
 	// sdl init and make window
     if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
-        return 1;
+        return WINDOW_ERROR;
 
     window.handle = SDL_CreateWindow( g_window_title, 0, 0, 700, 700, g_window_flags );
     if ( !window.handle )
     {
         SDL_Quit();
-        return 1;
+        return WINDOW_ERROR;
     }
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 int window_start( void )
@@ -178,7 +178,7 @@ int window_start( void )
 	// clean up
 	window_general_free();
 
-    return 0;
+    return WINDOW_SUCCESS;
 }
 
 int window_close( void )
@@ -187,7 +187,29 @@ int window_close( void )
     SDL_Quit();
 
 	// reset window
-	window = ( struct window ) { 0 };
+	window = ( struct window ){ 0 };
 
+    return WINDOW_SUCCESS;
+}
+
+int window_set_target_fps( int fps )
+{
+	window.frame.target_rate = fps;
+	window.frame.target_delta = ( fps <= 0.0 ? 1.0 : 1000.0 / ( f64 ) fps );
+
+	return 0;
+}
+
+int window_set_target_tps( int tps )
+{
+	window.tick.target_rate = tps;
+	window.tick.target_delta = ( tps <= 0.0 ? 0.01 : 1000.0 / ( f64 ) tps );
+
+	return 0;
+}
+
+int window_get_size( int *w, int *h )
+{
+    SDL_GetWindowSize( window.handle, w, h );
     return 0;
 }

@@ -4,6 +4,9 @@
 #include "../util/util.h"
 #include <SDL2/SDL.h>
 
+#define WINDOW_SUCCESS	0
+#define WINDOW_ERROR	-1
+
 extern const char *g_window_title;
 extern const u32 g_window_flags;
 
@@ -59,25 +62,21 @@ struct window
 // global window because only one window should be opened for this game anyways
 extern struct window window;
 
-// init window and open it
+// window setup and cleanup functions
 int window_init( struct window_state *state );
-
-// start main loop
 int window_start( void );
-
-// close window and free memory
 int window_close( void );
 
-// change all event functions. used when switching game states.
+// window setters
 int window_set_state( struct window_state *state );
+int window_set_target_fps( int fps );
+int window_set_target_tps( int tps );
 
-// change target frame rate
-int window_set_target_frame_rate( unsigned int rate );
-
-// change target tick rate (avoid changing tick rate)
-int window_set_target_tick_rate( unsigned int rate );
-
-// get window width and height
+// window getters
 int window_get_size( int *w, int *h );
+
+// window events
+int window_event_resized( void );
+int window_event_moved( void );
 
 #endif

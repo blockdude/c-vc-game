@@ -2,17 +2,21 @@
 #include "../gfx/window.h"
 #include "../gfx/render.h"
 #include "../util/util.h"
+#include "../world/world.h"
+
+// new world
+static struct world world;
 
 int game_init( void )
 {
-	render_init();
+    world_init( &world );
     return 0;
 }
 
 int game_free( void )
 {
-	render_free();
-    return 0;
+    world_free( &world );
+	return 0;
 }
 
 int game_update( void )
@@ -29,6 +33,9 @@ int game_render( void )
 {
 	render_set_color( 255, 255, 255, 255 );
 	render_clear();
+
+    world_render( &world );
+
 	render_present();
 
     printf( "---------------------------\n" );

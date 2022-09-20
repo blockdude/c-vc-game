@@ -6,9 +6,9 @@
 #include "tile/tile.h"
 #include "chunk.h"
 
-#define WORLD_SIZE_X 1
-#define WORLD_SIZE_Y 1
-#define WORLD_SIZE_Z 1
+#define WORLD_SIZE_X 3
+#define WORLD_SIZE_Y 3
+#define WORLD_SIZE_Z 3
 #define WORLD_VOLUME ( WORLD_SIZE_X * WORLD_SIZE_Y * WORLD_SIZE_Z )
 
 struct world
@@ -21,6 +21,14 @@ struct world
 
     // entity to load world around
     struct entity entity_load;
+
+    // temp camera
+    struct
+    {
+        float x;
+        float y;
+        float scale;
+    } camera;
 
     // world tick counter (used to get time of day?)
     u64 tick;
@@ -39,6 +47,7 @@ int world_init( struct world *self );
 int world_free( struct world *self );
 int world_update( struct world *self );
 int world_tick( struct world *self );
+int world_render( struct world *self );
 
 //void world_to_screen( float world_x, float world_y, int *screen_x, int *screen_y );
 //void screen_to_world( float world_x, float world_y, int *screen_x, int *screen_y );

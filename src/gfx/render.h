@@ -5,6 +5,9 @@
 #include "../world/world.h"
 #include <SDL2/SDL.h>
 
+#define RENDER_SUCCESS	0
+#define RENDER_ERROR	-1
+
 extern const u32 g_render_flags;
 
 struct render

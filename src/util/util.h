@@ -8,6 +8,5 @@
 
 #include "types.h"
 #include "fmath.h"
-#include "kdtree.h"
 
 #endif
