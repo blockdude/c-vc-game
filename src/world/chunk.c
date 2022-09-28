@@ -1,12 +1,13 @@
+#include <string.h>
 #include "chunk.h"
 #include "world.h"
-#include "../gfx/draw.h"
+#include "../gfx/render.h"
 #include "../gfx/window.h"
 
 int chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z )
 {
     // init all data of chunk to zero
-    *self = ( struct chunk ) { 0 };
+    memset( self, 0, sizeof( struct chunk ) );
 
     // init new data
     self->world = world;
@@ -20,7 +21,7 @@ int chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z )
 int chunk_free( struct chunk *self )
 {
     // just set data to zero
-    *self = ( struct chunk ) { 0 };
+    memset( self, 0, sizeof( struct chunk ) );
 
 	return 0;
 }

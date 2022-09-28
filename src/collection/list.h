@@ -17,6 +17,7 @@ struct list
     struct node *pool;
 };
 
+int list_init( struct list *self );
 int list_insert( struct list *self, void *data );
 int list_push( struct list *self, void *data );
 

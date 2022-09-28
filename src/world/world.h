@@ -6,9 +6,9 @@
 #include "tile/tile.h"
 #include "chunk.h"
 
-#define WORLD_SIZE_X 3
-#define WORLD_SIZE_Y 3
-#define WORLD_SIZE_Z 3
+#define WORLD_SIZE_X 6
+#define WORLD_SIZE_Y 6
+#define WORLD_SIZE_Z 1
 #define WORLD_VOLUME ( WORLD_SIZE_X * WORLD_SIZE_Y * WORLD_SIZE_Z )
 
 struct world

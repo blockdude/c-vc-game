@@ -28,37 +28,37 @@ enum mouse
     MB_MIDDLE       = SDL_BUTTON_MMASK
 };
 
-// state handler (for main.c only)
+// state handler (for window.c only)
 void input_init( void );
 void input_handle( SDL_Event *event );
 void input_update( void );
 
 // true when key has been pressed (lasts one frame)
-bool key_down( enum keyboard input );
+bool input_key_down( enum keyboard input );
 
 // true when key is released (lasts one frame)
-bool key_up( enum keyboard input );
+bool input_key_up( enum keyboard input );
 
 // true while key is held
-bool key_press( enum keyboard input );
+bool input_key_press( enum keyboard input );
 
 
 // true when button is pressed (lasts one frame)
-bool mouse_down( enum mouse input );
+bool input_mouse_down( enum mouse input );
 
 // true when button is released (lasts one frame)
-bool mouse_up( enum mouse input );
+bool input_mouse_up( enum mouse input );
 
 // true when button is held
-bool mouse_press( enum mouse input );
+bool input_mouse_press( enum mouse input );
 
 // true when mouse is moved
-bool mouse_move( void );
+bool input_mouse_move( void );
 
 // get mouse position on window
-void mouse_pos( int *x, int *y );
+void input_mouse_pos( int *x, int *y );
 
 // returns amount scrolled in a frame otherwise returns zero
-i32 mouse_scroll( void );
+i32 input_mouse_scroll( void );
 
 #endif

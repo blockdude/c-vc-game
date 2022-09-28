@@ -29,14 +29,6 @@ float max( float a, float b )
     return ( a > b ? a : b );
 }
 
-void split_color( int color, char *r, char *g, char *b, char *a )
-{
-    if ( r ) *r = color >> 24 & 0xff;
-    if ( g ) *g = color >> 16 & 0xff;
-    if ( b ) *b = color >> 8 & 0xff;
-    if ( a ) *a = color & 0xff;
-}
-
 void center_pos( float x, float y, float *x_out, float *y_out )
 {
     if ( x_out ) *x_out = x + 0.5f;

@@ -4,10 +4,10 @@
 
 static void update( struct ecs *self )
 {
-    self->component.movement.up = key_press( KB_NORTH );
-    self->component.movement.down = key_press( KB_SOUTH );
-    self->component.movement.right = key_press( KB_EAST );
-    self->component.movement.left = key_press( KB_WEST );
+    self->component.movement.up = input_key_press( KB_NORTH );
+    self->component.movement.down = input_key_press( KB_SOUTH );
+    self->component.movement.right = input_key_press( KB_EAST );
+    self->component.movement.left = input_key_press( KB_WEST );
 }
 
 void ecs_control_init()

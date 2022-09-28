@@ -1,21 +1,48 @@
+#include <string.h>
 #include "world.h"
-#include "../gfx/draw.h"
+#include "../gfx/render.h"
 #include "../gfx/window.h"
-#include <assert.h>
+#include "../input/input.h"
 
 int world_init( struct world *self )
 {
-    *self = ( struct world ) { 0 };
+    memset( self, 0, sizeof( struct world ) );
     ecs_init( &self->ecs );
 
-	return 0;
+    self->camera.x = WORLD_SIZE_X / 2;
+    self->camera.y = WORLD_SIZE_Y / 2;
+    self->camera.scale = 100.0f;
+
+    for ( int i = 0; i < WORLD_VOLUME; i++ )
+    {
+        self->chunks[ i ].world = self;
+    }
+
+    return 0;
 }
 
 int world_free( struct world *self )
 {
-    *self = ( struct world ) { 0 };
+    memset( self, 0, sizeof( struct world ) );
 
-	return 0;
+    return 0;
+}
+
+int world_update( struct world *self )
+{
+    float vx = 0.0f;
+    float vy = 0.0f;
+
+    if ( input_key_press( KB_NORTH ) ) vy -= 1.0f;
+    if ( input_key_press( KB_SOUTH ) ) vy += 1.0f;
+    if ( input_key_press( KB_EAST ) ) vx += 1.0f;
+    if ( input_key_press( KB_WEST ) ) vx -= 1.0f;
+
+    normalize( vx, vy, &vx, &vy );
+    self->camera.x += vx * 10.0f * window.frame.delta;
+    self->camera.y += vy * 10.0f * window.frame.delta;
+
+    return 0;
 }
 
 int world_render( struct world *self )
@@ -39,18 +66,18 @@ int world_render( struct world *self )
         float rect_x;
         float rect_y;
 
-        rect_x = ( float ) ( ( x - self->camera.x ) * 100.0f + offset_x );
-        rect_y = ( float ) ( ( y - self->camera.y ) * 100.0f + offset_y );
+        rect_x = ( float ) ( ( x - self->camera.x ) * self->camera.scale + offset_x );
+        rect_y = ( float ) ( ( y - self->camera.y ) * self->camera.scale + offset_y );
 
         struct rectangle r = {
             .x = rect_x,
             .y = rect_y,
-            .w = 100.0f,
-            .h = 100.0f
+            .w = self->camera.scale,
+            .h = self->camera.scale
         };
 
         render_set_color( 0, 0, 0, 255 );
-        draw_rectangle( r );
+        render_rectangle( r );
     }
 
     return 0;

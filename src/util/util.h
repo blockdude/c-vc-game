@@ -8,5 +8,7 @@
 
 #include "types.h"
 #include "fmath.h"
+#include "color.h"
+#include "shape.h"
 
 #endif

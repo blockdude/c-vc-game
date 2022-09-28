@@ -5,6 +5,8 @@
 
 struct component_control
 {
+    int key_up;
+    int key_down;
 };
 
 #endif

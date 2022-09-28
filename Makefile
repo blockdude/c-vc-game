@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -g -Wall -Wextra -std=c99 -ggdb3
+CFLAGS = -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
 LIBS = -lm -lSDL2
 
 SRC = $(wildcard src/**/*.c) $(wildcard src/*.c) $(wildcard src/**/**/*.c) $(wildcard src/**/**/**/*.c)

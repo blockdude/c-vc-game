@@ -21,6 +21,7 @@ int game_free( void )
 
 int game_update( void )
 {
+    world_update( &world );
     return 0;
 }
 

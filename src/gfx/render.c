@@ -43,3 +43,15 @@ int render_present( void )
 	SDL_RenderPresent( render.handle );
 	return render.handle ? RENDER_SUCCESS : RENDER_ERROR;
 }
+
+int render_rectangle( struct rectangle rectangle )
+{
+	SDL_FRect r = {
+		.x = rectangle.x,
+		.y = rectangle.y,
+		.w = rectangle.w,
+		.h = rectangle.h
+	};
+
+	return SDL_RenderDrawRectF( render.handle, &r );
+}

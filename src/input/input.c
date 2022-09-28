@@ -9,14 +9,6 @@ static bool mouse_state_up = false;
 static bool mouse_state_move = false;
 static i32 mouse_state_scroll = 0;
 
-struct mouse_state
-{
-	bool down;
-	bool up;
-	bool moved;
-	int delta;
-} mouse_state;
-
 void input_init( void )
 {
     key_state = SDL_GetKeyboardState( NULL );
@@ -79,50 +71,50 @@ void input_update( void )
     mouse_state_scroll = 0;
 }
 
-bool key_down( enum keyboard input )
+bool input_key_down( enum keyboard input )
 {
     return key_state_down && key_state[ input ];
 }
 
-bool key_up( enum keyboard input )
+bool input_key_up( enum keyboard input )
 {
     return key_state_up && key_state[ input ];
 }
 
-bool key_press( enum keyboard input )
+bool input_key_press( enum keyboard input )
 {
     return key_state[ input ];
 }
 
-bool mouse_down( enum mouse input )
+bool input_mouse_down( enum mouse input )
 {
     u32 mouse_state = SDL_GetMouseState( NULL, NULL );
     return mouse_state_down && ( mouse_state & input );
 }
 
-bool mouse_up( enum mouse input )
+bool input_mouse_up( enum mouse input )
 {
     u32 mouse_state = SDL_GetMouseState( NULL, NULL );
     return mouse_state_up && ( mouse_state & input );
 }
 
-bool mouse_press( enum mouse input )
+bool input_mouse_press( enum mouse input )
 {
     u32 mouse_state = SDL_GetMouseState( NULL, NULL );
     return mouse_state & input;
 }
 
-bool mouse_move( void )
+bool input_mouse_move( void )
 {
     return mouse_state_move;
 }
 
-void mouse_pos( int *x, int *y )
+void input_mouse_pos( int *x, int *y )
 {
     SDL_GetMouseState( x, y );
 }
 
-i32 mouse_scroll( void )
+i32 input_mouse_scroll( void )
 {
     return mouse_state_scroll;
 }
