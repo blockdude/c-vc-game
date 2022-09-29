@@ -13,6 +13,9 @@ enum keyboard
     KB_EAST         = SDL_SCANCODE_D,
     KB_WEST         = SDL_SCANCODE_A,
 
+    KB_UP           = SDL_SCANCODE_Q,
+    KB_DOWN         = SDL_SCANCODE_E,
+
     // other
     KB_INTERACT     = SDL_SCANCODE_F,
     KB_DROP         = SDL_SCANCODE_Q,

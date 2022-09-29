@@ -10,6 +10,7 @@ static struct world world;
 
 int game_init( void )
 {
+    tile_init();
     world_init( &world, 16, 16, 16 );
     return 0;
 }
