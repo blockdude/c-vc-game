@@ -29,7 +29,7 @@ int render_set_color( u8 r, u8 g, u8 b, u8 a );
 int render_clear( void );
 int render_present( void );
 
-int render_line( float x0, float y0, float x1, float y1 );
+int render_line( struct line line );
 int render_rectangle( struct rectangle rectangle );
 int render_circle( struct circle circle );
 int render_triangle( struct triangle triangle );

@@ -4,35 +4,34 @@
 #include "../util/util.h"
 #include "tile/tile.h"
 
-#define CHUNK_SIZE_X 32
-#define CHUNK_SIZE_Y 32
-#define CHUNK_SIZE_Z 32
-
-#define CHUNK_VOLUME ( CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z )
+#define CHUNK_SIZE_X        48
+#define CHUNK_SIZE_Y        48
+#define CHUNK_SIZE_Z        48
+#define CHUNK_VOLUME        ( CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z )
 
 // forward declartion of world
 struct world;
 
+struct tile_data
+{
+    int light_level     : 16;
+    int id              : 16;
+};
+
 // chunk data
 struct chunk
 {
-    // position of chunk
-    i64 x;
-    i64 y;
-    i64 z;
-
-    // world where chunk is set in
+    // world containing this chunk
     struct world *world;
 
+    // index in world chunks array
+    size_t index;
+
     // tile data
-    struct
-    {
-        int light_level;
-		int id;
-    } data[ CHUNK_VOLUME ];
+    struct tile_data *tiles;
 };
 
-int chunk_init( struct chunk *self, struct world *world, i64 x, i64 y, i64 z );
+int chunk_init( struct chunk *self, struct world *world, size_t index );
 int chunk_free( struct chunk *self );
 int chunk_update( struct chunk *self );
 int chunk_tick( struct chunk *self );

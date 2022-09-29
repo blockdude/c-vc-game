@@ -10,8 +10,4 @@ float clamp				( float val, float min, float max );
 float min				( float a, float b );
 float max				( float a, float b );
 
-void center_pos			( float x, float y, float *x_out, float *y_out );
-float center_x			( float x );
-float center_y			( float y );
-
 #endif

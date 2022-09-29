@@ -1,6 +1,17 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
+struct point
+{
+	float x, y;
+};
+
+struct line
+{
+	float x0, y0;
+	float x1, y1;
+};
+
 struct rectangle
 {
 	float x;

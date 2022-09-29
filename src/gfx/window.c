@@ -2,6 +2,9 @@
 #include "render.h"
 #include "../input/input.h"
 
+#define DEFAULT_RATE 60
+#define MS_PER_SECOND
+
 // global variables
 struct window window;
 
@@ -83,8 +86,8 @@ int window_init( struct window_state *state )
 		window.state = *state;
 
 	window.frame = ( struct timing ) {
-		.target_rate	= 60,
-		.target_delta	= 1000.0 / 60.0,
+		.target_rate	= DEFAULT_RATE,
+		.target_delta	= 1000.0 / ( double ) DEFAULT_RATE,
 		.rate			= 0,
 		.delta			= 0,
 		.count			= 0
@@ -187,7 +190,7 @@ int window_close( void )
     SDL_Quit();
 
 	// reset window
-	window = ( struct window ){ 0 };
+	window = ( struct window ) { 0 };
 
     return WINDOW_SUCCESS;
 }

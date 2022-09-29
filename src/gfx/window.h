@@ -29,7 +29,7 @@ struct timing
 	// target cycles per second
 	int target_rate;
 	
-	// target seconds per cycle
+	// target milliseconds per cycle
 	f64 target_delta;
 
 	// cycles per second (updated every second)

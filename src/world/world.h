@@ -6,11 +6,6 @@
 #include "tile/tile.h"
 #include "chunk.h"
 
-#define WORLD_SIZE_X 6
-#define WORLD_SIZE_Y 6
-#define WORLD_SIZE_Z 1
-#define WORLD_VOLUME ( WORLD_SIZE_X * WORLD_SIZE_Y * WORLD_SIZE_Z )
-
 struct world
 {
     // collection of all world entities
@@ -36,14 +31,15 @@ struct world
     // seed of world
     u64 seed;
 
-    // size in each dimension of the world
-    int world_size;
-
     // all chunks in the world
-    struct chunk chunks[ WORLD_VOLUME ];
+    size_t world_size_x;
+    size_t world_size_y;
+    size_t world_size_z;
+    size_t chunks_count;
+    struct chunk *chunks;
 };
 
-int world_init( struct world *self );
+int world_init( struct world *self, size_t world_size_x, size_t world_size_y, size_t world_size_z );
 int world_free( struct world *self );
 int world_update( struct world *self );
 int world_tick( struct world *self );

@@ -4,7 +4,12 @@ union ecs_system ECS_SYSTEMS[ COMPONENT_COUNT ];
 
 void ecs_init( struct ecs *self )
 {
-    *self = ( struct ecs ) { 0 };
+    memset( self, 0, sizeof( *self ) );
+}
+
+void ecs_free( struct ecs *self )
+{
+    memset( self, 0, sizeof( *self ) );
 }
 
 void ecs_add_component( struct ecs *self, enum ecs_component component )

@@ -9,7 +9,7 @@
 
 void generate_world( struct world *world )
 {
-    for ( int i = 0; i < WORLD_VOLUME; i++ )
+    for ( size_t i = 0; i < world->chunks_count; i++ )
     {
         generate_chunk( &world->chunks[ i ] );
     }
@@ -24,17 +24,17 @@ void generate_chunk( struct chunk *chunk )
         // level 14 and below will be dirt
         if ( z < 15 )
         {
-            chunk->data[ i ].id = TILE_DIRT;
+            chunk->tiles[ i ].id = TILE_DIRT;
         }
         // level 15 and above will be air
         if ( z > 15 )
         {
-            chunk->data[ i ].id = TILE_AIR;
+            chunk->tiles[ i ].id = TILE_AIR;
         }
         // level 15 will be grass
         if ( z == 15 )
         {
-            chunk->data[ i ].id = TILE_GRASS;
+            chunk->tiles[ i ].id = TILE_GRASS;
         }
     }
 }

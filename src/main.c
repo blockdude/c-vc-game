@@ -1,19 +1,10 @@
 #include "gfx/window.h"
 #include "gfx/render.h"
-#include "state/game.h"
+#include "state/state.h"
 
 int main( void )
 {
-	// starting game state
-	struct window_state state = {
-		.init		= &game_init,
-		.free		= &game_free,
-		.update 	= &game_update,
-		.tick		= &game_tick,
-		.render 	= &game_render
-	};
-
-	window_init( &state );
+	window_init( &g_game_state );
 	render_init();
 
 	window_start();

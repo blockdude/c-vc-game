@@ -44,7 +44,7 @@ int main( void )
         int z = i / ( dim_x * dim_y ); // z in N(A)
         int w = i % ( dim_x * dim_y ); // w in N(BC)
 
-        // below might be faster idk idc... yet
+        // below might be faster. idk
         //int w = i - z * dim_x * dim_y;
 
         // N(BC) -> N(B) x N(C)

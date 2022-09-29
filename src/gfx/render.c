@@ -22,7 +22,6 @@ int render_init( void )
 int render_free( void )
 {
 	SDL_DestroyRenderer( render.handle );
-
 	return RENDER_SUCCESS;
 }
 
@@ -44,6 +43,11 @@ int render_present( void )
 	return render.handle ? RENDER_SUCCESS : RENDER_ERROR;
 }
 
+int render_line( struct line line )
+{
+	return SDL_RenderDrawLineF( render.handle, line.x0, line.y0, line.x1, line.y1 );
+}
+
 int render_rectangle( struct rectangle rectangle )
 {
 	SDL_FRect r = {
@@ -54,4 +58,16 @@ int render_rectangle( struct rectangle rectangle )
 	};
 
 	return SDL_RenderDrawRectF( render.handle, &r );
+}
+
+int render_filled_rectangle( struct rectangle rectangle )
+{
+	SDL_FRect r = {
+		.x = rectangle.x,
+		.y = rectangle.y,
+		.w = rectangle.w,
+		.h = rectangle.h
+	};
+
+	return SDL_RenderFillRectF( render.handle, &r );
 }
