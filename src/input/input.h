@@ -62,6 +62,6 @@ bool input_mouse_move( void );
 void input_mouse_pos( int *x, int *y );
 
 // returns amount scrolled in a frame otherwise returns zero
-i32 input_mouse_scroll( void );
+float input_mouse_scroll( void );
 
 #endif

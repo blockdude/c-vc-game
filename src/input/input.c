@@ -7,7 +7,7 @@ static bool key_state_up = false;
 static bool mouse_state_down = false;
 static bool mouse_state_up = false;
 static bool mouse_state_move = false;
-static i32 mouse_state_scroll = 0;
+static float mouse_state_scroll = 0;
 
 void input_init( void )
 {
@@ -46,7 +46,7 @@ void input_handle( SDL_Event *event )
 
         case SDL_MOUSEWHEEL:
 
-            mouse_state_scroll = event->wheel.y;
+            mouse_state_scroll = event->wheel.preciseY;
 
             break;
 
@@ -114,7 +114,7 @@ void input_mouse_pos( int *x, int *y )
     SDL_GetMouseState( x, y );
 }
 
-i32 input_mouse_scroll( void )
+float input_mouse_scroll( void )
 {
     return mouse_state_scroll;
 }

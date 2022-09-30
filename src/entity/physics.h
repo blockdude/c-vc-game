@@ -6,8 +6,9 @@
 struct component_physics
 {
     // velocity vector
-    f32 dx;
-    f32 dy;
+    float dx;
+    float dy;
+    float dz;
 
     // do collision
     bool collision;

@@ -2,9 +2,10 @@
 
 union ecs_system ECS_SYSTEMS[ COMPONENT_COUNT ];
 
-void ecs_init( struct ecs *self )
+void ecs_init( struct ecs *self, struct world *world )
 {
     memset( self, 0, sizeof( *self ) );
+    self->world = world;
 }
 
 void ecs_free( struct ecs *self )

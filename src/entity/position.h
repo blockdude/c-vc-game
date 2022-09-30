@@ -7,7 +7,7 @@ struct component_position
 {
     f64 x;
     f64 y;
-	int z;
+	f64 z;
 };
 
 #endif

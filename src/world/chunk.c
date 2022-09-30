@@ -32,11 +32,14 @@ int chunk_render( struct chunk *self )
 	if ( self == NULL )
 		return -1;
 
-    int screen_w;
-    int screen_h;
-    window_get_size( &screen_w, &screen_h );
-    int screen_center_x = screen_w / 2;
-    int screen_center_y = screen_h / 2;
+    // get screen center
+    int screen_center_x;
+    int screen_center_y;
+
+    window_get_size( &screen_center_x, &screen_center_y );
+
+    screen_center_x = screen_center_x / 2;
+    screen_center_y = screen_center_y / 2;
 
     //int chunk_z = self->index / ( CHUNK_SIZE_X * CHUNK_SIZE_Y );
     int chunk_w = self->index % ( self->world->world_size_x * self->world->world_size_y );
@@ -81,8 +84,6 @@ int chunk_render( struct chunk *self )
         render_set_color( 0, 0, 0, 255 );
         render_rectangle( rect );
     }
-
-    printf( " rendered in pos %d, %d\n", chunk_x, chunk_y );
 
     return 0;
 }
