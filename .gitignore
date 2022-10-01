@@ -1,11 +1,12 @@
-# ignore bin directory
+# ignore directories
 bin
+old
+obj
 
-# ignore old files and directories
-*-old
-
-# ignore custom make script
+# ignore select shell script
 remote-make.sh
+run.sh
+run
 
 # ignore valgrind massif readouts
 massif.out.*
