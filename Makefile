@@ -28,4 +28,4 @@ run: $(BIN)
 clean:
 	rm -rf $(BIN_DIR) $(OBJ_DIR)
 
-.PHONY: clean run
+.PHONY: all clean run
