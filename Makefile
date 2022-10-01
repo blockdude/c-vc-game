@@ -22,5 +22,10 @@ $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+run: $(BIN)
+	@exec bin/main
+
 clean:
 	rm -rf $(BIN_DIR) $(OBJ_DIR)
+
+.PHONY: clean run
