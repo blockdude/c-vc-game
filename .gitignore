@@ -7,8 +7,8 @@ bin
 # ignore custom make script
 remote-make.sh
 
-# unignore vimspector
-!.vimspector.json
+# ignore valgrind massif readouts
+massif.out.*
 
 # Prerequisites
 *.d
