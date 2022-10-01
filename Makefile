@@ -3,24 +3,24 @@ CC = gcc
 CFLAGS = -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
 LIBS = -lm -lSDL2
 
-SRC = $(wildcard src/**/*.c) $(wildcard src/*.c) $(wildcard src/**/**/*.c) $(wildcard src/**/**/**/*.c)
-OBJ = $(SRC:.c=.o)
-BIN = bin
+BIN_DIR = bin
+SRC_DIR = src
+OBJ_DIR = obj
 
-DEPS = $(M_SRC:%=%.h)
+BIN = $(BIN_DIR)/main
+SRC = $(patsubst $(SRC_DIR)/%,%,$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/**/*.c) $(wildcard $(SRC_DIR)/**/**/*.c) $(wildcard $(SRC_DIR)/**/**/**/*.c))
+DEP = $(patsubst $(SRC_DIR)/%,%,$(wildcard $(SRC_DIR)/*.h) $(wildcard $(SRC_DIR)/**/*.h) $(wildcard $(SRC_DIR)/**/**/*.h) $(wildcard $(SRC_DIR)/**/**/**/*.h))
+OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
-all: bin libs bin/main
+all: $(BIN)
 
-bin:
-	mkdir -p ./$(BIN)
+$(BIN): $(OBJ)
+	@mkdir -p $(@D)
+	$(CC) $(LIBS) -o $(BIN_DIR)/main $^
 
-libs:
-
-bin/main: $(OBJ)
-	$(CC) -o $(BIN)/main $^ $(LIBS)
-
-%.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+$(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf $(BIN) $(OBJ)
+	rm -rf $(BIN_DIR) $(OBJ_DIR)
