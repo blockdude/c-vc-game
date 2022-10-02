@@ -74,6 +74,8 @@ int window_set_target_tps( int tps );
 
 // window getters
 int window_get_size( int *w, int *h );
+int window_get_fps( void );
+int window_get_tps( void );
 
 // window events
 int window_event_resized( void );

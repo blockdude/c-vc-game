@@ -4,7 +4,7 @@
 
 int main( void )
 {
-	window_init( &g_game_state );
+	window_init( &game_state );
 	render_init();
 
 	window_start();

@@ -1,12 +1,10 @@
 #include "game.h"
+#include "state.h"
 #include "../gfx/window.h"
 #include "../gfx/render.h"
 #include "../util/util.h"
 #include "../world/world.h"
 #include "../input/input.h"
-
-// new world
-static struct world world;
 
 int game_init( void )
 {

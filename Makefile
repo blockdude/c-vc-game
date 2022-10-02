@@ -9,16 +9,17 @@ LDLIBS = -lm -lSDL2
 LDFLAGS = 
 
 # directories
-BLD_DIR := bld
-SRC_DIR := src
+BLD_DIR ?= bld
+SRC_DIR ?= src
+
 BIN_DIR := $(BLD_DIR)/bin
 OBJ_DIR := $(BLD_DIR)/obj
 DEP_DIR := $(BLD_DIR)/dep
 
 # build directory tree
-BLD_DIRS := $(BIN_DIR) \
-			$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR))) \
-			$(patsubst $(SRC_DIR)/%,$(DEP_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)))
+DIRS := $(BLD_DIR) $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) \
+		$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR))) \
+		$(patsubst $(SRC_DIR)/%,$(DEP_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)))
 
 # files
 BIN := $(BIN_DIR)/main
@@ -27,14 +28,14 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
 # build
-all: $(BLD_DIRS) $(BIN)
+all: $(DIRS) $(BIN)
 
 # build and run
 run: all
-	exec $(BIN)
+	@exec $(BIN)
 
 # create directories
-$(BLD_DIRS):
+$(DIRS):
 	@mkdir -p $@
 
 # compile to binary
