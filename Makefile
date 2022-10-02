@@ -52,4 +52,4 @@ clean:
 
 -include $(DEP)
 
-.PHONY: all init setup clean run
+.PHONY: all clean run
