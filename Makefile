@@ -15,7 +15,7 @@ BIN_DIR := $(BLD_DIR)/bin
 OBJ_DIR := $(BLD_DIR)/obj
 DEP_DIR := $(BLD_DIR)/dep
 
-# entire build directory tree
+# build directory tree
 BLD_DIRS := $(BIN_DIR) \
 			$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR))) \
 			$(patsubst $(SRC_DIR)/%,$(DEP_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)))
