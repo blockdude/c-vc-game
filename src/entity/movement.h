@@ -5,7 +5,7 @@
 
 struct component_movement
 {
-    f32 speed;
+    float speed;
 
     // change to a vector
     bool up;
@@ -14,8 +14,8 @@ struct component_movement
     bool right;
 
     // like this
-    f32 dx;
-    f32 dy;
+    float dx;
+    float dy;
 };
 
 #endif

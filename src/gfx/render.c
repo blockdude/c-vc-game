@@ -2,7 +2,7 @@
 #include "window.h"
 
 // some sdl flags that i made global incase i wanted to do something with them
-const u32 g_render_flags = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
+const uint32_t g_render_flags = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
 
 // global renderer
 struct render render;
@@ -25,7 +25,7 @@ int render_free( void )
 	return RENDER_SUCCESS;
 }
 
-int render_set_color( u8 r, u8 g, u8 b, u8 a )
+int render_set_color( uint8_t r, uint8_t g, uint8_t b, uint8_t a )
 {
 	int error_code = SDL_SetRenderDrawColor( render.handle, r, g, b, a );
 	return error_code == 0 ? RENDER_SUCCESS : RENDER_ERROR;

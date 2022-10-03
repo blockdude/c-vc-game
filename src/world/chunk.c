@@ -74,7 +74,7 @@ int chunk_render( struct chunk *self )
         };
 
         // render stuff
-        u8 r, g, b, a;
+        uint8_t r, g, b, a;
         struct tile *t = tile_get( self->tiles[ tile_index ].id );
         color_split( t->color, &r, &g, &b, &a );
 

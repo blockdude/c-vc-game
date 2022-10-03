@@ -54,7 +54,7 @@ struct ecs
 
 struct entity
 {
-    u32 id;
+    uint32_t id;
     struct ecs *ecs;
 };
 

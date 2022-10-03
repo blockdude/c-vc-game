@@ -1,6 +1,6 @@
 #include "input.h"
 
-static const u8 *key_state;
+static const uint8_t *key_state;
 static bool key_state_down = false;
 static bool key_state_up = false;
 
@@ -88,19 +88,19 @@ bool input_key_press( enum keyboard input )
 
 bool input_mouse_down( enum mouse input )
 {
-    u32 mouse_state = SDL_GetMouseState( NULL, NULL );
+    uint32_t mouse_state = SDL_GetMouseState( NULL, NULL );
     return mouse_state_down && ( mouse_state & input );
 }
 
 bool input_mouse_up( enum mouse input )
 {
-    u32 mouse_state = SDL_GetMouseState( NULL, NULL );
+    uint32_t mouse_state = SDL_GetMouseState( NULL, NULL );
     return mouse_state_up && ( mouse_state & input );
 }
 
 bool input_mouse_press( enum mouse input )
 {
-    u32 mouse_state = SDL_GetMouseState( NULL, NULL );
+    uint32_t mouse_state = SDL_GetMouseState( NULL, NULL );
     return mouse_state & input;
 }
 

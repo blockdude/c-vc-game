@@ -8,7 +8,7 @@
 #define WINDOW_ERROR	-1
 
 extern const char *g_window_title;
-extern const u32 g_window_flags;
+extern const uint32_t g_window_flags;
 
 // window function
 typedef int ( *window_event_fn )( void );
@@ -30,16 +30,16 @@ struct timing
 	int target_rate;
 	
 	// target milliseconds per cycle
-	f64 target_delta;
+	double target_delta;
 
 	// cycles per second (updated every second)
 	int rate;
 
 	// seconds per cycle (updated every cycle)
-	f64 delta;
+	double delta;
 
 	// # of cycles that have occurred
-	u64 count;
+	uint64_t count;
 };
 
 // window struct

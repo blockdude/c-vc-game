@@ -5,8 +5,8 @@
 
 struct component_camera
 {
-    f64 x;
-    f64 y;
+    double x;
+    double y;
 
     int offset_x;
     int offset_y;

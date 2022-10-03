@@ -8,7 +8,7 @@
 #define RENDER_SUCCESS	0
 #define RENDER_ERROR	-1
 
-extern const u32 g_render_flags;
+extern const uint32_t g_render_flags;
 
 struct render
 {
@@ -25,7 +25,7 @@ int render_free( void );
  * drawing stuff
  */
 
-int render_set_color( u8 r, u8 g, u8 b, u8 a );
+int render_set_color( uint8_t r, uint8_t g, uint8_t b, uint8_t a );
 int render_clear( void );
 int render_present( void );
 

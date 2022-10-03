@@ -5,9 +5,9 @@
 
 struct component_position
 {
-    f64 x;
-    f64 y;
-	f64 z;
+    double x;
+    double y;
+	double z;
 };
 
 #endif

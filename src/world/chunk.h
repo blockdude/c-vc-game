@@ -14,8 +14,8 @@ struct world;
 
 struct tile_data
 {
-    u8 light_level;
-    u8 id;
+    uint8_t light_level;
+    uint8_t id;
 };
 
 // chunk data

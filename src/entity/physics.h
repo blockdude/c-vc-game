@@ -17,7 +17,7 @@ struct component_physics
     bool drag;
 
     // hitbox template
-    f32 hitbox[ 2 ][ 8 ];
+    float hitbox[ 2 ][ 8 ];
 };
 
 #endif

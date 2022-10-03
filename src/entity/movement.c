@@ -3,8 +3,8 @@
 
 static void tick( struct ecs *self )
 {
-    f32 dx = 0;
-    f32 dy = 0;
+    float dx = 0;
+    float dy = 0;
 
     if ( self->component.movement.left )
     {

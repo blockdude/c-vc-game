@@ -53,7 +53,7 @@ struct tile
     bool use_color;
 
     // tile color
-    u32 color;
+    uint32_t color;
 
     // drag and sliperiness to use with physics
     float drag;
@@ -66,7 +66,7 @@ struct tile
     float offset_y;
 
 	// return the texture id for the tile
-    int ( *texture )( struct world *world, i64 x, i64 y, i64 z );
+    int ( *texture )( struct world *world, int64_t x, int64_t y, int64_t z );
 };
 
 // init data for tiles

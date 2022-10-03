@@ -26,10 +26,10 @@ struct world
     } camera;
 
     // world tick counter (used to get time of day?)
-    u64 tick;
+    uint64_t tick;
 
     // seed of world
-    u64 seed;
+    uint64_t seed;
 
     // all chunks in the world
     size_t world_size_x;
