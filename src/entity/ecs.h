@@ -10,21 +10,25 @@
 #include "physics.h"
 #include "position.h"
 
-// forward declaration of world
+// forward declaration
 struct world;
+
+/*
+ * component stuff
+ */
 
 enum ecs_component
 {
-    COMPONENT_FIRST = 0,
+    ECS_COMPONENT_FIRST = 0,
 
-    COMPONENT_POSITION = 0,
-    COMPONENT_CONTROL,
-    COMPONENT_MOVEMENT,
-    COMPONENT_PHYSICS,
-    COMPONENT_CAMERA,
+    ECS_COMPONENT_POSITION = 0,
+    ECS_COMPONENT_CONTROL,
+    ECS_COMPONENT_MOVEMENT,
+    ECS_COMPONENT_PHYSICS,
+    ECS_COMPONENT_CAMERA,
 
-    COMPONENT_COUNT,
-    COMPONENT_LAST = COMPONENT_COUNT - 1
+    ECS_COMPONENT_COUNT,
+    ECS_COMPONENT_LAST = ECS_COMPONENT_COUNT - 1
 };
 
 struct ecs_component_collection
@@ -35,6 +39,68 @@ struct ecs_component_collection
     struct component_physics physics;
     struct component_camera camera;
 };
+
+/*
+ * ecs stuff
+ */
+
+struct ecs
+{
+    struct ecs_component_collection component;
+    bool enabled_components[ ECS_COMPONENT_COUNT ];
+
+    struct world *world;
+};
+
+struct entity
+{
+    u32 id;
+    struct ecs *ecs;
+};
+
+/*
+ * system stuff
+ */
+
+typedef void ( *ecs_event_fn )( struct ecs * );
+
+enum ecs_event
+{
+    ECS_EVENT_FIRST = 0,
+
+    ECS_EVENT_INIT = 0,
+    ECS_EVENT_FREE,
+    ECS_EVENT_TICK,
+    ECS_EVENT_UPDATE,
+    ECS_EVENT_RENDER,
+
+    ECS_EVENT_COUNT,
+    ECS_EVENT_LAST = ECS_EVENT_COUNT - 1
+};
+
+union ecs_system
+{
+    struct
+    {
+        ecs_event_fn init;
+        ecs_event_fn free;
+        ecs_event_fn tick;
+        ecs_event_fn update;
+        ecs_event_fn render;
+    } sys;
+
+    ecs_event_fn events[ ECS_EVENT_COUNT ];
+};
+
+/*
+ * global variables
+ */
+
+extern union ecs_system ECS_SYSTEMS[ ECS_COMPONENT_COUNT ];
+
+/*
+ * functions
+ */
 
 #define _ECS_DECL_COMPONENT( _name )\
     extern void ecs_##_name##_init();\
@@ -49,57 +115,19 @@ static inline void ecs_init_components()
     _ECS_DECL_COMPONENT( camera );
 }
 
-struct ecs
-{
-    struct ecs_component_collection component;
-    bool enabled_components[ COMPONENT_COUNT ];
+// ecs creation
+int ecs_init( struct ecs *self, struct world *world );
+int ecs_free( struct ecs *self );
 
-    // pointer to world to allow systems to interact with the world
-    struct world *world;
-};
+// entity creation
+struct entity ecs_new_entity( struct ecs *self );
+int ecs_del_entity( struct entity entity );
 
-struct entity
-{
-    u64 id;
-    struct ecs *ecs;
-};
+// component creation for entities
+int ecs_add_component( struct ecs *self, enum ecs_component component );
+int ecs_rem_component( struct ecs *self, enum ecs_component component );
 
-enum ecs_event
-{
-    EVENT_FIRST = 0,
-
-    EVENT_INIT = 0,
-    EVENT_FREE,
-    EVENT_TICK,
-    EVENT_UPDATE,
-    EVENT_RENDER,
-
-    EVENT_COUNT,
-    EVENT_LAST = EVENT_COUNT - 1
-};
-
-typedef void ( *ecs_event_fn )( struct ecs * );
-
-union ecs_system
-{
-    struct
-    {
-        ecs_event_fn init;
-        ecs_event_fn free;
-        ecs_event_fn tick;
-        ecs_event_fn update;
-        ecs_event_fn render;
-    } sys;
-
-    ecs_event_fn events[ EVENT_COUNT ];
-};
-
-extern union ecs_system ECS_SYSTEMS[ COMPONENT_COUNT ];
-
-void ecs_init( struct ecs *self, struct world *world );
-void ecs_free( struct ecs *self );
-void ecs_add_component( struct ecs *self, enum ecs_component component );
-void ecs_rem_component( struct ecs *self, enum ecs_component component );
-void ecs_call_event( struct ecs *self, enum ecs_event event );
+// event manager
+int ecs_call_event( struct ecs *self, enum ecs_event event );
 
 #endif

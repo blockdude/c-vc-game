@@ -3,7 +3,7 @@
 
 void ecs_position_init()
 {
-    enum ecs_component id = COMPONENT_POSITION;
+    enum ecs_component id = ECS_COMPONENT_POSITION;
 
     ECS_SYSTEMS[ id ] = ( union ecs_system ) {
         .sys = {

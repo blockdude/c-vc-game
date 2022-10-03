@@ -5,11 +5,13 @@
 #include "../util/util.h"
 #include "../world/world.h"
 #include "../input/input.h"
+#include "../world/gen/gen.h"
 
 int game_init( void )
 {
     tile_init();
     world_init( &world, 16, 16, 8 );
+    gen_world( &world );
     return 0;
 }
 

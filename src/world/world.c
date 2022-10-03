@@ -1,5 +1,4 @@
 #include <string.h>
-#include "gen/generate.h"
 #include "world.h"
 #include "../gfx/render.h"
 #include "../gfx/window.h"
@@ -17,10 +16,7 @@ int world_init( struct world *self, size_t world_size_x, size_t world_size_y, si
     self->chunks = calloc( self->chunks_count, sizeof( *self->chunks ) );
 
     for ( size_t i = 0; i < self->chunks_count; i++ )
-    {
         chunk_init( &self->chunks[ i ], self, i );
-        generate_chunk( &self->chunks[ i ] );
-    }
 
     self->camera.x = self->world_size_x * CHUNK_SIZE_X / 2;
     self->camera.y = self->world_size_y * CHUNK_SIZE_Y / 2;

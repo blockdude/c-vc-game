@@ -33,7 +33,7 @@ static void tick( struct ecs *self )
 
 void ecs_movement_init()
 {
-    enum ecs_component id = COMPONENT_MOVEMENT;
+    enum ecs_component id = ECS_COMPONENT_MOVEMENT;
 
     ECS_SYSTEMS[ id ] = ( union ecs_system ) {
         .sys = {

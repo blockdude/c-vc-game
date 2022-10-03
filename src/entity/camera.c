@@ -9,7 +9,7 @@ static void tick( struct ecs *self )
 
 void ecs_camera_init()
 {
-    enum ecs_component type = COMPONENT_CAMERA;
+    enum ecs_component type = ECS_COMPONENT_CAMERA;
 
     ECS_SYSTEMS[ type ] = ( union ecs_system ) {
         .sys = {

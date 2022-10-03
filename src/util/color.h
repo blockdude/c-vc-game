@@ -3,19 +3,13 @@
 
 #include "../util/util.h"
 
-union color
+struct color
 {
-    struct
-    {
-        u8 r;
-        u8 g;
-        u8 b;
-        u8 a;
-    } val;
-
-    u32 raw;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
 };
-
 void color_split( u32 color, u8 *r, u8 *g, u8 *b, u8 *a );
 
 #endif

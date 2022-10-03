@@ -1,4 +1,4 @@
-#include "generate.h"
+#include "gen.h"
 #include "../world.h"
 #include "../chunk.h"
 #include "../tile/tile.h"
@@ -7,15 +7,15 @@
  * temp world gen
  */
 
-void generate_world( struct world *world )
+void gen_world( struct world *world )
 {
     for ( size_t i = 0; i < world->chunks_count; i++ )
     {
-        generate_chunk( &world->chunks[ i ] );
+        gen_chunk( &world->chunks[ i ] );
     }
 }
 
-void generate_chunk( struct chunk *chunk )
+void gen_chunk( struct chunk *chunk )
 {
     for ( int i = 0; i < CHUNK_VOLUME; i++ )
     {

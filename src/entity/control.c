@@ -12,7 +12,7 @@ static void update( struct ecs *self )
 
 void ecs_control_init()
 {
-    enum ecs_component type = COMPONENT_CONTROL;
+    enum ecs_component type = ECS_COMPONENT_CONTROL;
 
     ECS_SYSTEMS[ type ] = ( union ecs_system ) {
         .sys = {

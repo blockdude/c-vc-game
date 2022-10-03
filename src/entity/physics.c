@@ -9,7 +9,7 @@ static void tick( struct ecs *self )
 
 void ecs_physics_init()
 {
-    enum ecs_component id = COMPONENT_PHYSICS;
+    enum ecs_component id = ECS_COMPONENT_PHYSICS;
 
     ECS_SYSTEMS[ id ] = ( union ecs_system ) {
         .sys = {
