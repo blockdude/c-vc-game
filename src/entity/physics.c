@@ -1,23 +1,24 @@
 #include "physics.h"
 #include "ecs.h"
 
-static void tick( struct ecs *self )
+static int tick( void *self, struct ecs *ecs )
 {
-    self->component.position.x += self->component.physics.dx;
-    self->component.position.y += self->component.physics.dy;
+    if ( self == NULL || ecs == NULL )
+        return -1;
+    return 0;
 }
 
-void ecs_physics_init()
+int ecs_physics_init( struct ecs *ecs )
 {
-    enum ecs_component id = ECS_COMPONENT_PHYSICS;
-
-    ECS_SYSTEMS[ id ] = ( union ecs_system ) {
+    union ecs_system system = { 
         .sys = {
-            .init = NULL,
-            .free = NULL,
-            .tick = &tick,
+            .init   = NULL,
+            .free   = NULL,
+            .tick   = &tick,
             .update = NULL,
             .render = NULL
         }
     };
+
+    return ecs_register_component( ecs, ECS_COMPONENT_PHYSICS, sizeof( struct component_physics ), system );
 }

@@ -48,20 +48,20 @@ static int window_general_free( void )
     return WINDOW_SUCCESS;
 }
 
-// base update
-static int window_general_update( void )
-{
-    if ( window.state.update ) window.state.update();
-    input_update();
-
-    return WINDOW_SUCCESS;
-}
-
 // base tick
 static int window_general_tick( void )
 {
     if ( window.state.tick ) window.state.tick();
     window.tick.count++;
+
+    return WINDOW_SUCCESS;
+}
+
+// base update
+static int window_general_update( void )
+{
+    if ( window.state.update ) window.state.update();
+    input_update();
 
     return WINDOW_SUCCESS;
 }

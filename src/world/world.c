@@ -7,7 +7,7 @@
 int world_init( struct world *self, size_t world_size_x, size_t world_size_y, size_t world_size_z )
 {
     memset( self, 0, sizeof( struct world ) );
-    ecs_init( &self->ecs, self );
+    ecs_init( &self->ecs, self, 128 );
 
     self->world_size_x = world_size_x;
     self->world_size_y = world_size_y;
@@ -38,14 +38,6 @@ int world_free( struct world *self )
     return 0;
 }
 
-int world_update( struct world *self )
-{
-    if ( self == NULL )
-        return -1;
-            
-    return 0;
-}
-
 int world_tick( struct world *self )
 {
     if ( self == NULL )
@@ -53,6 +45,14 @@ int world_tick( struct world *self )
 
     self->tick++;
 
+    return 0;
+}
+
+int world_update( struct world *self )
+{
+    if ( self == NULL )
+        return -1;
+            
     return 0;
 }
 

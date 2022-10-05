@@ -33,8 +33,8 @@ struct chunk
 
 int chunk_init( struct chunk *self, struct world *world, size_t index );
 int chunk_free( struct chunk *self );
-int chunk_update( struct chunk *self );
 int chunk_tick( struct chunk *self );
+int chunk_update( struct chunk *self );
 int chunk_render( struct chunk *self );
 
 #endif

@@ -1,17 +1,17 @@
 #include "position.h"
 #include "ecs.h"
 
-void ecs_position_init()
+int ecs_position_init( struct ecs *ecs )
 {
-    enum ecs_component id = ECS_COMPONENT_POSITION;
-
-    ECS_SYSTEMS[ id ] = ( union ecs_system ) {
+    union ecs_system system = { 
         .sys = {
-            .init = NULL,
-            .free = NULL,
-            .tick = NULL,
+            .init   = NULL,
+            .free   = NULL,
+            .tick   = NULL,
             .update = NULL,
             .render = NULL
         }
     };
+
+    return ecs_register_component( ecs, ECS_COMPONENT_POSITION, sizeof( struct component_position ), system );
 }

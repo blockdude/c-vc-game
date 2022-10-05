@@ -11,12 +11,6 @@ struct world
     // collection of all world entities
     struct ecs ecs;
 
-    // entity to follow with camera
-    struct entity entity_view;
-
-    // entity to load world around
-    struct entity entity_load;
-
     // temp camera
     struct
     {
@@ -41,8 +35,8 @@ struct world
 
 int world_init( struct world *self, size_t world_size_x, size_t world_size_y, size_t world_size_z );
 int world_free( struct world *self );
-int world_update( struct world *self );
 int world_tick( struct world *self );
+int world_update( struct world *self );
 int world_render( struct world *self );
 
 //void world_to_screen( float world_x, float world_y, int *screen_x, int *screen_y );

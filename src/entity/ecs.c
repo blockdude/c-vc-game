@@ -1,47 +1,42 @@
 #include "ecs.h"
 
-union ecs_system ECS_SYSTEMS[ ECS_COMPONENT_COUNT ];
+#define ECS_INIT_COMPONENT( name ) \
+    extern int ecs_##name##_init( struct ecs * ); \
+    ecs_##name##_init( self );
 
-int ecs_init( struct ecs *self, struct world *world )
+int ecs_register_component( struct ecs *self, enum ecs_component id, size_t size, union ecs_system system )
 {
+    self->components[ id ].system = system;
+    self->components[ id ].size = size;
+    self->components[ id ].data = malloc( size * self->capacity );
+
+    return 0;
+}
+
+int ecs_init( struct ecs *self, struct world *world, size_t capacity )
+{
+    // set initial size of ecs ( will hold 128 entities max )
     memset( self, 0, sizeof( *self ) );
     self->world = world;
+    self->capacity = capacity;
+    self->count = 0;
+
+    // init components for this ecs
+    ECS_INIT_COMPONENT( position );
+    ECS_INIT_COMPONENT( control );
+    ECS_INIT_COMPONENT( physics );
+    ECS_INIT_COMPONENT( movement );
+    ECS_INIT_COMPONENT( camera );
+
     return 0;
 }
 
 int ecs_free( struct ecs *self )
 {
-    memset( self, 0, sizeof( *self ) );
-    return 0;
-}
-
-int ecs_add_component( struct ecs *self, enum ecs_component component )
-{
-    self->enabled_components[ component ] = true;
-    return 0;
-}
-
-int ecs_rem_component( struct ecs *self, enum ecs_component component )
-{
-    self->enabled_components[ component ] = false;
-    return 0;
-}
-
-int ecs_call_event( struct ecs *self, enum ecs_event event )
-{
-    // call every enabled component event
+    // free components
     for ( int i = 0; i < ECS_COMPONENT_COUNT; i++ )
-    {
-        if ( self->enabled_components[ i ] == true )
-        {
-            ecs_event_fn fn = ECS_SYSTEMS[ i ].events[ event ];
+        free( self->components[ i ].data );
 
-            if ( fn )
-            {
-                fn( self );
-            }
-        }
-    }
-
+    memset( self, 0, sizeof( *self ) );
     return 0;
 }

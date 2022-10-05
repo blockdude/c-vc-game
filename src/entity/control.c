@@ -2,25 +2,24 @@
 #include "ecs.h"
 #include "../input/input.h"
 
-static void update( struct ecs *self )
+static int update( void *self, struct ecs *ecs )
 {
-    self->component.movement.up = input_key_press( KB_NORTH );
-    self->component.movement.down = input_key_press( KB_SOUTH );
-    self->component.movement.right = input_key_press( KB_EAST );
-    self->component.movement.left = input_key_press( KB_WEST );
+    if ( self == NULL || ecs == NULL )
+        return -1;
+    return 0;
 }
 
-void ecs_control_init()
+int ecs_control_init( struct ecs *ecs )
 {
-    enum ecs_component type = ECS_COMPONENT_CONTROL;
-
-    ECS_SYSTEMS[ type ] = ( union ecs_system ) {
+    union ecs_system system = {
         .sys = {
-            .init = NULL,
-            .free = NULL,
-            .tick = NULL,
+            .init   = NULL,
+            .free   = NULL,
+            .tick   = NULL,
             .update = &update,
             .render = NULL
         }
     };
+
+    return ecs_register_component( ecs, ECS_COMPONENT_CONTROL, sizeof( struct component_control ), system );
 }

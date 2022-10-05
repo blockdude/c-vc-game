@@ -21,6 +21,12 @@ int game_free( void )
 	return 0;
 }
 
+int game_tick( void )
+{
+    world_tick( &world );
+    return 0;
+}
+
 int game_update( void )
 {
     world_update( &world );
@@ -45,12 +51,6 @@ int game_update( void )
 
     world.camera.scale *= scroll_delta != 0 ? pow( scroll_speed, scroll_delta ) : 1.0f;
 
-    return 0;
-}
-
-int game_tick( void )
-{
-    world_tick( &world );
     return 0;
 }
 

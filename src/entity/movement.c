@@ -1,47 +1,24 @@
 #include "movement.h"
 #include "ecs.h"
 
-static void tick( struct ecs *self )
+static int tick( void *self, struct ecs *ecs )
 {
-    float dx = 0;
-    float dy = 0;
-
-    if ( self->component.movement.left )
-    {
-        dx -= 1;
-    }
-
-    if ( self->component.movement.right )
-    {
-        dx += 1;
-    }
-
-    if ( self->component.movement.up )
-    {
-        dy -= 1;
-    }
-
-    if ( self->component.movement.down )
-    {
-        dy += 1;
-    }
-
-    normalize( dx, dy, &dx, &dy );
-    self->component.physics.dx = dx * self->component.movement.speed;
-    self->component.physics.dy = dy * self->component.movement.speed;
+    if ( self == NULL || ecs == NULL )
+        return -1;
+    return 0;
 }
 
-void ecs_movement_init()
+int ecs_movement_init( struct ecs *ecs )
 {
-    enum ecs_component id = ECS_COMPONENT_MOVEMENT;
-
-    ECS_SYSTEMS[ id ] = ( union ecs_system ) {
+    union ecs_system system = { 
         .sys = {
-            .init = NULL,
-            .free = NULL,
-            .tick = &tick,
+            .init   = NULL,
+            .free   = NULL,
+            .tick   = &tick,
             .update = NULL,
             .render = NULL
         }
     };
+
+    return ecs_register_component( ecs, ECS_COMPONENT_MOVEMENT, sizeof( struct component_movement ), system );
 }

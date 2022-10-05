@@ -18,8 +18,8 @@ struct window_state
 {
 	window_event_fn init;
 	window_event_fn free;
-	window_event_fn update;
 	window_event_fn tick;
+	window_event_fn update;
 	window_event_fn render;
 };
 
