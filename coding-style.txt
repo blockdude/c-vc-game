@@ -13,21 +13,31 @@ General
 - Use C style comments.
 
 
-Formatting
---------------------------------------------------
+/*
+ * Formatting
+ * --------------------------------------------------
+ */
 
-- Indents are spaces and must be 4 spaces wide.
+/*
+ * Indents are spaces and must be 4 spaces wide.
+ */
 
-- Do not put parentheses next to keywords. Put a space
-between them.
+/*
+ * Do not put parentheses next to keywords. Put a space
+ * between them.
+ */
 
+/* examples */
 if (something)
 else if (something)
 else (something)
 for (int i = 0; i < 10; i++)
+/* end of examples */
 
-- Avoid using parentheses in return statments when not
-necessary.
+/*
+ * Avoid using parentheses in return statments when not
+ * necessary.
+ */
 
 return 0;
 return x * (y + 1);
@@ -64,12 +74,14 @@ File Naming
 - C source files must end in ".c"
 - C header files must end in ".h"
 - C object files must end in ".o"
+- C dependency files must end in ".d"
 
 Use hyphens in place of spaces for file names.
 
 "some-source-file.c"
 "some-header-file.h"
 "some-object-file.o"
+"some-dep-file.d"
 
 
 Naming Conventions

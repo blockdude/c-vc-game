@@ -2,15 +2,11 @@
 #define WORLD_H
 
 #include "../util/util.h"
-#include "../entity/ecs.h"
 #include "tile/tile.h"
 #include "chunk.h"
 
 struct world
 {
-    // collection of all world entities
-    struct ecs ecs;
-
     // temp camera
     struct
     {

@@ -7,7 +7,6 @@
 int world_init( struct world *self, size_t world_size_x, size_t world_size_y, size_t world_size_z )
 {
     memset( self, 0, sizeof( struct world ) );
-    ecs_init( &self->ecs, self, 128 );
 
     self->world_size_x = world_size_x;
     self->world_size_y = world_size_y;
@@ -27,8 +26,6 @@ int world_init( struct world *self, size_t world_size_x, size_t world_size_y, si
 
 int world_free( struct world *self )
 {
-    ecs_free( &self->ecs );
-
     for ( size_t i = 0; i < self->chunks_count; i++ )
         chunk_free( &self->chunks[ i ] );
 
