@@ -2,12 +2,14 @@
 MAKEFLAGS = -j$(exec nproc)
 
 # flags and compiler
-CC = gcc
-
-CPPFLAGS =
-CFLAGS = -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
-LDFLAGS = 
-LDLIBS = -lm -lSDL2
+SHELL		= /bin/sh
+CC			= gcc
+LINKER		= $(CC)
+INCLUDE		=
+CPPFLAGS	=
+CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
+LDFLAGS		= 
+LDLIBS		= -lm -lSDL2
 
 # directories
 BLD_DIR ?= build
@@ -29,7 +31,8 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
 # echo output
-RUN_CMD_CC = @echo "  CC    " $@;
+RUN_CMD_CC		= @echo "  CC    " $@;
+RUN_CMD_LTLINK	= @echo "  LTLINK" $@;
 
 # build
 all: $(DIRS) $(BIN)
@@ -44,11 +47,11 @@ $(DIRS):
 
 # compile to binary
 $(BIN): $(OBJ)
-	$(RUN_CMD_CC) $(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+	$(RUN_CMD_LTLINK) $(LINKER) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 # generate object files and dependencies
 $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	$(RUN_CMD_CC) $(CC) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $@ -o $@ -c $<
+	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $@ -o $@ -c $<
 
 # remove build files
 clean:
