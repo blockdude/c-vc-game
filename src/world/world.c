@@ -97,7 +97,7 @@ int world_render( struct world *self )
         if ( x < 0 || y < 0 || x >= ( int ) self->world_size_x || y >= ( int ) self->world_size_y )
             continue;
 
-        // convert xy into screen coordinates
+        // convert world coordinates into screen coordinates
         float rect_x = ( float ) ( ( x * CHUNK_SIZE_X - self->camera.x ) * self->camera.scale + screen_center_x );
         float rect_y = ( float ) ( ( y * CHUNK_SIZE_Y - self->camera.y ) * self->camera.scale + screen_center_y );
 

@@ -1,31 +1,26 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-struct component_position
+typedef struct position
 {
     double x;
     double y;
 	double z;
-};
+} position;
 
-struct component_velocity
+typedef struct velocity
 {
-    float vx;
-    float vy;
-    float vz;
-};
+    float x;
+    float y;
+    float z;
+} velocity;
 
-struct component_direction
-{
-    float a;
-};
-
-struct component_camera
+typedef struct camera
 {
     double x;
     double y;
 
     float scale;
-};
+} camera;
 
 #endif

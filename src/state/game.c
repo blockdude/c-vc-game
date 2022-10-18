@@ -12,13 +12,14 @@ int game_init( void )
     tile_init();
     world_init( &world, 16, 16, 8 );
     gen_world( &world );
+
     return 0;
 }
 
 int game_free( void )
 {
     world_free( &world );
-	return 0;
+    return 0;
 }
 
 int game_tick( void )
@@ -56,8 +57,8 @@ int game_update( void )
 
 int game_render( void )
 {
-	render_set_color( 255, 255, 255, 255 );
-	render_clear();
+    render_set_color( 255, 255, 255, 255 );
+    render_clear();
 
     // get screen center
     int screen_center_x;
@@ -91,7 +92,7 @@ int game_render( void )
     render_line( line_a );
     render_line( line_b );
 
-	render_present();
+    render_present();
 
     printf( "|-------------|-------------|\n" );
     printf( "|frame: %5lu |tick : %5lu |\n", window.frame.count, window.tick.count );

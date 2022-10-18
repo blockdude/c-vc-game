@@ -9,7 +9,7 @@ LDLIBS = -lm -lSDL2
 LDFLAGS = 
 
 # directories
-BLD_DIR ?= bld
+BLD_DIR ?= build
 SRC_DIR ?= src
 
 BIN_DIR := $(BLD_DIR)/bin
