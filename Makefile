@@ -4,9 +4,10 @@ MAKEFLAGS = -j$(exec nproc)
 # flags and compiler
 CC = gcc
 
+CPPFLAGS =
 CFLAGS = -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
-LDLIBS = -lm -lSDL2
 LDFLAGS = 
+LDLIBS = -lm -lSDL2
 
 # directories
 BLD_DIR ?= build
@@ -16,7 +17,7 @@ BIN_DIR := $(BLD_DIR)/bin
 OBJ_DIR := $(BLD_DIR)/obj
 DEP_DIR := $(BLD_DIR)/dep
 
-# build directory tree
+# directory tree
 DIRS := $(BLD_DIR) $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) \
 		$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR))) \
 		$(patsubst $(SRC_DIR)/%,$(DEP_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)))
@@ -26,6 +27,9 @@ BIN := $(BIN_DIR)/main
 SRC := $(shell find $(SRC_DIR) -type f -name '*.c')
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
+
+# echo output
+RUN_CMD_CC = @echo "  CC    " $@;
 
 # build
 all: $(DIRS) $(BIN)
@@ -40,12 +44,11 @@ $(DIRS):
 
 # compile to binary
 $(BIN): $(OBJ)
-	$(CC) $(LDLIBS) -o $(BIN_DIR)/main $^
+	$(RUN_CMD_CC) $(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 # generate object files and dependencies
 $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) -c -o $@ $<
-	@$(CC) $(CFLAGS) -MG -MM -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $(<:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o) $<
+	$(RUN_CMD_CC) $(CC) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $@ -o $@ -c $<
 
 # remove build files
 clean:
