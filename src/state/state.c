@@ -4,11 +4,11 @@
 struct world world;
 
 struct window_state game_state = {
-    .init   = ( window_event_fn ) game_init,
-    .free   = ( window_event_fn ) game_free,
-    .tick   = ( window_event_fn ) game_tick,
-    .update = ( window_event_fn ) game_update,
-    .render = ( window_event_fn ) game_render
+    .init   = game_init,
+    .free   = game_free,
+    .tick   = game_tick,
+    .update = game_update,
+    .render = game_render
 };
 
 struct window_state menu_state = {

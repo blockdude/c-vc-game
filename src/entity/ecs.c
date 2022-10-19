@@ -1,5 +1,5 @@
 #include "ecs.h"
-#include "../data-struct/vector.h"
+#include "../data/vector.h"
 
 #define ECS_INIT_COMPONENT( name ) \
     extern int ecs_##name##_init( struct ecs * ); \

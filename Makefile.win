@@ -1,23 +1,22 @@
 # always use as many cores as possible
 MAKEFLAGS = -j$(exec nproc)
 
+# directories
+BLD_DIR ?= build
+SRC_DIR ?= src
+BIN_DIR := $(BLD_DIR)/bin
+OBJ_DIR := $(BLD_DIR)/obj
+DEP_DIR := $(BLD_DIR)/dep
+
 # flags and compiler
 SHELL		= /bin/sh
 CC			= x86_64-w64-mingw32-gcc
 LINKER		= $(CC)
-INCLUDE		= -Ilib/x86_64-w64-mingw32/include
+INCLUDE		= -I$(SRC_DIR) -Ilib/x86_64-w64-mingw32/include
 CPPFLAGS	=
 CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
 LDFLAGS		= -Llib/x86_64-w64-mingw32/lib 
 LDLIBS		= -lm -lmingw32 -lSDL2main -lSDL2 -mwindows
-
-# directories
-BLD_DIR ?= build
-SRC_DIR ?= src
-
-BIN_DIR := $(BLD_DIR)/bin
-OBJ_DIR := $(BLD_DIR)/obj
-DEP_DIR := $(BLD_DIR)/dep
 
 # directory tree
 DIRS := $(BLD_DIR) $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) \

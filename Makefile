@@ -1,23 +1,22 @@
 # always use as many cores as possible
 MAKEFLAGS = -j$(exec nproc)
 
+# directories
+BLD_DIR ?= build
+SRC_DIR ?= src
+BIN_DIR := $(BLD_DIR)/bin
+OBJ_DIR := $(BLD_DIR)/obj
+DEP_DIR := $(BLD_DIR)/dep
+
 # flags and compiler
 SHELL		= /bin/sh
 CC			= gcc
 LINKER		= $(CC)
-INCLUDE		=
+INCLUDE		= -I$(SRC_DIR)
 CPPFLAGS	=
 CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
 LDFLAGS		= 
 LDLIBS		= -lm -lSDL2
-
-# directories
-BLD_DIR ?= build
-SRC_DIR ?= src
-
-BIN_DIR := $(BLD_DIR)/bin
-OBJ_DIR := $(BLD_DIR)/obj
-DEP_DIR := $(BLD_DIR)/dep
 
 # directory tree
 DIRS := $(BLD_DIR) $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) \
