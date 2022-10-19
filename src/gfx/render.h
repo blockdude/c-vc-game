@@ -2,7 +2,6 @@
 #define RENDER_H
 
 #include "../util/util.h"
-#include "../world/world.h"
 #include <SDL2/SDL.h>
 
 #define RENDER_SUCCESS	0

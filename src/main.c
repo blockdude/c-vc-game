@@ -4,6 +4,11 @@
 
 int main( int argc, char *argv[] )
 {
+	// print arguments
+	for ( int i = 0; i < argc; i++ )
+		printf( "%s ", argv[ i ] );
+	printf( "\n" );
+
 	// setup
 	window_init( &game_state );
 	render_init();

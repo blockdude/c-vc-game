@@ -13,6 +13,7 @@
  * types
  */
 
+struct ecs;
 typedef int ( *ecs_system_fn )( struct ecs * );
 
 typedef uint64_t ecs_id_t;
@@ -82,7 +83,7 @@ struct ecs_entity_list
 
 struct ecs
 {
-
+    int tmp;
 };
 
 /*

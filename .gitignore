@@ -2,6 +2,8 @@
 bin
 old
 obj
+lib
+.vim
 
 # ignore select shell script
 remote-make.sh
