@@ -4,6 +4,7 @@ MAKEFLAGS = -j$(exec nproc)
 # directories
 BLD_DIR ?= build
 SRC_DIR ?= src
+LIB_DIR ?= lib/x86_64-w64-mingw32
 BIN_DIR := $(BLD_DIR)/bin
 OBJ_DIR := $(BLD_DIR)/obj
 DEP_DIR := $(BLD_DIR)/dep
@@ -19,14 +20,17 @@ SRC := $(shell find $(SRC_DIR) -type f -name '*.c')
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
+DLL := $(shell find $(LIB_DIR)/bin -type f -name '*.dll')
+BDLL := $(DLL:$(LIB_DIR)/bin/%=$(BIN_DIR)/%)
+
 # flags and compiler
 SHELL		= /bin/sh
 CC			= x86_64-w64-mingw32-gcc
 LINKER		= $(CC)
-INCLUDE		= -I$(SRC_DIR) -Ilib/x86_64-w64-mingw32/include
+INCLUDE		= -I$(SRC_DIR) -I$(LIB_DIR)/include
 CPPFLAGS	=
 CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
-LDFLAGS		= -Llib/x86_64-w64-mingw32/lib 
+LDFLAGS		= -L$(LIB_DIR)/lib
 LDLIBS		= -lm -lmingw32 -lSDL2main -lSDL2 -mwindows
 
 # echo output
@@ -34,11 +38,15 @@ RUN_CMD_CC		= @echo "  CC    " $@;
 RUN_CMD_LTLINK	= @echo "  LTLINK" $@;
 
 # build
-all: $(DIRS) $(BIN)
+all: $(DIRS) $(BDLL) $(BIN)
 
 # build and run
 run: all
 	@exec $(BIN)
+
+# copy dlls
+$(BDLL): $(DLL)
+	@cp $< $@
 
 # create directories
 $(DIRS):

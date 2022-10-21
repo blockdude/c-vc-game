@@ -4,6 +4,7 @@ MAKEFLAGS = -j$(exec nproc)
 # directories
 BLD_DIR ?= build
 SRC_DIR ?= src
+LIB_DIR ?= lib
 BIN_DIR := $(BLD_DIR)/bin
 OBJ_DIR := $(BLD_DIR)/obj
 DEP_DIR := $(BLD_DIR)/dep
