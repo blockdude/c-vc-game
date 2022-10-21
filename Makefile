@@ -8,16 +8,6 @@ BIN_DIR := $(BLD_DIR)/bin
 OBJ_DIR := $(BLD_DIR)/obj
 DEP_DIR := $(BLD_DIR)/dep
 
-# flags and compiler
-SHELL		= /bin/sh
-CC			= gcc
-LINKER		= $(CC)
-INCLUDE		= -I$(SRC_DIR)
-CPPFLAGS	=
-CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
-LDFLAGS		= 
-LDLIBS		= -lm -lSDL2
-
 # directory tree
 DIRS := $(BLD_DIR) $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) \
 		$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR))) \
@@ -28,6 +18,16 @@ BIN := $(BIN_DIR)/main
 SRC := $(shell find $(SRC_DIR) -type f -name '*.c')
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
+
+# flags and compiler
+SHELL		= /bin/sh
+CC			= gcc
+LINKER		= $(CC)
+INCLUDE		= -I$(SRC_DIR)
+CPPFLAGS	=
+CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
+LDFLAGS		= 
+LDLIBS		= -lm -lSDL2
 
 # echo output
 RUN_CMD_CC		= @echo "  CC    " $@;
