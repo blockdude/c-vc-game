@@ -1,6 +1,6 @@
 #include "window.h"
 #include "render.h"
-#include "../input/input.h"
+#include <input/input.h>
 
 #define DEFAULT_RATE 60
 #define MS_PER_SECOND

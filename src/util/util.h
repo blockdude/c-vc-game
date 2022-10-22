@@ -13,5 +13,6 @@
 #include "fmath.h"
 #include "color.h"
 #include "shape.h"
+#include "log.h"
 
 #endif

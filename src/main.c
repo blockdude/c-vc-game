@@ -1,13 +1,19 @@
 #include "gfx/window.h"
 #include "gfx/render.h"
 #include "state/state.h"
+#include "util/util.h"
 
 int main( int argc, char *argv[] )
 {
-	// print arguments
+	// store arguments in a buffer
+	int buf_size = 256;
+	char buf[ buf_size ];
+	int buf_pos = 0;
 	for ( int i = 0; i < argc; i++ )
-		printf( "%s ", argv[ i ] );
-	printf( "\n" );
+		buf_pos += snprintf( buf + buf_pos, buf_size - buf_pos, "%s ", argv[ i ] );
+
+	// log arguments
+	log_info( "executed with: %s", buf );
 
 	// setup
 	window_init( &game_state );

@@ -25,7 +25,7 @@ SHELL		= /bin/sh
 CC			= gcc
 LINKER		= $(CC)
 INCLUDE		= -I$(SRC_DIR)
-CPPFLAGS	=
+CPPFLAGS	= -DLOG_USE_COLOR
 CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
 LDFLAGS		= 
 LDLIBS		= -lm -lSDL2
