@@ -103,9 +103,13 @@ void *vector_push_back( void *self, void *data )
     }
 
     // copy data
-    char *data_dest = self;
-    data_dest += vec->element_size * vec->size;
-    memcpy( data_dest, data, vec->element_size );
+    if ( data != NULL )
+    {
+        char *data_dest = self;
+        data_dest += vec->element_size * vec->size;
+        memcpy( data_dest, data, vec->element_size );
+    }
+
     vec->size++;
 
     return VECTOR_FIRST( vec );
