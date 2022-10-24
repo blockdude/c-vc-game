@@ -3,6 +3,7 @@ bin
 old
 obj
 lib
+tool
 .vim
 
 # ignore select shell script

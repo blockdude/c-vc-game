@@ -2,7 +2,7 @@
 #include "window.h"
 
 // some sdl flags that i made global incase i wanted to do something with them
-const uint32_t g_render_flags = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
+const uint32_t g_render_flags = SDL_RENDERER_ACCELERATED;
 
 // global renderer
 struct render render;
