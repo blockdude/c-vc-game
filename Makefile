@@ -1,3 +1,15 @@
+ifeq ($(OS),Windows_NT)
+	UNAME := Windows
+	MKDIR = mkdir
+	RMDIR = rmdir
+	RM = del
+else
+	UNAME := $(shell uname -s)
+	MKDIR = mkdir
+	RMDIR = rm -r
+	RM = rm
+endif
+
 # always use as many cores as possible
 MAKEFLAGS = -j$(exec nproc)
 
