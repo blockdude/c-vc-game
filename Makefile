@@ -43,8 +43,13 @@ LDFLAGS		=
 LDLIBS		= -lm -lSDL2
 
 # echo output
-RUN_CMD_CC		= @echo "  CC    " $@;
-RUN_CMD_LTLINK	= @echo "  LTLINK" $@;
+RUN_CMD_AR     = @echo "  AR    " $@;
+RUN_CMD_CC     = @echo "  CC    " $@;
+RUN_CMD_CXX    = @echo "  CXX   " $@;
+RUN_CMD_LTLINK = @echo "  LTLINK" $@;
+RUN_CMD_RANLIB = @echo "  RANLIB" $@;
+RUN_CMD_RC     = @echo "  RC    " $@;
+RUN_CMD_GEN    = @echo "  GEN   " $@;
 
 # build
 all: $(DIRS) $(BIN)
