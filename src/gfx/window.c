@@ -211,6 +211,13 @@ int window_set_target_tps( int tps )
 	return 0;
 }
 
+int window_set_title( const char *title )
+{
+    SDL_SetWindowTitle( window.handle, title );
+
+    return 0;
+}
+
 int window_get_size( int *w, int *h )
 {
     SDL_GetWindowSize( window.handle, w, h );

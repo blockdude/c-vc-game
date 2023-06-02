@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
 	log_info( "executed with: %s", buf );
 
 	// setup
-	window_init( &game_state );
+	window_init( &collision_state );
 	render_init();
 
 	// loop

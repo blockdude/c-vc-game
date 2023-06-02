@@ -13,5 +13,6 @@
 extern struct world world;
 extern struct window_state game_state;
 extern struct window_state menu_state;
+extern struct window_state collision_state;
 
 #endif
