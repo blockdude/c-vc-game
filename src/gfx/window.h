@@ -11,16 +11,16 @@ extern const char *g_window_title;
 extern const uint32_t g_window_flags;
 
 // window function
-typedef int ( *window_event_fn )( void );
+typedef int ( *window_fn )( void );
 
 // game states
 struct window_state
 {
-	window_event_fn init;
-	window_event_fn free;
-	window_event_fn tick;
-	window_event_fn update;
-	window_event_fn render;
+	window_fn init;
+	window_fn free;
+	window_fn tick;
+	window_fn update;
+	window_fn render;
 };
 
 // track timing of frame and tick

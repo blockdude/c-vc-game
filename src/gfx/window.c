@@ -13,7 +13,7 @@ const char *g_window_title = "window";
 const uint32_t g_window_flags = SDL_WINDOW_RESIZABLE;
 
 // base handle
-static int window_general_handle( void )
+static int window_internal_handle( void )
 {
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
@@ -32,44 +32,49 @@ static int window_general_handle( void )
 }
 
 // base init
-static int window_general_init( void )
+static int window_internal_init( void )
 {
-    if ( window.state.init ) window.state.init();
+    if ( window.state.init )
+        window.state.init();
     input_init();
 
     return WINDOW_SUCCESS;
 }
 
 // base clean
-static int window_general_free( void )
+static int window_internal_free( void )
 {
-    if ( window.state.free ) window.state.free();
+    if ( window.state.free )
+        window.state.free();
 
     return WINDOW_SUCCESS;
 }
 
 // base tick
-static int window_general_tick( void )
+static int window_internal_tick( void )
 {
-    if ( window.state.tick ) window.state.tick();
+    if ( window.state.tick )
+        window.state.tick();
     window.tick.count++;
 
     return WINDOW_SUCCESS;
 }
 
 // base update
-static int window_general_update( void )
+static int window_internal_update( void )
 {
-    if ( window.state.update ) window.state.update();
+    if ( window.state.update )
+        window.state.update();
     input_update();
 
     return WINDOW_SUCCESS;
 }
 
 // base render
-static int window_general_render( void )
+static int window_internal_render( void )
 {
-	if ( window.state.render ) window.state.render();
+	if ( window.state.render )
+        window.state.render();
     window.frame.count++;
 
     return WINDOW_SUCCESS;
@@ -103,14 +108,22 @@ int window_init( struct window_state *state )
 
 	// sdl init and make window
     if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
+    {
+        log_error( "Unable to initialize SDL: %s", SDL_GetError() );
         return WINDOW_ERROR;
+    }
+
+    log_info( "SDL initialized" );
 
     window.handle = SDL_CreateWindow( g_window_title, 0, 0, 700, 700, g_window_flags );
     if ( !window.handle )
     {
+        log_error( "Unable to create SDL window: %s", SDL_GetError() );
         SDL_Quit();
         return WINDOW_ERROR;
     }
+
+    log_info( "SDL window created" );
 
     return WINDOW_SUCCESS;
 }
@@ -118,7 +131,7 @@ int window_init( struct window_state *state )
 int window_start( void )
 {
 	// init
-    window_general_init();
+    window_internal_init();
 
 	// setup game loop
     uint64_t frame_previous = SDL_GetTicks64();
@@ -158,17 +171,17 @@ int window_start( void )
         frame_previous = frame_current;
         tick_time += frame_delta;
 
-        window_general_handle();
+        window_internal_handle();
 
         // do ticks and maintain tick rate
         while( tick_time >= window.tick.target_delta )
         {
-            window_general_tick();
+            window_internal_tick();
             tick_time -= window.tick.target_delta;
         }
 
-        window_general_update();
-        window_general_render();
+        window_internal_update();
+        window_internal_render();
 
         // convert & store frame timing of current frame
         window.frame.delta = ( double ) frame_delta / 1000.0;
@@ -179,7 +192,7 @@ int window_start( void )
     }
 
 	// clean up
-	window_general_free();
+	window_internal_free();
 
     return WINDOW_SUCCESS;
 }
