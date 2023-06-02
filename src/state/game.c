@@ -4,7 +4,7 @@
 #include "../gfx/render.h"
 #include "../util/util.h"
 #include "../world/world.h"
-#include "../input/input.h"
+#include "../system/input.h"
 #include "../world/gen/gen.h"
 
 int game_init( void )

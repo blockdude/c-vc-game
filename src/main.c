@@ -16,6 +16,7 @@ int main( int argc, char *argv[] )
 	log_info( "executed with: %s", buf );
 
 	// setup
+	system_init();
 	window_init( &game_state );
 	render_init();
 
@@ -25,6 +26,7 @@ int main( int argc, char *argv[] )
 	// free memory
 	render_free();
 	window_close();
+	system_free();
 
 	return 0;
 }

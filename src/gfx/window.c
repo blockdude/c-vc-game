@@ -1,42 +1,18 @@
 #include "window.h"
 #include "render.h"
-#include <input/input.h>
+#include "../system/input.h"
 
-#define DEFAULT_RATE 60
+#define DEFAULT_RATE 60.0
 #define MS_PER_SECOND
 
 // global variables
 struct window window;
-
-// window stuff
-const char *g_window_title = "window";
-const uint32_t g_window_flags = SDL_WINDOW_RESIZABLE;
-
-// base handle
-static int window_internal_handle( void )
-{
-    SDL_Event event;
-    while ( SDL_PollEvent( &event ) )
-    {
-        switch ( event.type )
-        {
-            case SDL_QUIT:
-                window.running = false;
-                break;
-        }
-
-        input_handle( &event );
-    }
-
-    return WINDOW_SUCCESS;
-}
 
 // base init
 static int window_internal_init( void )
 {
     if ( window.state.init )
         window.state.init();
-    input_init();
 
     return WINDOW_SUCCESS;
 }
@@ -65,7 +41,7 @@ static int window_internal_update( void )
 {
     if ( window.state.update )
         window.state.update();
-    input_update();
+    input_reset();
 
     return WINDOW_SUCCESS;
 }
@@ -92,30 +68,21 @@ int window_init( struct window_state *state )
 
 	window.frame = ( struct timing ) {
 		.target_rate	= DEFAULT_RATE,
-		.target_delta	= 1000.0 / ( double ) DEFAULT_RATE,
+		.target_delta	= 1000.0 / DEFAULT_RATE,
 		.rate			= 0,
 		.delta			= 0,
 		.count			= 0
 	};
 
 	window.tick = ( struct timing ) {
-		.target_rate	= 60,
-		.target_delta	= 1000.0 / 60.0,
+		.target_rate	= DEFAULT_RATE,
+		.target_delta	= 1000.0 / DEFAULT_RATE,
 		.rate			= 0,
 		.delta			= 0,
 		.count			= 0
 	};
 
-	// sdl init and make window
-    if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
-    {
-        log_error( "Unable to initialize SDL: %s", SDL_GetError() );
-        return WINDOW_ERROR;
-    }
-
-    log_info( "SDL initialized" );
-
-    window.handle = SDL_CreateWindow( g_window_title, 0, 0, 700, 700, g_window_flags );
+    window.handle = SDL_CreateWindow( "window" , 0, 0, 700, 700, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI );
     if ( !window.handle )
     {
         log_error( "Unable to create SDL window: %s", SDL_GetError() );
@@ -171,9 +138,10 @@ int window_start( void )
         frame_previous = frame_current;
         tick_time += frame_delta;
 
-        window_internal_handle();
-
-        // do ticks and maintain tick rate
+        // poll events
+        input_poll_events();
+        
+        // maintain fixed time stamp
         while( tick_time >= window.tick.target_delta )
         {
             window_internal_tick();
@@ -188,7 +156,8 @@ int window_start( void )
 
         // apply fps cap
         int delay = frame_current + window.frame.target_delta - SDL_GetTicks64();
-        if ( delay > 0 ) SDL_Delay( delay );
+        if ( delay > 0 )
+            SDL_Delay( delay );
     }
 
 	// clean up
@@ -199,10 +168,8 @@ int window_start( void )
 
 int window_close( void )
 {
+    log_info( "SDL window closing" );
     SDL_DestroyWindow( window.handle );
-    SDL_Quit();
-
-	// reset window
 	window = ( struct window ) { 0 };
 
     return WINDOW_SUCCESS;
@@ -213,7 +180,7 @@ int window_set_target_fps( int fps )
 	window.frame.target_rate = fps;
 	window.frame.target_delta = ( fps <= 0.0 ? 1.0 : 1000.0 / ( double ) fps );
 
-	return 0;
+	return WINDOW_SUCCESS;
 }
 
 int window_set_target_tps( int tps )
@@ -221,18 +188,17 @@ int window_set_target_tps( int tps )
 	window.tick.target_rate = tps;
 	window.tick.target_delta = ( tps <= 0.0 ? 0.01 : 1000.0 / ( double ) tps );
 
-	return 0;
-}
-
-int window_set_title( const char *title )
-{
-    SDL_SetWindowTitle( window.handle, title );
-
-    return 0;
+	return WINDOW_SUCCESS;
 }
 
 int window_get_size( int *w, int *h )
 {
     SDL_GetWindowSize( window.handle, w, h );
-    return 0;
+    return WINDOW_SUCCESS;
+}
+
+int window_set_title( const char *title )
+{
+    SDL_SetWindowTitle( window.handle, title );
+    return WINDOW_SUCCESS;
 }

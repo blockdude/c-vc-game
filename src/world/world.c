@@ -2,7 +2,6 @@
 #include "world.h"
 #include "../gfx/render.h"
 #include "../gfx/window.h"
-#include "../input/input.h"
 
 int world_init( struct world *self, size_t world_size_x, size_t world_size_y, size_t world_size_z )
 {

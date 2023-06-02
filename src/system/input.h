@@ -4,6 +4,9 @@
 #include "../util/util.h"
 #include <SDL2/SDL.h>
 
+#define INPUT_SUCCESS 0
+#define INPUT_ERROR -1
+
 // keyboard buton input
 enum keyboard
 {
@@ -30,11 +33,40 @@ enum mouse
     MB_RIGHT        = SDL_BUTTON_RMASK,
     MB_MIDDLE       = SDL_BUTTON_MMASK
 };
+/*
+struct key_state
+{
+    bool press;
+    bool up;
+    bool down;
+};
+
+struct mouse_scroll
+{
+    float x;
+    float y;
+};
+
+struct mouse
+{
+    struct key_state left;
+    struct key_state right;
+    struct mouse_scroll scroll;
+    bool move;
+};
+
+struct input
+{
+    char key[ 128 ];
+    struct mouse mouse;
+};
+*/
 
 // state handler (for window.c only)
-void input_init( void );
-void input_handle( SDL_Event *event );
-void input_update( void );
+int input_init( void );
+int input_poll_events( void );
+int input_reset( void );
+int input_free( void );
 
 // true when key has been pressed (lasts one frame)
 bool input_key_down( enum keyboard input );

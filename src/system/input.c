@@ -1,4 +1,5 @@
 #include "input.h"
+#include "../gfx/window.h"
 
 static const uint8_t *key_state;
 static bool key_state_down = false;
@@ -9,56 +10,69 @@ static bool mouse_state_up = false;
 static bool mouse_state_move = false;
 static float mouse_state_scroll = 0;
 
-void input_init( void )
+int input_init( void )
 {
     key_state = SDL_GetKeyboardState( NULL );
+    return INPUT_SUCCESS;
 }
 
-void input_handle( SDL_Event *event )
+int input_poll_events( void )
 {
-    switch ( event->type )
+    SDL_Event event;
+    while ( SDL_PollEvent( &event ) )
     {
-        // get key state
-        case SDL_KEYDOWN:
+        switch ( event.type )
+        {
+            case SDL_QUIT:
 
-            key_state_down = true;
+                window.running = false;
 
-            break;
+                break;
 
-        case SDL_KEYUP:
+            // get key state
+            case SDL_KEYDOWN:
 
-            key_state_up = true;
+                key_state_down = true;
 
-            break;
+                break;
 
-        // get mouse state
-        case SDL_MOUSEBUTTONDOWN:
+            case SDL_KEYUP:
 
-            mouse_state_down = true;
+                key_state_up = true;
 
-            break;
+                break;
 
-        case SDL_MOUSEBUTTONUP:
+            // get mouse state
+            case SDL_MOUSEBUTTONDOWN:
 
-            mouse_state_up = true;
+                mouse_state_down = true;
 
-            break;
+                break;
 
-        case SDL_MOUSEWHEEL:
+            case SDL_MOUSEBUTTONUP:
 
-            mouse_state_scroll = event->wheel.preciseY;
+                mouse_state_up = true;
 
-            break;
+                break;
 
-        case SDL_MOUSEMOTION:
+            case SDL_MOUSEWHEEL:
 
-            mouse_state_move = true;
+                mouse_state_scroll = event.wheel.preciseY;
 
-            break;
+                break;
+
+            case SDL_MOUSEMOTION:
+
+                mouse_state_move = true;
+
+                break;
+        }
     }
+
+    return INPUT_SUCCESS;
 }
 
-void input_update( void )
+int input_reset( void )
 {
     // reset key state
     key_state_down = false;
@@ -69,6 +83,12 @@ void input_update( void )
     mouse_state_up = false;
     mouse_state_move = false;
     mouse_state_scroll = 0;
+
+    return INPUT_SUCCESS;
+}
+
+int input_free( void )
+{
 }
 
 bool input_key_down( enum keyboard input )

@@ -7,9 +7,6 @@
 #define WINDOW_SUCCESS	0
 #define WINDOW_ERROR	-1
 
-extern const char *g_window_title;
-extern const uint32_t g_window_flags;
-
 // window function
 typedef int ( *window_fn )( void );
 
@@ -57,6 +54,10 @@ struct window
 	// store timings
 	struct timing frame;
 	struct timing tick;
+
+	// unused for now
+	int w;
+	int h;
 };
 
 // global window because only one window should be opened for this game anyways
