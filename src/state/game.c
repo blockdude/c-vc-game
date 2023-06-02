@@ -94,9 +94,9 @@ int game_render( void )
 
     render_present();
 
-    printf( "|-------------|-------------|\n" );
-    printf( "|frame: %5lu |tick : %5lu |\n", window.frame.count, window.tick.count );
-    printf( "|fps  : %5u |tps  : %5u |\n", window.frame.rate, window.tick.rate );
+    char buff[ 256 ];
+    sprintf( buff, "frame : %5lu | fps : %u | tick : %5lu | tps : %u", window.frame.count, window.frame.rate, window.frame.count, window.tick.rate );
+    window_set_title( buff );
 
     return 0;
 }

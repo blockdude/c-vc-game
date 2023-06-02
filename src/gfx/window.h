@@ -71,6 +71,7 @@ int window_close( void );
 int window_set_state( struct window_state *state );
 int window_set_target_fps( int fps );
 int window_set_target_tps( int tps );
+int window_set_title( const char *title );
 
 // window getters
 int window_get_size( int *w, int *h );
