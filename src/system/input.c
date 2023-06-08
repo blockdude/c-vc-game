@@ -1,4 +1,6 @@
 #include "input.h"
+#include <SDL2/SDL.h>
+#include "../util/util.h"
 #include "../gfx/window.h"
 
 static const uint8_t *key_state;
@@ -16,8 +18,25 @@ int input_init( void )
     return INPUT_SUCCESS;
 }
 
+static int input_reset( void )
+{
+    // reset key state
+    key_state_down = false;
+    key_state_up = false;
+    
+    // reset mouse state
+    mouse_state_down = false;
+    mouse_state_up = false;
+    mouse_state_move = false;
+    mouse_state_scroll = 0;
+
+    return INPUT_SUCCESS;
+}
+
 int input_poll_events( void )
 {
+    input_reset();
+
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
     {
@@ -25,7 +44,7 @@ int input_poll_events( void )
         {
             case SDL_QUIT:
 
-                window.running = false;
+                window.quit = true;
 
                 break;
 
@@ -72,36 +91,22 @@ int input_poll_events( void )
     return INPUT_SUCCESS;
 }
 
-int input_reset( void )
+int input_free( void )
 {
-    // reset key state
-    key_state_down = false;
-    key_state_up = false;
-    
-    // reset mouse state
-    mouse_state_down = false;
-    mouse_state_up = false;
-    mouse_state_move = false;
-    mouse_state_scroll = 0;
-
     return INPUT_SUCCESS;
 }
 
-int input_free( void )
-{
-}
-
-bool input_key_down( enum keyboard input )
+bool input_key_down( enum key input )
 {
     return key_state_down && key_state[ input ];
 }
 
-bool input_key_up( enum keyboard input )
+bool input_key_up( enum key input )
 {
     return key_state_up && key_state[ input ];
 }
 
-bool input_key_press( enum keyboard input )
+bool input_key_press( enum key input )
 {
     return key_state[ input ];
 }

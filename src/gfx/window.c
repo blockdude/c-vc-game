@@ -41,7 +41,6 @@ static int window_internal_update( void )
 {
     if ( window.state.update )
         window.state.update();
-    input_reset();
 
     return WINDOW_SUCCESS;
 }
@@ -59,7 +58,7 @@ static int window_internal_render( void )
 int window_init( struct window_state *state )
 {
 	// init variables
-	window.running = true;
+	window.quit = false;
 
 	if ( state == NULL )
 		window.state = ( struct window_state ) { 0 };
@@ -82,6 +81,8 @@ int window_init( struct window_state *state )
 		.count			= 0
 	};
 
+    log_info( "Creating SDL window" );
+
     window.handle = SDL_CreateWindow( "window" , 0, 0, 700, 700, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI );
     if ( !window.handle )
     {
@@ -90,12 +91,10 @@ int window_init( struct window_state *state )
         return WINDOW_ERROR;
     }
 
-    log_info( "SDL window created" );
-
     return WINDOW_SUCCESS;
 }
 
-int window_start( void )
+int window_loop( void )
 {
 	// init
     window_internal_init();
@@ -110,7 +109,7 @@ int window_start( void )
     uint64_t frame_timer = frame_previous;
 
 	// begin main loop
-    while ( window.running )
+    while ( !window.quit )
     {
         // get frame timing
         uint64_t frame_current = SDL_GetTicks64();
@@ -142,7 +141,7 @@ int window_start( void )
         input_poll_events();
         
         // maintain fixed time stamp
-        while( tick_time >= window.tick.target_delta )
+        while ( tick_time >= window.tick.target_delta )
         {
             window_internal_tick();
             tick_time -= window.tick.target_delta;
@@ -166,9 +165,9 @@ int window_start( void )
     return WINDOW_SUCCESS;
 }
 
-int window_close( void )
+int window_free( void )
 {
-    log_info( "SDL window closing" );
+    log_info( "Closing SDL window" );
     SDL_DestroyWindow( window.handle );
 	window = ( struct window ) { 0 };
 

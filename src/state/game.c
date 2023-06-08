@@ -10,27 +10,27 @@
 int game_init( void )
 {
     tile_init();
-    world_init( &world, 16, 16, 8 );
-    gen_world( &world );
+    world_init( &state.world, 16, 16, 8 );
+    gen_world( &state.world );
 
     return 0;
 }
 
 int game_free( void )
 {
-    world_free( &world );
+    world_free( &state.world );
     return 0;
 }
 
 int game_tick( void )
 {
-    world_tick( &world );
+    world_tick( &state.world );
     return 0;
 }
 
 int game_update( void )
 {
-    world_update( &world );
+    world_update( &state.world );
 
     float vx = 0.0f;
     float vy = 0.0f;
@@ -39,18 +39,18 @@ int game_update( void )
     float player_speed = 10.0f;
 
     // get input
-    if ( input_key_press( KB_NORTH ) ) vy -= 1.0f;
-    if ( input_key_press( KB_SOUTH ) ) vy += 1.0f;
-    if ( input_key_press( KB_EAST ) ) vx += 1.0f;
-    if ( input_key_press( KB_WEST ) ) vx -= 1.0f;
+    // if ( input_key_press( KB_NORTH ) ) vy -= 1.0f;
+    // if ( input_key_press( KB_SOUTH ) ) vy += 1.0f;
+    // if ( input_key_press( KB_EAST ) ) vx += 1.0f;
+    // if ( input_key_press( KB_WEST ) ) vx -= 1.0f;
     scroll_delta = input_mouse_scroll();
 
     // apply input
     normalize( vx, vy, &vx, &vy );
-    world.camera.x += vx * player_speed * window.frame.delta;
-    world.camera.y += vy * player_speed * window.frame.delta;
+    state.world.camera.x += vx * player_speed * window.frame.delta;
+    state.world.camera.y += vy * player_speed * window.frame.delta;
 
-    world.camera.scale *= scroll_delta != 0 ? pow( scroll_speed, scroll_delta ) : 1.0f;
+    state.world.camera.scale *= scroll_delta != 0 ? pow( scroll_speed, scroll_delta ) : 1.0f;
 
     return 0;
 }
@@ -69,7 +69,7 @@ int game_render( void )
     screen_center_x = screen_center_x / 2;
     screen_center_y = screen_center_y / 2;
 
-    world_render( &world );
+    world_render( &state.world );
 
     // draw cross hair
 

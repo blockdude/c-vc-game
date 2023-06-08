@@ -9,18 +9,22 @@ struct render render;
 
 int render_init( void )
 {
-    render.handle = SDL_CreateRenderer( window.handle, -1, g_render_flags );
+	log_info( "Creating SDL renderer" );
 
+    render.handle = SDL_CreateRenderer( window.handle, -1, g_render_flags );
     if ( render.handle == NULL )
+	{
+		log_error( "Unable to create SDL renderer: %s", SDL_GetError() );
         return RENDER_ERROR;
+	}
 
     SDL_SetRenderDrawBlendMode( render.handle, SDL_BLENDMODE_BLEND );
-
 	return RENDER_SUCCESS;
 }
 
 int render_free( void )
 {
+	log_info( "Closing SDL renderer" );
 	SDL_DestroyRenderer( render.handle );
 	return RENDER_SUCCESS;
 }

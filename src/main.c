@@ -1,7 +1,7 @@
 #include "gfx/window.h"
 #include "gfx/render.h"
+#include "system/system.h"
 #include "state/state.h"
-#include "util/util.h"
 
 int main( int argc, char *argv[] )
 {
@@ -17,15 +17,15 @@ int main( int argc, char *argv[] )
 
 	// setup
 	system_init();
-	window_init( &game_state );
+	window_init( &state.game );
 	render_init();
 
 	// loop
-	window_start();
+	window_loop();
 
 	// free memory
 	render_free();
-	window_close();
+	window_free();
 	system_free();
 
 	return 0;

@@ -46,7 +46,8 @@ struct window
 	SDL_Window *handle;
 
 	// is the window running
-	bool running;
+	bool quit;
+	bool initialized;
 
 	// store window state
 	struct window_state state;
@@ -65,8 +66,8 @@ extern struct window window;
 
 // window setup and cleanup functions
 int window_init( struct window_state *state );
-int window_start( void );
-int window_close( void );
+int window_loop( void );
+int window_free( void );
 
 // window setters
 int window_set_state( struct window_state *state );

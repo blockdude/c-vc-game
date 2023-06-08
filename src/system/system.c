@@ -13,11 +13,9 @@ int system_init( void )
         return SYSTEM_ERROR;
     }
 
-    log_info( "SDL initialized" );
-
     log_info( "Initializing input" );
+
     input_init();
-    log_info( "Input initialized" );
 
     return SYSTEM_SUCCESS;
 }

@@ -38,7 +38,7 @@ CC			= gcc
 LINKER		= $(CC)
 INCLUDE		= -I$(SRC_DIR)
 CPPFLAGS	= -DLOG_USE_COLOR
-CFLAGS		= -g -Wall -Wextra -std=c99 -ggdb3 -pedantic
+CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
 LDFLAGS		= 
 LDLIBS		= -lm -lSDL2
 
