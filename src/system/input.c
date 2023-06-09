@@ -1,39 +1,117 @@
 #include "input.h"
-#include <SDL2/SDL.h>
 #include "../util/util.h"
 #include "../gfx/window.h"
 
-static const uint8_t *key_state;
-static bool key_state_down = false;
-static bool key_state_up = false;
+struct key_state
+{
+    // true when button is down ( lasts one frame )
+    bool down;
 
-static bool mouse_state_down = false;
-static bool mouse_state_up = false;
-static bool mouse_state_move = false;
-static float mouse_state_scroll = 0;
+    // true when button is up ( lasts one frame )
+    bool up;
+
+    // true when while button is held down
+    bool press;
+
+    // true when key is double pressed lasts one frame
+    bool repeat;
+};
+
+struct mouse_state
+{
+    struct key_state button[ INPUT_MB_COUNT ];
+
+    struct {
+        // integer wheel delta
+        int x;
+        int y;
+
+        // float wheel delta
+        float fx;
+        float fy;
+    } wheel;
+
+    struct {
+        // position relative to window
+        int x;
+        int y;
+
+        // delta x and y
+        int dx;
+        int dy;
+
+        // global position
+        int gx;
+        int gy;
+    } pos;
+
+    bool moved;
+};
+
+struct input
+{
+    struct key_state key[ INPUT_KB_COUNT ];
+    struct mouse_state mouse;
+};
+
+static struct input input;
+
+static enum input_button button_from_sdl( Uint8 sdlbutton )
+{
+    switch ( sdlbutton )
+    {
+        case SDL_BUTTON_LEFT: return INPUT_MB_LEFT;
+        case SDL_BUTTON_RIGHT: return INPUT_MB_RIGHT;
+        case SDL_BUTTON_MIDDLE: return INPUT_MB_MIDDLE;
+        case SDL_BUTTON_X1: return INPUT_MB_XA;
+        case SDL_BUTTON_X2: return INPUT_MB_XB;
+    }
+
+    return INPUT_MB_FIRST;
+}
+
+static void key_up( struct key_state *state )
+{
+    state->up = state->press;
+    state->press = false;
+}
+
+static void key_down( struct key_state *state )
+{
+    state->down = !state->press;
+    state->press = true;
+}
+
+static void key_update( struct key_state *state )
+{
+    state->down = false;
+    state->up = false;
+}
+
+static void input_reset( void )
+{
+    // reset keys
+    for ( int i = 0; i < INPUT_KB_COUNT; i++ )
+        key_update( &input.key[ i ] );
+
+    // reset mouse buttons
+    for ( int i = 0; i < INPUT_MB_COUNT; i++ )
+        key_update( &input.mouse.button[ i ] );
+
+    // reset mouse events
+    input.mouse.moved = false;
+    input.mouse.wheel.x = 0;
+    input.mouse.wheel.y = 0;
+    input.mouse.wheel.fx = 0;
+    input.mouse.wheel.fy = 0;
+}
 
 int input_init( void )
 {
-    key_state = SDL_GetKeyboardState( NULL );
     return INPUT_SUCCESS;
 }
 
-static int input_reset( void )
-{
-    // reset key state
-    key_state_down = false;
-    key_state_up = false;
-    
-    // reset mouse state
-    mouse_state_down = false;
-    mouse_state_up = false;
-    mouse_state_move = false;
-    mouse_state_scroll = 0;
-
-    return INPUT_SUCCESS;
-}
-
-int input_poll_events( void )
+int input_process_events( void )
 {
     input_reset();
 
@@ -44,45 +122,50 @@ int input_poll_events( void )
         {
             case SDL_QUIT:
 
-                window.quit = true;
+                window_quit();
 
                 break;
 
-            // get key state
             case SDL_KEYDOWN:
 
-                key_state_down = true;
+                key_down( &input.key[ event.key.keysym.scancode ] );
 
                 break;
 
             case SDL_KEYUP:
 
-                key_state_up = true;
+                key_up( &input.key[ event.key.keysym.scancode ] );
 
                 break;
 
-            // get mouse state
             case SDL_MOUSEBUTTONDOWN:
 
-                mouse_state_down = true;
+                key_down( &input.mouse.button[ button_from_sdl( event.button.button ) ] );
 
                 break;
 
             case SDL_MOUSEBUTTONUP:
 
-                mouse_state_up = true;
+                key_up( &input.mouse.button[ button_from_sdl( event.button.button ) ] );
 
                 break;
 
             case SDL_MOUSEWHEEL:
 
-                mouse_state_scroll = event.wheel.preciseY;
+                input.mouse.wheel.x += event.wheel.x;
+                input.mouse.wheel.y += event.wheel.y;
+                input.mouse.wheel.fx += event.wheel.preciseX;
+                input.mouse.wheel.fy += event.wheel.preciseY;
 
                 break;
 
             case SDL_MOUSEMOTION:
 
-                mouse_state_move = true;
+                input.mouse.pos.x = event.motion.x;
+                input.mouse.pos.y = event.motion.y;
+                input.mouse.pos.dx = event.motion.xrel;
+                input.mouse.pos.dy = event.motion.yrel;
+                input.mouse.moved = true;
 
                 break;
         }
@@ -96,50 +179,48 @@ int input_free( void )
     return INPUT_SUCCESS;
 }
 
-bool input_key_down( enum key input )
+bool input_key_down( enum input_key key )
 {
-    return key_state_down && key_state[ input ];
+    return input.key[ key ].down;
 }
 
-bool input_key_up( enum key input )
+bool input_key_up( enum input_key key )
 {
-    return key_state_up && key_state[ input ];
+    return input.key[ key ].up;
 }
 
-bool input_key_press( enum key input )
+bool input_key_press( enum input_key key )
 {
-    return key_state[ input ];
+    return input.key[ key ].press;
 }
 
-bool input_mouse_down( enum mouse input )
+bool input_mouse_down( enum input_button button )
 {
-    uint32_t mouse_state = SDL_GetMouseState( NULL, NULL );
-    return mouse_state_down && ( mouse_state & input );
+    return input.mouse.button[ button ].down;
 }
 
-bool input_mouse_up( enum mouse input )
+bool input_mouse_up( enum input_button button )
 {
-    uint32_t mouse_state = SDL_GetMouseState( NULL, NULL );
-    return mouse_state_up && ( mouse_state & input );
+    return input.mouse.button[ button ].up;
 }
 
-bool input_mouse_press( enum mouse input )
+bool input_mouse_press( enum input_button button )
 {
-    uint32_t mouse_state = SDL_GetMouseState( NULL, NULL );
-    return mouse_state & input;
+    return input.mouse.button[ button ].press;
 }
 
 bool input_mouse_move( void )
 {
-    return mouse_state_move;
+    return input.mouse.moved;
 }
 
 void input_mouse_pos( int *x, int *y )
 {
-    SDL_GetMouseState( x, y );
+    *x = input.mouse.pos.x;
+    *y = input.mouse.pos.y;
 }
 
 float input_mouse_scroll( void )
 {
-    return mouse_state_scroll;
+    return input.mouse.wheel.fy;
 }

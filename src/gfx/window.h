@@ -67,6 +67,7 @@ extern struct window window;
 // window setup and cleanup functions
 int window_init( struct window_state *state );
 int window_loop( void );
+int window_quit( void );
 int window_free( void );
 
 // window setters

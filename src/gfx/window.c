@@ -138,7 +138,7 @@ int window_loop( void )
         tick_time += frame_delta;
 
         // poll events
-        input_poll_events();
+        input_process_events();
         
         // maintain fixed time stamp
         while ( tick_time >= window.tick.target_delta )
@@ -162,6 +162,12 @@ int window_loop( void )
 	// clean up
 	window_internal_free();
 
+    return WINDOW_SUCCESS;
+}
+
+int window_quit( void )
+{
+    window.quit = true;
     return WINDOW_SUCCESS;
 }
 

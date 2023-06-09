@@ -39,10 +39,10 @@ int game_update( void )
     float player_speed = 10.0f;
 
     // get input
-    // if ( input_key_press( KB_NORTH ) ) vy -= 1.0f;
-    // if ( input_key_press( KB_SOUTH ) ) vy += 1.0f;
-    // if ( input_key_press( KB_EAST ) ) vx += 1.0f;
-    // if ( input_key_press( KB_WEST ) ) vx -= 1.0f;
+    if ( input_key_press( INPUT_KB_W ) ) vy -= 1.0f;
+    if ( input_key_press( INPUT_KB_S ) ) vy += 1.0f;
+    if ( input_key_press( INPUT_KB_D ) ) vx += 1.0f;
+    if ( input_key_press( INPUT_KB_A ) ) vx -= 1.0f;
     scroll_delta = input_mouse_scroll();
 
     // apply input

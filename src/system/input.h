@@ -2,200 +2,112 @@
 #define INPUT_H
 
 #include <stdbool.h>
+#include <SDL2/SDL.h>
 
 #define INPUT_SUCCESS 0
 #define INPUT_ERROR -1
 
 // keyboard buton input
-enum key
+enum input_key
 {
-    KB_FIRST            = 0,
+    INPUT_KB_FIRST            = 0,
 
-    KB_UNKNOWN          = 0,
+    INPUT_KB_UNKNOWN          = SDL_SCANCODE_UNKNOWN,
 
-    KB_A                = 1,
-    KB_B                = 2,
-    KB_C                = 3,
-    KB_D                = 4,
-    KB_E                = 5,
-    KB_F                = 6,
-    KB_G                = 7,
-    KB_H                = 8,
-    KB_I                = 9,
-    KB_J                = 10,
-    KB_K                = 11,
-    KB_L                = 12,
-    KB_M                = 13,
-    KB_N                = 14,
-    KB_O                = 15,
-    KB_P                = 16,
-    KB_Q                = 17,
-    KB_R                = 18,
-    KB_S                = 19,
-    KB_T                = 20,
-    KB_U                = 21,
-    KB_V                = 22,
-    KB_W                = 23,
-    KB_X                = 24,
-    KB_Y                = 25,
-    KB_Z                = 26,
+    INPUT_KB_A                = SDL_SCANCODE_A,
+    INPUT_KB_B                = SDL_SCANCODE_B,
+    INPUT_KB_C                = SDL_SCANCODE_C,
+    INPUT_KB_D                = SDL_SCANCODE_D,
+    INPUT_KB_E                = SDL_SCANCODE_E,
+    INPUT_KB_F                = SDL_SCANCODE_F,
+    INPUT_KB_G                = SDL_SCANCODE_G,
+    INPUT_KB_H                = SDL_SCANCODE_H,
+    INPUT_KB_I                = SDL_SCANCODE_I,
+    INPUT_KB_J                = SDL_SCANCODE_J,
+    INPUT_KB_K                = SDL_SCANCODE_K,
+    INPUT_KB_L                = SDL_SCANCODE_L,
+    INPUT_KB_M                = SDL_SCANCODE_M,
+    INPUT_KB_N                = SDL_SCANCODE_N,
+    INPUT_KB_O                = SDL_SCANCODE_O,
+    INPUT_KB_P                = SDL_SCANCODE_P,
+    INPUT_KB_Q                = SDL_SCANCODE_Q,
+    INPUT_KB_R                = SDL_SCANCODE_R,
+    INPUT_KB_S                = SDL_SCANCODE_S,
+    INPUT_KB_T                = SDL_SCANCODE_T,
+    INPUT_KB_U                = SDL_SCANCODE_U,
+    INPUT_KB_V                = SDL_SCANCODE_V,
+    INPUT_KB_W                = SDL_SCANCODE_W,
+    INPUT_KB_X                = SDL_SCANCODE_X,
+    INPUT_KB_Y                = SDL_SCANCODE_Y,
+    INPUT_KB_Z                = SDL_SCANCODE_Z,
 
-    KB_0                = 27,
-    KB_1                = 28,
-    KB_2                = 29,
-    KB_3                = 30,
-    KB_4                = 31,
-    KB_5                = 32,
-    KB_6                = 33,
-    KB_7                = 34,
-    KB_8                = 35,
-    KB_9                = 36,
+    INPUT_KB_0                = SDL_SCANCODE_0,
+    INPUT_KB_1                = SDL_SCANCODE_1,
+    INPUT_KB_2                = SDL_SCANCODE_2,
+    INPUT_KB_3                = SDL_SCANCODE_3,
+    INPUT_KB_4                = SDL_SCANCODE_4,
+    INPUT_KB_5                = SDL_SCANCODE_5,
+    INPUT_KB_6                = SDL_SCANCODE_6,
+    INPUT_KB_7                = SDL_SCANCODE_7,
+    INPUT_KB_8                = SDL_SCANCODE_8,
+    INPUT_KB_9                = SDL_SCANCODE_9,
 
-    KB_RETURN           = 37,
-    KB_ESCAPE           = 38,
-    KB_BACKSPACE        = 39,
-    KB_TAB              = 40,
-    KB_SPACE            = 41,
+    INPUT_KB_RETURN           = SDL_SCANCODE_RETURN,
+    INPUT_KB_ESCAPE           = SDL_SCANCODE_ESCAPE,
+    INPUT_KB_BACKSPACE        = SDL_SCANCODE_BACKSPACE,
+    INPUT_KB_TAB              = SDL_SCANCODE_TAB,
+    INPUT_KB_SPACE            = SDL_SCANCODE_SPACE,
 
-    KB_MINUS            = 42,
-    KB_EQUAL            = 43,
-    KB_LEFT_BRACKET     = 44,
-    KB_RIGHT_BRACKET    = 45,
-    KB_BACKSLASH        = 46,
+    INPUT_KB_MINUS            = SDL_SCANCODE_MINUS,
+    INPUT_KB_EQUAL            = SDL_SCANCODE_EQUALS,
+    INPUT_KB_LEFT_BRACKET     = SDL_SCANCODE_LEFTBRACKET,
+    INPUT_KB_RIGHT_BRACKET    = SDL_SCANCODE_RIGHTBRACKET,
+    INPUT_KB_BACKSLASH        = SDL_SCANCODE_BACKSLASH,
 
-    KB_EXCLAIM          = 47,
-    KB_DOUBLE_QUOTE     = 48,
-    KB_HASH             = 49,
-    KB_PERCENT          = 50,
-    KB_DOLLAR           = 51,
-    KB_AMPERSAND        = 52,
-    KB_SINGLE_QUOTE     = 53,
-    KB_LEFT_PAREN       = 54,
-    KB_RIGHT_PAREN      = 55,
-    KB_ASTERISK         = 56,
-    KB_PLUS             = 57,
-    KB_COMMA            = 58,
-    KB_PERIOD           = 59,
-    KB_SLASH            = 60,
+    INPUT_KB_RIGHT            = SDL_SCANCODE_RIGHT,
+    INPUT_KB_LEFT             = SDL_SCANCODE_LEFT,
+    INPUT_KB_DOWN             = SDL_SCANCODE_DOWN,
+    INPUT_KB_UP               = SDL_SCANCODE_UP,
+    INPUT_KB_LEFT_CTRL        = SDL_SCANCODE_LCTRL,
+    INPUT_KB_LEFT_ALT         = SDL_SCANCODE_LALT,
+    INPUT_KB_LEFT_SHIFT       = SDL_SCANCODE_LSHIFT,
+    INPUT_KB_RIGHT_CTRL       = SDL_SCANCODE_RCTRL,
+    INPUT_KB_RIGHT_ALT        = SDL_SCANCODE_RALT,
+    INPUT_KB_RIGHT_SHIFT      = SDL_SCANCODE_RSHIFT,
 
-    KB_COLON            = 61,
-    KB_SEMICOLON        = 62,
-    KB_LESS             = 63,
-    KB_GREATER          = 64,
-    KB_QUESTION         = 65,
-    KB_AT               = 66,
-    KB_CARET            = 67,
-    KB_UNDERSCORE       = 68,
-    KB_GRAVE_ACCENT     = 69,
-    KB_APOSTROPHE       = 70,
-
-    KB_DELETE           = 71,
-
-    KB_RIGHT            = 72,
-    KB_LEFT             = 73,
-    KB_DOWN             = 74,
-    KB_UP               = 75,
-    KB_LEFT_CTRL        = 76,
-    KB_LEFT_ALT         = 77,
-    KB_LEFT_SHIFT       = 78,
-    KB_RIGHT_CTRL       = 79,
-    KB_RIGHT_ALT        = 80,
-    KB_RIGHT_SHIFT      = 81,
-    KB_INSERT           = 82,
-    KB_HOME             = 83,
-    KB_END              = 84,
-    KB_PAGE_UP          = 85,
-    KB_PAGE_DOWN        = 86,
-
-    KB_COUNT,
-    KB_LAST             = KB_COUNT - 1
+    INPUT_KB_COUNT            = SDL_NUM_SCANCODES,
+    INPUT_KB_LAST             = INPUT_KB_RIGHT_SHIFT
 };
 
 // mouse button input
-enum mouse
+enum input_button
 {
-    MB_FIRST            = 0,
+    INPUT_MB_FIRST            = 0,
 
-    MB_LEFT             = 0,
-    MB_RIGHT            = 1,
-    MB_MIDDLE           = 2,
-    MB_ALT_A            = 3,
-    MB_ALT_B            = 4,
+    INPUT_MB_LEFT             = 0,
+    INPUT_MB_RIGHT            = 1,
+    INPUT_MB_MIDDLE           = 2,
+    INPUT_MB_XA               = 3,
+    INPUT_MB_XB               = 4,
 
-    MB_COUNT,
-    MB_LAST             = MB_COUNT - 1
-};
-
-struct key_state
-{
-    bool down;
-    bool up;
-    bool press;
-};
-
-struct mouse_vec
-{
-    float x;
-    float y;
-};
-
-struct mouse_state
-{
-    struct {
-        struct key_state left;
-        struct key_state middle;
-        struct key_state right;
-        struct key_state alt_1;
-        struct key_state alt_2;
-    } button;
-
-    struct mouse_vec scroll;
-
-    struct {
-        struct mouse_vec abs;
-        struct mouse_vec rel;
-    } pos;
-
-    bool moved;
-};
-
-struct input
-{
-    struct key_state key[ KB_COUNT ];
-    struct mouse_state mouse;
+    INPUT_MB_COUNT,
+    INPUT_MB_LAST             = INPUT_MB_COUNT - 1
 };
 
 // input stuff
 int input_init( void );
-int input_poll_events( void );
+int input_process_events( void );
 int input_free( void );
 
-// true when key has been pressed (lasts one frame)
-bool input_key_down( enum key input );
+bool input_key_down( enum input_key key );
+bool input_key_up( enum input_key key );
+bool input_key_press( enum input_key key );
 
-// true when key is released (lasts one frame)
-bool input_key_up( enum key input );
-
-// true while key is held
-bool input_key_press( enum key input );
-
-
-// true when button is pressed (lasts one frame)
-bool input_mouse_down( enum mouse input );
-
-// true when button is released (lasts one frame)
-bool input_mouse_up( enum mouse input );
-
-// true when button is held
-bool input_mouse_press( enum mouse input );
-
-// true when mouse is moved (lasts one frame)
+bool input_mouse_down( enum input_button button );
+bool input_mouse_up( enum input_button button );
+bool input_mouse_press( enum input_button button );
 bool input_mouse_move( void );
-
-// get mouse position on window
 void input_mouse_pos( int *x, int *y );
-
-// returns amount scrolled in a frame otherwise returns zero
 float input_mouse_scroll( void );
 
 #endif
