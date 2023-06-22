@@ -57,6 +57,12 @@ static int window_internal_render( void )
 
 int window_init( struct window_state *state )
 {
+    // skip init if already done
+    if ( window.initialized )
+    {
+        return WINDOW_SUCCESS;
+    }
+
 	// init variables
 	window.quit = false;
 
@@ -83,14 +89,14 @@ int window_init( struct window_state *state )
 
     log_info( "Creating SDL window" );
 
-    window.handle = SDL_CreateWindow( "window" , 0, 0, 700, 700, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI );
+    window.handle = SDL_CreateWindow( "window" , 0, 0, 700, 700, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI );
     if ( !window.handle )
     {
         log_error( "Unable to create SDL window: %s", SDL_GetError() );
-        SDL_Quit();
         return WINDOW_ERROR;
     }
 
+    window.initialized = true;
     return WINDOW_SUCCESS;
 }
 
@@ -175,7 +181,7 @@ int window_free( void )
 {
     log_info( "Closing SDL window" );
     SDL_DestroyWindow( window.handle );
-	window = ( struct window ) { 0 };
+	window.initialized = false;
 
     return WINDOW_SUCCESS;
 }

@@ -43,7 +43,7 @@ int game_update( void )
     if ( input_key_press( INPUT_KB_S ) ) vy += 1.0f;
     if ( input_key_press( INPUT_KB_D ) ) vx += 1.0f;
     if ( input_key_press( INPUT_KB_A ) ) vx -= 1.0f;
-    scroll_delta = input_mouse_scroll();
+    input_mouse_fscroll( NULL, &scroll_delta );
 
     // apply input
     normalize( vx, vy, &vx, &vy );
@@ -69,7 +69,7 @@ int game_render( void )
     screen_center_x = screen_center_x / 2;
     screen_center_y = screen_center_y / 2;
 
-    world_render( &state.world );
+    //world_render( &state.world );
 
     // draw cross hair
 
@@ -95,7 +95,7 @@ int game_render( void )
     render_present();
 
     char buff[ 256 ];
-    sprintf( buff, "frame : %5lu | fps : %u | tick : %5lu | tps : %u", window.frame.count, window.frame.rate, window.frame.count, window.tick.rate );
+    sprintf( buff, "frame : %5lu | fps : %u | tick : %5lu | tps : %u", window.frame.count, window.frame.rate, window.tick.count, window.tick.rate );
     window_set_title( buff );
 
     return 0;

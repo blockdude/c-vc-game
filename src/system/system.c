@@ -5,7 +5,7 @@
 
 int system_init( void )
 {
-    log_info( "Initializing SDL" );
+    log_info( "Initializing SDL subsystems" );
 
     if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
     {

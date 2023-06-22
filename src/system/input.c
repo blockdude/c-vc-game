@@ -104,6 +104,8 @@ static void input_reset( void )
     input.mouse.wheel.y = 0;
     input.mouse.wheel.fx = 0;
     input.mouse.wheel.fy = 0;
+    input.mouse.pos.dx = 0;
+    input.mouse.pos.dy = 0;
 }
 
 int input_init( void )
@@ -163,8 +165,8 @@ int input_process_events( void )
 
                 input.mouse.pos.x = event.motion.x;
                 input.mouse.pos.y = event.motion.y;
-                input.mouse.pos.dx = event.motion.xrel;
-                input.mouse.pos.dy = event.motion.yrel;
+                input.mouse.pos.dx += event.motion.xrel;
+                input.mouse.pos.dy += event.motion.yrel;
                 input.mouse.moved = true;
 
                 break;
@@ -209,18 +211,31 @@ bool input_mouse_press( enum input_button button )
     return input.mouse.button[ button ].press;
 }
 
-bool input_mouse_move( void )
+bool input_mouse_moved( void )
 {
     return input.mouse.moved;
 }
 
 void input_mouse_pos( int *x, int *y )
 {
-    *x = input.mouse.pos.x;
-    *y = input.mouse.pos.y;
+    if ( x ) *x = input.mouse.pos.x;
+    if ( y ) *y = input.mouse.pos.y;
 }
 
-float input_mouse_scroll( void )
+void input_mouse_pos_delta( int *x, int *y )
 {
-    return input.mouse.wheel.fy;
+    if ( x ) *x = input.mouse.pos.dx;
+    if ( y ) *y = input.mouse.pos.dy;
+}
+
+void input_mouse_scroll( int *x, int *y )
+{
+    if ( x ) *x = input.mouse.wheel.x;
+    if ( y ) *y = input.mouse.wheel.y;
+}
+
+void input_mouse_fscroll( float *x, float *y )
+{
+    if ( x ) *x = input.mouse.wheel.fx;
+    if ( y ) *y = input.mouse.wheel.fy;
 }
