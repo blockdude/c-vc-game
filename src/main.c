@@ -14,8 +14,6 @@ int main( int argc, char *argv[] )
 
 	// log arguments
 	log_info( "executed with: %s", buf );
-	char e = 1[ "hello" ];
-	log_info( "%c", e );
 
 	// setup
 	system_init();
