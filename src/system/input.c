@@ -1,6 +1,5 @@
 #include "input.h"
 #include "../util/util.h"
-#include "../gfx/window.h"
 
 struct key_state
 {
@@ -117,6 +116,8 @@ int input_process_events( void )
 {
     input_reset();
 
+    int result = INPUT_SUCCESS;
+
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
     {
@@ -124,7 +125,7 @@ int input_process_events( void )
         {
             case SDL_QUIT:
 
-                window_quit();
+                result = INPUT_QUIT;
 
                 break;
 
@@ -173,7 +174,7 @@ int input_process_events( void )
         }
     }
 
-    return INPUT_SUCCESS;
+    return result;
 }
 
 int input_free( void )

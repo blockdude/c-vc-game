@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 
 #define INPUT_SUCCESS 0
+#define INPUT_QUIT 1
 #define INPUT_ERROR -1
 
 // keyboard buton input

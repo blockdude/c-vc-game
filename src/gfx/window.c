@@ -144,7 +144,7 @@ int window_loop( void )
         tick_time += frame_delta;
 
         // poll events
-        input_process_events();
+        window.quit = input_process_events();
         
         // maintain fixed time stamp
         while ( tick_time >= window.tick.target_delta )
