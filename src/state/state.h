@@ -2,7 +2,6 @@
 #define STATE_H
 
 #include "../gfx/window.h"
-#include "../gfx/render.h"
 #include "../world/world.h"
 
 #define DEFAULT_FRAME_RATE			60
