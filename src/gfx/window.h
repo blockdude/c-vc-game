@@ -42,8 +42,10 @@ struct timing
 // window struct
 struct window
 {
-	// handle to sdl window
+	// handle to sdl window and opengl context
 	SDL_Window *handle;
+	SDL_GLContext context;
+	// note: glcontext is an alias for void *
 
 	// is the window running
 	bool quit;

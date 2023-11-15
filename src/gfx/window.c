@@ -2,9 +2,6 @@
 #include "render.h"
 #include "../system/input.h"
 
-#define DEFAULT_RATE 60.0
-#define MS_PER_SECOND
-
 // global variables
 struct window window;
 
@@ -65,23 +62,20 @@ int window_init( struct window_state *state )
 
 	// init variables
 	window.quit = false;
+	window.state = state == NULL ? ( struct window_state ) { 0 } : *state;
 
-	if ( state == NULL )
-		window.state = ( struct window_state ) { 0 };
-	else
-		window.state = *state;
-
+    const double default_rate = 60.0;
 	window.frame = ( struct timing ) {
-		.target_rate	= DEFAULT_RATE,
-		.target_delta	= 1000.0 / DEFAULT_RATE,
+		.target_rate	= default_rate,
+		.target_delta	= 1000.0 / default_rate,
 		.rate			= 0,
 		.delta			= 0,
 		.count			= 0
 	};
 
 	window.tick = ( struct timing ) {
-		.target_rate	= DEFAULT_RATE,
-		.target_delta	= 1000.0 / DEFAULT_RATE,
+		.target_rate	= default_rate,
+		.target_delta	= 1000.0 / default_rate,
 		.rate			= 0,
 		.delta			= 0,
 		.count			= 0
@@ -89,10 +83,23 @@ int window_init( struct window_state *state )
 
     log_info( "Creating SDL window" );
 
-    window.handle = SDL_CreateWindow( "window" , 0, 0, 700, 700, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI );
+    const Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
+    const int window_size = 700;
+    window.handle = SDL_CreateWindow( "game engine", 0, 0, window_size, window_size, window_flags );
     if ( !window.handle )
     {
-        log_error( "Unable to create SDL window: %s", SDL_GetError() );
+        log_error( "Failed to initialize window. Unable to create SDL window: %s", SDL_GetError() );
+        return WINDOW_ERROR;
+    }
+
+    log_info( "Creating OpenGL context" );
+
+    window.context = SDL_GL_CreateContext( window.handle );
+    if ( !window.context )
+    {
+        // if we cannot create the gl context then close the window and report an error
+        log_error( "Failed to initialize window. Unable to create OpenGL context: %s", SDL_GetError() );
+        SDL_DestroyWindow( window.handle );
         return WINDOW_ERROR;
     }
 
@@ -102,6 +109,13 @@ int window_init( struct window_state *state )
 
 int window_loop( void )
 {
+    // sanity check
+    if ( !window.initialized )
+    {
+        log_error( "Window not initialized" );
+        return WINDOW_ERROR;
+    }
+
 	// init
     window_internal_init();
 
@@ -179,6 +193,8 @@ int window_quit( void )
 
 int window_free( void )
 {
+    log_info( "Closing OpenGL context" );
+    SDL_GL_DeleteContext( window.context );
     log_info( "Closing SDL window" );
     SDL_DestroyWindow( window.handle );
 	window.initialized = false;
