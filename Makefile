@@ -2,7 +2,7 @@
 MAKEFLAGS = -j$(exec nproc) --no-print-directory
 
 # directories
-BLD_DIR ?= build
+BLD_DIR ?= .bld
 SRC_DIR ?= src
 LIB_DIR ?= lib
 BIN_DIR := $(BLD_DIR)/bin
@@ -40,8 +40,11 @@ RUN_CMD_RANLIB = @echo "  RANLIB" $@;
 RUN_CMD_RC     = @echo "  RC    " $@;
 RUN_CMD_GEN    = @echo "  GEN   " $@;
 
-# build
-all: $(DIRS) $(BIN)
+all: bld test
+
+bld: $(DIRS) $(BIN)
+
+test: bld
 	@(cd test; $(MAKE) test_all)
 
 # build and run
@@ -66,4 +69,4 @@ clean:
 
 -include $(DEP)
 
-.PHONY: all clean run
+.PHONY: all clean run test bld
