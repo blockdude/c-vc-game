@@ -1,5 +1,5 @@
 # always use as many cores as possible
-MAKEFLAGS = -j$(exec nproc)
+MAKEFLAGS = -j$(exec nproc) --no-print-directory
 
 # directories
 BLD_DIR ?= build
@@ -31,6 +31,7 @@ LDFLAGS		=
 LDLIBS		= -lm -lSDL2
 
 # echo output
+RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
 RUN_CMD_AR     = @echo "  AR    " $@;
 RUN_CMD_CC     = @echo "  CC    " $@;
 RUN_CMD_CXX    = @echo "  CXX   " $@;
@@ -41,6 +42,7 @@ RUN_CMD_GEN    = @echo "  GEN   " $@;
 
 # build
 all: $(DIRS) $(BIN)
+	@(cd test; $(MAKE) test_all)
 
 # build and run
 run: all
@@ -48,7 +50,7 @@ run: all
 
 # create directories
 $(DIRS):
-	@mkdir -p $@
+	$(RUN_CMD_MKDIR) mkdir -p $@
 
 # link to binary
 $(BIN): $(OBJ)
