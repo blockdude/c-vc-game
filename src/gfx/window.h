@@ -63,7 +63,7 @@ struct window
 	int h;
 };
 
-// global window because only one window should be opened for this game anyways
+// global window context (defined in window.c)
 extern struct window window;
 
 // window setup and cleanup functions

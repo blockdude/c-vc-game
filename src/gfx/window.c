@@ -2,7 +2,7 @@
 #include "render.h"
 #include "../system/input.h"
 
-// global variables
+// global window context
 struct window window;
 
 // base init

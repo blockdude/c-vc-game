@@ -7,8 +7,6 @@
 #define RENDER_SUCCESS	0
 #define RENDER_ERROR	-1
 
-extern const uint32_t g_render_flags;
-
 struct render
 {
 	SDL_Renderer *handle;
