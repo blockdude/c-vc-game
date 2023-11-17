@@ -66,6 +66,7 @@ $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # remove build files
 clean:
 	@rm -r $(BLD_DIR) 2> /dev/null || true
+	@(cd test; $(MAKE) clean)
 
 -include $(DEP)
 

@@ -2,7 +2,7 @@
 MAKEFLAGS = -j$(exec nproc)
 
 # directories
-BLD_DIR ?= ../build
+BLD_DIR ?= ../.bld
 SRC_DIR ?= ../src
 LIB_DIR ?= ../lib
 BIN_DIR := $(BLD_DIR)/bin
