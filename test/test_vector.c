@@ -5,7 +5,7 @@ UTEST( vector, init )
 {
 	int *v = NULL;
 
-	vector_init( v );
+	vector_init( v, 0 );
 	ASSERT_TRUE( v );
 
 	EXPECT_EQ( vector_size( v ), ( size_t ) 0 );

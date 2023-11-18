@@ -9,19 +9,24 @@ struct metadata_
     size_t capacity;
 };
 
-#define VECT_TO_META( vec ) ( ( ( struct metadata_ * ) ( vec ) ) - 1 )
-#define META_TO_VECT( vec ) ( ( void * ) ( ( ( struct metadata_ * ) ( vec ) ) + 1 ) )
-#define CAST_TO_META( vec ) ( ( struct metadata_ * ) ( vec ) )
+#define VECT_TO_META_( vec ) ( ( ( struct metadata_ * ) ( vec ) ) - 1 )
+#define META_TO_VECT_( vec ) ( ( void * ) ( ( ( struct metadata_ * ) ( vec ) ) + 1 ) )
+#define CAST_TO_META_( vec ) ( ( struct metadata_ * ) ( vec ) )
 
 #define vector_compute_growth_( size ) ( ( size_t ) ( size * 1.5 + 1 ) )
-#define vector_size( vec ) ( ( vec ) ? VECT_TO_META( vec )->size : ( size_t ) 0 )
-#define vector_capacity( vec ) ( ( vec ) ? VECT_TO_META( vec )->capacity : ( size_t ) 0 )
+#define vector_memset_( src, c, n ) memset( ( src ), ( c ), ( n ) )
+#define vector_memmove_( dst, src, n ) memmove( ( dst ), ( src ), ( n ) )
+#define vector_memcpy_( dst, src, n ) memcpy( ( dst ), ( src ), ( n ) )
+#define vector_free_( vec ) free( VECT_TO_META_( vec ) )
+
+#define vector_size( vec ) ( ( vec ) ? VECT_TO_META_( vec )->size : ( size_t ) 0 )
+#define vector_capacity( vec ) ( ( vec ) ? VECT_TO_META_( vec )->capacity : ( size_t ) 0 )
 
 static inline void vector_set_size_( void *vec, size_t s )
 {
     if ( vec )
     {
-        VECT_TO_META( vec )->size = s;
+        VECT_TO_META_( vec )->size = s;
     }
 }
 
@@ -29,7 +34,7 @@ static inline void vector_set_capacity_( void *vec, size_t c )
 {
     if ( vec )
     {
-        VECT_TO_META( vec )->capacity = c;
+        VECT_TO_META_( vec )->capacity = c;
     }
 }
 
@@ -45,13 +50,13 @@ static inline void *vector_alloc_( size_t stride, size_t n )
     if ( vbase == NULL )
         return NULL;
 
-    ( *CAST_TO_META( vbase ) ) =
+    ( *CAST_TO_META_( vbase ) ) =
     ( struct metadata_ ) {
         .size     = 0,
         .capacity = n
     };
 
-    return META_TO_VECT( vbase );
+    return META_TO_VECT_( vbase );
 }
 
 /*
@@ -64,9 +69,9 @@ static inline void *vector_realloc_( void *vec, size_t stride, size_t n )
 
     if ( vec )
     {
-        void *vbase = VECT_TO_META( vec );
+        void *vbase = VECT_TO_META_( vec );
         vbase = realloc( vbase, v_size );
-        vec = vbase ? META_TO_VECT( vbase ) : NULL;
+        vec = vbase ? META_TO_VECT_( vbase ) : NULL;
         vector_set_capacity_( vec, n );
     }
     else
@@ -96,12 +101,12 @@ static inline void *vector_increment_size_( void *vec, size_t stride, size_t n )
         return vec;
 }
 
-#define vector_init( vec ) \
+#define vector_init( vec, c ) \
     do                                                              \
     {                                                               \
         if ( !( vec ) )                                             \
         {                                                           \
-            ( vec ) = vector_alloc_( sizeof( *( vec ) ), 0 );       \
+            ( vec ) = vector_alloc_( sizeof( *( vec ) ), ( c ) );   \
         }                                                           \
     }                                                               \
     while ( 0 )
@@ -111,7 +116,7 @@ static inline void *vector_increment_size_( void *vec, size_t stride, size_t n )
     {                                                               \
         if ( vec )                                                  \
         {                                                           \
-            free( VECT_TO_META( vec ) );                            \
+            vector_free_( vec );                                    \
             ( vec ) = NULL;                                         \
         }                                                           \
     }                                                               \
@@ -134,7 +139,12 @@ static inline void *vector_increment_size_( void *vec, size_t stride, size_t n )
 #define vector_resize( vec, n ) \
     do                                                              \
     {                                                               \
+        size_t vsize = vector_size( vec );                          \
         vector_reserve( ( vec ), ( n ) );                           \
+        if ( vsize < ( n ) )                                        \
+        {                                                           \
+            vector_memset_( ( vec ) + vsize, 0, ( n ) - vsize );    \
+        }                                                           \
         vector_set_size_( ( vec ) , ( n ) );                        \
     }                                                               \
     while ( 0 )
@@ -186,7 +196,7 @@ static inline void *vector_increment_size_( void *vec, size_t stride, size_t n )
         }                                                           \
         if ( ( i ) < vsize )                                        \
         {                                                           \
-            memmove(                                                \
+            vector_memmove_(                                        \
                 ( vec ) + ( i ) + 1,                                \
                 ( vec ) + ( i ),                                    \
                 ( vsize - ( i ) ) * sizeof( *( vec ) )              \
@@ -205,7 +215,7 @@ static inline void *vector_increment_size_( void *vec, size_t stride, size_t n )
             size_t vsize = vector_size( vec );                      \
             if ( ( i ) < vsize )                                    \
             {                                                       \
-                memmove(                                            \
+                vector_memmove_(                                    \
                     ( vec ) + ( i ),                                \
                     ( vec ) + ( i ) + 1,                            \
                     ( vsize - ( i ) - 1 ) * sizeof( *( vec ) )      \
