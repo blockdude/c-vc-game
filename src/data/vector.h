@@ -1,6 +1,12 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+/*
+ * A header only C++ style dynamic array implementation.
+ * Heavly influenced by eteran's c-vector.
+ * https://github.com/eteran/c-vector.
+ */
+
 #include <stdlib.h>
 
 struct metadata_
