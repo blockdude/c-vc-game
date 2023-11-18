@@ -443,6 +443,33 @@ UTEST( vector, complex_insert_B )
 	ASSERT_FALSE( v );
 }
 
+/*
+ * Test multiple references to the same vector.
+ */
+UTEST( vector, vector_pointer )
+{
+	int *v = NULL;
+	int **vptr = &v;
+
+	vector_init( *vptr, 0 );
+
+	ASSERT_TRUE( v );
+	ASSERT_TRUE( *vptr );
+
+	vector_push_back( v, 10 );
+	vector_push_back( *vptr, 15 );
+	vector_push_back( v, 10 );
+
+	EXPECT_EQ( v[ 0 ], 10 );
+	EXPECT_EQ( v[ 1 ], 15 );
+	EXPECT_EQ( ( *vptr )[ 2 ], 10 );
+
+	vector_free( v );
+	ASSERT_FALSE( v );
+	ASSERT_FALSE( *vptr );
+
+}
+
 #ifdef INSTANTIATE_MAIN
 UTEST_MAIN()
 #endif
