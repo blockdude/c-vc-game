@@ -14,7 +14,7 @@ struct metadata_
 #define CAST_TO_META_( vec ) ( ( struct metadata_ * ) ( vec ) )
 
 #define vector_compute_growth_( size ) ( ( size_t ) ( size * 1.5 + 1 ) )
-#define vector_memset_( src, c, n ) memset( ( src ), ( c ), ( n ) )
+#define vector_memset_( dst, val, n ) memset( ( dst ), ( val ), ( n ) )
 #define vector_memmove_( dst, src, n ) memmove( ( dst ), ( src ), ( n ) )
 #define vector_memcpy_( dst, src, n ) memcpy( ( dst ), ( src ), ( n ) )
 #define vector_free_( vec ) free( VECT_TO_META_( vec ) )
@@ -143,7 +143,11 @@ static inline void *vector_increment_size_( void *vec, size_t stride, size_t n )
         vector_reserve( ( vec ), ( n ) );                           \
         if ( vsize < ( n ) )                                        \
         {                                                           \
-            vector_memset_( ( vec ) + vsize, 0, ( n ) - vsize );    \
+            vector_memset_(                                         \
+                ( vec ) + vsize,                                    \
+                0,                                                  \
+                ( ( n ) - vsize ) * sizeof( *( vec ) )              \
+            );                                                      \
         }                                                           \
         vector_set_size_( ( vec ) , ( n ) );                        \
     }                                                               \
