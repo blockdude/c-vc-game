@@ -10,7 +10,8 @@
 #define DEFAULT_WINDOW_WIDTH		700
 #define DEFAULT_WINDOW_HEIGHT		700
 
-struct state {
+struct state
+{
 	struct world world;
 	struct window_state game;
 	struct window_state menu;

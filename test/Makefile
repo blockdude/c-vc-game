@@ -11,7 +11,7 @@ DEP_DIR := $(BLD_DIR)/dep
 
 # files
 BIN := $(BIN_DIR)/main
-SRC := $(shell find $(SRC_DIR) -type f -name '*.c' -not -name 'main.c')
+SRC := $(shell find $(SRC_DIR) -type f -name '*.c' $(BIN:$(BIN_DIR)/%=-not -name '%.c'))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
@@ -56,7 +56,7 @@ $(TEST_DIRS):
 	$(RUN_CMD_MKDIR) mkdir -p $@
 
 $(TEST): all
-	@exec $(TEST_BIN_DIR)/$@
+	@exec $(TEST_BIN_DIR)/$@ --enable-mixed-units
 
 # link to binary
 $(TEST_BIN): $(TEST_BIN_DIR)/%: $(TEST_OBJ_DIR)/%.o
@@ -68,7 +68,7 @@ $(TEST_OBJ): $(TEST_OBJ_DIR)/%.o: %.c
 
 # remove build files
 clean:
-	@rm -r $(TEST_DIRS) 2> /dev/null || true
+	@rm -r $(TEST_BLD_DIR) 2> /dev/null || true
 
 -include $(TEST_DEP) $(DEP)
 

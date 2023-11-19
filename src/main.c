@@ -1,7 +1,7 @@
-#include "gfx/window.h"
-#include "gfx/render.h"
-#include "system/system.h"
-#include "state/state.h"
+#include <gfx/window.h>
+#include <gfx/render.h>
+#include <system/system.h>
+#include <state/state.h>
 
 int main( int argc, char *argv[] )
 {
