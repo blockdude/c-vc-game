@@ -27,8 +27,8 @@ LINKER		= $(CC)
 INCLUDE		= -I$(SRC_DIR) -I$(LIB_DIR)/glad/include
 CPPFLAGS	= -DLOG_USE_COLOR
 CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
-LDFLAGS		= ./$(LIB_DIR)/glad/obj/glad.o
-LDLIBS		= -lm -lSDL2 -ldl
+LDFLAGS		= $(LIB_DIR)/glad/obj/glad.o
+LDLIBS		= -lm -ldl -lSDL2
 
 # echo output
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
