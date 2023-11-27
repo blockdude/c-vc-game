@@ -2,9 +2,10 @@
 #define WINDOW_H
 
 #include <util/util.h>
+#include <glad/glad.h>
 #include <SDL2/SDL.h>
 
-#define WINDOW_SUCCESS	0
+#define WINDOW_SUCCESS	 0
 #define WINDOW_ERROR	-1
 
 // window function

@@ -2,6 +2,15 @@
 #include "render.h"
 #include "../system/input.h"
 
+#define init_timing( r ) \
+    ( struct timing ) {                             \
+		.target_rate	= ( r ),                    \
+		.target_delta	= 1000.0 / ( r ),           \
+		.rate			= 0,                        \
+		.delta			= 0,                        \
+		.count			= 0                         \
+	}
+
 // global window context
 struct window window;
 
@@ -57,34 +66,31 @@ int window_init( struct window_state *state )
     // skip init if already done
     if ( window.initialized )
     {
-        return WINDOW_SUCCESS;
+        return WINDOW_ERROR;
     }
+
+    const double default_rate = 60.0;
+    const int window_size = 700;
+    const Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
 
 	// init variables
 	window.quit = false;
 	window.state = state == NULL ? ( struct window_state ) { 0 } : *state;
+	window.frame = init_timing( default_rate );
+	window.tick = init_timing( default_rate );
 
-    const double default_rate = 60.0;
-	window.frame = ( struct timing ) {
-		.target_rate	= default_rate,
-		.target_delta	= 1000.0 / default_rate,
-		.rate			= 0,
-		.delta			= 0,
-		.count			= 0
-	};
+    // Request an OpenGL 3.3 context (should be core)
+    SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 
-	window.tick = ( struct timing ) {
-		.target_rate	= default_rate,
-		.target_delta	= 1000.0 / default_rate,
-		.rate			= 0,
-		.delta			= 0,
-		.count			= 0
-	};
+    // Request a depth buffer
+    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
 
+    // create sdl2 window
     log_info( "Creating SDL window" );
-
-    const Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
-    const int window_size = 700;
     window.handle = SDL_CreateWindow( "game engine", 0, 0, window_size, window_size, window_flags );
     if ( !window.handle )
     {
@@ -92,13 +98,22 @@ int window_init( struct window_state *state )
         return WINDOW_ERROR;
     }
 
+    // create opengl context
     log_info( "Creating OpenGL context" );
-
     window.context = SDL_GL_CreateContext( window.handle );
     if ( !window.context )
     {
         // if we cannot create the gl context then close the window and report an error
         log_error( "Failed to initialize window. Unable to create OpenGL context: %s", SDL_GetError() );
+        SDL_DestroyWindow( window.handle );
+        return WINDOW_ERROR;
+    }
+
+    // init glad library
+    if ( !gladLoadGLLoader( SDL_GL_GetProcAddress ) )
+    {
+        log_error( "Failed to initialize opengl" );
+        SDL_GL_DeleteContext( window.context );
         SDL_DestroyWindow( window.handle );
         return WINDOW_ERROR;
     }

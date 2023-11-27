@@ -24,11 +24,11 @@ DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 SHELL		= /bin/sh
 CC			= gcc
 LINKER		= $(CC)
-INCLUDE		= -I$(SRC_DIR)
+INCLUDE		= -I$(SRC_DIR) -I$(LIB_DIR)/glad/include
 CPPFLAGS	= -DLOG_USE_COLOR
 CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
-LDFLAGS		=
-LDLIBS		= -lm -lSDL2 -lGL
+LDFLAGS		= ./$(LIB_DIR)/glad/obj/glad.o
+LDLIBS		= -lm -lSDL2 -ldl
 
 # echo output
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
@@ -42,7 +42,10 @@ RUN_CMD_GEN    = @echo "  GEN   " $@;
 
 all: bld test
 
-bld: $(DIRS) $(BIN)
+bld: $(LIB_DIR)/glad/obj/glad.o $(DIRS) $(BIN)
+
+$(LIB_DIR)/glad/obj/glad.o:
+	@(cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
 
 test: bld
 	@(cd test; $(MAKE) test_all)
@@ -66,8 +69,9 @@ $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # remove build files
 clean:
 	@rm -r $(BLD_DIR) 2> /dev/null || true
+	@rm -r $(LIB_DIR)/glad/obj 2> /dev/null || true
 	@(cd test; $(MAKE) clean)
 
 -include $(DEP)
 
-.PHONY: all clean run test bld
+.PHONY: all clean run test bld libs
