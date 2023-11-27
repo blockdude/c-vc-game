@@ -28,7 +28,7 @@ INCLUDE		= -I$(SRC_DIR)
 CPPFLAGS	= -DLOG_USE_COLOR
 CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
 LDFLAGS		=
-LDLIBS		= -lm -lSDL2
+LDLIBS		= -lm -lSDL2 -lGL
 
 # echo output
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
