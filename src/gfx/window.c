@@ -1,6 +1,7 @@
 #include "window.h"
 #include "render.h"
 #include "../system/input.h"
+#include <glad/glad.h>
 
 #define init_timing( r ) \
     ( struct timing ) {                             \
@@ -110,6 +111,7 @@ int window_init( struct window_state *state )
     }
 
     // init glad library
+    log_info( "Initializing OpenGL" );
     if ( !gladLoadGLLoader( SDL_GL_GetProcAddress ) )
     {
         log_error( "Failed to initialize opengl" );

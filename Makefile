@@ -62,7 +62,7 @@ $(DIRS):
 $(BIN): $(OBJ)
 	$(RUN_CMD_LTLINK) $(LINKER) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-# generate object files and dependencies
+# generate src object files and dependencies
 $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $@ -o $@ -c $<
 
