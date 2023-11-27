@@ -42,17 +42,17 @@ RUN_CMD_GEN    = @echo "  GEN   " $@;
 
 all: bld test
 
-bld: $(LIB_DIR)/glad/obj/glad.o $(DIRS) $(BIN)
+# build and run
+run: all
+	@exec $(BIN)
 
-$(LIB_DIR)/glad/obj/glad.o:
-	@(cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
+bld: $(LIB_DIR)/glad/obj/glad.o $(DIRS) $(BIN)
 
 test: bld
 	@(cd test; $(MAKE) test_all)
 
-# build and run
-run: all
-	@exec $(BIN)
+$(LIB_DIR)/glad/obj/glad.o:
+	@(cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
 
 # create directories
 $(DIRS):

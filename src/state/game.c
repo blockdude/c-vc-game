@@ -1,9 +1,9 @@
 #include "game.h"
 #include "state.h"
-#include "../gfx/window.h"
-#include "../gfx/render.h"
-#include "../util/util.h"
-#include "../system/input.h"
+#include <gfx/window.h>
+#include <gfx/render.h>
+#include <util/util.h>
+#include <system/input.h>
 #include <glad/glad.h>
 
 int game_init( void )
@@ -28,11 +28,11 @@ int game_update( void )
 
 int game_render( void )
 {
-    glClearColor(1.f, 1.f, 1.f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor( 1.f, 1.f, 1.f, 1.f );
+    glClear( GL_COLOR_BUFFER_BIT );
     //render_set_color( 255, 255, 255, 255 );
     //render_clear();
-    SDL_GL_SwapWindow(window.handle);
+    SDL_GL_SwapWindow( window.handle );
 
     char buff[ 256 ];
     sprintf( buff, "frame : %5lu | fps : %u | tick : %5lu | tps : %u", window.frame.count, window.frame.rate, window.tick.count, window.tick.rate );

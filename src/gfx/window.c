@@ -1,6 +1,6 @@
 #include "window.h"
 #include "render.h"
-#include "../system/input.h"
+#include <system/input.h>
 #include <glad/glad.h>
 
 #define init_timing( r ) \
@@ -119,6 +119,12 @@ int window_init( struct window_state *state )
         SDL_DestroyWindow( window.handle );
         return WINDOW_ERROR;
     }
+
+    // log opengl info information
+    log_info( "Vendor     : %s", glGetString( GL_VENDOR ) );
+    log_info( "Renderer   : %s", glGetString( GL_RENDERER ) );
+    log_info( "GL Version : %s", glGetString( GL_VERSION ) );
+    log_info( "SL Version : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 
     window.initialized = true;
     return WINDOW_SUCCESS;
