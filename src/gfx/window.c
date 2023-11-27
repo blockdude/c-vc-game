@@ -121,10 +121,10 @@ int window_init( struct window_state *state )
     }
 
     // log opengl info information
-    log_info( "Vendor     : %s", glGetString( GL_VENDOR ) );
-    log_info( "Renderer   : %s", glGetString( GL_RENDERER ) );
-    log_info( "GL Version : %s", glGetString( GL_VERSION ) );
-    log_info( "SL Version : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+    log_debug( "Vendor     : %s", glGetString( GL_VENDOR ) );
+    log_debug( "Renderer   : %s", glGetString( GL_RENDERER ) );
+    log_debug( "GL Version : %s", glGetString( GL_VERSION ) );
+    log_debug( "SL Version : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 
     window.initialized = true;
     return WINDOW_SUCCESS;
