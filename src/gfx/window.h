@@ -67,13 +67,13 @@ struct window
 extern struct window window;
 
 // window setup and cleanup functions
-int window_init( struct window_state *state );
+int window_init( const struct window_state *state );
 int window_loop( void );
 int window_quit( void );
 int window_free( void );
 
 // window setters
-int window_set_state( struct window_state *state );
+int window_set_state( const struct window_state *state );
 int window_set_target_fps( int fps );
 int window_set_target_tps( int tps );
 int window_set_title( const char *title );

@@ -57,12 +57,14 @@ static int window_internal_render( void )
 {
 	if ( window.state.render )
         window.state.render();
+
+    SDL_GL_SwapWindow( window.handle );
     window.frame.count++;
 
     return WINDOW_SUCCESS;
 }
 
-int window_init( struct window_state *state )
+int window_init( const struct window_state *state )
 {
     // skip init if already done
     if ( window.initialized )
@@ -139,6 +141,8 @@ int window_loop( void )
         return WINDOW_ERROR;
     }
 
+    log_info( "Starting window loop..." );
+
 	// init
     window_internal_init();
 
@@ -183,7 +187,7 @@ int window_loop( void )
         // poll events
         window.quit = input_process_events();
         
-        // maintain fixed time stamp
+        // maintain fixed time step for each tick
         while ( tick_time >= window.tick.target_delta )
         {
             window_internal_tick();
@@ -193,7 +197,7 @@ int window_loop( void )
         window_internal_update();
         window_internal_render();
 
-        // convert & store frame timing of current frame
+        // calculate & store frame time
         window.frame.delta = ( double ) frame_delta / 1000.0;
 
         // apply fps cap

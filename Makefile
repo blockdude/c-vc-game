@@ -40,19 +40,19 @@ RUN_CMD_RANLIB = @echo "  RANLIB" $@;
 RUN_CMD_RC     = @echo "  RC    " $@;
 RUN_CMD_GEN    = @echo "  GEN   " $@;
 
-all: bld test
+all: build test
 
 # build and run
 run: all
 	@exec $(BIN)
 
-bld: $(LIB_DIR)/glad/obj/glad.o $(DIRS) $(BIN)
+build: $(LIB_DIR)/glad/obj/glad.o $(DIRS) $(BIN)
 
-test: bld
+test: build
 	@(cd test; $(MAKE) test_all)
 
 $(LIB_DIR)/glad/obj/glad.o:
-	@(cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
+	$(RUN_CMD_CC) (cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
 
 # create directories
 $(DIRS):

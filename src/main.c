@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
 		buf_pos += snprintf( buf + buf_pos, buf_size - buf_pos, "%s ", argv[ i ] );
 
 	// log arguments
-	log_debug( "executed with: %s", buf );
+	log_debug( "Arguments: %s", buf );
 
 	// setup
 	system_init();
