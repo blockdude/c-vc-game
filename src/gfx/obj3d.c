@@ -70,7 +70,7 @@ static int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 			struct vert fa, fb, fc;
 			int a, b, c, d, e, f, g, h, i;
 
-			sscanf( buffer, "%*s %d%d%d %d%d%d %d%d%d",
+			sscanf( buffer, "%*s %d/%d/%d %d/%d/%d %d/%d/%d",
 					&a, &b, &c,
 					&d, &e, &f,
 					&g, &h, &i
@@ -144,9 +144,10 @@ int obj3d_load( struct obj3d *obj, const char *file )
 
 	obj3d_init_( obj );
 
-	if ( obj3d_load_mesh_( obj, file ) != 0 )
+	int res = obj3d_load_mesh_( obj, file );
+	if ( res != 0 )
 	{
-		return -1;
+		return res - 1;
 	}
 
 	obj3d_compute_extent_( obj );

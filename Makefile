@@ -49,6 +49,7 @@ run: all
 build: $(LIB_DIR)/glad/obj/glad.o $(DIRS) $(BIN)
 
 test: build
+	@(cd test; $(MAKE) clean)
 	@(cd test; $(MAKE) test_all)
 
 $(LIB_DIR)/glad/obj/glad.o:
