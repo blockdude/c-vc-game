@@ -82,9 +82,9 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 			fa.vt = obj->vt[ b - 1 ];
 			fa.vn = obj->vn[ c - 1 ];
 
-			fb.v  = obj->v [ e - 1 ];
-			fb.vt = obj->vt[ f - 1 ];
-			fb.vn = obj->vn[ g - 1 ];
+			fb.v  = obj->v [ d - 1 ];
+			fb.vt = obj->vt[ e - 1 ];
+			fb.vn = obj->vn[ f - 1 ];
 
 			fc.v  = obj->v [ g - 1 ];
 			fc.vt = obj->vt[ h - 1 ];

@@ -89,38 +89,6 @@ int game_init( void )
     glUniform1f( aspect_loc, window.aspect );
     glUniform3fv( center_loc, 1, ( const GLfloat * )&obj.center );
 
-    FILE *fp = fopen( "objdumpf.txt", "wb" );
-    char *f = ( char * )obj.f;
-    for ( size_t i = 0; i < obj.f_nbytes; i++ )
-    {
-        fputc( f[ i ], fp );
-    }
-    fclose( fp );
-
-    fp = fopen( "objdumpv.txt", "wb" );
-    f = ( char * )obj.v;
-    for ( size_t i = 0; i < obj.v_nbytes; i++ )
-    {
-        fputc( f[ i ], fp );
-    }
-    fclose( fp );
-
-    fp = fopen( "objdumpvt.txt", "wb" );
-    f = ( char * )obj.vt;
-    for ( size_t i = 0; i < obj.vt_nbytes; i++ )
-    {
-        fputc( f[ i ], fp );
-    }
-    fclose( fp );
-
-    fp = fopen( "objdumpvn.txt", "wb" );
-    f = ( char * )obj.vn;
-    for ( size_t i = 0; i < obj.vn_nbytes; i++ )
-    {
-        fputc( f[ i ], fp );
-    }
-    fclose( fp );
-
     return 0;
 }
 
@@ -141,6 +109,7 @@ int game_tick( void )
 
 int game_update( void )
 {
+    glUniform1f( aspect_loc, window.aspect );
     return 0;
 }
 
@@ -154,7 +123,7 @@ int game_render( void )
     glDrawArrays(
             GL_TRIANGLES,
             0,
-            obj.f_len - 1800
+            obj.f_len
     );
 
     char buff[ 256 ];
