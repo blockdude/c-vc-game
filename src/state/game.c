@@ -5,12 +5,16 @@
 #include <util/util.h>
 #include <system/input.h>
 #include <glad/glad.h>
+#include <gfx/shader.h>
+#include <gfx/obj3d.h>
 
 static struct shader shader;
 static struct obj3d obj;
+static GLuint vao, vbo;
 
 int game_init( void )
 {
+    glEnable( GL_DEPTH_TEST );
     return 0;
 }
 
