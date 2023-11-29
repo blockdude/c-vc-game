@@ -1,5 +1,6 @@
 #include "shader.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <util/log.h>
@@ -68,7 +69,7 @@ struct shader shader_load( const char *vs, const char *fs )
 	glGetProgramiv( self.handle, GL_LINK_STATUS, &linked );
 
 	if ( linked == 0 ) {
-		log_error( "Error linking shader at [ %s, %s ]", vd, fs );
+		log_error( "Error linking shader at [ %s, %s ]", vs, fs );
 		shader_free( self );
 	}
 

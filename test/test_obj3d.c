@@ -143,6 +143,11 @@ UTEST_F( obj3d_test_fixture, validate_properties )
 	EXPECT_EQ( obj->f_len, ( size_t )1869 );
 	EXPECT_EQ( obj->f_nbytes, ( size_t )59808 );
 	EXPECT_EQ( sizeof( struct vert ), sizeof( float ) * 8 );
+
+	EXPECT_EQ( ( char * )obj->v_offset_data, ( char * )obj->f );
+	EXPECT_EQ( ( char * )obj->v_offset_data, ( char * )obj->data );
+	EXPECT_EQ( ( char * )obj->vt_offset_data, ( char * )obj->f + sizeof( float ) * 3 );
+	EXPECT_EQ( ( char * )obj->vn_offset_data, ( char * )obj->f + sizeof( float ) * 5 );
 }
 
 #ifdef INSTANTIATE_MAIN
