@@ -2,8 +2,10 @@
 
 #include <util/log.h>
 #include <util/types.h>
+#include <util/fmath.h>
 #include <data/dynarr.h>
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -16,7 +18,7 @@ static inline void obj3d_init_( struct obj3d *obj )
 	obj->vn = NULL;
 }
 
-static int obj3d_load_mesh_( struct obj3d *obj, const char *file )
+static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 {
 	const size_t buffer_size = 1024;
 	char buffer[ buffer_size ];
@@ -99,12 +101,79 @@ static int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 	return 0;
 }
 
-static void obj3d_compute_extent_( struct obj3d *obj )
+static inline struct vec3 obj3d_vec3_min_( struct vec3 va, struct vec3 vb )
 {
-
+	struct vec3 res;
+	res.x = f32min( va.x, vb.x );
+	res.y = f32min( va.y, vb.y );
+	res.z = f32min( va.z, vb.z );
+	return res;
 }
 
-static void obj3d_compute_properties_( struct obj3d *obj )
+static inline struct vec3 obj3d_vec3_max_( struct vec3 va, struct vec3 vb )
+{
+	struct vec3 res;
+	res.x = f32max( va.x, vb.x );
+	res.y = f32max( va.y, vb.y );
+	res.z = f32max( va.z, vb.z );
+	return res;
+}
+
+static inline void obj3d_set_min_max_( struct obj3d *obj )
+{
+	size_t len = dynarr_size( obj->v );
+	struct vec3 min = len > 0 ? obj->v[ 0 ] : ( struct vec3 ){ 0 };
+	struct vec3 max = len > 0 ? obj->v[ 0 ] : ( struct vec3 ){ 0 };
+
+	for ( size_t i = 0; i < len; i++ )
+	{
+		min = obj3d_vec3_min_( min, obj->v[ i ] );
+		max = obj3d_vec3_max_( max, obj->v[ i ] );
+	}
+
+	obj->min = min;
+	obj->max = max;
+}
+
+static inline float obj3d_vec3_distance_( struct vec3 va, struct vec3 vb )
+{
+	struct vec3 tmp;
+
+	tmp.x = vb.x - va.x;
+	tmp.y = vb.y - va.y;
+	tmp.z = vb.z - va.z;
+
+	tmp.x = tmp.x * tmp.x;
+	tmp.y = tmp.y * tmp.y;
+	tmp.z = tmp.z * tmp.z;
+
+	float res = sqrt( tmp.x + tmp.y + tmp.z );
+	return res;
+}
+
+static inline struct vec3 obj3d_vec3_center_( struct vec3 va, struct vec3 vb )
+{
+	struct vec3 res;
+
+	res.x = va.x + vb.x;
+	res.y = va.y + vb.y;
+	res.z = va.z + vb.z;
+
+	res.x /= 2;
+	res.y /= 2;
+	res.z /= 2;
+
+	return res;
+}
+
+static inline void obj3d_compute_extent_( struct obj3d *obj )
+{
+	obj3d_set_min_max_( obj );
+	obj->dia = obj3d_vec3_distance_( obj->min, obj->max );
+	obj->center = obj3d_vec3_center_( obj->min, obj->max );
+}
+
+static inline void obj3d_compute_properties_( struct obj3d *obj )
 {
 	obj->f_len			= dynarr_size( obj->f );
 	obj->v_len			= dynarr_size( obj->v );
@@ -121,7 +190,7 @@ static void obj3d_compute_properties_( struct obj3d *obj )
 	obj->f_elem_len		= 8; /* v vt vn */
 	obj->v_elem_len	   	= 3; /* x y z   */
 	obj->vt_elem_len   	= 2; /* u v     */
-	obj->vn_elem_len   	= 3; /* r g b   */
+	obj->vn_elem_len   	= 3; /* x y z   */
 
 	obj->stride		   	= ( obj->v_elem_len + obj->vt_elem_len + obj->vn_elem_len ) * obj->elem_size;
 

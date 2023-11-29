@@ -33,7 +33,7 @@ struct obj3d
 	struct vert *f;		/* vertices (v, vt, and vn)       */
 	struct vec3 *v;		/* vertex positions		x, y, z   */
 	struct vec2 *vt;	/* texture coordinates	u, v	  */
-	struct vec3 *vn;	/* vertex normal		r, g, b   */
+	struct vec3 *vn;	/* vertex normal		x, y, z   */
 
 	size_t f_len;
 	size_t v_len;
@@ -50,6 +50,7 @@ struct obj3d
 	size_t elem_size;
 
 	// number of values in a single element
+	size_t f_elem_len;
 	size_t v_elem_len;
 	size_t vt_elem_len;
 	size_t vn_elem_len;
@@ -71,7 +72,7 @@ struct obj3d
 	void *data;
 
 	// extent info
-	float diameter;
+	float dia;
 	struct vec3 center;
 	struct vec3 max;
 	struct vec3 min;

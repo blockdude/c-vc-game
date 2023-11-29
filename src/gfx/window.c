@@ -78,7 +78,7 @@ int window_init( const struct window_state *state )
 
 	// init variables
 	window.quit = false;
-	window.state = state == NULL ? ( struct window_state ) { 0 } : *state;
+	window.state = state != NULL ? *state : ( struct window_state ) { 0 };
 	window.frame = init_timing( default_rate );
 	window.tick = init_timing( default_rate );
 
