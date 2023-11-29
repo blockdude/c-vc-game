@@ -51,6 +51,9 @@ struct input
 {
     struct key_state key[ INPUT_KB_COUNT ];
     struct mouse_state mouse;
+
+    input_callback_fn resize_cb;
+    input_callback_fn quit_cb;
 };
 
 static struct input input;
@@ -109,6 +112,8 @@ static void input_reset( void )
 
 int input_init( void )
 {
+    input.resize_cb = NULL;
+    input.quit_cb = NULL;
     return INPUT_SUCCESS;
 }
 
@@ -125,7 +130,15 @@ int input_process_events( void )
         {
             case SDL_QUIT:
 
+                if ( input.quit_cb ) input.quit_cb();
                 result = INPUT_QUIT;
+
+                break;
+
+            case SDL_WINDOWEVENT_RESIZED:
+            case SDL_WINDOWEVENT_SIZE_CHANGED:
+
+                if ( input.resize_cb ) input.resize_cb();
 
                 break;
 
@@ -175,6 +188,18 @@ int input_process_events( void )
     }
 
     return result;
+}
+
+int input_set_resize_callback( input_callback_fn fn )
+{
+    input.resize_cb = fn;
+    return INPUT_SUCCESS;
+}
+
+int input_set_quit_callback( input_callback_fn fn )
+{
+    input.quit_cb = fn;
+    return INPUT_SUCCESS;
 }
 
 int input_free( void )

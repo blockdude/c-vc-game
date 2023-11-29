@@ -15,11 +15,26 @@
 // global window context
 struct window window;
 
+static void window_resize_callback_( void )
+{
+    window_get_size( &window.w, &window.h );
+    window.aspect = ( float )window.w / ( float )window.h;
+}
+
+static void window_quit_callback_( void )
+{
+    window.quit = true;
+}
+
 // base init
 static int window_internal_init( void )
 {
     if ( window.state.init )
         window.state.init();
+
+    // set callback functions
+    input_set_resize_callback( window_resize_callback_ );
+    input_set_quit_callback( window_quit_callback_ );
 
     return WINDOW_SUCCESS;
 }
@@ -185,7 +200,7 @@ int window_loop( void )
         tick_time += frame_delta;
 
         // poll events
-        window.quit = input_process_events();
+        input_process_events();
         
         // maintain fixed time step for each tick
         while ( tick_time >= window.tick.target_delta )

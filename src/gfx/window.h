@@ -58,9 +58,10 @@ struct window
 	struct timing frame;
 	struct timing tick;
 
-	// unused for now
+	// keeps track of width, height and aspect ratio
 	int w;
 	int h;
+	float aspect;
 };
 
 // global window context (defined in window.c)
@@ -82,9 +83,5 @@ int window_set_title( const char *title );
 int window_get_size( int *w, int *h );
 int window_get_fps( void );
 int window_get_tps( void );
-
-// window events
-int window_event_resized( void );
-int window_event_moved( void );
 
 #endif

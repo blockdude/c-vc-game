@@ -1,6 +1,7 @@
 #include "shader.h"
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include <util/log.h>
 
 static GLint shader_compile_( const char *path, GLenum type )

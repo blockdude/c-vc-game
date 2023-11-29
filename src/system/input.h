@@ -95,11 +95,22 @@ enum input_button
     INPUT_MB_LAST             = INPUT_MB_COUNT - 1
 };
 
+typedef void ( *input_callback_fn )( void );
+
 // input stuff
 int input_init( void );
-int input_process_events( void );
 int input_free( void );
 
+/*
+ * tmp callback setter for window resizing and quit
+ * (for use in window.c only)
+ * TODO: allow register of multiple callbacks to an event
+ */
+int input_process_events( void );
+int input_set_resize_callback( input_callback_fn fn );
+int input_set_quit_callback( input_callback_fn fn );
+
+// 
 bool input_key_down( enum input_key key );
 bool input_key_up( enum input_key key );
 bool input_key_press( enum input_key key );
