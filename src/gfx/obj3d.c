@@ -118,9 +118,10 @@ static void obj3d_compute_properties_( struct obj3d *obj )
 
 	obj->elem_size		= sizeof( float );
 
-	obj->v_elem_len	   	= 3; /* x y z */
-	obj->vt_elem_len   	= 2; /* u v   */
-	obj->vn_elem_len   	= 3; /* r g b */
+	obj->f_elem_len		= 8; /* v vt vn */
+	obj->v_elem_len	   	= 3; /* x y z   */
+	obj->vt_elem_len   	= 2; /* u v     */
+	obj->vn_elem_len   	= 3; /* r g b   */
 
 	obj->stride		   	= ( obj->v_elem_len + obj->vt_elem_len + obj->vn_elem_len ) * obj->elem_size;
 

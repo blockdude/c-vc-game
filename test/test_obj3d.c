@@ -21,6 +21,12 @@ UTEST( obj3d, load_obj_file )
 	EXPECT_EQ( v.y, 8.850442f );
 	EXPECT_EQ( v.z, 1.286151f );
 
+	// values calculated before hand
+	EXPECT_EQ( obj.stride, ( size_t )32 );
+	EXPECT_EQ( obj.f_len, ( size_t )1869 );
+	EXPECT_EQ( obj.f_nbytes, ( size_t )59808 );
+	EXPECT_EQ( sizeof( struct vert ), sizeof( float ) * 8 );
+
 	obj3d_free( &obj );
 }
 
