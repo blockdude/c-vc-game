@@ -15,10 +15,11 @@
 // global window context
 struct window window;
 
-static void window_resize_callback_( void )
+static void window_resize_callback_( int w, int h )
 {
-    window_get_size( &window.w, &window.h );
-    window.aspect = ( float )window.w / ( float )window.h;
+    window.w = w;
+    window.h = h;
+    window.aspect = ( float )w / ( float )h;
 }
 
 static void window_quit_callback_( void )
@@ -96,6 +97,9 @@ int window_init( const struct window_state *state )
 	window.state = state != NULL ? *state : ( struct window_state ) { 0 };
 	window.frame = init_timing( default_rate );
 	window.tick = init_timing( default_rate );
+    window.w = window_size;
+    window.h = window_size;
+    window.aspect = 1.f;
 
     // Request an OpenGL 3.3 context (should be core)
     SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
@@ -262,7 +266,9 @@ int window_set_target_tps( int tps )
 
 int window_get_size( int *w, int *h )
 {
-    SDL_GetWindowSize( window.handle, w, h );
+    //SDL_GetWindowSize( window.handle, w, h );
+    *w = window.w;
+    *h = window.h;
     return WINDOW_SUCCESS;
 }
 

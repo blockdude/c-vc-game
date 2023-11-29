@@ -6,6 +6,9 @@
 #include <system/input.h>
 #include <glad/glad.h>
 
+static struct shader shader;
+static struct obj3d obj;
+
 int game_init( void )
 {
     return 0;

@@ -95,7 +95,8 @@ enum input_button
     INPUT_MB_LAST             = INPUT_MB_COUNT - 1
 };
 
-typedef void ( *input_callback_fn )( void );
+typedef void ( *input_resize_callback_fn )( int w, int h );
+typedef void ( *input_quit_callback_fn )( void );
 
 // input stuff
 int input_init( void );
@@ -107,8 +108,8 @@ int input_free( void );
  * TODO: allow register of multiple callbacks to an event
  */
 int input_process_events( void );
-int input_set_resize_callback( input_callback_fn fn );
-int input_set_quit_callback( input_callback_fn fn );
+int input_set_resize_callback( input_resize_callback_fn fn );
+int input_set_quit_callback( input_quit_callback_fn fn );
 
 // 
 bool input_key_down( enum input_key key );
