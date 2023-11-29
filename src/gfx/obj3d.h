@@ -79,8 +79,9 @@ struct obj3d
 };
 
 int  obj3d_load( struct obj3d *obj, const char *file );
+void obj3d_free( struct obj3d *obj );
+
 int  obj3d_square( struct obj3d *obj );
 int  obj3d_sphere( struct obj3d *obj );
-void obj3d_free( struct obj3d *obj );
 
 #endif
