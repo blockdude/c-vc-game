@@ -46,14 +46,14 @@ struct obj3d
 	size_t vt_nbytes;
 	size_t vn_nbytes;
 
-	// size of each element
-	size_t elem_size;
+	// size (in bytes) of each float value
+	size_t val_size;
 
 	// number of values in a single element
-	size_t f_elem_len;
-	size_t v_elem_len;
-	size_t vt_elem_len;
-	size_t vn_elem_len;
+	size_t f_nval;
+	size_t v_nval;
+	size_t vt_nval;
+	size_t vn_nval;
 
 	// distance between each v, vt, or vn in the faces array
 	size_t stride;

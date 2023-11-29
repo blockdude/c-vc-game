@@ -5,6 +5,11 @@
 
 #define PI 3.1415926535897932384626433832795f
 
+static inline int fltcmp( float x, float y, float epsilon )
+{
+    return ( fabs( x - y ) <= epsilon );
+}
+
 static inline float magnitude( float x, float y )
 {
     return sqrt( x * x + y * y );

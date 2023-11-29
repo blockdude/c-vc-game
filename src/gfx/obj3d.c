@@ -78,17 +78,17 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 					&g, &h, &i
 			);
 
-			fa.v  = obj->v [ a ];
-			fa.vt = obj->vt[ b ];
-			fa.vn = obj->vn[ c ];
+			fa.v  = obj->v [ a - 1 ];
+			fa.vt = obj->vt[ b - 1 ];
+			fa.vn = obj->vn[ c - 1 ];
 
-			fb.v  = obj->v [ e ];
-			fb.vt = obj->vt[ f ];
-			fb.vn = obj->vn[ g ];
+			fb.v  = obj->v [ e - 1 ];
+			fb.vt = obj->vt[ f - 1 ];
+			fb.vn = obj->vn[ g - 1 ];
 
-			fc.v  = obj->v [ g ];
-			fc.vt = obj->vt[ h ];
-			fc.vn = obj->vn[ i ];
+			fc.v  = obj->v [ g - 1 ];
+			fc.vt = obj->vt[ h - 1 ];
+			fc.vn = obj->vn[ i - 1 ];
 
 			dynarr_push_back( obj->f, fa );
 			dynarr_push_back( obj->f, fb );
@@ -185,18 +185,18 @@ static inline void obj3d_compute_properties_( struct obj3d *obj )
 	obj->vt_nbytes		= dynarr_size( obj->vt ) * sizeof( *obj->vt );
 	obj->vn_nbytes		= dynarr_size( obj->vn ) * sizeof( *obj->vn );
 
-	obj->elem_size		= sizeof( float );
+	obj->val_size		= sizeof( float );
 
-	obj->f_elem_len		= 8; /* v vt vn */
-	obj->v_elem_len	   	= 3; /* x y z   */
-	obj->vt_elem_len   	= 2; /* u v     */
-	obj->vn_elem_len   	= 3; /* x y z   */
+	obj->f_nval			= 8; /* v vt vn */
+	obj->v_nval	   		= 3; /* x y z   */
+	obj->vt_nval   		= 2; /* u v     */
+	obj->vn_nval   		= 3; /* x y z   */
 
-	obj->stride		   	= ( obj->v_elem_len + obj->vt_elem_len + obj->vn_elem_len ) * obj->elem_size;
+	obj->stride		   	= ( obj->v_nval + obj->vt_nval + obj->vn_nval ) * obj->val_size;
 
 	obj->v_offset		= 0;
-	obj->vt_offset		= obj->v_elem_len * obj->elem_size;
-	obj->vn_offset		= ( obj->v_elem_len + obj->vt_elem_len ) * obj->elem_size;
+	obj->vt_offset		= obj->v_nval * obj->val_size;
+	obj->vn_offset		= ( obj->v_nval + obj->vt_nval ) * obj->val_size;
 
 	obj->v_offset_data	= &obj->f[ 0 ].v;
 	obj->vt_offset_data = &obj->f[ 0 ].vt;
