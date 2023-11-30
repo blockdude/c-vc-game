@@ -120,7 +120,7 @@ bool input_mouse_up( enum input_button button );
 bool input_mouse_press( enum input_button button );
 bool input_mouse_moved( void );
 void input_mouse_pos( int *x, int *y );
-void input_mouse_pos_delta( int *x, int *y );
+void input_mouse_delta( int *x, int *y );
 void input_mouse_scroll( int *x, int *y );
 void input_mouse_fscroll( float *x, float *y );
 

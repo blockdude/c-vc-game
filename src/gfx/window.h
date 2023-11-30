@@ -6,6 +6,8 @@
 
 #define WINDOW_SUCCESS	 0
 #define WINDOW_ERROR	-1
+#define WINDOW_EXIT      1
+#define WINDOW_HARD_EXIT 2
 
 // window function
 typedef int ( *window_fn )( void );
@@ -24,16 +26,16 @@ struct window_state
 struct timing
 {
 	// target cycles per second
-	int target_rate;
+	float target_rate;
 	
 	// target milliseconds per cycle
-	double target_delta;
+	float target_delta;
 
 	// cycles per second (updated every second)
 	int rate;
 
 	// seconds per cycle (updated every cycle)
-	double delta;
+	float delta;
 
 	// # of cycles that have occurred
 	uint64_t count;
@@ -75,8 +77,8 @@ int window_free( void );
 
 // window setters
 int window_set_state( const struct window_state *state );
-int window_set_target_fps( int fps );
-int window_set_target_tps( int tps );
+int window_set_target_fps( float fps );
+int window_set_target_tps( float tps );
 int window_set_title( const char *title );
 
 // window getters

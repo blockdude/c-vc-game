@@ -13,10 +13,11 @@ static GLint shader_compile_( const char *path, GLenum type )
 
 	f = fopen( path, "rb" );
 	if ( f == NULL ) {
-		log_error( "Error loading shader at %s", path );
+		log_error( "Error. Could not open shader file: %s", path );
 		return -1;
 	}
 
+	// put shader in buffer text
 	fseek( f, 0, SEEK_END );
 	len = ftell( f );
 	assert( len > 0 );
@@ -27,6 +28,7 @@ static GLint shader_compile_( const char *path, GLenum type )
 	assert( strlen( text ) > 0 );
 	fclose( f );
 
+	// create and compile shader
 	GLuint handle = glCreateShader( type );
 	glShaderSource( handle, 1, ( const GLchar *const * ) &text, ( const GLint * ) &len );
 	glCompileShader( handle );
@@ -37,7 +39,7 @@ static GLint shader_compile_( const char *path, GLenum type )
 	// Check OpenGL logs if compilation failed
 	if ( compiled == 0 )
 	{
-		log_error( "Error compiling shader at %s", path );
+		log_error( "Error compiling shader: %s", path );
 		return -1;
 	}
 

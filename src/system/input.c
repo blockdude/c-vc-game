@@ -260,7 +260,7 @@ void input_mouse_pos( int *x, int *y )
     if ( y ) *y = input.mouse.pos.y;
 }
 
-void input_mouse_pos_delta( int *x, int *y )
+void input_mouse_delta( int *x, int *y )
 {
     if ( x ) *x = input.mouse.pos.dx;
     if ( y ) *y = input.mouse.pos.dy;

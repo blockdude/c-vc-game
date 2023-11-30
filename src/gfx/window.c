@@ -1,9 +1,13 @@
 #include "window.h"
 #include "render.h"
+#include <stdalign.h>
 #include <system/input.h>
 #include <glad/glad.h>
 
-#define init_timing( r ) \
+// global window context
+struct window window;
+
+#define INIT_TIMING( r ) \
     ( struct timing ) {                             \
 		.target_rate	= ( r ),                    \
 		.target_delta	= 1000.0 / ( r ),           \
@@ -12,10 +16,22 @@
 		.count			= 0                         \
 	}
 
-// global window context
-struct window window;
+// used in window_loop only
+#define process_event_( fn ) \
+    do                                              \
+    {                                               \
+        int code = window_internal_##fn();          \
+        switch ( code )                             \
+        {                                           \
+            case WINDOW_SUCCESS:   break;           \
+            case WINDOW_EXIT:      goto soft_exit_; \
+            case WINDOW_HARD_EXIT: goto hard_exit_; \
+            default:               goto soft_exit_; \
+        };                                          \
+    }                                               \
+    while ( 0 )
 
-static void window_resize_callback_( int w, int h )
+static void resize_callback_( int w, int h )
 {
     window.w = w;
     window.h = h;
@@ -23,62 +39,67 @@ static void window_resize_callback_( int w, int h )
     glViewport( 0, 0, w, h );
 }
 
-static void window_quit_callback_( void )
+static void quit_callback_( void )
 {
     window.quit = true;
 }
 
 // base init
-static int window_internal_init( void )
+static inline int window_internal_init( void )
 {
+    int code = WINDOW_SUCCESS;
     if ( window.state.init )
-        window.state.init();
+        code = window.state.init();
 
     // set callback functions
-    input_push_resize_callback( window_resize_callback_ );
-    input_push_quit_callback( window_quit_callback_ );
+    input_push_resize_callback( resize_callback_ );
+    input_push_quit_callback( quit_callback_ );
 
-    return WINDOW_SUCCESS;
+    return code;
 }
 
 // base clean
-static int window_internal_free( void )
+static inline int window_internal_free( void )
 {
+    int code = WINDOW_SUCCESS;
     if ( window.state.free )
-        window.state.free();
+        code = window.state.free();
 
-    return WINDOW_SUCCESS;
+    return code;
 }
 
 // base tick
-static int window_internal_tick( void )
+static inline int window_internal_tick( void )
 {
+    int code = WINDOW_SUCCESS;
     if ( window.state.tick )
-        window.state.tick();
+        code = window.state.tick();
     window.tick.count++;
 
-    return WINDOW_SUCCESS;
+    return code;
 }
 
 // base update
-static int window_internal_update( void )
+static inline int window_internal_update( void )
 {
+    int code = WINDOW_SUCCESS;
     if ( window.state.update )
-        window.state.update();
+        code = window.state.update();
 
-    return WINDOW_SUCCESS;
+    return code;
 }
 
 // base render
-static int window_internal_render( void )
+static inline int window_internal_render( void )
 {
+    int code = WINDOW_SUCCESS;
 	if ( window.state.render )
-        window.state.render();
+        code = window.state.render();
 
-    SDL_GL_SwapWindow( window.handle );
     window.frame.count++;
+    SDL_GL_SwapWindow( window.handle );
 
-    return WINDOW_SUCCESS;
+    return code;
 }
 
 int window_init( const struct window_state *state )
@@ -89,15 +110,15 @@ int window_init( const struct window_state *state )
         return WINDOW_ERROR;
     }
 
-    const double default_rate = 60.0;
+    const float default_rate = 60.0f;
     const int window_size = 700;
     const Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
 
 	// init variables
 	window.quit = false;
 	window.state = state != NULL ? *state : ( struct window_state ) { 0 };
-	window.frame = init_timing( default_rate );
-	window.tick = init_timing( default_rate );
+	window.frame = INIT_TIMING( default_rate );
+	window.tick = INIT_TIMING( default_rate );
     window.w = window_size;
     window.h = window_size;
     window.aspect = 1.f;
@@ -164,11 +185,11 @@ int window_loop( void )
     log_info( "Starting window loop..." );
 
 	// init
-    window_internal_init();
+    process_event_( init );
 
 	// setup game loop
     uint64_t frame_previous = SDL_GetTicks64();
-    double tick_time = 0;
+    float tick_time = 0;
 
     uint64_t tick_last = 0;
     uint64_t frame_last = 0;
@@ -210,15 +231,15 @@ int window_loop( void )
         // maintain fixed time step for each tick
         while ( tick_time >= window.tick.target_delta )
         {
-            window_internal_tick();
+            process_event_( tick );
             tick_time -= window.tick.target_delta;
         }
 
-        window_internal_update();
-        window_internal_render();
+        process_event_( update );
+        process_event_( render );
 
         // calculate & store frame time
-        window.frame.delta = ( double ) frame_delta / 1000.0;
+        window.frame.delta = ( float ) frame_delta / 1000.0f;
 
         // apply fps cap
         int delay = frame_current + window.frame.target_delta - SDL_GetTicks64();
@@ -226,9 +247,10 @@ int window_loop( void )
             SDL_Delay( delay );
     }
 
-	// clean up
+soft_exit_:
 	window_internal_free();
 
+hard_exit_:
     return WINDOW_SUCCESS;
 }
 
@@ -249,18 +271,18 @@ int window_free( void )
     return WINDOW_SUCCESS;
 }
 
-int window_set_target_fps( int fps )
+int window_set_target_fps( float fps )
 {
 	window.frame.target_rate = fps;
-	window.frame.target_delta = ( fps <= 0.0 ? 1.0 : 1000.0 / ( double ) fps );
+	window.frame.target_delta = ( fps <= 0.0 ? 1.0 : 1000.0 / ( float ) fps );
 
 	return WINDOW_SUCCESS;
 }
 
-int window_set_target_tps( int tps )
+int window_set_target_tps( float tps )
 {
 	window.tick.target_rate = tps;
-	window.tick.target_delta = ( tps <= 0.0 ? 0.01 : 1000.0 / ( double ) tps );
+	window.tick.target_delta = ( tps <= 0.0 ? 0.01 : 1000.0 / ( float ) tps );
 
 	return WINDOW_SUCCESS;
 }
