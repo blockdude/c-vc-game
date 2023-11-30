@@ -57,7 +57,7 @@ int game_init( void )
         GL_FLOAT,           // Specify the type of the components
         GL_FALSE,           // Specify if we want the data to be normalized
         obj.stride,         // Specify the stride (number of bytes between each vertex)
-        obj.v_offset_data   // Specify the starting point (in bytes) for the position data
+        obj.v_offset_ptr    // Specify the starting point (in bytes) for the position data
     );
     
     glVertexAttribPointer(
@@ -66,7 +66,7 @@ int game_init( void )
         GL_FLOAT,           // Specify the type of the components
         GL_FALSE,           // Specify if we want the data to be normalized
         obj.stride,         // Specify the stride (number of bytes between each vertex)
-        obj.vn_offset_data  // Specify the starting point (in bytes) for the position data
+        obj.vn_offset_ptr   // Specify the starting point (in bytes) for the position data
     );
     
     // mark attribute as being used
@@ -87,7 +87,7 @@ int game_init( void )
     // set uniform variables
     glUniform1f( scale_loc, scale );
     glUniform1f( aspect_loc, window.aspect );
-    glUniform3fv( center_loc, 1, ( const GLfloat * )&obj.center );
+    glUniform3f( center_loc, obj.center.x, obj.center.y, obj.center.z );
 
     return 0;
 }
@@ -118,8 +118,6 @@ int game_render( void )
     glClearColor( 1.f, 1.f, 1.f, 1.f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    shader_bind( shader );
-    glBindVertexArray( vao );
     glDrawArrays(
             GL_TRIANGLES,
             0,

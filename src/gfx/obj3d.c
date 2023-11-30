@@ -194,13 +194,13 @@ static inline void obj3d_compute_properties_( struct obj3d *obj )
 
 	obj->stride		   	= ( obj->v_nval + obj->vt_nval + obj->vn_nval ) * obj->val_size;
 
-	obj->v_offset		= 0;
-	obj->vt_offset		= obj->v_nval * obj->val_size;
-	obj->vn_offset		= ( obj->v_nval + obj->vt_nval ) * obj->val_size;
+	obj->v_offset		= ( 0 );
+	obj->vt_offset		= ( obj->v_nval * obj->val_size );
+	obj->vn_offset		= ( ( obj->v_nval + obj->vt_nval ) * obj->val_size );
 
-	obj->v_offset_data	= &obj->f[ 0 ].v;
-	obj->vt_offset_data = &obj->f[ 0 ].vt;
-	obj->vn_offset_data = &obj->f[ 0 ].vn;
+	obj->v_offset_ptr	= ( void * )obj->v_offset;
+	obj->vt_offset_ptr	= ( void * )obj->vt_offset;
+	obj->vn_offset_ptr	= ( void * )obj->vn_offset;
 
 	obj->data			= obj->f;
 }

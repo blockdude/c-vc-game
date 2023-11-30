@@ -20,9 +20,9 @@ static GLint shader_compile_( const char *path, GLenum type )
 	fseek( f, 0, SEEK_END );
 	len = ftell( f );
 	assert( len > 0 );
-	fseek( f, 0, SEEK_SET );
 	text = calloc( 1, len );
 	assert( text != NULL );
+	fseek( f, 0, SEEK_SET );
 	fread( text, 1, len, f );
 	assert( strlen( text ) > 0 );
 	fclose( f );
@@ -41,7 +41,7 @@ static GLint shader_compile_( const char *path, GLenum type )
 		return -1;
 	}
 
-	free(text);
+	free( text );
 	return handle;
 }
 
@@ -61,6 +61,8 @@ struct shader shader_load( const char *vs, const char *fs )
 	//for (size_t i = 0; i < n; i++) {
 	//	glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name);
 	//}
+	//glBindAttribLocation( self.handle, 0, "position" );
+	//glBindAttribLocation( self.handle, 1, "normal" );
 
 	glLinkProgram( self.handle );
 

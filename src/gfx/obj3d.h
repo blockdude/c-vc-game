@@ -64,9 +64,9 @@ struct obj3d
 	size_t vn_offset;
 
 	// address of first elements in faces
-	void *v_offset_data;
-	void *vt_offset_data;
-	void *vn_offset_data;
+	void *v_offset_ptr;
+	void *vt_offset_ptr;
+	void *vn_offset_ptr;
 
 	// raw data
 	void *data;
