@@ -8,6 +8,7 @@
 #include <gfx/shader.h>
 #include <gfx/obj3d.h>
 #include <stdio.h>
+#include <cglm/cglm.h>
 
 static struct shader shader;
 static struct obj3d obj;
@@ -104,6 +105,14 @@ int game_free( void )
 
 int game_tick( void )
 {
+    mat4 m = {
+        { 1, 0, 0, 0 },
+        { 0, 1, 0, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 0, 1 }
+    };
+
+    glm_translate(m, (vec3){1.0f, 0.0f, 0.0f});
     return 0;
 }
 

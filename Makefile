@@ -21,6 +21,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
 CLEAN = $(BLD_DIR)
+LIBS  =
 
 # flags and compiler
 SHELL		= /bin/sh
@@ -34,6 +35,8 @@ LDLIBS		= -lm -ldl -lSDL2
 
 # echo output
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
+RUN_CMD_RM     = @echo "  RM    " $@;
+
 RUN_CMD_AR     = @echo "  AR    " $@;
 RUN_CMD_CC     = @echo "  CC    " $@;
 RUN_CMD_CXX    = @echo "  CXX   " $@;
@@ -42,6 +45,7 @@ RUN_CMD_RANLIB = @echo "  RANLIB" $@;
 RUN_CMD_RC     = @echo "  RC    " $@;
 RUN_CMD_GEN    = @echo "  GEN   " $@;
 
+PHONY = all
 all: build test
 
 # =============================
@@ -51,10 +55,15 @@ all: build test
 
 INCLUDE += -I$(LIB_DIR)/glad/include
 LDFLAGS += $(LIB_DIR)/glad/obj/glad.o
-CLEAN   += $(LIB_DIR)/glad/obj
+LIBS    += $(LIB_DIR)/glad/obj/glad.o
 
 $(LIB_DIR)/glad/obj/glad.o:
 	$(RUN_CMD_CC) (cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
+
+CLEAN += clean_glad.o
+PHONY += clean_glad.o
+clean_glad.o:
+	@rm -r $(LIB_DIR)/glad/obj 2> /dev/null || true
 
 # =============================
 
@@ -67,18 +76,26 @@ $(LIB_DIR)/glad/obj/glad.o:
 
 INCLUDE += -I$(LIB_DIR)/cglm/include
 LDFLAGS += $(LIB_DIR)/cglm/libcglm.a
-CLEAN   += $(LIB_DIR)/cglm/libcglm.a
+LIBS    += $(LIB_DIR)/cglm/libcglm.a
 
 $(LIB_DIR)/cglm/libcglm.a:
 	$(RUN_CMD_CC) (cd lib/cglm && cmake . -DCGLM_STATIC=ON && make)
 
+CLEAN += clean_libcglm.a
+PHONY += clean_libcglm.a
+clean_libcglm.a:
+	@(cd lib/cglm && make clean)
+
 # =============================
 
+PHONY += run
 run: all
 	@exec $(BIN)
 
-build: $(LIB_DIR)/glad/obj/glad.o $(DIRS) $(BIN)
+PHONY += build
+build: $(LIBS) $(DIRS) $(BIN)
 
+PHONY += test
 test: build
 	@(cd test; $(MAKE) clean)
 	@(cd test; $(MAKE) test_all)
@@ -92,10 +109,11 @@ $(BIN): $(OBJ)
 $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $@ -o $@ -c $<
 
-clean:
-	@rm -r $(CLEAN) 2> /dev/null || true
+PHONY += clean
+clean: $(CLEAN)
+	@rm -r $(BLD_DIR) 2> /dev/null || true
 	@(cd test; $(MAKE) clean)
 
 -include $(DEP)
 
-.PHONY: all clean run test bld libs
+.PHONY: $(PHONY)
