@@ -3,7 +3,13 @@
 
 #include <math.h>
 
-#define PI 3.1415926535897932384626433832795f
+#define PI_2 GLM_PI_2
+#define PI GLM_PI
+#define TAU ( 2 * PI )
+
+#define clamp( v, mn, mx ) max( mn, min( mx, v ) )
+#define max( a, b ) ( ( a ) > ( b ) ? ( a ) : ( b ) )
+#define min( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
 
 static inline int fltcmp( float x, float y, float epsilon )
 {
@@ -20,22 +26,6 @@ static inline void normalize( float x, float y, float *x_norm, float *y_norm )
     float mag = sqrt( x * x + y * y );
     if ( x_norm ) *x_norm = x != 0 ? x / mag : 0;
     if ( y_norm ) *y_norm = y != 0 ? y / mag : 0;
-}
-
-static inline float clamp( float val, float min, float max )
-{
-    float t = val < min ? min : val;
-    return t > max ? max : t;
-}
-
-static inline float f32min( float a, float b )
-{
-    return ( a < b ? a : b );
-}
-
-static inline float f32max( float a, float b )
-{
-    return ( a > b ? a : b );
 }
 
 #endif

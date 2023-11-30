@@ -5,35 +5,24 @@
  * WaveFront object file loader.
  */
 
+#include <cglm/cglm.h>
+#include <cglm/struct.h>
 #include <stddef.h>
-
-struct vec3
-{
-	float x;
-	float y;
-	float z;
-};
-
-struct vec2
-{
-	float x;
-	float y;
-};
 
 struct vert
 {
-	struct vec3 v;
-	struct vec2 vt;
-	struct vec3 vn;
+	vec3s v;
+	vec2s vt;
+	vec3s vn;
 };
 
 struct obj3d
 {
 	// dynarrs
 	struct vert *f;		/* vertices (v, vt, and vn)       */
-	struct vec3 *v;		/* vertex positions		x, y, z   */
-	struct vec2 *vt;	/* texture coordinates	u, v	  */
-	struct vec3 *vn;	/* vertex normal		x, y, z   */
+	vec3s *v;			/* vertex positions		x, y, z   */
+	vec2s *vt;			/* texture coordinates	u, v	  */
+	vec3s *vn;			/* vertex normal		x, y, z   */
 
 	size_t f_len;
 	size_t v_len;
@@ -73,9 +62,9 @@ struct obj3d
 
 	// extent info
 	float dia;
-	struct vec3 center;
-	struct vec3 max;
-	struct vec3 min;
+	vec3s center;
+	vec3s max;
+	vec3s min;
 };
 
 int  obj3d_load( struct obj3d *obj, const char *file );

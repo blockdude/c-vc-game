@@ -48,21 +48,21 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 		// get a vertex position
 		if ( strcmp( lexeme, "v" ) == 0 )
 		{
-			struct vec3 tmp;
+			vec3s tmp;
 			sscanf( buffer, "%*s %f %f %f", &tmp.x, &tmp.y, &tmp.z );
 			dynarr_push_back( obj->v, tmp );
 		}
 		// get a texture coordinates
 		else if ( strcmp( lexeme, "vt" ) == 0 )
 		{
-			struct vec2 tmp;
+			vec2s tmp;
 			sscanf( buffer, "%*s %f %f", &tmp.x, &tmp.y );
 			dynarr_push_back( obj->vt, tmp );
 		}
 		// get a vertex normal
 		else if ( strcmp( lexeme, "vn" ) == 0 )
 		{
-			struct vec3 tmp;
+			vec3s tmp;
 			sscanf( buffer, "%*s %f %f %f", &tmp.x, &tmp.y, &tmp.z );
 			dynarr_push_back( obj->vn, tmp );
 		}
@@ -101,29 +101,29 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 	return 0;
 }
 
-static inline struct vec3 obj3d_vec3_min_( struct vec3 va, struct vec3 vb )
+static inline vec3s obj3d_vec3_min_( vec3s va, vec3s vb )
 {
-	struct vec3 res;
-	res.x = f32min( va.x, vb.x );
-	res.y = f32min( va.y, vb.y );
-	res.z = f32min( va.z, vb.z );
+	vec3s res;
+	res.x = min( va.x, vb.x );
+	res.y = min( va.y, vb.y );
+	res.z = min( va.z, vb.z );
 	return res;
 }
 
-static inline struct vec3 obj3d_vec3_max_( struct vec3 va, struct vec3 vb )
+static inline vec3s obj3d_vec3_max_( vec3s va, vec3s vb )
 {
-	struct vec3 res;
-	res.x = f32max( va.x, vb.x );
-	res.y = f32max( va.y, vb.y );
-	res.z = f32max( va.z, vb.z );
+	vec3s res;
+	res.x = max( va.x, vb.x );
+	res.y = max( va.y, vb.y );
+	res.z = max( va.z, vb.z );
 	return res;
 }
 
 static inline void obj3d_set_min_max_( struct obj3d *obj )
 {
 	size_t len = dynarr_size( obj->v );
-	struct vec3 min = len > 0 ? obj->v[ 0 ] : ( struct vec3 ){ 0 };
-	struct vec3 max = len > 0 ? obj->v[ 0 ] : ( struct vec3 ){ 0 };
+	vec3s min = len > 0 ? obj->v[ 0 ] : ( vec3s ){ 0 };
+	vec3s max = len > 0 ? obj->v[ 0 ] : ( vec3s ){ 0 };
 
 	for ( size_t i = 0; i < len; i++ )
 	{
@@ -135,9 +135,9 @@ static inline void obj3d_set_min_max_( struct obj3d *obj )
 	obj->max = max;
 }
 
-static inline float obj3d_vec3_distance_( struct vec3 va, struct vec3 vb )
+static inline float obj3d_vec3_distance_( vec3s va, vec3s vb )
 {
-	struct vec3 tmp;
+	vec3s tmp;
 
 	tmp.x = vb.x - va.x;
 	tmp.y = vb.y - va.y;
@@ -151,9 +151,9 @@ static inline float obj3d_vec3_distance_( struct vec3 va, struct vec3 vb )
 	return res;
 }
 
-static inline struct vec3 obj3d_vec3_center_( struct vec3 va, struct vec3 vb )
+static inline vec3s obj3d_vec3_center_( vec3s va, vec3s vb )
 {
-	struct vec3 res;
+	vec3s res;
 
 	res.x = va.x + vb.x;
 	res.y = va.y + vb.y;

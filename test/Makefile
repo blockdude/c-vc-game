@@ -32,10 +32,10 @@ TEST     := $(TEST_SRC:%.c=%)
 SHELL		= /bin/sh
 CC			= gcc
 LINKER		= $(CC)
-INCLUDE		= -I$(SRC_DIR) -I$(LIB_DIR)/glad/include -I./
+INCLUDE		= -I$(SRC_DIR) -I$(LIB_DIR)/glad/include -I$(LIB_DIR)/cglm/include -I./
 CPPFLAGS	= -DLOG_USE_COLOR -DINSTANTIATE_MAIN
 CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
-LDFLAGS		= $(LIB_DIR)/glad/obj/glad.o
+LDFLAGS		= $(LIB_DIR)/glad/obj/glad.o $(LIB_DIR)/cglm/libcglm.a
 LDLIBS		= -lm -ldl -lSDL2
 
 # echo output

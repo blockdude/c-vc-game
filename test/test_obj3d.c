@@ -42,15 +42,15 @@ UTEST_F( obj3d_test_fixture, validate_f )
 	struct obj3d *obj = &utest_fixture->obj;
 
 	struct vert f_first = {
-		.v  = { -0.967716f, 11.993134f, -0.156907f },
-		.vt = { 0.4033f   , 0.3064f                },
-		.vn = { -0.3183f  , -0.6137f  , -0.7226f   }
+		.v  = { { -0.967716f, 11.993134f, -0.156907f } },
+		.vt = { { 0.4033f   , 0.3064f				 } },
+		.vn = { { -0.3183f  , -0.6137f  , -0.7226f   } }
 	};
 
 	struct vert f_last = {
-		.v  = { 0.536469f, 9.000515f, 1.657671f },
-		.vt = { 0.205f   , 0.3177f              },
-		.vn = { 0.4359f  , -0.5951f , 0.6751f   }
+		.v  = { { 0.536469f, 9.000515f, 1.657671f } },
+		.vt = { { 0.205f   , 0.3177f              } },
+		.vn = { { 0.4359f  , -0.5951f , 0.6751f   } }
 	};
 
 	struct vert f;
@@ -67,7 +67,7 @@ UTEST_F( obj3d_test_fixture, validate_v )
 {
 	struct obj3d *obj = &utest_fixture->obj;
 
-	struct vec3 v;
+	vec3s v;
 	v = obj->v[ 0 ];
 
 	EXPECT_EQ( v.x, -0.967716f );
@@ -85,7 +85,7 @@ UTEST_F( obj3d_test_fixture, validate_vt )
 {
 	struct obj3d *obj = &utest_fixture->obj;
 
-	struct vec2 v;
+	vec2s v;
 	v = obj->vt[ 0 ];
 
 	EXPECT_EQ( v.x, 0.4033f );
@@ -101,7 +101,7 @@ UTEST_F( obj3d_test_fixture, validate_vn )
 {
 	struct obj3d *obj = &utest_fixture->obj;
 
-	struct vec3 v;
+	vec3s v;
 	v = obj->vn[ 0 ];
 
 	EXPECT_EQ( v.x, -0.3183f );
