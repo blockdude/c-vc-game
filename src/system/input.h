@@ -105,11 +105,10 @@ int input_free( void );
 /*
  * tmp callback setter for window resizing and quit
  * (for use in window.c only)
- * TODO: allow register of multiple callbacks to an event
  */
 int input_process_events( void );
-int input_set_resize_callback( input_resize_callback_fn fn );
-int input_set_quit_callback( input_quit_callback_fn fn );
+int input_push_resize_callback( input_resize_callback_fn fn );
+int input_push_quit_callback( input_quit_callback_fn fn );
 
 // 
 bool input_key_down( enum input_key key );

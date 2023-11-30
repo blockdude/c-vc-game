@@ -20,6 +20,7 @@ static void window_resize_callback_( int w, int h )
     window.w = w;
     window.h = h;
     window.aspect = ( float )w / ( float )h;
+    glViewport( 0, 0, w, h );
 }
 
 static void window_quit_callback_( void )
@@ -34,8 +35,8 @@ static int window_internal_init( void )
         window.state.init();
 
     // set callback functions
-    input_set_resize_callback( window_resize_callback_ );
-    input_set_quit_callback( window_quit_callback_ );
+    input_push_resize_callback( window_resize_callback_ );
+    input_push_quit_callback( window_quit_callback_ );
 
     return WINDOW_SUCCESS;
 }

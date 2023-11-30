@@ -20,14 +20,16 @@ SRC := $(shell find $(SRC_DIR) -type f -name '*.c')
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
+CLEAN = $(BLD_DIR)
+
 # flags and compiler
 SHELL		= /bin/sh
 CC			= gcc
 LINKER		= $(CC)
-INCLUDE		= -I$(SRC_DIR) -I$(LIB_DIR)/glad/include
+INCLUDE		= -I$(SRC_DIR)
 CPPFLAGS	= -DLOG_USE_COLOR
 CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
-LDFLAGS		= $(LIB_DIR)/glad/obj/glad.o
+LDFLAGS		= 
 LDLIBS		= -lm -ldl -lSDL2
 
 # echo output
@@ -42,7 +44,34 @@ RUN_CMD_GEN    = @echo "  GEN   " $@;
 
 all: build test
 
-# build and run
+# =============================
+# -----------------------------
+# GLAD lib
+# -----------------------------
+
+INCLUDE += -I$(LIB_DIR)/glad/include
+LDFLAGS += $(LIB_DIR)/glad/obj/glad.o
+CLEAN   += $(LIB_DIR)/glad/obj
+
+$(LIB_DIR)/glad/obj/glad.o:
+	$(RUN_CMD_CC) (cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
+
+# =============================
+
+
+
+# =============================
+# -----------------------------
+# CGLM lib
+# -----------------------------
+
+#INCLUDE += -I$(LIB_DIR)/glad/include
+#
+#$(LIB_DIR)/glad/obj/glad.o:
+#	$(RUN_CMD_CC) (cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
+
+# =============================
+
 run: all
 	@exec $(BIN)
 
@@ -52,25 +81,17 @@ test: build
 	@(cd test; $(MAKE) clean)
 	@(cd test; $(MAKE) test_all)
 
-$(LIB_DIR)/glad/obj/glad.o:
-	$(RUN_CMD_CC) (cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
-
-# create directories
 $(DIRS):
 	$(RUN_CMD_MKDIR) mkdir -p $@
 
-# link to binary
 $(BIN): $(OBJ)
 	$(RUN_CMD_LTLINK) $(LINKER) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-# generate src object files and dependencies
 $(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $@ -o $@ -c $<
 
-# remove build files
 clean:
-	@rm -r $(BLD_DIR) 2> /dev/null || true
-	@rm -r $(LIB_DIR)/glad/obj 2> /dev/null || true
+	@rm -r $(CLEAN) 2> /dev/null || true
 	@(cd test; $(MAKE) clean)
 
 -include $(DEP)
