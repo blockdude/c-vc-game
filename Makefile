@@ -65,10 +65,12 @@ $(LIB_DIR)/glad/obj/glad.o:
 # CGLM lib
 # -----------------------------
 
-#INCLUDE += -I$(LIB_DIR)/glad/include
-#
-#$(LIB_DIR)/glad/obj/glad.o:
-#	$(RUN_CMD_CC) (cd $(LIB_DIR)/glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c src/glad.c)
+INCLUDE += -I$(LIB_DIR)/cglm/include
+LDFLAGS += $(LIB_DIR)/cglm/libcglm.a
+CLEAN   += $(LIB_DIR)/cglm/libcglm.a
+
+$(LIB_DIR)/cglm/libcglm.a:
+	$(RUN_CMD_CC) (cd lib/cglm && cmake . -DCGLM_STATIC=ON && make)
 
 # =============================
 
