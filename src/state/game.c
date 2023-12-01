@@ -1,10 +1,7 @@
 #include "game.h"
-#include "cglm/struct/mat4.h"
-#include "cglm/struct/vec3.h"
 #include "state.h"
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_mouse.h>
 #include <util/util.h>
 #include <system/input.h>
 #include <gfx/window.h>
@@ -16,6 +13,7 @@
 #include <gfx/camera.h>
 
 #include <cglm/cglm.h>
+#include <cglm/struct.h>
 #include <glad/glad.h>
 
 #include <stdio.h>
@@ -46,7 +44,9 @@ static struct shader shader;
 /* ================================== */
 static vec3s direction  = { 0 };
 static float speed      = 25.0f;
+static float sens       = 1.0f;
 static float mouse_sens = 0.0009f;
+static float fov        = 45.0f;
 /* ================================== */
 
 int game_init( void )
@@ -54,7 +54,7 @@ int game_init( void )
     glEnable( GL_DEPTH_TEST );
 
     log_info( "Loading object file..." );
-    if ( obj3d_load( &obj, "res/objects/cube.obj" ) != 0 )
+    if ( obj3d_load( &obj, "res/objects/square.obj" ) != 0 )
     {
         log_error( "Failed to load object..." );
         return WINDOW_EXIT;
@@ -106,10 +106,13 @@ int game_init( void )
     log_debug( "Object vn count: %d", obj.vn_len );
     
     // init rendering details
-    model_matrix = GLMS_MAT4_IDENTITY;
-    camera_init( &camera, degtorad( 200.0f ) );
+    float s = 1.0f;
+    vec3s scale = {{ s, s, s }};
+    model_matrix = glms_scale( GLMS_MAT4_IDENTITY, scale );
+    camera_init( &camera, degtorad( fov ) );
     //camera.eye   = glms_vec3_add( camera.eye, obj.center );
-    //camera.eye   = glms_vec3_add( camera.eye, ( vec3s ){{ 0, 0, obj.dia }} );
+    //camera.eye   = glms_vec3_add( camera.eye, ( vec3s ){{ 0, 0, 10.0f }} );
+    camera.eye   = GLMS_VEC3_ZERO;
     camera.pitch = degtorad( 0 );
     camera.yaw   = degtorad( 0 );
 
@@ -168,8 +171,6 @@ int game_update( void )
         direction.y -= 1;
     }
 
-    float sens = 1.0f;
-
     if ( input_key_press( INPUT_KB_LEFT ) )
     {
         camera.yaw += sens * window.frame.delta;
@@ -210,18 +211,17 @@ int game_update( void )
     direction = GLMS_VEC3_ZERO;
     camera_update( &camera );
 
-    shader_uniform_mat4( shader, "view_matrix", camera.view );
-    shader_uniform_mat4( shader, "proj_matrix", camera.proj );
-    shader_uniform_mat4( shader, "model_matrix", model_matrix );
+    //shader_uniform_mat4( shader, "view_matrix", camera.view );
+    //shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+    //shader_uniform_mat4( shader, "model_matrix", model_matrix );
 
     shader_uniform_vec3( shader, "camera.eye", camera.eye );
     shader_uniform_vec3( shader, "camera.target", camera.target );
     shader_uniform_vec3( shader, "camera.up", camera.up );
     shader_uniform_mat4( shader, "camera.view", camera.view );
+    shader_uniform_float( shader, "camera.fov", camera.fov );
 
     shader_uniform_vec2( shader, "resolution", ( vec2s ){{ window.w, window.h }} );
-
-    log_debug( "%f, %f, %f", camera.target.x, camera.target.y, camera.target.z );
 
     return 0;
 }

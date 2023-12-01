@@ -34,7 +34,7 @@ struct camera_t
 struct hitdata_t
 {
 	bool did_hit;
-	float dst;
+	float dist;
 	vec3 hit_point;
 	vec3 normal;
 };
@@ -65,7 +65,7 @@ ray_t ray_create( vec2 pixel )
 	return self;
 }
 
-hitdata_t intersect_ray_tri( ray_t ray, triangle_t tri )
+hitdata_t intersects_ray_tri( ray_t ray, triangle_t tri )
 {
 	vec3 edgeAB = tri.pos_b - tri.pos_a;
 	vec3 edgeAC = tri.pos_c - tri.pos_a;
@@ -77,18 +77,46 @@ hitdata_t intersect_ray_tri( ray_t ray, triangle_t tri )
 	float det = -dot( ray.dir, normalVector );
 	float invDet = 1 / det;
 
-	// Calculate dst to triangle & barycentric coordinates of intersection point
-	float dst = dot( ao, normalVector ) * invDet;
+	// Calculate dist to triangle & barycentric coordinates of intersection point
+	float dist = dot( ao, normalVector ) * invDet;
 	float u = dot( edgeAC, dao ) * invDet;
 	float v = -dot( edgeAB, dao ) * invDet;
 	float w = 1 - u - v;
 
 	// Initialize hit info
 	hitdata_t hitInfo;
-	hitInfo.did_hit   = det >= 1E-6f && dst >= 0 && u >= 0 && v >= 0 && w >= 0;
-	hitInfo.hit_point = ray.orig + ray.dir * dst;
+	hitInfo.did_hit   = det >= 1E-6f && dist >= 0 && u >= 0 && v >= 0 && w >= 0;
+	hitInfo.hit_point = ray.orig + ray.dir * dist;
 	hitInfo.normal    = normalize( tri.norm_a * w + tri.norm_b * u + tri.norm_c * v );
-	hitInfo.dst       = dst;
+	hitInfo.dist       = dist;
+	return hitInfo;
+}
+
+hitdata_t intersects_ray_sphere( vec3 sphereCentre, float sphereRadius, ray_t ray )
+{
+	hitdata_t hitInfo;
+	vec3 offsetRayOrigin = ray.orig - sphereCentre;
+	// From the equation: sqrLength(rayOrigin + rayDir * dist) = radius^2
+	// Solving for dist results in a quadratic equation with coefficients:
+	float a = dot(ray.dir, ray.dir); // a = 1 (assuming unit vector)
+	float b = 2 * dot(offsetRayOrigin, ray.dir);
+	float c = dot(offsetRayOrigin, offsetRayOrigin) - sphereRadius * sphereRadius;
+	// Quadratic discriminant
+	float discriminant = b * b - 4 * a * c; 
+
+	// No solution when d < 0 (ray misses sphere)
+	if (discriminant >= 0) {
+		// Distance to nearest intersection point (from quadratic formula)
+		float dist = (-b - sqrt(discriminant)) / (2 * a);
+
+		// Ignore intersections that occur behind the ray
+		if (dist >= 0) {
+			hitInfo.did_hit = true;
+			hitInfo.dist = dist;
+			hitInfo.hit_point = ray.orig + ray.dir * dist;
+			hitInfo.normal = normalize(hitInfo.hit_point - sphereCentre);
+		}
+	}
 	return hitInfo;
 }
 
@@ -141,10 +169,19 @@ void main()
 	//	out_color = vec4( 1.0f, 1.0f, 1.0f, 1.0f );
 	//}
 
-	ray_t r = ray_create( gl_FragCoord.xy );
-	out_color = vec4( r.dir, 0.0f );
+	//r.orig = camera.eye;
+	//r.dir = camera.target;
+	//r.orig = vec3( 0 );
+	//r.dir = vec3( 0.0f, 0.0f, 1.0f );
 
+	ray_t r = ray_create( gl_FragCoord.xy );
+	//hitdata_t hit = intersects_ray_sphere( vec3( 0.0f, 0.0f, 0.0f ), 1.0f, r );
+	bool hit = hit_sphere( vec3( 0.0f, 0.0f, 0.0f ), 1.0f, r );
+	out_color = vec4( 0.0f, 0.0f, float( hit ), 1.0f );
+	//out_color = vec4( camera.target, 1.0f );
+
+	//ray_t r = ray_create( gl_FragCoord.xy );
 	//float a = 0.5f * ( r.dir.y + 1.0f );
 	//vec3 color = ( 1.0f - a ) * vec3( 1.0f, 1.0f, 1.0f ) + a * vec3( 0.5f, 0.7f, 1.0f );
-	//out_color = vec4( color, 1.0f );
+	//out_color = vec4( color, 0.0f );
 }
