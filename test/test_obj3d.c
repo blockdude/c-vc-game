@@ -13,7 +13,7 @@ UTEST_F_SETUP( obj3d_test_fixture )
 	struct obj3d *obj = &utest_fixture->obj;
 	utest_fixture->initialized = obj3d_load( obj, "../res/objects/rayman.obj" );
 	ASSERT_EQ( utest_fixture->initialized, 0 );
-	ASSERT_GT( obj->f_len, ( size_t )0 );
+	ASSERT_GT( obj->fv_len, ( size_t )0 );
 }
 
 UTEST_F_TEARDOWN( obj3d_test_fixture )
@@ -25,9 +25,9 @@ UTEST_F_TEARDOWN( obj3d_test_fixture )
 static int obj3d_test_fixture_vert_compare( struct vert va, struct vert vb )
 {
 	int res = 1;
-	res = res & ( va.v.x == vb.v.x );
-	res = res & ( va.v.y == vb.v.y );
-	res = res & ( va.v.z == vb.v.z );
+	res = res & ( va.vp.x == vb.vp.x );
+	res = res & ( va.vp.y == vb.vp.y );
+	res = res & ( va.vp.z == vb.vp.z );
 
 	res = res & ( va.vt.x == vb.vt.x );
 	res = res & ( va.vt.y == vb.vt.y );
@@ -43,23 +43,23 @@ UTEST_F( obj3d_test_fixture, validate_f )
 	struct obj3d *obj = &utest_fixture->obj;
 
 	struct vert f_first = {
-		.v  = { { -0.967716f, 11.993134f, -0.156907f } },
+		.vp = { { -0.967716f, 11.993134f, -0.156907f } },
 		.vt = { { 0.4033f   , 0.3064f				 } },
 		.vn = { { -0.3183f  , -0.6137f  , -0.7226f   } }
 	};
 
 	struct vert f_last = {
-		.v  = { { 0.536469f, 9.000515f, 1.657671f } },
+		.vp = { { 0.536469f, 9.000515f, 1.657671f } },
 		.vt = { { 0.205f   , 0.3177f              } },
 		.vn = { { 0.4359f  , -0.5951f , 0.6751f   } }
 	};
 
 	struct vert f;
-	f = obj->f[ 0 ];
+	f = obj->fv[ 0 ];
 
 	EXPECT_TRUE( obj3d_test_fixture_vert_compare( f, f_first ) );
 
-	f = obj->f[ obj->f_len - 1 ];
+	f = obj->fv[ obj->fv_len - 1 ];
 
 	EXPECT_TRUE( obj3d_test_fixture_vert_compare( f, f_last ) );
 }
@@ -69,13 +69,13 @@ UTEST_F( obj3d_test_fixture, validate_v )
 	struct obj3d *obj = &utest_fixture->obj;
 
 	vec3s v;
-	v = obj->v[ 0 ];
+	v = obj->vp[ 0 ];
 
 	EXPECT_EQ( v.x, -0.967716f );
 	EXPECT_EQ( v.y, 11.993134f );
 	EXPECT_EQ( v.z, -0.156907f );
 
-	v = obj->v[ obj->v_len - 1 ];
+	v = obj->vp[ obj->vp_len - 1 ];
 
 	EXPECT_EQ( v.x, -0.026541f );
 	EXPECT_EQ( v.y, 8.850442f );
@@ -141,8 +141,8 @@ UTEST_F( obj3d_test_fixture, validate_properties )
 
 	// values calculated before hand
 	EXPECT_EQ( obj->stride, ( size_t )32 );
-	EXPECT_EQ( obj->f_len, ( size_t )1869 );
-	EXPECT_EQ( obj->f_nbytes, ( size_t )59808 );
+	EXPECT_EQ( obj->fv_len, ( size_t )1869 );
+	EXPECT_EQ( obj->fv_nbytes, ( size_t )59808 );
 	EXPECT_EQ( sizeof( struct vert ), sizeof( float ) * 8 );
 }
 

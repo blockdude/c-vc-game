@@ -11,7 +11,7 @@
 
 struct vert
 {
-	vec3s v;
+	vec3s vp;
 	vec2s vt;
 	vec3s vn;
 };
@@ -19,19 +19,19 @@ struct vert
 struct obj3d
 {
 	// dynarrs
-	struct vert *f;		/* vertices (v, vt, and vn)       */
-	vec3s *v;			/* vertex positions		x, y, z   */
-	vec2s *vt;			/* texture coordinates	u, v	  */
-	vec3s *vn;			/* vertex normal		x, y, z   */
+	struct vert *fv;	/* face vertices (v, vt, and vn)		*/
+	vec3s *vp;			/* vertex positions				x, y, z	*/
+	vec2s *vt;			/* vertex texture coordinates	u, v	*/
+	vec3s *vn;			/* vertex normal				x, y, z	*/
 
-	size_t f_len;
-	size_t v_len;
+	size_t fv_len;
+	size_t vp_len;
 	size_t vt_len;
 	size_t vn_len;
 
 	// number of bytes being stored by each array
-	size_t f_nbytes;
-	size_t v_nbytes;
+	size_t fv_nbytes;
+	size_t vp_nbytes;
 	size_t vt_nbytes;
 	size_t vn_nbytes;
 
@@ -39,8 +39,8 @@ struct obj3d
 	size_t val_size;
 
 	// number of values in a single element
-	size_t f_nval;
-	size_t v_nval;
+	size_t fv_nval;
+	size_t vp_nval;
 	size_t vt_nval;
 	size_t vn_nval;
 
@@ -48,7 +48,7 @@ struct obj3d
 	size_t stride;
 
 	// offset of first elements
-	size_t v_offset;
+	size_t vp_offset;
 	size_t vt_offset;
 	size_t vn_offset;
 

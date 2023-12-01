@@ -78,7 +78,7 @@ int game_init( void )
     vbo_bind( vbo );
 
     // upload data to our gpu
-    vbo_buff( vbo, obj.f, obj.f_nbytes );
+    vbo_buff( vbo, obj.fv, obj.fv_nbytes );
 
     GLuint pos_idx = glGetAttribLocation( shader.handle, "position" );
     GLuint norm_idx = glGetAttribLocation( shader.handle, "normal" );
@@ -86,10 +86,10 @@ int game_init( void )
     vao_attr(
         vao, vbo,
         pos_idx,
-        obj.v_nval,
+        obj.vp_nval,
         GL_FLOAT,
         obj.stride,
-        obj.v_offset
+        obj.vp_offset
     );
 
     vao_attr(
@@ -107,7 +107,7 @@ int game_init( void )
     model_idx = glGetUniformLocation( shader.handle, "model_matrix" );
 
     log_debug( "Uniform locations: %d, %d, %d, %d, %d", proj_idx, view_idx, model_idx, pos_idx, norm_idx );
-    log_debug( "Object vertices: %d", obj.f_len );
+    log_debug( "Object vertices: %d", obj.fv_len );
     
     // init rendering details
     model_matrix = GLMS_MAT4_IDENTITY;
@@ -207,7 +207,7 @@ int game_render( void )
     glDrawArrays(
             GL_TRIANGLES,
             0,
-            obj.f_len
+            obj.fv_len
     );
 
     char buff[ 256 ];
