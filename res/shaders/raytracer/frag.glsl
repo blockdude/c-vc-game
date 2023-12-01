@@ -149,14 +149,14 @@ bool hit_sphere( vec3 center, float radius, ray_t r )
 
 void main()
 {
-	//triangle_t tri;
-	//tri.pos_a  = vec3( -1.0f, -1.0f,  0.0f );
-	//tri.pos_b  = vec3(  1.0f, -1.0f,  0.0f );
-	//tri.pos_c  = vec3(  1.0f,  1.0f,  0.0f );
+	triangle_t tri;
+	tri.pos_a  = vec3( -1.0f, -1.0f,  0.0f );
+	tri.pos_b  = vec3(  1.0f, -1.0f,  0.0f );
+	tri.pos_c  = vec3(  1.0f,  1.0f,  0.0f );
 
-	//tri.norm_a = vec3(  0.0f,  0.0f,  1.0f );
-	//tri.norm_b = vec3(  0.0f,  0.0f,  1.0f );
-	//tri.norm_c = vec3(  0.0f,  0.0f,  1.0f );
+	tri.norm_a = vec3(  0.0f,  1.0f,  0.0f );
+	tri.norm_b = vec3(  0.0f,  1.0f,  0.0f );
+	tri.norm_c = vec3(  0.0f,  1.0f,  0.0f );
 
 	//hitdata_t hit = intersect_ray_tri( r, tri );
 
@@ -177,6 +177,7 @@ void main()
 	ray_t r = ray_create( gl_FragCoord.xy );
 	//hitdata_t hit = intersects_ray_sphere( vec3( 0.0f, 0.0f, 0.0f ), 1.0f, r );
 	bool hit = hit_sphere( vec3( 0.0f, 0.0f, 0.0f ), 1.0f, r );
+	//hitdata_t hit = intersects_ray_tri( r, tri );
 	out_color = vec4( 0.0f, 0.0f, float( hit ), 1.0f );
 	//out_color = vec4( camera.target, 1.0f );
 
