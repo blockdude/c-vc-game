@@ -45,7 +45,7 @@ static void quit_callback_( void )
 }
 
 // base init
-static inline int window_internal_init( void )
+static inline int window_internal_init_( void )
 {
     int code = WINDOW_SUCCESS;
     if ( window.state.init )
@@ -59,7 +59,7 @@ static inline int window_internal_init( void )
 }
 
 // base clean
-static inline int window_internal_free( void )
+static inline int window_internal_free_( void )
 {
     int code = WINDOW_SUCCESS;
     if ( window.state.free )
@@ -69,7 +69,7 @@ static inline int window_internal_free( void )
 }
 
 // base tick
-static inline int window_internal_tick( void )
+static inline int window_internal_tick_( void )
 {
     int code = WINDOW_SUCCESS;
     if ( window.state.tick )
@@ -80,7 +80,7 @@ static inline int window_internal_tick( void )
 }
 
 // base update
-static inline int window_internal_update( void )
+static inline int window_internal_update_( void )
 {
     int code = WINDOW_SUCCESS;
     if ( window.state.update )
@@ -90,7 +90,7 @@ static inline int window_internal_update( void )
 }
 
 // base render
-static inline int window_internal_render( void )
+static inline int window_internal_render_( void )
 {
     int code = WINDOW_SUCCESS;
 	if ( window.state.render )
@@ -116,6 +116,8 @@ int window_init( const struct window_state *state )
 
 	// init variables
 	window.quit = false;
+    window.initialized = false;
+    window.rel_mouse_mode = false;
 	window.state = state != NULL ? *state : ( struct window_state ) { 0 };
 	window.frame = INIT_TIMING( default_rate );
 	window.tick = INIT_TIMING( default_rate );
@@ -185,7 +187,7 @@ int window_loop( void )
     log_info( "Starting window loop..." );
 
 	// init
-    process_event_( init );
+    process_event_( init_ );
 
 	// setup game loop
     uint64_t frame_previous = SDL_GetTicks64();
@@ -231,12 +233,12 @@ int window_loop( void )
         // maintain fixed time step for each tick
         while ( tick_time >= window.tick.target_delta )
         {
-            process_event_( tick );
+            process_event_( tick_ );
             tick_time -= window.tick.target_delta;
         }
 
-        process_event_( update );
-        process_event_( render );
+        process_event_( update_ );
+        process_event_( render_ );
 
         // calculate & store frame time
         window.frame.delta = ( float ) frame_delta / 1000.0f;
@@ -248,7 +250,7 @@ int window_loop( void )
     }
 
 soft_exit_:
-	window_internal_free();
+	window_internal_free_();
 
 hard_exit_:
     return WINDOW_SUCCESS;
@@ -298,5 +300,21 @@ int window_get_size( int *w, int *h )
 int window_set_title( const char *title )
 {
     SDL_SetWindowTitle( window.handle, title );
+    return WINDOW_SUCCESS;
+}
+
+int window_set_relative_mouse( bool state )
+{
+    window.rel_mouse_mode = state;
+    SDL_WarpMouseInWindow( window.handle, window.w / 2, window.h / 2 );
+    SDL_SetRelativeMouseMode( state );
+    return WINDOW_SUCCESS;
+}
+
+int window_toggle_relative_mouse( void )
+{
+    window.rel_mouse_mode = !window.rel_mouse_mode;
+    SDL_WarpMouseInWindow( window.handle, window.w / 2, window.h / 2 );
+    SDL_SetRelativeMouseMode( window.rel_mouse_mode );
     return WINDOW_SUCCESS;
 }

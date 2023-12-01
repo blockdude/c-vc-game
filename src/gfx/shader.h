@@ -14,7 +14,7 @@ struct shader {
 	GLuint fs_handle;
 };
 
-struct shader shader_load( const char *vs, const char *fs );
+int  shader_load( struct shader *shader, const char *vs, const char *fs );
 void shader_free( struct shader self );
 void shader_bind( struct shader self );
 

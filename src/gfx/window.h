@@ -52,6 +52,7 @@ struct window
 	// is the window running
 	bool quit;
 	bool initialized;
+	bool rel_mouse_mode;
 
 	// store window state
 	struct window_state state;
@@ -80,6 +81,8 @@ int window_set_state( const struct window_state *state );
 int window_set_target_fps( float fps );
 int window_set_target_tps( float tps );
 int window_set_title( const char *title );
+int window_set_relative_mouse( bool state );
+int window_toggle_relative_mouse( void );
 
 // window getters
 int window_get_size( int *w, int *h );

@@ -21,6 +21,7 @@ int main( int argc, char *argv[] )
 	render_init();
 
 	// loop
+	window_set_target_fps( 0 );
 	window_loop();
 
 	// free memory

@@ -3,6 +3,7 @@
 #include "state.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mouse.h>
 #include <util/util.h>
 #include <system/input.h>
 #include <gfx/window.h>
@@ -40,20 +41,32 @@ static struct shader shader;
 static GLuint proj_idx, view_idx, model_idx;
 /* ================================== */
 
+/* ================================== */
+/* controls */
+/* ================================== */
+static vec3s direction  = { 0 };
+static float speed      = 30.0f;
+static float mouse_sens = 0.0009f;
+/* ================================== */
+
 int game_init( void )
 {
     glEnable( GL_DEPTH_TEST );
 
-    shader = shader_load( "res/shaders/vert.glsl", "res/shaders/frag.glsl" );
-    shader_bind( shader );
-
-    int res = obj3d_load( &obj, "res/objects/rayman.obj" );
-
-    if ( res != 0 )
+    log_info( "Loading object file..." );
+    if ( obj3d_load( &obj, "res/objects/rayman.obj" ) != 0 )
     {
         log_error( "Failed to load object..." );
-        return -1;
+        return WINDOW_EXIT;
     }
+
+    log_info( "Loading and compiling shaders..." );
+    if ( shader_load( &shader, "res/shaders/vert.glsl", "res/shaders/frag.glsl" ) != 0 )
+    {
+        return WINDOW_EXIT;
+    }
+
+    shader_bind( shader );
 
     // create and bind our vao
     vao = vao_create();
@@ -103,7 +116,7 @@ int game_init( void )
     camera.pitch = degtorad( 0 );
     camera.yaw   = degtorad( 180 );
 
-    SDL_SetRelativeMouseMode( true );
+    window_set_relative_mouse( true );
 
     return 0;
 }
@@ -124,10 +137,6 @@ int game_tick( void )
 
 int game_update( void )
 {
-    vec3s direction = { 0 };
-    float speed = 20.0f;
-    float sens = 1.0f;
-
     if ( input_key_press( INPUT_KB_W ) )
     {
         direction.x += sinf( camera.yaw );
@@ -162,45 +171,30 @@ int game_update( void )
         direction.y -= 1;
     }
 
-    if ( input_key_press( INPUT_KB_LEFT ) )
-    {
-        camera.yaw += sens * window.frame.delta;
-    }
-
-    if ( input_key_press( INPUT_KB_RIGHT ) )
-    {
-        camera.yaw -= sens * window.frame.delta;
-    }
-
-    if ( input_key_press( INPUT_KB_UP ) )
-    {
-        camera.pitch += sens * window.frame.delta;
-    }
-
-    if ( input_key_press( INPUT_KB_DOWN ) )
-    {
-        camera.pitch -= sens * window.frame.delta;
-    }
-
     if ( input_mouse_moved() )
     {
         int dx, dy;
         input_mouse_delta( &dx, &dy );
-        camera.yaw   -= ( float )dx * 0.002f;
-        camera.pitch -= ( float )dy * 0.002f;
+        camera.yaw   -= ( float )dx * mouse_sens;
+        camera.pitch -= ( float )dy * mouse_sens;
     }
 
-    direction = glms_vec3_normalize( direction );
-    camera.eye.x += direction.x * speed * window.frame.delta;
-    camera.eye.y += direction.y * speed * window.frame.delta;
-    camera.eye.z += direction.z * speed * window.frame.delta;
+    if ( input_key_down( INPUT_KB_ESCAPE ) )
+    {
+        window_toggle_relative_mouse();
+    }
 
+    direction = glms_vec3_scale( direction, speed * window.frame.delta );
+    camera.eye = glms_vec3_add( camera.eye, direction );
     camera.aspect = window.aspect;
+
+    direction = GLMS_VEC3_ZERO;
     camera_update( &camera );
 
     glUniformMatrix4fv( view_idx, 1, GL_FALSE,  ( float * )&camera.view );
     glUniformMatrix4fv( proj_idx, 1, GL_FALSE,  ( float * )&camera.proj );
     glUniformMatrix4fv( model_idx, 1, GL_FALSE, ( float * )&model_matrix );
+
     return 0;
 }
 

@@ -5,6 +5,21 @@
 #include <assert.h>
 #include <util/log.h>
 
+static void shader_log_error_(
+		GLint handle, const char *adverb, const char *path,
+		void ( *getlog )( GLuint, GLsizei, GLsizei *, GLchar * ),
+		void ( *getiv )( GLuint, GLenum, GLint * ) )
+{
+	GLint loglen;
+	getiv( handle, GL_INFO_LOG_LENGTH, &loglen );
+
+	char *logtext = calloc( 1, loglen );
+	getlog( handle, loglen, NULL, logtext );
+	log_error( "Error %s shader at %s:\n%s", adverb, path, logtext );
+
+	free( logtext );
+}
+
 static GLint shader_compile_( const char *path, GLenum type )
 {
 	FILE *f;
@@ -12,9 +27,10 @@ static GLint shader_compile_( const char *path, GLenum type )
 	long len;
 
 	f = fopen( path, "rb" );
-	if ( f == NULL ) {
+	if ( f == NULL )
+	{
 		log_error( "Error. Could not open shader file: %s", path );
-		return -1;
+		return 0;
 	}
 
 	// put shader in buffer text
@@ -39,45 +55,55 @@ static GLint shader_compile_( const char *path, GLenum type )
 	// Check OpenGL logs if compilation failed
 	if ( compiled == 0 )
 	{
-		log_error( "Error compiling shader: %s", path );
-		return -1;
+		shader_log_error_( handle, "compiling", path, glGetShaderInfoLog, glGetShaderiv );
+		glDeleteShader( handle );
+		return 0;
 	}
 
 	free( text );
 	return handle;
 }
 
-struct shader shader_load( const char *vs, const char *fs )
+int shader_load( struct shader *self, const char *vs, const char *fs )
 {
-	struct shader self;
+	if ( self == NULL )
+		return 1;
 
-	self.vs_handle = shader_compile_( vs, GL_VERTEX_SHADER );
-	self.fs_handle = shader_compile_( fs, GL_FRAGMENT_SHADER );
-	self.handle = glCreateProgram();
+	*self = ( struct shader ){ 0 };
+
+	self->vs_handle = shader_compile_( vs, GL_VERTEX_SHADER );
+	self->fs_handle = shader_compile_( fs, GL_FRAGMENT_SHADER );
+
+	if ( self->vs_handle == 0 || self->fs_handle == 0 )
+		return 2;
+
+	self->handle = glCreateProgram();
 
 	// Link shader program
-	glAttachShader( self.handle, self.vs_handle );
-	glAttachShader( self.handle, self.fs_handle );
+	glAttachShader( self->handle, self->vs_handle );
+	glAttachShader( self->handle, self->fs_handle );
 
 	//// Bind vertex attributes
 	//for (size_t i = 0; i < n; i++) {
 	//	glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name);
 	//}
-	//glBindAttribLocation( self.handle, 0, "position" );
-	//glBindAttribLocation( self.handle, 1, "normal" );
 
-	glLinkProgram( self.handle );
+	glLinkProgram( self->handle );
 
 	// Check link status
 	GLint linked;
-	glGetProgramiv( self.handle, GL_LINK_STATUS, &linked );
+	glGetProgramiv( self->handle, GL_LINK_STATUS, &linked );
 
-	if ( linked == 0 ) {
-		log_error( "Error linking shader at [ %s, %s ]", vs, fs );
-		shader_free( self );
+	if ( linked == 0 )
+	{
+		char buf[ 512 ];
+		snprintf( buf, 512, "[ %s, %s ]", vs, fs );
+		shader_log_error_( self->handle, "linking", buf, glGetProgramInfoLog, glGetProgramiv );
+		shader_free( *self );
+		return 3;
 	}
 
-	return self;
+	return 0;
 }
 
 void shader_free( struct shader self )

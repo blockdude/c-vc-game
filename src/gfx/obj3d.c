@@ -26,7 +26,7 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 	
 	if ( fp == NULL )
 	{
-		return -1;
+		return 1;
 	}
 
 	while( !feof( fp ) )
@@ -208,17 +208,11 @@ static inline void obj3d_compute_properties_( struct obj3d *obj )
 int obj3d_load( struct obj3d *obj, const char *file )
 {
 	if ( obj == NULL || file == NULL )
-	{
-		return -1;
-	}
+		return 1;
 
 	obj3d_init_( obj );
-
-	int res = obj3d_load_mesh_( obj, file );
-	if ( res != 0 )
-	{
-		return res - 1;
-	}
+	if ( obj3d_load_mesh_( obj, file ) != 0 )
+		return 2;
 
 	obj3d_compute_extent_( obj );
 	obj3d_compute_properties_( obj );
