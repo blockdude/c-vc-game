@@ -3,10 +3,6 @@
 in vec3 position;
 in vec3 normal;
 
-uniform float scale;
-uniform vec3 center;
-uniform float aspect;
-
 uniform mat4 view_matrix;
 uniform mat4 proj_matrix;
 uniform mat4 model_matrix;

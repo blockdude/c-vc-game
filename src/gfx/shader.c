@@ -117,3 +117,38 @@ void shader_bind( struct shader self )
 {
 	glUseProgram( self.handle );
 }
+
+void shader_uniform_mat4( struct shader self, char *name, mat4s m )
+{
+    glUniformMatrix4fv( glGetUniformLocation( self.handle, name ), 1, GL_FALSE, ( const GLfloat * )&m.raw );
+}
+
+void shader_uniform_float( struct shader self, char *name, float f )
+{
+    glUniform1f( glGetUniformLocation( self.handle, name ), f );
+}
+
+void shader_uniform_vec2( struct shader self, char *name, vec2s v )
+{
+    glUniform2f( glGetUniformLocation( self.handle, name ), v.x, v.y );
+}
+
+void shader_uniform_vec3( struct shader self, char *name, vec3s v )
+{
+    glUniform3f( glGetUniformLocation( self.handle, name ), v.x, v.y, v.z );
+}
+
+void shader_uniform_vec4( struct shader self, char *name, vec4s v )
+{
+    glUniform4f( glGetUniformLocation( self.handle, name ), v.x, v.y, v.z, v.w );
+}
+
+void shader_uniform_int( struct shader self, char *name, int v )
+{
+    glUniform1i( glGetUniformLocation( self.handle, name ), v );
+}
+
+void shader_uniform_uint( struct shader self, char *name, unsigned int v )
+{
+    glUniform1ui( glGetUniformLocation( self.handle, name ), v );
+}

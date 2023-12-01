@@ -115,7 +115,7 @@ build: $(LIBS) $(DIRS) $(BIN)
 
 PHONY += test
 test: build
-	@(cd test; $(MAKE) clean)
+	#@(cd test; $(MAKE) clean)
 	@(cd test; $(MAKE) test_all)
 
 $(DIRS):

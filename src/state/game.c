@@ -39,14 +39,13 @@ static struct vbo vbo;
 /* shader */
 /* ================================== */
 static struct shader shader;
-static GLuint proj_idx, view_idx, model_idx;
 /* ================================== */
 
 /* ================================== */
 /* controls */
 /* ================================== */
 static vec3s direction  = { 0 };
-static float speed      = 30.0f;
+static float speed      = 25.0f;
 static float mouse_sens = 0.0009f;
 /* ================================== */
 
@@ -62,7 +61,7 @@ int game_init( void )
     }
 
     log_info( "Loading and compiling shaders..." );
-    if ( shader_load( &shader, "res/shaders/vert.glsl", "res/shaders/frag.glsl" ) != 0 )
+    if ( shader_load( &shader, "res/shaders/raytracer/vert.glsl", "res/shaders/raytracer/frag.glsl" ) != 0 )
     {
         return WINDOW_EXIT;
     }
@@ -100,22 +99,19 @@ int game_init( void )
         obj.stride,
         obj.vn_offset
     );
-    
-    // Configure uniform variables.
-    proj_idx = glGetUniformLocation( shader.handle, "proj_matrix" );
-    view_idx = glGetUniformLocation( shader.handle, "view_matrix" );
-    model_idx = glGetUniformLocation( shader.handle, "model_matrix" );
 
-    log_debug( "Uniform locations: %d, %d, %d, %d, %d", proj_idx, view_idx, model_idx, pos_idx, norm_idx );
-    log_debug( "Object vertices: %d", obj.fv_len );
+    log_debug( "Object fv count: %d", obj.fv_len );
+    log_debug( "Object vp count: %d", obj.vp_len );
+    log_debug( "Object vt count: %d", obj.vt_len );
+    log_debug( "Object vn count: %d", obj.vn_len );
     
     // init rendering details
     model_matrix = GLMS_MAT4_IDENTITY;
-    camera_init( &camera, degtorad( 45.0f ) );
-    camera.eye   = glms_vec3_add( camera.eye, obj.center );
-    camera.eye   = glms_vec3_add( camera.eye, ( vec3s ){{ 0, 0, obj.dia }} );
+    camera_init( &camera, degtorad( 200.0f ) );
+    //camera.eye   = glms_vec3_add( camera.eye, obj.center );
+    //camera.eye   = glms_vec3_add( camera.eye, ( vec3s ){{ 0, 0, obj.dia }} );
     camera.pitch = degtorad( 0 );
-    camera.yaw   = degtorad( 180 );
+    camera.yaw   = degtorad( 0 );
 
     window_set_relative_mouse( true );
 
@@ -172,6 +168,28 @@ int game_update( void )
         direction.y -= 1;
     }
 
+    float sens = 1.0f;
+
+    if ( input_key_press( INPUT_KB_LEFT ) )
+    {
+        camera.yaw += sens * window.frame.delta;
+    }
+
+    if ( input_key_press( INPUT_KB_RIGHT ) )
+    {
+        camera.yaw -= sens * window.frame.delta;
+    }
+
+    if ( input_key_press( INPUT_KB_UP ) )
+    {
+        camera.pitch += sens * window.frame.delta;
+    }
+
+    if ( input_key_press( INPUT_KB_DOWN ) )
+    {
+        camera.pitch -= sens * window.frame.delta;
+    }
+
     if ( input_mouse_moved() )
     {
         int dx, dy;
@@ -192,9 +210,18 @@ int game_update( void )
     direction = GLMS_VEC3_ZERO;
     camera_update( &camera );
 
-    glUniformMatrix4fv( view_idx, 1, GL_FALSE,  ( float * )&camera.view );
-    glUniformMatrix4fv( proj_idx, 1, GL_FALSE,  ( float * )&camera.proj );
-    glUniformMatrix4fv( model_idx, 1, GL_FALSE, ( float * )&model_matrix );
+    shader_uniform_mat4( shader, "view_matrix", camera.view );
+    shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+    shader_uniform_mat4( shader, "model_matrix", model_matrix );
+
+    shader_uniform_vec3( shader, "camera.eye", camera.eye );
+    shader_uniform_vec3( shader, "camera.target", camera.target );
+    shader_uniform_vec3( shader, "camera.up", camera.up );
+    shader_uniform_mat4( shader, "camera.view", camera.view );
+
+    shader_uniform_vec2( shader, "resolution", ( vec2s ){{ window.w, window.h }} );
+
+    log_debug( "%f, %f, %f", camera.target.x, camera.target.y, camera.target.z );
 
     return 0;
 }
