@@ -52,14 +52,6 @@ struct obj3d
 	size_t vt_offset;
 	size_t vn_offset;
 
-	// address of first elements in faces
-	void *v_offset_ptr;
-	void *vt_offset_ptr;
-	void *vn_offset_ptr;
-
-	// raw data
-	void *data;
-
 	// extent info
 	float dia;
 	vec3s center;
