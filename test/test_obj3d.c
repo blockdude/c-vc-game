@@ -1,4 +1,4 @@
-#include <utest.h>
+#include "utest.h"
 #include <gfx/obj3d.h>
 #include <util/fmath.h>
 
@@ -13,6 +13,7 @@ UTEST_F_SETUP( obj3d_test_fixture )
 	struct obj3d *obj = &utest_fixture->obj;
 	utest_fixture->initialized = obj3d_load( obj, "../res/objects/rayman.obj" );
 	ASSERT_EQ( utest_fixture->initialized, 0 );
+	ASSERT_GT( obj->f_len, ( size_t )0 );
 }
 
 UTEST_F_TEARDOWN( obj3d_test_fixture )

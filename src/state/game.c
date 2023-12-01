@@ -1,4 +1,5 @@
 #include "game.h"
+#include "cglm/struct/mat4.h"
 #include "cglm/struct/vec3.h"
 #include "state.h"
 
@@ -54,7 +55,7 @@ int game_init( void )
     glEnable( GL_DEPTH_TEST );
 
     log_info( "Loading object file..." );
-    if ( obj3d_load( &obj, "res/objects/rayman.obj" ) != 0 )
+    if ( obj3d_load( &obj, "res/objects/cube.obj" ) != 0 )
     {
         log_error( "Failed to load object..." );
         return WINDOW_EXIT;
@@ -105,7 +106,7 @@ int game_init( void )
     view_idx = glGetUniformLocation( shader.handle, "view_matrix" );
     model_idx = glGetUniformLocation( shader.handle, "model_matrix" );
 
-    log_debug( "Uniform locations: %d, %d", pos_idx, norm_idx );
+    log_debug( "Uniform locations: %d, %d, %d, %d, %d", proj_idx, view_idx, model_idx, pos_idx, norm_idx );
     log_debug( "Object vertices: %d", obj.f_len );
     
     // init rendering details

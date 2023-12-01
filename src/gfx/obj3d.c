@@ -1,4 +1,5 @@
 #include "obj3d.h"
+#include "cglm/struct/vec3.h"
 
 #include <util/log.h>
 #include <util/types.h>
@@ -18,6 +19,20 @@ static inline void obj3d_init_( struct obj3d *obj )
 	obj->vn = NULL;
 }
 
+static inline void obj3d_append_face_vertex_( struct obj3d *obj, const char *vert )
+{
+	struct vert f;
+	int a, b, c;
+
+	sscanf( vert, "%d/%d/%d", &a, &b, &c );
+
+	f.v  = obj->v [ a - 1 ];
+	f.vt = obj->vt[ b - 1 ];
+	f.vn = obj->vn[ c - 1 ];
+
+	dynarr_push_back( obj->f, f );
+}
+
 static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 {
 	const size_t buffer_size = 1024;
@@ -31,7 +46,7 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 
 	while( !feof( fp ) )
 	{
-		// get line and store in buffer
+		// get line and store in buffer (should make proper parser but this is fine for now)
 		if ( !fgets( buffer, buffer_size, fp ) )
 		{
 			break;
@@ -66,57 +81,36 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 			sscanf( buffer, "%*s %f %f %f", &tmp.x, &tmp.y, &tmp.z );
 			dynarr_push_back( obj->vn, tmp );
 		}
-		// get an object face
+		// get a face
 		else if ( strcmp( lexeme, "f" ) == 0 )
 		{
-			struct vert fa, fb, fc;
-			int a, b, c, d, e, f, g, h, i;
+			// store and track start address of each face vertex
+			int vert_count = 0;
+			char *vert_idx[ 64 ];
 
-			sscanf( buffer, "%*s %d/%d/%d %d/%d/%d %d/%d/%d",
-					&a, &b, &c,
-					&d, &e, &f,
-					&g, &h, &i
-			);
+			// count number of vertices
+			for ( char *itr = buffer; *itr != '\n' && *itr != '\0'; itr++ )
+			{
+				if ( *itr == ' ' )
+				{
+					vert_idx[ vert_count ] = itr + 1;
+					vert_count++;
+				}
+			}
 
-			fa.v  = obj->v [ a - 1 ];
-			fa.vt = obj->vt[ b - 1 ];
-			fa.vn = obj->vn[ c - 1 ];
-
-			fb.v  = obj->v [ d - 1 ];
-			fb.vt = obj->vt[ e - 1 ];
-			fb.vn = obj->vn[ f - 1 ];
-
-			fc.v  = obj->v [ g - 1 ];
-			fc.vt = obj->vt[ h - 1 ];
-			fc.vn = obj->vn[ i - 1 ];
-
-			dynarr_push_back( obj->f, fa );
-			dynarr_push_back( obj->f, fb );
-			dynarr_push_back( obj->f, fc );
+			// parse vertex
+			for ( int i = 0; i <= vert_count - 3; i++ )
+			{
+				obj3d_append_face_vertex_( obj, vert_idx[ 0 ] );
+				obj3d_append_face_vertex_( obj, vert_idx[ 1 + i ] );
+				obj3d_append_face_vertex_( obj, vert_idx[ 2 + i ] );
+			}
 		}
 	}
 
 	fclose( fp );
 
 	return 0;
-}
-
-static inline vec3s obj3d_vec3_min_( vec3s va, vec3s vb )
-{
-	vec3s res;
-	res.x = min( va.x, vb.x );
-	res.y = min( va.y, vb.y );
-	res.z = min( va.z, vb.z );
-	return res;
-}
-
-static inline vec3s obj3d_vec3_max_( vec3s va, vec3s vb )
-{
-	vec3s res;
-	res.x = max( va.x, vb.x );
-	res.y = max( va.y, vb.y );
-	res.z = max( va.z, vb.z );
-	return res;
 }
 
 static inline void obj3d_set_min_max_( struct obj3d *obj )
@@ -127,50 +121,19 @@ static inline void obj3d_set_min_max_( struct obj3d *obj )
 
 	for ( size_t i = 0; i < len; i++ )
 	{
-		min = obj3d_vec3_min_( min, obj->v[ i ] );
-		max = obj3d_vec3_max_( max, obj->v[ i ] );
+		min = glms_vec3_minv( min, obj->v[ i ] );
+		max = glms_vec3_maxv( max, obj->v[ i ] );
 	}
 
 	obj->min = min;
 	obj->max = max;
 }
 
-static inline float obj3d_vec3_distance_( vec3s va, vec3s vb )
-{
-	vec3s tmp;
-
-	tmp.x = vb.x - va.x;
-	tmp.y = vb.y - va.y;
-	tmp.z = vb.z - va.z;
-
-	tmp.x = tmp.x * tmp.x;
-	tmp.y = tmp.y * tmp.y;
-	tmp.z = tmp.z * tmp.z;
-
-	float res = sqrt( tmp.x + tmp.y + tmp.z );
-	return res;
-}
-
-static inline vec3s obj3d_vec3_center_( vec3s va, vec3s vb )
-{
-	vec3s res;
-
-	res.x = va.x + vb.x;
-	res.y = va.y + vb.y;
-	res.z = va.z + vb.z;
-
-	res.x /= 2;
-	res.y /= 2;
-	res.z /= 2;
-
-	return res;
-}
-
 static inline void obj3d_compute_extent_( struct obj3d *obj )
 {
 	obj3d_set_min_max_( obj );
-	obj->dia = obj3d_vec3_distance_( obj->min, obj->max );
-	obj->center = obj3d_vec3_center_( obj->min, obj->max );
+	obj->dia = glms_vec3_distance( obj->min, obj->max );
+	obj->center = glms_vec3_center( obj->min, obj->max );
 }
 
 static inline void obj3d_compute_properties_( struct obj3d *obj )
@@ -212,10 +175,19 @@ int obj3d_load( struct obj3d *obj, const char *file )
 
 	obj3d_init_( obj );
 	if ( obj3d_load_mesh_( obj, file ) != 0 )
+	{
+		obj3d_free( obj );
 		return 2;
+	}
 
 	obj3d_compute_extent_( obj );
 	obj3d_compute_properties_( obj );
+
+	if ( obj->f_len == 0 )
+	{
+		obj3d_free( obj );
+		return 3;
+	}
 
 	return 0;
 }
