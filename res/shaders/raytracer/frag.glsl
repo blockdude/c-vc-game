@@ -4,8 +4,8 @@
 #define EPSILON 1e-4f
 #define RENDER_DISTANCE 100000000.0f
 
-const uint MAX_OBJECT_COUNT = 8u;
-const uint MAX_LIGHT_COUNT  = 2u;
+const uint MAX_OBJECT_COUNT = 5u;
+const uint MAX_LIGHT_COUNT  = 1u;
 const uint MAX_PLANE_COUNT  = 1u;
 
 const uint OBJECT_TYPE_NONE = 0u;
@@ -18,7 +18,7 @@ out vec4 out_color;
 struct material_t
 {
 	vec3 color;
-	float roughness;
+	float reflectiveness;
 };
 
 struct object_t
@@ -177,7 +177,10 @@ hitdata_t hit_ray_plane( ray_t ray, plane_t plane )
 	hitdata.dist = dist;
 	hitdata.hit_point = ray.orig + ray.dir * dist;
 	hitdata.normal = plane.norm;
+
+	/* preassigned values for plane (should change to uniform) */
 	hitdata.mat.color = vec3( 0.5f, 0.5f, 0.5f );
+	hitdata.mat.reflectiveness = 0.0f;
 
 	return hitdata; 
 } 
@@ -272,6 +275,42 @@ hitdata_t raycast( ray_t ray )
 /* COMPUTE LIGHT			   */
 /* --------------------------- */
 
+vec3 raycast_to_light( hitdata_t hitdata )
+{
+	vec3 color = vec3( 0.0f );
+
+	if ( hitdata.hit == false )
+		return color;
+
+	/* get color from light source */
+	for ( int i = 0; i < lights.length(); i++ )
+	{
+		light_t light = lights[ i ];
+
+		/* ray to light */
+		ray_t rtl;
+		rtl.dir = normalize( light.pos - hitdata.hit_point );
+		rtl.orig = hitdata.hit_point;
+
+		/* cast ray to light source */
+		hitdata_t rtl_hitdata = raycast( rtl );
+
+		/* no color if ray to light source is blocked */
+		if ( rtl_hitdata.hit == true )
+			continue;
+
+		float light_dist = distance( light.pos, hitdata.hit_point );
+
+		if ( light_dist > light.reach )
+			continue;
+
+		float diffuse = clamp( dot( hitdata.normal, normalize( light.pos - hitdata.hit_point ) ), 0.0, 1.0 );
+		color = light.color * light.power * diffuse * hitdata.mat.color * dot( hitdata.normal, rtl.dir );
+	}
+
+	return color;
+}
+
 vec3 compute_color( ray_t ray )
 {
 	vec3 color = vec3( 0.0f );
@@ -280,31 +319,19 @@ vec3 compute_color( ray_t ray )
 	hitdata_t hitdata;
 	hitdata = raycast( ray );
 
-	if ( hitdata.hit == true )
-	{
-		for ( int i = 0; i < lights.length(); i++ )
-		{
-			light_t light = lights[ i ];
+	if ( hitdata.hit == false )
+		return color;
 
-			ray_t rtl;
-			rtl.dir = normalize( light.pos - hitdata.hit_point );
-			rtl.orig = hitdata.hit_point;
+	/* reflected ray (single bounce) */
+	ray_t rr;
+	rr.dir = reflect( ray.dir, hitdata.normal );
+	rr.orig = hitdata.hit_point;
+	hitdata_t refldata = raycast( rr );
 
-			/* cast ray to light source */
-			hitdata_t rtl_hitdata = raycast( rtl );
+	vec3 orig_color = raycast_to_light( hitdata ) * ( 1.0f - hitdata.mat.reflectiveness );
+	vec3 refl_color = raycast_to_light( refldata ) * ( hitdata.mat.reflectiveness );
 
-			float light_dist = distance( light.pos, hitdata.hit_point );
-
-			if ( light_dist > light.reach )
-				continue;
-
-			if ( rtl_hitdata.hit == false )
-			{
-				float diffuse = clamp( dot( hitdata.normal, normalize( light.pos - hitdata.hit_point ) ), 0.0, 1.0 );
-				color = light.color * light.power * diffuse * hitdata.mat.color * dot( hitdata.normal, rtl.dir );
-			}
-		}
-	}
+	color = orig_color + refl_color;
 
 	return color;
 }

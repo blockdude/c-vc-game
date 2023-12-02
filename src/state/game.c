@@ -44,8 +44,7 @@ static struct shader shader;
 /* ================================== */
 /* controls */
 /* ================================== */
-static vec3s direction  = { 0 };
-static float speed      = 25.0f;
+static float speed      = 10.0f;
 static float mouse_sens = 0.0009f;
 static float fov        = 45.0f;
 /* ================================== */
@@ -124,19 +123,31 @@ int game_init( void )
     shader_uniform_vec3( shader,  "objects[0].pos", ( vec3s ){{ 3.0f, 0.0f, 0.0f }} );
     shader_uniform_float( shader, "objects[0].scale", 1.0f );
     shader_uniform_vec3( shader,  "objects[0].mat.color", ( vec3s ){{ 0.0f, 1.0f, 0.0f }} );
-    shader_uniform_float( shader, "objects[0].mat.roughness", 0.0f );
+    shader_uniform_float( shader, "objects[0].mat.reflectiveness", 0.0f );
 
     shader_uniform_uint( shader,  "objects[1].type", 1 );
     shader_uniform_vec3( shader,  "objects[1].pos", ( vec3s ){{ 0.0f, 0.0f, 0.0f }} );
     shader_uniform_float( shader, "objects[1].scale", 1.0f );
     shader_uniform_vec3( shader,  "objects[1].mat.color", ( vec3s ){{ 0.0f, 0.0f, 1.0f }} );
-    shader_uniform_float( shader, "objects[1].mat.roughness", 0.0f );
+    shader_uniform_float( shader, "objects[1].mat.reflectiveness", 0.3f );
 
     shader_uniform_uint( shader,  "objects[2].type", 1 );
     shader_uniform_vec3( shader,  "objects[2].pos", ( vec3s ){{ -3.0f, 0.0f, 0.0f }} );
     shader_uniform_float( shader, "objects[2].scale", 1.0f );
     shader_uniform_vec3( shader,  "objects[2].mat.color", ( vec3s ){{ 1.0f, 0.0f, 0.0f }} );
-    shader_uniform_float( shader, "objects[2].mat.roughness", 0.0f );
+    shader_uniform_float( shader, "objects[2].mat.reflectiveness", 0.7f );
+
+    shader_uniform_uint( shader,  "objects[3].type", 1 );
+    shader_uniform_vec3( shader,  "objects[3].pos", ( vec3s ){{ 0.0f, 0.0f, 3.0f }} );
+    shader_uniform_float( shader, "objects[3].scale", 1.0f );
+    shader_uniform_vec3( shader,  "objects[3].mat.color", ( vec3s ){{ 1.0f, 1.0f, 1.0f }} );
+    shader_uniform_float( shader, "objects[3].mat.reflectiveness", 0.5f );
+
+    shader_uniform_uint( shader,  "objects[4].type", 1 );
+    shader_uniform_vec3( shader,  "objects[4].pos", ( vec3s ){{ 0.0f, 0.0f, -3.0f }} );
+    shader_uniform_float( shader, "objects[4].scale", 1.0f );
+    shader_uniform_vec3( shader,  "objects[4].mat.color", ( vec3s ){{ 0.8f, 0.8f, 0.8f }} );
+    shader_uniform_float( shader, "objects[4].mat.reflectiveness", 1.0f );
 
     window_set_relative_mouse( true );
 
@@ -159,7 +170,7 @@ int game_tick( void )
 
 int game_update( void )
 {
-    direction = GLMS_VEC3_ZERO;
+    vec3s direction = GLMS_VEC3_ZERO;;
     if ( input_key_press( INPUT_KB_W ) )
     {
         direction.x += sinf( camera.yaw );
