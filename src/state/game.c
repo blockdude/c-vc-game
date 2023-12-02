@@ -24,7 +24,7 @@
 static struct obj3d obj;
 static struct camera camera;
 static mat4s model_matrix;
-static vec3s light_pos   = {{ 5.0f, 5.0f, 5.0f }};
+static vec3s light_pos   = {{ 0.0f, 5.0f, 0.0f }};
 static vec3s light_color = {{ 1.0f, 1.0f, 1.0f }};
 /* ================================== */
 
@@ -116,7 +116,7 @@ int game_init( void )
     shader_uniform_vec3( shader,  "lights[0].pos",    light_pos );
     shader_uniform_vec3( shader,  "lights[0].color",  light_color );
     shader_uniform_float( shader, "lights[0].radius", 1.0f );
-    shader_uniform_float( shader, "lights[0].reach",  30.0f );
+    shader_uniform_float( shader, "lights[0].reach",  300.0f );
     shader_uniform_float( shader, "lights[0].power",  1.0f );
 
     shader_uniform_uint( shader,  "objects[0].type", 1 );
@@ -170,6 +170,11 @@ int game_tick( void )
 
 int game_update( void )
 {
+    /* ======================================================== */
+    /* --------------------------- */
+    /* CHARACTER MOVEMENT		   */
+    /* --------------------------- */
+
     vec3s direction = GLMS_VEC3_ZERO;;
     if ( input_key_press( INPUT_KB_W ) )
     {
@@ -223,6 +228,19 @@ int game_update( void )
     camera.aspect = window.aspect;
     camera_update( &camera );
 
+    shader_uniform_vec3( shader, "camera.eye", camera.eye );
+    shader_uniform_vec3( shader, "camera.target", camera.target );
+    shader_uniform_vec3( shader, "camera.up", camera.up );
+    shader_uniform_mat4( shader, "camera.view", camera.view );
+    shader_uniform_float( shader, "camera.fov", camera.fov );
+
+    /* ======================================================== */
+
+    /* ======================================================== */
+    /* --------------------------- */
+    /* LIGHT MOVEMENT		       */
+    /* --------------------------- */
+
     direction = GLMS_VEC3_ZERO;
     if ( input_key_press( INPUT_KB_LEFT ) )
     {
@@ -248,15 +266,63 @@ int game_update( void )
     light_pos = glms_vec3_add( light_pos, direction );
     shader_uniform_vec3( shader,  "lights[0].pos", light_pos );
 
-    //shader_uniform_mat4( shader, "view_matrix", camera.view );
-    //shader_uniform_mat4( shader, "proj_matrix", camera.proj );
-    //shader_uniform_mat4( shader, "model_matrix", model_matrix );
+    /* ======================================================== */
 
-    shader_uniform_vec3( shader, "camera.eye", camera.eye );
-    shader_uniform_vec3( shader, "camera.target", camera.target );
-    shader_uniform_vec3( shader, "camera.up", camera.up );
-    shader_uniform_mat4( shader, "camera.view", camera.view );
-    shader_uniform_float( shader, "camera.fov", camera.fov );
+    /* ======================================================== */
+    /* --------------------------- */
+    /* LIGHT PROFILES		       */
+    /* --------------------------- */
+
+    if ( input_key_down( INPUT_KB_1 ) )
+    {
+        shader_uniform_vec3( shader, "lights[0].color", light_color );
+    }
+
+    if ( input_key_down( INPUT_KB_2 ) )
+    {
+        shader_uniform_vec3( shader, "lights[0].color", ( vec3s ){{ 0.4f, 0.9f, 1.0f }} );
+    }
+
+    if ( input_key_down( INPUT_KB_3 ) )
+    {
+        shader_uniform_vec3( shader, "lights[0].color", ( vec3s ){{ 1.0f, 0.2f, 1.0f }} );
+    }
+
+    if ( input_key_down( INPUT_KB_4 ) )
+    {
+        shader_uniform_vec3( shader, "lights[0].color", ( vec3s ){{ 0.7f, 0.6f, 0.2f }} );
+    }
+
+    if ( input_key_down( INPUT_KB_5 ) )
+    {
+        shader_uniform_vec3( shader, "lights[0].color", ( vec3s ){{ 0.8f, 0.7f, 0.8f }} );
+    }
+
+    if ( input_key_down( INPUT_KB_6 ) )
+    {
+        shader_uniform_float( shader, "lights[0].reach",  300.0f );
+        shader_uniform_float( shader, "lights[0].power",  1.0f );
+    }
+
+    if ( input_key_down( INPUT_KB_7 ) )
+    {
+        shader_uniform_float( shader, "lights[0].reach",  30.0f );
+        shader_uniform_float( shader, "lights[0].power",  0.8f );
+    }
+
+    if ( input_key_down( INPUT_KB_8 ) )
+    {
+        shader_uniform_float( shader, "lights[0].reach",  10.0f );
+        shader_uniform_float( shader, "lights[0].power",  0.5f );
+    }
+
+    if ( input_key_down( INPUT_KB_9 ) )
+    {
+        shader_uniform_float( shader, "lights[0].reach",  7.0f );
+        shader_uniform_float( shader, "lights[0].power",  0.3f );
+    }
+
+    /* ======================================================== */
 
     shader_uniform_vec2( shader, "resolution", ( vec2s ){{ window.w, window.h }} );
 
