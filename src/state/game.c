@@ -129,25 +129,25 @@ int game_init( void )
     shader_uniform_vec3( shader,  "objects[1].pos", ( vec3s ){{ 0.0f, 0.0f, 0.0f }} );
     shader_uniform_float( shader, "objects[1].scale", 1.0f );
     shader_uniform_vec3( shader,  "objects[1].mat.color", ( vec3s ){{ 0.0f, 0.0f, 1.0f }} );
-    shader_uniform_float( shader, "objects[1].mat.reflectiveness", 0.3f );
+    shader_uniform_float( shader, "objects[1].mat.reflectiveness", 1.0f );
 
     shader_uniform_uint( shader,  "objects[2].type", 1 );
     shader_uniform_vec3( shader,  "objects[2].pos", ( vec3s ){{ -3.0f, 0.0f, 0.0f }} );
     shader_uniform_float( shader, "objects[2].scale", 1.0f );
     shader_uniform_vec3( shader,  "objects[2].mat.color", ( vec3s ){{ 1.0f, 0.0f, 0.0f }} );
-    shader_uniform_float( shader, "objects[2].mat.reflectiveness", 0.7f );
+    shader_uniform_float( shader, "objects[2].mat.reflectiveness", 0.5f );
 
     shader_uniform_uint( shader,  "objects[3].type", 1 );
     shader_uniform_vec3( shader,  "objects[3].pos", ( vec3s ){{ 0.0f, 0.0f, 3.0f }} );
     shader_uniform_float( shader, "objects[3].scale", 1.0f );
     shader_uniform_vec3( shader,  "objects[3].mat.color", ( vec3s ){{ 1.0f, 1.0f, 1.0f }} );
-    shader_uniform_float( shader, "objects[3].mat.reflectiveness", 0.5f );
+    shader_uniform_float( shader, "objects[3].mat.reflectiveness", 0.8f );
 
     shader_uniform_uint( shader,  "objects[4].type", 1 );
     shader_uniform_vec3( shader,  "objects[4].pos", ( vec3s ){{ 0.0f, 0.0f, -3.0f }} );
     shader_uniform_float( shader, "objects[4].scale", 1.0f );
     shader_uniform_vec3( shader,  "objects[4].mat.color", ( vec3s ){{ 0.8f, 0.8f, 0.8f }} );
-    shader_uniform_float( shader, "objects[4].mat.reflectiveness", 1.0f );
+    shader_uniform_float( shader, "objects[4].mat.reflectiveness", 0.08f );
 
     window_set_relative_mouse( true );
 
