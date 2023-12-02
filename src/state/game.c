@@ -99,22 +99,37 @@ int game_init( void )
         obj.stride,
         obj.vn_offset
     );
-
-    log_debug( "Object fv count: %d", obj.fv_len );
-    log_debug( "Object vp count: %d", obj.vp_len );
-    log_debug( "Object vt count: %d", obj.vt_len );
-    log_debug( "Object vn count: %d", obj.vn_len );
     
     // init rendering details
     float s = 1.0f;
     vec3s scale = {{ s, s, s }};
     model_matrix = glms_scale( GLMS_MAT4_IDENTITY, scale );
     camera_init( &camera, degtorad( fov ) );
-    //camera.eye   = glms_vec3_add( camera.eye, obj.center );
-    //camera.eye   = glms_vec3_add( camera.eye, ( vec3s ){{ 0, 0, 10.0f }} );
     camera.eye   = GLMS_VEC3_ZERO;
     camera.pitch = degtorad( 0 );
     camera.yaw   = degtorad( 0 );
+
+    // uniform objects to render
+    shader_uniform_vec3( shader, "plane.pos",  ( vec3s ){{ 0.0f, -1.0f, 0.0f }} );
+    shader_uniform_vec3( shader, "plane.norm", ( vec3s ){{ 0.0f, 1.0f, 0.0f }} );
+
+    shader_uniform_uint( shader,  "objects[0].type", 1 );
+    shader_uniform_vec3( shader,  "objects[0].pos", ( vec3s ){{ 3.0f, 0.0f, 0.0f }} );
+    shader_uniform_float( shader, "objects[0].scale", 1.0f );
+    shader_uniform_vec3( shader,  "objects[0].mat.color", ( vec3s ){{ 0.0f, 1.0f, 0.0f }} );
+    shader_uniform_float( shader, "objects[0].mat.roughness", 0.0f );
+
+    shader_uniform_uint( shader,  "objects[1].type", 1 );
+    shader_uniform_vec3( shader,  "objects[1].pos", ( vec3s ){{ 0.0f, 0.0f, 0.0f }} );
+    shader_uniform_float( shader, "objects[1].scale", 1.0f );
+    shader_uniform_vec3( shader,  "objects[1].mat.color", ( vec3s ){{ 0.0f, 0.0f, 1.0f }} );
+    shader_uniform_float( shader, "objects[1].mat.roughness", 0.0f );
+
+    shader_uniform_uint( shader,  "objects[2].type", 1 );
+    shader_uniform_vec3( shader,  "objects[2].pos", ( vec3s ){{ 0.0f, 0.0f, 0.0f }} );
+    shader_uniform_float( shader, "objects[2].scale", 1.0f );
+    shader_uniform_vec3( shader,  "objects[2].mat.color", ( vec3s ){{ 0.0f, 0.0f, 1.0f }} );
+    shader_uniform_float( shader, "objects[2].mat.roughness", 0.0f );
 
     window_set_relative_mouse( true );
 

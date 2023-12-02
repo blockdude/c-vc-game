@@ -228,7 +228,8 @@ int window_loop( void )
         tick_time += frame_delta;
 
         // poll events
-        input_process_events();
+        if ( input_process_events() != 0 )
+            goto soft_exit_;
         
         // maintain fixed time step for each tick
         while ( tick_time >= window.tick.target_delta )

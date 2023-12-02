@@ -2,23 +2,32 @@
 
 #define M_PI 3.1415926538
 #define EPSILON 1e-6f
+#define RENDER_DISTANCE 10000.0f
 
-const uint MAX_OBJECT_COUNT = 16u;
-const uint MAX_LIGHT_COUNT = 4u;
+const uint MAX_OBJECT_COUNT = 8u;
+const uint MAX_LIGHT_COUNT  = 2u;
+const uint MAX_PLANE_COUNT  = 1u;
 
 const uint OBJECT_TYPE_NONE = 0u;
 const uint OBJECT_TYPE_SPHERE = 1u;
-const uint OBJECT_TYPE_CUBE = 2u;
+const uint OBJECT_TYPE_TRIANGLE = 2u;
+const uint OBJECT_TYPE_PLANE = 2u;
 
 out vec4 out_color;
+
+struct material_t
+{
+	vec3 color;
+	float roughness;
+};
 
 struct object_t
 {
 	uint type;
 	vec3 pos;
-	int scale;
-	vec3 color;
-	float roughness;
+	vec3 norm;
+	float scale;
+	material_t mat;
 };
 
 /* point lighting */
@@ -69,36 +78,27 @@ struct hitdata_t
 	float dist;
 	vec3 hit_point;
 	vec3 normal;
+	material_t mat;
 };
+
+/* ======================================================== */
+/* --------------------------- */
+/* UNIFORM DATA				   */
+/* --------------------------- */
 
 uniform camera_t camera;
 uniform vec2 resolution;
 
 uniform object_t objects[ MAX_OBJECT_COUNT ];
 uniform light_t lights[ MAX_LIGHT_COUNT ];
+uniform plane_t plane;
 
-ray_t camera_ray( vec2 pixel )
-{
-	ray_t self;
-	self.orig = camera.eye;
+/* ======================================================== */
 
-	vec3 cameraU = vec3( camera.view[ 0 ][ 0 ], camera.view[ 1 ][ 0 ], camera.view[ 2 ][ 0 ] );
-	vec3 cameraV = vec3( camera.view[ 0 ][ 1 ], camera.view[ 1 ][ 1 ], camera.view[ 2 ][ 1 ] );
-	vec3 cameraW = vec3( camera.view[ 0 ][ 2 ], camera.view[ 1 ][ 2 ], camera.view[ 2 ][ 2 ] );
-
-	float height = 2.0f * tan( camera.fov / 2.0f );
-	float aspect = resolution.x / resolution.y;
-	float width = height * aspect;
-
-	vec2 window_dim = vec2( width, height );
-	vec2 pixel_size = window_dim / resolution;
-
-	vec2 delta = -0.5 * window_dim + pixel * pixel_size;
-	self.dir = -cameraW + cameraV * delta.y + cameraU * delta.x;
-	self.dir = normalize( self.dir );
-
-	return self;
-}
+/* ======================================================== */
+/* --------------------------- */
+/* COLLISION / INTERSECTION    */
+/* --------------------------- */
 
 hitdata_t hit_ray_tri( ray_t ray, triangle_t tri )
 {
@@ -176,28 +176,112 @@ hitdata_t hit_ray_plane( ray_t ray, plane_t plane )
 	hitdata.dist = dist;
 	hitdata.hit_point = ray.orig + ray.dir * dist;
 	hitdata.normal = plane.norm;
+	hitdata.mat.color = vec3( 0.5f, 0.5f, 0.5f );
 
 	return hitdata; 
 } 
 
+hitdata_t hit_ray_object( ray_t ray, object_t obj )
+{
+	hitdata_t hitdata;
+	hitdata.hit = false;
+	hitdata.mat.color = vec3( 0.0f, 0.0f, 0.0f );
+
+	if ( obj.type == OBJECT_TYPE_NONE )
+	{
+		return hitdata;
+	}
+	if ( obj.type == OBJECT_TYPE_SPHERE )
+	{
+		sphere_t sphere = sphere_t( obj.pos, obj.scale );
+		hitdata = hit_ray_sphere( ray, sphere );
+		hitdata.mat = obj.mat;
+	}
+
+	return hitdata;
+}
+
+/* ======================================================== */
+
+/* ======================================================== */
+/* --------------------------- */
+/* RAY CAST					   */
+/* --------------------------- */
+
+ray_t camera_raycast( vec2 pixel )
+{
+	ray_t self;
+	self.orig = camera.eye;
+
+	vec3 cameraU = vec3( camera.view[ 0 ][ 0 ], camera.view[ 1 ][ 0 ], camera.view[ 2 ][ 0 ] );
+	vec3 cameraV = vec3( camera.view[ 0 ][ 1 ], camera.view[ 1 ][ 1 ], camera.view[ 2 ][ 1 ] );
+	vec3 cameraW = vec3( camera.view[ 0 ][ 2 ], camera.view[ 1 ][ 2 ], camera.view[ 2 ][ 2 ] );
+
+	float height = 2.0f * tan( camera.fov / 2.0f );
+	float aspect = resolution.x / resolution.y;
+	float width = height * aspect;
+
+	vec2 window_dim = vec2( width, height );
+	vec2 pixel_size = window_dim / resolution;
+
+	vec2 delta = -0.5 * window_dim + pixel * pixel_size;
+	self.dir = -cameraW + cameraV * delta.y + cameraU * delta.x;
+	self.dir = normalize( self.dir );
+
+	return self;
+}
+
+hitdata_t raycast( ray_t ray )
+{
+	hitdata_t hitdata;
+	hitdata.hit = false;
+	hitdata.mat.color = vec3( 0.0f, 0.0f, 0.0f );
+	float min_dist = RENDER_DISTANCE;
+
+	/* object collision */
+	for ( int i = 0; i < objects.length(); i++ )
+	{
+		if ( objects[ i ].type == OBJECT_TYPE_NONE )
+			continue;
+
+		hitdata_t tmp = hit_ray_object( ray, objects[ i ] );
+		if ( tmp.hit == true && tmp.dist < min_dist )
+		{
+			hitdata = tmp;
+			min_dist = tmp.dist;
+		}
+	}
+
+	/* plane collision */
+	hitdata_t tmp = hit_ray_plane( ray, plane );
+	if ( tmp.hit == true && tmp.dist < min_dist )
+	{
+		hitdata = tmp;
+		min_dist = tmp.dist;
+	}
+
+	return hitdata;
+}
+
+/* ======================================================== */
+
+/* ======================================================== */
+/* --------------------------- */
+/* MAIN ENTRY				   */
+/* --------------------------- */
+
 void main()
 {
-	ray_t ray = camera_ray( gl_FragCoord.xy );
+	ray_t ray = camera_raycast( gl_FragCoord.xy );
 
-	sphere_t sphere = sphere_t( vec3( 0.0f, 0.0f, 0.0f ), 1.0f );
-	plane_t plane = plane_t( vec3( 0.0f, -1.0f, 0.0f ), vec3( 0.0f, 1.0f, 0.0f ) );
-	hitdata_t hd;
+	light_t light = light_t( vec3( 5.0f, 5.0f, 5.0f ), 1.0f, vec3( 1.0f, 1.0f, 1.0f ), 1000.0f );
 
-	out_color = vec4( 0.0f, 0.0f, 0.0f, 1.0f );
+	out_color = vec4( vec3( 0.0f ), 1.0f );
 
-	hd = hit_ray_plane( ray, plane );
-	if ( hd.hit )
-		out_color = vec4( 0.5f, 0.5f, 0.5f, 1.0f );
-
-	if ( hd.hit_point.y < camera.eye.y )
-	{
-		hd = hit_ray_sphere( ray, sphere );
-		if ( hd.hit )
-			out_color = vec4( 0.0f, 0.0f, 1.0f, 1.0f );
-	}
+	hitdata_t hitdata;
+	hitdata = raycast( ray );
+	if ( hitdata.hit == true )
+		out_color = vec4( hitdata.mat.color, 1.0f );
 }
+
+/* ======================================================== */
