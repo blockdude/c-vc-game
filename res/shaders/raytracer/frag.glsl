@@ -274,14 +274,36 @@ void main()
 {
 	ray_t ray = camera_raycast( gl_FragCoord.xy );
 
-	light_t light = light_t( vec3( 5.0f, 5.0f, 5.0f ), 1.0f, vec3( 1.0f, 1.0f, 1.0f ), 1000.0f );
-
 	out_color = vec4( vec3( 0.0f ), 1.0f );
 
 	hitdata_t hitdata;
 	hitdata = raycast( ray );
+
+	/* cast a ray to the light source */
 	if ( hitdata.hit == true )
-		out_color = vec4( hitdata.mat.color, 1.0f );
+	{
+		//out_color = vec4( 1.0f, 1.0f, 1.0f, 1.0f );
+		for ( int i = 0; i < lights.length(); i++ )
+		{
+			/* cast ray to light source */
+			ray_t rtl;
+			rtl.orig = hitdata.hit_point;
+			rtl.dir = normalize( lights[ i ].pos - hitdata.hit_point );
+			hitdata_t rtl_hitdata = raycast( rtl );
+
+			float light_dist = distance( lights[ i ].pos, hitdata.hit_point );
+
+			if ( light_dist > lights[ i ].reach )
+				continue;
+
+			vec3 color = hitdata.mat.color * lights[ i ].color * dot( hitdata.normal, rtl.dir );
+
+			if ( rtl_hitdata.hit == false )
+			{
+				out_color = vec4( color, 1.0f );
+			}
+		}
+	}
 }
 
 /* ======================================================== */

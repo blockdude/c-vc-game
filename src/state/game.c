@@ -111,7 +111,17 @@ int game_init( void )
 
     // uniform objects to render
     shader_uniform_vec3( shader, "plane.pos",  ( vec3s ){{ 0.0f, -1.0f, 0.0f }} );
-    shader_uniform_vec3( shader, "plane.norm", ( vec3s ){{ 0.0f, 1.0f, 0.0f }} );
+    shader_uniform_vec3( shader, "plane.norm", ( vec3s ){{ 0.0f,  1.0f, 0.0f }} );
+
+    shader_uniform_vec3( shader,  "lights[0].pos",    ( vec3s ){{ 5.0f, 5.0f, 5.0f }} );
+    shader_uniform_vec3( shader,  "lights[0].color",  ( vec3s ){{ 0.5f, 0.5f, 0.5f }} );
+    shader_uniform_float( shader, "lights[0].radius", 1.0f );
+    shader_uniform_float( shader, "lights[0].reach",  20.0f );
+
+    //shader_uniform_vec3( shader,  "lights[1].pos",    ( vec3s ){{ -5.0f, 5.0f, -5.0f }} );
+    //shader_uniform_vec3( shader,  "lights[1].color",  ( vec3s ){{ 1.0f, 1.0f, 1.0f }} );
+    //shader_uniform_float( shader, "lights[1].radius", 1.0f );
+    //shader_uniform_float( shader, "lights[1].reach",  100.0f );
 
     shader_uniform_uint( shader,  "objects[0].type", 1 );
     shader_uniform_vec3( shader,  "objects[0].pos", ( vec3s ){{ 3.0f, 0.0f, 0.0f }} );
@@ -126,9 +136,9 @@ int game_init( void )
     shader_uniform_float( shader, "objects[1].mat.roughness", 0.0f );
 
     shader_uniform_uint( shader,  "objects[2].type", 1 );
-    shader_uniform_vec3( shader,  "objects[2].pos", ( vec3s ){{ 0.0f, 0.0f, 0.0f }} );
+    shader_uniform_vec3( shader,  "objects[2].pos", ( vec3s ){{ -3.0f, 0.0f, 0.0f }} );
     shader_uniform_float( shader, "objects[2].scale", 1.0f );
-    shader_uniform_vec3( shader,  "objects[2].mat.color", ( vec3s ){{ 0.0f, 0.0f, 1.0f }} );
+    shader_uniform_vec3( shader,  "objects[2].mat.color", ( vec3s ){{ 1.0f, 0.0f, 0.0f }} );
     shader_uniform_float( shader, "objects[2].mat.roughness", 0.0f );
 
     window_set_relative_mouse( true );
