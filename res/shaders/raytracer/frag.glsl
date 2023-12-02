@@ -1,8 +1,40 @@
 #version 330 core
 
 #define M_PI 3.1415926538
+#define EPSILON 1e-6f
+
+const uint MAX_OBJECT_COUNT = 16u;
+const uint MAX_LIGHT_COUNT = 4u;
+
+const uint OBJECT_TYPE_NONE = 0u;
+const uint OBJECT_TYPE_SPHERE = 1u;
+const uint OBJECT_TYPE_CUBE = 2u;
 
 out vec4 out_color;
+
+struct object_t
+{
+	uint type;
+	vec3 pos;
+	int scale;
+	vec3 color;
+	float roughness;
+};
+
+/* point lighting */
+struct light_t
+{
+	vec3 pos;
+	float radius;
+	vec3 color;
+	float reach;
+};
+
+struct plane_t
+{
+	vec3 pos;
+	vec3 norm;
+};
 
 struct ray_t
 {
@@ -41,6 +73,9 @@ struct hitdata_t
 
 uniform camera_t camera;
 uniform vec2 resolution;
+
+uniform object_t objects[ MAX_OBJECT_COUNT ];
+uniform light_t lights[ MAX_LIGHT_COUNT ];
 
 ray_t camera_ray( vec2 pixel )
 {
@@ -85,7 +120,7 @@ hitdata_t hit_ray_tri( ray_t ray, triangle_t tri )
 
 	// Initialize hit info
 	hitdata_t hitdata;
-	hitdata.hit       = det >= 1e-6f && dist >= 0 && u >= 0 && v >= 0 && w >= 0;
+	hitdata.hit       = det >= EPSILON && dist >= 0 && u >= 0 && v >= 0 && w >= 0;
 	hitdata.hit_point = ray.orig + ray.dir * dist;
 	hitdata.normal    = normalize( tri.norm_a * w + tri.norm_b * u + tri.norm_c * v );
 	hitdata.dist      = dist;
@@ -96,9 +131,6 @@ hitdata_t hit_ray_sphere( ray_t r, sphere_t s )
 {
 	hitdata_t hitdata;
 	hitdata.hit = false;
-	hitdata.dist = 0;
-	hitdata.hit_point = vec3( 0.0f );
-	hitdata.normal = vec3( 0.0f );
 
 	/* offset from center */
 	vec3 oc = r.orig - s.center;
@@ -128,9 +160,44 @@ hitdata_t hit_ray_sphere( ray_t r, sphere_t s )
 	return hitdata;
 }
 
+hitdata_t hit_ray_plane( ray_t ray, plane_t plane ) 
+{ 
+	hitdata_t hitdata;
+	hitdata.hit = false;
+
+	float denom = dot( plane.norm, ray.dir ); 
+
+	if ( abs( denom ) <= EPSILON )
+		return hitdata;
+
+	float dist = dot( plane.pos - ray.orig, plane.norm ) / denom;
+
+	hitdata.hit = dist >= EPSILON;
+	hitdata.dist = dist;
+	hitdata.hit_point = ray.orig + ray.dir * dist;
+	hitdata.normal = plane.norm;
+
+	return hitdata; 
+} 
+
 void main()
 {
-	ray_t r = camera_ray( gl_FragCoord.xy );
-	hitdata_t hd = hit_ray_sphere( r, sphere_t( vec3( 0.0f, 0.0f, 0.0f ), 1.0f ) );
-	out_color = vec4( 0.0f, 0.0f, float( hd.hit ), 1.0f );
+	ray_t ray = camera_ray( gl_FragCoord.xy );
+
+	sphere_t sphere = sphere_t( vec3( 0.0f, 0.0f, 0.0f ), 1.0f );
+	plane_t plane = plane_t( vec3( 0.0f, -1.0f, 0.0f ), vec3( 0.0f, 1.0f, 0.0f ) );
+	hitdata_t hd;
+
+	out_color = vec4( 0.0f, 0.0f, 0.0f, 1.0f );
+
+	hd = hit_ray_plane( ray, plane );
+	if ( hd.hit )
+		out_color = vec4( 0.5f, 0.5f, 0.5f, 1.0f );
+
+	if ( hd.hit_point.y < camera.eye.y )
+	{
+		hd = hit_ray_sphere( ray, sphere );
+		if ( hd.hit )
+			out_color = vec4( 0.0f, 0.0f, 1.0f, 1.0f );
+	}
 }
