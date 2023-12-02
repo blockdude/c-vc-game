@@ -4,20 +4,23 @@
 #include <string.h>
 #include <assert.h>
 #include <util/log.h>
+#include <glad/glad.h>
 
-static void shader_log_error_(
-		GLint handle, const char *adverb, const char *path,
+static inline char *shader_get_log_( 
+		GLint handle,
 		void ( *getlog )( GLuint, GLsizei, GLsizei *, GLchar * ),
 		void ( *getiv )( GLuint, GLenum, GLint * ) )
 {
 	GLint loglen;
 	getiv( handle, GL_INFO_LOG_LENGTH, &loglen );
 
-	char *logtext = calloc( 1, loglen );
-	getlog( handle, loglen, NULL, logtext );
-	log_error( "Error %s shader at %s:\n%s", adverb, path, logtext );
+	if ( loglen <= 1 )
+		return NULL;
 
-	free( logtext );
+	char *logtext = malloc( loglen * sizeof( *logtext ) );
+	getlog( handle, loglen, NULL, logtext );
+
+	return logtext;
 }
 
 static GLint shader_compile_( const char *path, GLenum type )
@@ -51,15 +54,22 @@ static GLint shader_compile_( const char *path, GLenum type )
 
 	GLint compiled;
 	glGetShaderiv( handle, GL_COMPILE_STATUS, &compiled );
+	char *logtext = shader_get_log_( handle, glGetShaderInfoLog, glGetShaderiv );
 
 	// Check OpenGL logs if compilation failed
 	if ( compiled == 0 )
 	{
-		shader_log_error_( handle, "compiling", path, glGetShaderInfoLog, glGetShaderiv );
+		log_error( "Error compiling shader at %s:\n%s", path, logtext );
 		glDeleteShader( handle );
 		return 0;
 	}
 
+	if ( logtext )
+	{
+		log_trace( "Warning compiling shader at %s:\n%s", path, logtext );
+	}
+
+	free( logtext );
 	free( text );
 	return handle;
 }
@@ -93,16 +103,21 @@ int shader_load( struct shader *self, const char *vs, const char *fs )
 	// Check link status
 	GLint linked;
 	glGetProgramiv( self->handle, GL_LINK_STATUS, &linked );
+	char *logtext = shader_get_log_( self->handle, glGetProgramInfoLog, glGetProgramiv );
 
 	if ( linked == 0 )
 	{
-		char buf[ 512 ];
-		snprintf( buf, 512, "[ %s, %s ]", vs, fs );
-		shader_log_error_( self->handle, "linking", buf, glGetProgramInfoLog, glGetProgramiv );
+		log_error( "Error linking shader at [ %s, %s ]:\n%s", vs, fs, logtext );
 		shader_free( *self );
 		return 3;
 	}
 
+	if ( logtext )
+	{
+		log_trace( "Warning linking shader at [ %s, %s ]:\n%s", vs, fs, logtext );
+	}
+
+	free( logtext );
 	return 0;
 }
 
@@ -121,48 +136,48 @@ void shader_bind( struct shader self )
 void shader_uniform_mat4( struct shader self, char *name, mat4s m )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Failed to uniform variable: %s", name );
+	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniformMatrix4fv( idx, 1, GL_FALSE, ( const GLfloat * )&m.raw );
 }
 
 void shader_uniform_float( struct shader self, char *name, float f )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Failed to uniform variable: %s", name );
+	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform1f( idx, f );
 }
 
 void shader_uniform_vec2( struct shader self, char *name, vec2s v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Failed to uniform variable: %s", name );
+	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform2f( idx, v.x, v.y );
 }
 
 void shader_uniform_vec3( struct shader self, char *name, vec3s v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Failed to uniform variable: %s", name );
+	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform3f( idx, v.x, v.y, v.z );
 }
 
 void shader_uniform_vec4( struct shader self, char *name, vec4s v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Failed to uniform variable: %s", name );
+	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform4f( idx, v.x, v.y, v.z, v.w );
 }
 
 void shader_uniform_int( struct shader self, char *name, int v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Failed to uniform variable: %s", name );
+	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform1i( idx, v );
 }
 
 void shader_uniform_uint( struct shader self, char *name, unsigned int v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Failed to uniform variable: %s", name );
+	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform1ui( idx, v );
 }
