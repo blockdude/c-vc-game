@@ -1,8 +1,8 @@
 #version 330 core
 
 #define M_PI 3.1415926538
-#define EPSILON 1e-6f
-#define RENDER_DISTANCE 10000.0f
+#define EPSILON 1e-4f
+#define RENDER_DISTANCE 100000000.0f
 
 const uint MAX_OBJECT_COUNT = 8u;
 const uint MAX_LIGHT_COUNT  = 2u;
@@ -37,6 +37,7 @@ struct light_t
 	float radius;
 	vec3 color;
 	float reach;
+	float power;
 };
 
 struct plane_t
@@ -241,10 +242,11 @@ hitdata_t raycast( ray_t ray )
 	/* object collision */
 	for ( int i = 0; i < objects.length(); i++ )
 	{
-		if ( objects[ i ].type == OBJECT_TYPE_NONE )
+		object_t obj = objects[ i ];
+		if ( obj.type == OBJECT_TYPE_NONE )
 			continue;
 
-		hitdata_t tmp = hit_ray_object( ray, objects[ i ] );
+		hitdata_t tmp = hit_ray_object( ray, obj );
 		if ( tmp.hit == true && tmp.dist < min_dist )
 		{
 			hitdata = tmp;
@@ -267,43 +269,57 @@ hitdata_t raycast( ray_t ray )
 
 /* ======================================================== */
 /* --------------------------- */
+/* COMPUTE LIGHT			   */
+/* --------------------------- */
+
+vec3 compute_color( ray_t ray )
+{
+	vec3 color = vec3( 0.0f );
+
+	/* cast initial ray */
+	hitdata_t hitdata;
+	hitdata = raycast( ray );
+
+	if ( hitdata.hit == true )
+	{
+		for ( int i = 0; i < lights.length(); i++ )
+		{
+			light_t light = lights[ i ];
+
+			ray_t rtl;
+			rtl.dir = normalize( light.pos - hitdata.hit_point );
+			rtl.orig = hitdata.hit_point + ( rtl.dir * EPSILON );
+
+			/* cast ray to light source */
+			hitdata_t rtl_hitdata = raycast( rtl );
+
+			float light_dist = distance( light.pos, hitdata.hit_point );
+
+			if ( light_dist > light.reach )
+				continue;
+
+			if ( rtl_hitdata.hit == false )
+			{
+				float diffuse = clamp( dot( hitdata.normal, normalize( light.pos - hitdata.hit_point ) ), 0.0, 1.0 );
+				color = light.color * light.power * diffuse * hitdata.mat.color * dot( hitdata.normal, rtl.dir );
+			}
+		}
+	}
+
+	return color;
+}
+
+/* ======================================================== */
+
+/* ======================================================== */
+/* --------------------------- */
 /* MAIN ENTRY				   */
 /* --------------------------- */
 
 void main()
 {
 	ray_t ray = camera_raycast( gl_FragCoord.xy );
-
-	out_color = vec4( vec3( 0.0f ), 1.0f );
-
-	hitdata_t hitdata;
-	hitdata = raycast( ray );
-
-	/* cast a ray to the light source */
-	if ( hitdata.hit == true )
-	{
-		//out_color = vec4( 1.0f, 1.0f, 1.0f, 1.0f );
-		for ( int i = 0; i < lights.length(); i++ )
-		{
-			/* cast ray to light source */
-			ray_t rtl;
-			rtl.orig = hitdata.hit_point;
-			rtl.dir = normalize( lights[ i ].pos - hitdata.hit_point );
-			hitdata_t rtl_hitdata = raycast( rtl );
-
-			float light_dist = distance( lights[ i ].pos, hitdata.hit_point );
-
-			if ( light_dist > lights[ i ].reach )
-				continue;
-
-			vec3 color = hitdata.mat.color * lights[ i ].color * dot( hitdata.normal, rtl.dir );
-
-			if ( rtl_hitdata.hit == false )
-			{
-				out_color = vec4( color, 1.0f );
-			}
-		}
-	}
+	out_color = vec4( compute_color( ray ), 1.0f );
 }
 
 /* ======================================================== */

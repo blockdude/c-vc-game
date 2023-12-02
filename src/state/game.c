@@ -24,6 +24,8 @@
 static struct obj3d obj;
 static struct camera camera;
 static mat4s model_matrix;
+static vec3s light_pos   = {{ 5.0f, 5.0f, 5.0f }};
+static vec3s light_color = {{ 1.0f, 1.0f, 1.0f }};
 /* ================================== */
 
 /* ================================== */
@@ -44,7 +46,6 @@ static struct shader shader;
 /* ================================== */
 static vec3s direction  = { 0 };
 static float speed      = 25.0f;
-static float sens       = 1.0f;
 static float mouse_sens = 0.0009f;
 static float fov        = 45.0f;
 /* ================================== */
@@ -109,19 +110,15 @@ int game_init( void )
     camera.pitch = degtorad( 0 );
     camera.yaw   = degtorad( 0 );
 
-    // uniform objects to render
+    // uniform objects to fragment shader
     shader_uniform_vec3( shader, "plane.pos",  ( vec3s ){{ 0.0f, -1.0f, 0.0f }} );
     shader_uniform_vec3( shader, "plane.norm", ( vec3s ){{ 0.0f,  1.0f, 0.0f }} );
 
-    shader_uniform_vec3( shader,  "lights[0].pos",    ( vec3s ){{ 5.0f, 5.0f, 5.0f }} );
-    shader_uniform_vec3( shader,  "lights[0].color",  ( vec3s ){{ 0.5f, 0.5f, 0.5f }} );
+    shader_uniform_vec3( shader,  "lights[0].pos",    light_pos );
+    shader_uniform_vec3( shader,  "lights[0].color",  light_color );
     shader_uniform_float( shader, "lights[0].radius", 1.0f );
-    shader_uniform_float( shader, "lights[0].reach",  20.0f );
-
-    //shader_uniform_vec3( shader,  "lights[1].pos",    ( vec3s ){{ -5.0f, 5.0f, -5.0f }} );
-    //shader_uniform_vec3( shader,  "lights[1].color",  ( vec3s ){{ 1.0f, 1.0f, 1.0f }} );
-    //shader_uniform_float( shader, "lights[1].radius", 1.0f );
-    //shader_uniform_float( shader, "lights[1].reach",  100.0f );
+    shader_uniform_float( shader, "lights[0].reach",  30.0f );
+    shader_uniform_float( shader, "lights[0].power",  1.0f );
 
     shader_uniform_uint( shader,  "objects[0].type", 1 );
     shader_uniform_vec3( shader,  "objects[0].pos", ( vec3s ){{ 3.0f, 0.0f, 0.0f }} );
@@ -162,6 +159,7 @@ int game_tick( void )
 
 int game_update( void )
 {
+    direction = GLMS_VEC3_ZERO;
     if ( input_key_press( INPUT_KB_W ) )
     {
         direction.x += sinf( camera.yaw );
@@ -196,26 +194,6 @@ int game_update( void )
         direction.y -= 1;
     }
 
-    if ( input_key_press( INPUT_KB_LEFT ) )
-    {
-        camera.yaw += sens * window.frame.delta;
-    }
-
-    if ( input_key_press( INPUT_KB_RIGHT ) )
-    {
-        camera.yaw -= sens * window.frame.delta;
-    }
-
-    if ( input_key_press( INPUT_KB_UP ) )
-    {
-        camera.pitch += sens * window.frame.delta;
-    }
-
-    if ( input_key_press( INPUT_KB_DOWN ) )
-    {
-        camera.pitch -= sens * window.frame.delta;
-    }
-
     if ( input_mouse_moved() )
     {
         int dx, dy;
@@ -232,9 +210,32 @@ int game_update( void )
     direction = glms_vec3_scale( direction, speed * window.frame.delta );
     camera.eye = glms_vec3_add( camera.eye, direction );
     camera.aspect = window.aspect;
+    camera_update( &camera );
 
     direction = GLMS_VEC3_ZERO;
-    camera_update( &camera );
+    if ( input_key_press( INPUT_KB_LEFT ) )
+    {
+        direction.x += 1;
+    }
+
+    if ( input_key_press( INPUT_KB_RIGHT ) )
+    {
+        direction.x -= 1;
+    }
+
+    if ( input_key_press( INPUT_KB_UP ) )
+    {
+        direction.z += 1;
+    }
+
+    if ( input_key_press( INPUT_KB_DOWN ) )
+    {
+        direction.z -= 1;
+    }
+
+    direction = glms_vec3_scale( direction, speed * window.frame.delta );
+    light_pos = glms_vec3_add( light_pos, direction );
+    shader_uniform_vec3( shader,  "lights[0].pos", light_pos );
 
     //shader_uniform_mat4( shader, "view_matrix", camera.view );
     //shader_uniform_mat4( shader, "proj_matrix", camera.proj );
