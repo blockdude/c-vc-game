@@ -288,7 +288,7 @@ vec3 compute_color( ray_t ray )
 
 			ray_t rtl;
 			rtl.dir = normalize( light.pos - hitdata.hit_point );
-			rtl.orig = hitdata.hit_point + ( rtl.dir * EPSILON );
+			rtl.orig = hitdata.hit_point;
 
 			/* cast ray to light source */
 			hitdata_t rtl_hitdata = raycast( rtl );
