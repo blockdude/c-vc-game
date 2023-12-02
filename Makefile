@@ -125,6 +125,9 @@ PHONY += test
 test: $(TEST_BIN)
 	@exec $(TEST_BIN_DIR)/test_all --enable-mixed-units
 
+$(TEST): %: $(TEST_BIN_DIR)/%
+	@exec $(TEST_BIN_DIR)/$@ --enable-mixed-units
+
 $(TEST_BIN): $(TEST_BIN_DIR)/%: $(TEST_OBJ_DIR)/%.o $(OBJ:$(OBJ_DIR)/main.o=) $(LIBS)
 	$(RUN_CMD_LTLINK) $(LINKER) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
