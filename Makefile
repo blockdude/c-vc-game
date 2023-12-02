@@ -76,7 +76,7 @@ all: build test
 
 # =============================
 # -----------------------------
-# GLAD lib
+# GLAD LIB
 # -----------------------------
 
 INCLUDE += -I$(LIB_DIR)/glad/include
@@ -97,7 +97,7 @@ clean_glad.o:
 
 # =============================
 # -----------------------------
-# CGLM lib
+# CGLM LIB
 # -----------------------------
 
 INCLUDE += -I$(LIB_DIR)/cglm/include
@@ -105,7 +105,7 @@ INCLUDE += -I$(LIB_DIR)/cglm/include
 LIBS    += $(LIB_DIR)/cglm/libcglm.a
 
 $(LIB_DIR)/cglm/libcglm.a:
-	$(RUN_CMD_CC) (cd lib/cglm && cmake . -DCGLM_STATIC=ON && make)
+	$(RUN_CMD_AR) (cd lib/cglm && cmake . -DCGLM_STATIC=ON && make)
 
 CLEAN += clean_libcglm.a
 PHONY += clean_libcglm.a
