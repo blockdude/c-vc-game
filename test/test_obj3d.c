@@ -11,7 +11,7 @@ struct obj3d_test_fixture
 UTEST_F_SETUP( obj3d_test_fixture )
 {
 	struct obj3d *obj = &utest_fixture->obj;
-	utest_fixture->initialized = obj3d_load( obj, "../res/objects/rayman.obj" );
+	utest_fixture->initialized = obj3d_load( obj, "res/objects/rayman.obj" );
 	ASSERT_EQ( utest_fixture->initialized, 0 );
 	ASSERT_GT( obj->fv_len, ( size_t )0 );
 }
