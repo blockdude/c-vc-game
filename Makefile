@@ -1,5 +1,27 @@
 MAKEFLAGS = -j$(exec nproc) --no-print-directory
 
+ifeq ($(OS),Windows_NT)
+	UNAME := Windows
+	MKDIR = mkdir
+	RMDIR = rmdir
+	RM = del
+else
+	UNAME := $(shell uname -s)
+	MKDIR = mkdir
+	RMDIR = rm -r
+	RM = rm
+endif
+
+# flags and compiler
+SHELL		= /bin/sh
+CC			= gcc
+LINKER		= $(CC)
+INCLUDE		= -I$(SRC_DIR)
+CPPFLAGS	= -DLOG_USE_COLOR
+CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
+LDFLAGS		= 
+LDLIBS		= -lm
+
 # directories
 BLD_DIR ?= .bld
 SRC_DIR ?= src
@@ -38,16 +60,6 @@ PHONY =
 CLEAN =
 LIBS  =
 
-# flags and compiler
-SHELL		= /bin/sh
-CC			= gcc
-LINKER		= $(CC)
-INCLUDE		= -I$(SRC_DIR)
-CPPFLAGS	= -DLOG_USE_COLOR
-CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
-LDFLAGS		= 
-LDLIBS		= -lm -lSDL2
-
 # echo output
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
 RUN_CMD_RM     = @echo "  RM    " $@;
@@ -69,6 +81,17 @@ RUN_CMD_GEN    = @echo "  GEN   " $@;
 
 PHONY += all
 all: build test
+
+# =============================
+
+
+
+# =============================
+# -----------------------------
+# SDL LIB
+# -----------------------------
+
+LDLIBS += -lSDL2
 
 # =============================
 
