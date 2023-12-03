@@ -10,7 +10,7 @@ DEP_DIR := $(BLD_DIR)/dep
 
 # files
 BIN := $(BIN_DIR)/main
-SRC := $(shell find $(SRC_DIR) -type f -name '*.c')
+SRC := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/**/*.c) $(wildcard $(SRC_DIR)/**/**/*.c) $(wildcard $(SRC_DIR)/**/**/**/*.c)
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
@@ -20,7 +20,7 @@ TEST_BIN_DIR := $(TEST_BLD_DIR)/bin
 TEST_OBJ_DIR := $(TEST_BLD_DIR)/obj
 TEST_DEP_DIR := $(TEST_BLD_DIR)/dep
 
-TEST_SRC := $(shell find $(TEST_SRC_DIR) -type f -name '*.c')
+TEST_SRC := $(wildcard $(TEST_SRC_DIR)/*.c)
 TEST_OBJ := $(TEST_SRC:$(TEST_SRC_DIR)/%.c=$(TEST_OBJ_DIR)/%.o)
 TEST_DEP := $(TEST_SRC:$(TEST_SRC_DIR)/%.c=$(TEST_DEP_DIR)/%.d)
 TEST_BIN := $(TEST_SRC:$(TEST_SRC_DIR)/%.c=$(TEST_BIN_DIR)/%)
@@ -29,8 +29,7 @@ TEST     := $(TEST_SRC:$(TEST_SRC_DIR)/%.c=%)
 # directory tree
 DIRS := $(BLD_DIR) $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) \
 		$(TEST_BLD_DIR) $(TEST_BIN_DIR) $(TEST_OBJ_DIR) $(TEST_DEP_DIR) \
-		$(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR))) \
-		$(patsubst $(SRC_DIR)/%,$(DEP_DIR)/%,$(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)))
+		$(dir $(OBJ)) $(dir $(DEP))
 # build directory tree
 $(shell mkdir -p $(DIRS))
 
@@ -46,7 +45,7 @@ INCLUDE		= -I$(SRC_DIR)
 CPPFLAGS	= -DLOG_USE_COLOR
 CFLAGS		= -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
 LDFLAGS		= 
-LDLIBS		= -lm -ldl -lSDL2
+LDLIBS		= -lm -lSDL2
 
 # echo output
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
