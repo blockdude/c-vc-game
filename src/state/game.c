@@ -51,13 +51,15 @@ static float fov        = 45.0f;
 /* ================================== */
 
 /* ================================== */
-/* screen buffer */
+/* screen update */
 /* ================================== */
 static const GLfloat vertices[] = {
-    -1.0F, -1.0F, 0.0F,
-     1.0F, -1.0F, 0.0F,
-     1.0F,  1.0F, 0.0F,
-    -1.0F,  1.0F, 0.0F
+    -1.0f, -1.0f, 0.0f,
+     1.0f, -1.0f, 0.0f,
+     1.0f,  1.0f, 0.0f,
+     1.0f,  1.0f, 0.0f,
+    -1.0f,  1.0f, 0.0f,
+    -1.0f, -1.0f, 0.0f
 };
 /* ================================== */
 
@@ -316,7 +318,7 @@ int game_render( void )
 {
     glClearColor( 1.f, 1.f, 1.f, 1.f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glDrawArrays( GL_QUADS, 0, 4 );
+    glDrawArrays( GL_TRIANGLES, 0, 6 );
 
     return 0;
 }
