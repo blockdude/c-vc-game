@@ -18,6 +18,9 @@
 
 #include <stdio.h>
 
+#include "../../res/shaders/raytracer/vert.h"
+#include "../../res/shaders/raytracer/frag.h"
+
 /* ================================== */
 /* obj stuff */
 /* ================================== */
@@ -63,7 +66,7 @@ int game_init( void )
     glEnable( GL_DEPTH_TEST );
 
     log_info( "Loading and compiling shaders..." );
-    if ( shader_fbuild( &shader, "res/shaders/raytracer/vert.glsl", "res/shaders/raytracer/frag.glsl" ) != 0 )
+    if ( shader_tbuild( &shader, ( char * )vert_glsl, vert_glsl_len, ( char * )frag_glsl, frag_glsl_len ) != 0 )
     {
         log_error( "Failed to build shaders" );
         return WINDOW_EXIT;

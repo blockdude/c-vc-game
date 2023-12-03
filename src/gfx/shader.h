@@ -16,7 +16,7 @@ struct shader {
 };
 
 int  shader_fbuild( struct shader *self, const char *vspath, const char *fspath );
-int  shader_tbuild( struct shader *self, const char *vstext, const char *fstext );
+int  shader_tbuild( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen );
 void shader_free( struct shader self );
 void shader_bind( struct shader self );
 

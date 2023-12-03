@@ -150,10 +150,8 @@ static inline int shader_build_util_( struct shader *self, const char *vstext, s
 	return 0;
 }
 
-int shader_tbuild( struct shader *self, const char *vstext, const char *fstext )
+int shader_tbuild( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen )
 {
-	size_t vslen = strlen( vstext );
-	size_t fslen = strlen( fstext );
 	return shader_build_util_( self, vstext, vslen, fstext, fslen, NULL, NULL );
 }
 
