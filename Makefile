@@ -30,6 +30,7 @@ TEST     := $(TEST_SRC:$(TEST_SRC_DIR)/%.c=%)
 DIRS := $(BLD_DIR) $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) \
 		$(TEST_BLD_DIR) $(TEST_BIN_DIR) $(TEST_OBJ_DIR) $(TEST_DEP_DIR) \
 		$(dir $(OBJ)) $(dir $(DEP))
+
 # build directory tree
 $(shell mkdir -p $(DIRS))
 

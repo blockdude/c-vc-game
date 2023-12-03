@@ -1,5 +1,6 @@
 #include "window.h"
 #include "render.h"
+#include <SDL2/SDL_video.h>
 #include <stdalign.h>
 #include <system/input.h>
 #include <glad/glad.h>
@@ -137,7 +138,7 @@ int window_init( const struct window_state *state )
 
     // create sdl2 window
     log_info( "Creating SDL window" );
-    window.handle = SDL_CreateWindow( "game engine", 0, 0, window_size, window_size, window_flags );
+    window.handle = SDL_CreateWindow( "Raytracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_size, window_size, window_flags );
     if ( !window.handle )
     {
         log_error( "Failed to initialize window. Unable to create SDL window: %s", SDL_GetError() );
