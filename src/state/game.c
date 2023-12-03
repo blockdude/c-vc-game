@@ -63,7 +63,7 @@ int game_init( void )
     glEnable( GL_DEPTH_TEST );
 
     log_info( "Loading and compiling shaders..." );
-    if ( shader_load( &shader, "res/shaders/raytracer/vert.glsl", "res/shaders/raytracer/frag.glsl" ) != 0 )
+    if ( shader_fbuild( &shader, "res/shaders/raytracer/vert.glsl", "res/shaders/raytracer/frag.glsl" ) != 0 )
     {
         return WINDOW_EXIT;
     }

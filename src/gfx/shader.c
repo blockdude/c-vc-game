@@ -33,27 +33,29 @@ static char *shader_load_text_( const char *path, size_t *out_len )
 	if ( f == NULL )
 	{
 		log_error( "Error. Could not open shader file: %s", path );
-		return 0;
+		return NULL;
 	}
 
 	// put shader in buffer text
 	fseek( f, 0, SEEK_END );
 	len = ftell( f );
 	assert( len > 0 );
-	text = calloc( 1, len );
+	text = calloc( 1, len + 1 );
 	assert( text != NULL );
 	fseek( f, 0, SEEK_SET );
 	fread( text, 1, len, f );
 	assert( strlen( text ) > 0 );
 	fclose( f );
+	text[ len ] = '\0';
 
 	if ( out_len )
 		*out_len = len;
 
+	// return null terminated string
 	return text;
 }
 
-static GLint shader_compile_text_( const char *text, size_t len, GLenum type )
+static inline GLuint shader_compile_text_( const char *text, size_t len, GLenum type )
 {
 	// create and compile shader
 	GLuint handle = glCreateShader( type );
@@ -63,40 +65,36 @@ static GLint shader_compile_text_( const char *text, size_t len, GLenum type )
 	return handle;
 }
 
-static int shader_log_status_(
+static inline GLint shader_get_status_(
 		GLuint handle, GLenum pname,
-		const char *adverb, const char *vspath, const char *fspath,
+		void ( *getiv )( GLuint, GLenum, GLint * ) )
+{
+	GLint status;
+	getiv( handle, pname, &status );
+	return status;
+}
+
+static inline void shader_log_status_(
+		GLuint handle, const char *prefix, const char *path_a, const char *path_b,
 		void ( *getlog )( GLuint, GLsizei, GLsizei *, GLchar * ),
 		void ( *getiv )( GLuint, GLenum, GLint * ) )
 {
-	int result = 0;
-
-	GLint status;
-	getiv( handle, pname, &status );
 	char *logtext = shader_get_log_( handle, getlog, getiv );
 
-	char path[ 512 ];
-	if      ( vspath == NULL ) snprintf( path, 512, "[ %s ]", fspath );
-	else if ( fspath == NULL ) snprintf( path, 512, "[ %s ]", vspath );
-	else                       snprintf( path, 512, "[ %s, %s ]", vspath, fspath );
+	char path[ 512 ] = { 0 };
+	if      ( path_a ) snprintf( path, 512, " [ %s ]", path_a );
+	else if ( path_b ) snprintf( path, 512, " [ %s, %s ]", path_a, path_b );
 
-	// Check OpenGL logs if compilation failed
-	if ( status == 0 )
+	// Log shader messages
+	if ( logtext )
 	{
-		log_error( "Error %s shader at %s:\n%s", adverb, path, logtext );
-		result = 1;
-	}
-	else if ( logtext )
-	{
-		log_trace( "Warning %s shader at %s:\n%s", adverb, path, logtext );
+		log_trace( "%s shader logs%s:\n%s", prefix, path, logtext );
 	}
 
 	free( logtext );
-
-	return result;
 }
 
-GLuint shader_link_program_( GLuint vs, GLuint fs )
+static inline GLuint shader_link_program_( GLuint vs, GLuint fs )
 {
 	GLuint handle = glCreateProgram();
 
@@ -114,29 +112,23 @@ GLuint shader_link_program_( GLuint vs, GLuint fs )
 	return handle;
 }
 
-int shader_load( struct shader *self, const char *vspath, const char *fspath )
+static inline int shader_build_util_( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen, const char *vspath, const char *fspath )
 {
 	if ( self == NULL )
 		return 1;
 
 	*self = ( struct shader ){ 0 };
 
-	size_t vslen;
-	size_t fslen;
-
-	char *vstext = shader_load_text_( vspath, &vslen );
-	char *fstext = shader_load_text_( fspath, &fslen );
-
 	self->vs_handle = shader_compile_text_( vstext, vslen, GL_VERTEX_SHADER );
 	self->fs_handle = shader_compile_text_( fstext, fslen, GL_FRAGMENT_SHADER );
 
-	int vsstatus = shader_log_status_( self->vs_handle, GL_COMPILE_STATUS, "compiling", vspath, NULL, glGetShaderInfoLog, glGetShaderiv );
-	int fsstatus = shader_log_status_( self->fs_handle, GL_COMPILE_STATUS, "compiling", fspath, NULL, glGetShaderInfoLog, glGetShaderiv );
+	GLint vsstatus = shader_get_status_( self->vs_handle, GL_COMPILE_STATUS, glGetShaderiv );
+	GLint fsstatus = shader_get_status_( self->fs_handle, GL_COMPILE_STATUS, glGetShaderiv );
+	
+	shader_log_status_( self->vs_handle, "Vertex"  , vspath, NULL, glGetShaderInfoLog, glGetShaderiv );
+	shader_log_status_( self->fs_handle, "Fragment", fspath, NULL, glGetShaderInfoLog, glGetShaderiv );
 
-	free( vstext );
-	free( fstext );
-
-	if ( vsstatus != 0 || fsstatus != 0 )
+	if ( vsstatus == GL_FALSE || fsstatus == GL_FALSE )
 	{
 		glDeleteShader( self->vs_handle );
 		glDeleteShader( self->fs_handle );
@@ -144,8 +136,10 @@ int shader_load( struct shader *self, const char *vspath, const char *fspath )
 	}
 
 	self->handle = shader_link_program_( self->vs_handle, self->fs_handle );
-	int spstatus = shader_log_status_( self->handle, GL_LINK_STATUS, "linking", fspath, NULL, glGetProgramInfoLog, glGetProgramiv );
-	if ( spstatus != 0 )
+	GLint spstatus = shader_get_status_( self->handle, GL_LINK_STATUS, glGetProgramiv );
+	shader_log_status_( self->handle, "Program", vspath, fspath, glGetProgramInfoLog, glGetProgramiv );
+
+	if ( spstatus == GL_FALSE )
 	{
 		glDeleteProgram( self->handle );
 		glDeleteShader( self->vs_handle );
@@ -154,6 +148,31 @@ int shader_load( struct shader *self, const char *vspath, const char *fspath )
 	}
 
 	return 0;
+}
+
+int shader_tbuild( struct shader *self, const char *vstext, const char *fstext )
+{
+	size_t vslen = strlen( vstext );
+	size_t fslen = strlen( fstext );
+	return shader_build_util_( self, vstext, vslen, fstext, fslen, NULL, NULL );
+}
+
+int shader_fbuild( struct shader *self, const char *vspath, const char *fspath )
+{
+	size_t vslen;
+	size_t fslen;
+	char *vstext = shader_load_text_( vspath, &vslen );
+	char *fstext = shader_load_text_( fspath, &fslen );
+
+	if ( !vstext || !fstext )
+		return 4;
+
+	int result = shader_build_util_( self, vstext, vslen, fstext, fslen, vspath, fspath );
+
+	free( vstext );
+	free( fstext );
+
+	return result;
 }
 
 void shader_free( struct shader self )
