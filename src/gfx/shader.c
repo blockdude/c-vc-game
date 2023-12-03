@@ -23,11 +23,11 @@ static inline char *shader_get_log_(
 	return logtext;
 }
 
-static GLint shader_compile_( const char *path, GLenum type )
+static char *shader_load_text_( const char *path, size_t *out_len )
 {
 	FILE *f;
 	char *text;
-	long len;
+	size_t len;
 
 	f = fopen( path, "rb" );
 	if ( f == NULL )
@@ -47,77 +47,112 @@ static GLint shader_compile_( const char *path, GLenum type )
 	assert( strlen( text ) > 0 );
 	fclose( f );
 
+	if ( out_len )
+		*out_len = len;
+
+	return text;
+}
+
+static GLint shader_compile_text_( const char *text, size_t len, GLenum type )
+{
 	// create and compile shader
 	GLuint handle = glCreateShader( type );
 	glShaderSource( handle, 1, ( const GLchar *const * ) &text, ( const GLint * ) &len );
 	glCompileShader( handle );
 
-	GLint compiled;
-	glGetShaderiv( handle, GL_COMPILE_STATUS, &compiled );
-	char *logtext = shader_get_log_( handle, glGetShaderInfoLog, glGetShaderiv );
-
-	// Check OpenGL logs if compilation failed
-	if ( compiled == 0 )
-	{
-		log_error( "Error compiling shader at %s:\n%s", path, logtext );
-		glDeleteShader( handle );
-		return 0;
-	}
-
-	if ( logtext )
-	{
-		log_trace( "Warning compiling shader at %s:\n%s", path, logtext );
-	}
-
-	free( logtext );
-	free( text );
 	return handle;
 }
 
-int shader_load( struct shader *self, const char *vs, const char *fs )
+static int shader_log_status_(
+		GLuint handle, GLenum pname,
+		const char *adverb, const char *vspath, const char *fspath,
+		void ( *getlog )( GLuint, GLsizei, GLsizei *, GLchar * ),
+		void ( *getiv )( GLuint, GLenum, GLint * ) )
+{
+	int result = 0;
+
+	GLint status;
+	getiv( handle, pname, &status );
+	char *logtext = shader_get_log_( handle, getlog, getiv );
+
+	char path[ 512 ];
+	if      ( vspath == NULL ) snprintf( path, 512, "[ %s ]", fspath );
+	else if ( fspath == NULL ) snprintf( path, 512, "[ %s ]", vspath );
+	else                       snprintf( path, 512, "[ %s, %s ]", vspath, fspath );
+
+	// Check OpenGL logs if compilation failed
+	if ( status == 0 )
+	{
+		log_error( "Error %s shader at %s:\n%s", adverb, path, logtext );
+		result = 1;
+	}
+	else if ( logtext )
+	{
+		log_trace( "Warning %s shader at %s:\n%s", adverb, path, logtext );
+	}
+
+	free( logtext );
+
+	return result;
+}
+
+GLuint shader_link_program_( GLuint vs, GLuint fs )
+{
+	GLuint handle = glCreateProgram();
+
+	// Link shader program
+	glAttachShader( handle, vs );
+	glAttachShader( handle, fs );
+
+	// note: must bind attributes before linking
+	//// Bind vertex attributes
+	//for (size_t i = 0; i < n; i++) {
+	//	glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name);
+	//}
+
+	glLinkProgram( handle );
+	return handle;
+}
+
+int shader_load( struct shader *self, const char *vspath, const char *fspath )
 {
 	if ( self == NULL )
 		return 1;
 
 	*self = ( struct shader ){ 0 };
 
-	self->vs_handle = shader_compile_( vs, GL_VERTEX_SHADER );
-	self->fs_handle = shader_compile_( fs, GL_FRAGMENT_SHADER );
+	size_t vslen;
+	size_t fslen;
 
-	if ( self->vs_handle == 0 || self->fs_handle == 0 )
-		return 2;
+	char *vstext = shader_load_text_( vspath, &vslen );
+	char *fstext = shader_load_text_( fspath, &fslen );
 
-	self->handle = glCreateProgram();
+	self->vs_handle = shader_compile_text_( vstext, vslen, GL_VERTEX_SHADER );
+	self->fs_handle = shader_compile_text_( fstext, fslen, GL_FRAGMENT_SHADER );
 
-	// Link shader program
-	glAttachShader( self->handle, self->vs_handle );
-	glAttachShader( self->handle, self->fs_handle );
+	int vsstatus = shader_log_status_( self->vs_handle, GL_COMPILE_STATUS, "compiling", vspath, NULL, glGetShaderInfoLog, glGetShaderiv );
+	int fsstatus = shader_log_status_( self->fs_handle, GL_COMPILE_STATUS, "compiling", fspath, NULL, glGetShaderInfoLog, glGetShaderiv );
 
-	//// Bind vertex attributes
-	//for (size_t i = 0; i < n; i++) {
-	//	glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name);
-	//}
+	free( vstext );
+	free( fstext );
 
-	glLinkProgram( self->handle );
-
-	// Check link status
-	GLint linked;
-	glGetProgramiv( self->handle, GL_LINK_STATUS, &linked );
-	char *logtext = shader_get_log_( self->handle, glGetProgramInfoLog, glGetProgramiv );
-
-	if ( linked == 0 )
+	if ( vsstatus != 0 || fsstatus != 0 )
 	{
-		log_error( "Error linking shader at [ %s, %s ]:\n%s", vs, fs, logtext );
-		shader_free( *self );
+		glDeleteShader( self->vs_handle );
+		glDeleteShader( self->fs_handle );
+		return 2;
+	}
+
+	self->handle = shader_link_program_( self->vs_handle, self->fs_handle );
+	int spstatus = shader_log_status_( self->handle, GL_LINK_STATUS, "linking", fspath, NULL, glGetProgramInfoLog, glGetProgramiv );
+	if ( spstatus != 0 )
+	{
+		glDeleteProgram( self->handle );
+		glDeleteShader( self->vs_handle );
+		glDeleteShader( self->fs_handle );
 		return 3;
 	}
 
-	if ( logtext )
-	{
-		log_trace( "Warning linking shader at [ %s, %s ]:\n%s", vs, fs, logtext );
-	}
-
-	free( logtext );
 	return 0;
 }
 
