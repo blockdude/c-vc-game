@@ -65,6 +65,7 @@ int game_init( void )
     log_info( "Loading and compiling shaders..." );
     if ( shader_fbuild( &shader, "res/shaders/raytracer/vert.glsl", "res/shaders/raytracer/frag.glsl" ) != 0 )
     {
+        log_error( "Failed to build shaders" );
         return WINDOW_EXIT;
     }
 
