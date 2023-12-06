@@ -1,15 +1,15 @@
 MAKEFLAGS = -j$(exec nproc) --no-print-directory
 
 ifeq ($(OS),Windows_NT)
-UNAME := Windows
-MKDIR = mkdir
-RMDIR = rmdir
-RM = del
+    UNAME := Windows
+    MKDIR = mkdir
+    RMDIR = rmdir
+    RM = del
 else
-UNAME := $(shell uname -s)
-MKDIR = mkdir
-RMDIR = rm -r
-RM = rm
+    UNAME := $(shell uname -s)
+    MKDIR = mkdir
+    RMDIR = rm -r
+    RM = rm
 endif
 
 # flags and compiler
@@ -92,13 +92,13 @@ all: build test
 # -----------------------------
 
 ifeq ($(UNAME),Windows)
-INCLUDE += -I$(LIB_DIR)/sdl2/include
-LDFLAGS += -L$(LIB_DIR)/sdl2/lib
-LDLIBS += -lmingw32 -lSDL2main -lSDL2
-$(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(BIN_DIR))
-$(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(TEST_BIN_DIR))
+    INCLUDE += -I$(LIB_DIR)/sdl2/include
+    LDFLAGS += -L$(LIB_DIR)/sdl2/lib
+    LDLIBS += -lmingw32 -lSDL2main -lSDL2
+    $(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(BIN_DIR))
+    $(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(TEST_BIN_DIR))
 else
-LDLIBS += -lSDL2
+    LDLIBS += -lSDL2
 endif
 
 # =============================
@@ -111,7 +111,6 @@ endif
 # -----------------------------
 
 INCLUDE += -I$(LIB_DIR)/glad/include
-#LDFLAGS += $(LIB_DIR)/glad/obj/glad.o
 LIBS    += $(LIB_DIR)/glad/obj/glad.o
 
 $(LIB_DIR)/glad/obj/glad.o:
@@ -132,11 +131,10 @@ clean_glad.o:
 # -----------------------------
 
 INCLUDE += -I$(LIB_DIR)/cglm/include
-#LDFLAGS += $(LIB_DIR)/cglm/libcglm.a
 LIBS    += $(LIB_DIR)/cglm/libcglm.a
 
 ifeq ($(UNAME),Windows)
-CGLMEX = -G "MinGW Makefiles"
+    CGLMEX = -G "MinGW Makefiles"
 endif
 
 $(LIB_DIR)/cglm/libcglm.a:
