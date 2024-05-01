@@ -1,5 +1,6 @@
 #include "input.h"
 #include "../util/util.h"
+#include <data/dynarr.h>
 
 struct key_state
 {
@@ -51,6 +52,9 @@ struct input
 {
     struct key_state key[ INPUT_KB_COUNT ];
     struct mouse_state mouse;
+
+    input_resize_callback_fn *resize_cb;
+    input_quit_callback_fn *quit_cb;
 };
 
 static struct input input;
@@ -109,6 +113,8 @@ static void input_reset( void )
 
 int input_init( void )
 {
+    input.resize_cb = NULL;
+    input.quit_cb = NULL;
     return INPUT_SUCCESS;
 }
 
@@ -124,8 +130,27 @@ int input_process_events( void )
         switch ( event.type )
         {
             case SDL_QUIT:
+                {
+                    size_t len = dynarr_size( input.quit_cb );
+                    for ( size_t i = 0; i < len; i++ )
+                        input.quit_cb[ i ]();
+                    result = INPUT_QUIT;
+                }
+                break;
 
-                result = INPUT_QUIT;
+            case SDL_WINDOWEVENT:
+
+                switch ( event.window.event )
+                {
+                    case SDL_WINDOWEVENT_RESIZED:
+                    case SDL_WINDOWEVENT_SIZE_CHANGED:
+                        {
+                            size_t len = dynarr_size( input.resize_cb );
+                            for ( size_t i = 0; i < len; i++ )
+                                input.resize_cb[ i ]( event.window.data1, event.window.data2 );
+                        }
+                        break;
+                }
 
                 break;
 
@@ -177,6 +202,18 @@ int input_process_events( void )
     return result;
 }
 
+int input_push_resize_callback( input_resize_callback_fn fn )
+{
+    dynarr_push_back( input.resize_cb, fn );
+    return INPUT_SUCCESS;
+}
+
+int input_push_quit_callback( input_quit_callback_fn fn )
+{
+    dynarr_push_back( input.quit_cb, fn );
+    return INPUT_SUCCESS;
+}
+
 int input_free( void )
 {
     return INPUT_SUCCESS;
@@ -223,7 +260,7 @@ void input_mouse_pos( int *x, int *y )
     if ( y ) *y = input.mouse.pos.y;
 }
 
-void input_mouse_pos_delta( int *x, int *y )
+void input_mouse_delta( int *x, int *y )
 {
     if ( x ) *x = input.mouse.pos.dx;
     if ( y ) *y = input.mouse.pos.dy;

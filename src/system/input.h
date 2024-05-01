@@ -95,11 +95,22 @@ enum input_button
     INPUT_MB_LAST             = INPUT_MB_COUNT - 1
 };
 
+typedef void ( *input_resize_callback_fn )( int w, int h );
+typedef void ( *input_quit_callback_fn )( void );
+
 // input stuff
 int input_init( void );
-int input_process_events( void );
 int input_free( void );
 
+/*
+ * tmp callback setter for window resizing and quit
+ * (for use in window.c only)
+ */
+int input_process_events( void );
+int input_push_resize_callback( input_resize_callback_fn fn );
+int input_push_quit_callback( input_quit_callback_fn fn );
+
+// 
 bool input_key_down( enum input_key key );
 bool input_key_up( enum input_key key );
 bool input_key_press( enum input_key key );
@@ -109,7 +120,7 @@ bool input_mouse_up( enum input_button button );
 bool input_mouse_press( enum input_button button );
 bool input_mouse_moved( void );
 void input_mouse_pos( int *x, int *y );
-void input_mouse_pos_delta( int *x, int *y );
+void input_mouse_delta( int *x, int *y );
 void input_mouse_scroll( int *x, int *y );
 void input_mouse_fscroll( float *x, float *y );
 

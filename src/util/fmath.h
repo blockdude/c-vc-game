@@ -1,13 +1,33 @@
 #ifndef FMATH_H
 #define FMATH_H
 
-#define PI 3.1415926535897932384626433832795f
+#include <math.h>
 
-float magnitude			( float x, float y );
-void normalize			( float x, float y, float *x_norm, float *y_norm );
-float clamp				( float val, float min, float max );
+#define PI_2 GLM_PI_2
+#define PI GLM_PI
+#define TAU ( 2 * PI )
 
-float min				( float a, float b );
-float max				( float a, float b );
+#define clamp( v, mn, mx ) max( mn, min( mx, v ) )
+#define max( a, b ) ( ( a ) > ( b ) ? ( a ) : ( b ) )
+#define min( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
+#define degtorad( x ) ( ( x ) * ( PI / 180.0f ) )
+#define radtodeg( x ) ( ( x ) * ( 180.0f / PI ) )
+
+static inline int fltcmp( float x, float y, float epsilon )
+{
+    return ( fabs( x - y ) <= epsilon );
+}
+
+static inline float magnitude( float x, float y )
+{
+    return sqrt( x * x + y * y );
+}
+
+static inline void normalize( float x, float y, float *x_norm, float *y_norm )
+{
+    float mag = sqrt( x * x + y * y );
+    if ( x_norm ) *x_norm = x != 0 ? x / mag : 0;
+    if ( y_norm ) *y_norm = y != 0 ? y / mag : 0;
+}
 
 #endif

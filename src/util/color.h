@@ -1,7 +1,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "../util/util.h"
+#include "types.h"
 
 struct color
 {

@@ -1,7 +1,7 @@
-#include "gfx/window.h"
-#include "gfx/render.h"
-#include "system/system.h"
-#include "state/state.h"
+#include <gfx/window.h>
+#include <gfx/render.h>
+#include <system/system.h>
+#include <state/state.h>
 
 int main( int argc, char *argv[] )
 {
@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
 		buf_pos += snprintf( buf + buf_pos, buf_size - buf_pos, "%s ", argv[ i ] );
 
 	// log arguments
-	log_info( "executed with: %s", buf );
+	log_debug( "Arguments: %s", buf );
 
 	// setup
 	system_init();

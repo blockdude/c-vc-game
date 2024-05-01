@@ -1,17 +1,21 @@
 #include "render.h"
 #include "window.h"
 
-// some sdl flags that i made global incase i wanted to do something with them
-const uint32_t g_render_flags = SDL_RENDERER_ACCELERATED;
-
 // global renderer
 struct render render;
 
 int render_init( void )
 {
+	if ( window.handle == NULL )
+	{
+		log_error( "Unable to create SDL renderer: window not initialized" );
+		return RENDER_ERROR;
+	}
+
 	log_info( "Creating SDL renderer" );
 
-    render.handle = SDL_CreateRenderer( window.handle, -1, g_render_flags );
+	const Uint32 render_flags = SDL_RENDERER_ACCELERATED;
+    render.handle = SDL_CreateRenderer( window.handle, -1, render_flags );
     if ( render.handle == NULL )
 	{
 		log_error( "Unable to create SDL renderer: %s", SDL_GetError() );
