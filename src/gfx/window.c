@@ -1,6 +1,7 @@
+#define SDL_FUNCTION_POINTER_IS_VOID_POINTER
 #include "window.h"
 #include "render.h"
-#include <SDL2/SDL_video.h>
+#include <SDL3/SDL_video.h>
 #include <stdalign.h>
 #include <system/input.h>
 #include <glad/glad.h>
@@ -113,7 +114,7 @@ int window_init( const struct window_state *state )
 
     const float default_rate = 60.0f;
     const int window_size = 700;
-    const Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
+    const Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_OPENGL;
 
 	// init variables
 	window.quit = false;
@@ -138,7 +139,7 @@ int window_init( const struct window_state *state )
 
     // create sdl2 window
     log_info( "Creating SDL window" );
-    window.handle = SDL_CreateWindow( "Raytracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_size, window_size, window_flags );
+    window.handle = SDL_CreateWindow( "Raytracer", window_size, window_size, window_flags );
     if ( !window.handle )
     {
         log_error( "Failed to initialize window. Unable to create SDL window: %s", SDL_GetError() );
@@ -161,7 +162,7 @@ int window_init( const struct window_state *state )
     if ( !gladLoadGLLoader( SDL_GL_GetProcAddress ) )
     {
         log_error( "Failed to initialize opengl" );
-        SDL_GL_DeleteContext( window.context );
+        SDL_GL_DestroyContext( window.context );
         SDL_DestroyWindow( window.handle );
         return WINDOW_ERROR;
     }
@@ -191,7 +192,7 @@ int window_loop( void )
     process_event_( init_ );
 
 	// setup game loop
-    uint64_t frame_previous = SDL_GetTicks64();
+    uint64_t frame_previous = SDL_GetTicks();
     float tick_time = 0;
 
     uint64_t tick_last = 0;
@@ -203,7 +204,7 @@ int window_loop( void )
     while ( !window.quit )
     {
         // get frame timing
-        uint64_t frame_current = SDL_GetTicks64();
+        uint64_t frame_current = SDL_GetTicks();
         uint64_t frame_delta = frame_current - frame_previous;
 
         // update fps & tps every second
@@ -246,7 +247,7 @@ int window_loop( void )
         window.frame.delta = ( float ) frame_delta / 1000.0f;
 
         // apply fps cap
-        int delay = frame_current + window.frame.target_delta - SDL_GetTicks64();
+        int delay = frame_current + window.frame.target_delta - SDL_GetTicks();
         if ( delay > 0 )
             SDL_Delay( delay );
     }
@@ -267,7 +268,7 @@ int window_quit( void )
 int window_free( void )
 {
     log_info( "Closing OpenGL context" );
-    SDL_GL_DeleteContext( window.context );
+    SDL_GL_DestroyContext( window.context );
     log_info( "Closing SDL window" );
     SDL_DestroyWindow( window.handle );
 	window.initialized = false;

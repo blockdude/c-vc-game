@@ -2,3 +2,7 @@
 	path = lib/cglm
 	url = https://github.com/recp/cglm.git
 	ignore = untracked
+[submodule "SDL"]
+	path = lib/SDL3
+	url = https://github.com/libsdl-org/SDL.git
+	ignore = untracked

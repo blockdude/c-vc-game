@@ -2,7 +2,7 @@
 #define WINDOW_H
 
 #include <util/util.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #define WINDOW_SUCCESS	 0
 #define WINDOW_ERROR	-1

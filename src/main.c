@@ -2,6 +2,7 @@
 #include <gfx/render.h>
 #include <system/system.h>
 #include <state/state.h>
+#include <SDL3/SDL_version.h>
 
 int main( int argc, char *argv[] )
 {
@@ -14,6 +15,7 @@ int main( int argc, char *argv[] )
 
 	// log arguments
 	log_debug( "Arguments: %s", buf );
+	log_debug( "SDL version: %d", SDL_GetVersion() );
 
 	// setup
 	system_init();

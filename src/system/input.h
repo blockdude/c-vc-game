@@ -2,7 +2,7 @@
 #define INPUT_H
 
 #include <stdbool.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #define INPUT_SUCCESS 0
 #define INPUT_QUIT 1

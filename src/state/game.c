@@ -1,7 +1,7 @@
 #include "game.h"
 #include "state.h"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <util/util.h>
 #include <system/input.h>
 #include <gfx/window.h>

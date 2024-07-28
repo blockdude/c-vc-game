@@ -59,6 +59,7 @@ $(shell mkdir -p $(DIRS))
 PHONY =
 CLEAN =
 LIBS  =
+SO    =
 
 # echo output
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
@@ -92,14 +93,28 @@ all: build test
 # -----------------------------
 
 ifeq ($(UNAME),Windows)
-    INCLUDE += -I$(LIB_DIR)/sdl2/include
-    LDFLAGS += -L$(LIB_DIR)/sdl2/lib
-    LDLIBS += -lmingw32 -lSDL2main -lSDL2
-    $(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(BIN_DIR))
-    $(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(TEST_BIN_DIR))
+    #INCLUDE += -I$(LIB_DIR)/sdl2/include
+    #LDFLAGS += -L$(LIB_DIR)/sdl2/lib
+    #LDLIBS += -lmingw32 -lSDL2main -lSDL2
+    #$(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(BIN_DIR))
+    #$(shell cp $(LIB_DIR)/sdl2/bin/SDL2.dll $(TEST_BIN_DIR))
 else
-    LDLIBS += -lSDL2
+    #SDLBLD = $()
 endif
+
+INCLUDE += -I$(LIB_DIR)/SDL3/include
+LDFLAGS += -L$(LIB_DIR)/SDL3/build
+LDLIBS += -l:libSDL3.so
+LIBS += $(LIB_DIR)/SDL3/build/libSDL3.so
+
+$(LIB_DIR)/SDL3/build/libSDL3.so:
+	$(RUN_CMD_AR) (cd $(LIB_DIR)/SDL3 && cmake -S . -B build && cmake --build build)
+
+CLEAN += clean_libSDL3.so
+PHONY += clean_libSDL3.so
+clean_libSDL3.so:
+	(cd $(LIB_DIR)/SDL3 && cmake --build build --target clean)
+
 
 # =============================
 
@@ -138,12 +153,12 @@ ifeq ($(UNAME),Windows)
 endif
 
 $(LIB_DIR)/cglm/libcglm.a:
-	$(RUN_CMD_AR) (cd lib/cglm && cmake . -DCGLM_STATIC=ON $(CGLMEX) && make)
+	$(RUN_CMD_AR) (cd $(LIB_DIR)/cglm && cmake . -DCGLM_STATIC=ON $(CGLMEX) && make)
 
 CLEAN += clean_libcglm.a
 PHONY += clean_libcglm.a
 clean_libcglm.a:
-	@(cd lib/cglm && make clean)
+	@(cd $(LIB_DIR)/cglm && make clean)
 
 # =============================
 
@@ -156,10 +171,10 @@ clean_libcglm.a:
 
 PHONY += test
 test: $(TEST_BIN)
-	@exec $(TEST_BIN_DIR)/test_all --enable-mixed-units
+	LD_PRELOAD=lib/SDL3/build/libSDL3.so $(TEST_BIN_DIR)/test_all --enable-mixed-units
 
 $(TEST): %: $(TEST_BIN_DIR)/%
-	@exec $(TEST_BIN_DIR)/$@ --enable-mixed-units
+	LD_PRELOAD=lib/SDL3/build/libSDL3.so $(TEST_BIN_DIR)/$@ --enable-mixed-units
 
 $(TEST_BIN): $(TEST_BIN_DIR)/%: $(TEST_OBJ_DIR)/%.o $(OBJ:$(OBJ_DIR)/main.o=) $(LIBS)
 	$(RUN_CMD_LTLINK) $(LINKER) -o $@ $^ $(LDFLAGS) $(LDLIBS)
@@ -178,10 +193,10 @@ $(TEST_OBJ): $(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.c
 
 PHONY += run
 run: all
-	@exec $(BIN)
+	LD_PRELOAD=lib/SDL3/build/libSDL3.so $(BIN)
 
 PHONY += build
-build: $(BIN)
+build: $(BIN) $(SO)
 
 $(BIN): $(OBJ) $(LIBS)
 	$(RUN_CMD_LTLINK) $(LINKER) -o $@ $^ $(LDFLAGS) $(LDLIBS)

@@ -2,7 +2,7 @@
 #define RENDER_H
 
 #include "../util/util.h"
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #define RENDER_SUCCESS	0
 #define RENDER_ERROR	-1

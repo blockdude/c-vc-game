@@ -14,8 +14,7 @@ int render_init( void )
 
 	log_info( "Creating SDL renderer" );
 
-	const Uint32 render_flags = SDL_RENDERER_ACCELERATED;
-    render.handle = SDL_CreateRenderer( window.handle, -1, render_flags );
+    render.handle = SDL_CreateRenderer( window.handle, NULL );
     if ( render.handle == NULL )
 	{
 		log_error( "Unable to create SDL renderer: %s", SDL_GetError() );
@@ -53,7 +52,7 @@ int render_present( void )
 
 int render_line( struct line line )
 {
-	return SDL_RenderDrawLineF( render.handle, line.x0, line.y0, line.x1, line.y1 );
+	return SDL_RenderLine( render.handle, line.x0, line.y0, line.x1, line.y1 );
 }
 
 int render_rectangle( struct rectangle rectangle )
@@ -65,7 +64,7 @@ int render_rectangle( struct rectangle rectangle )
 		.h = rectangle.h
 	};
 
-	return SDL_RenderDrawRectF( render.handle, &r );
+	return SDL_RenderRect( render.handle, &r );
 }
 
 int render_filled_rectangle( struct rectangle rectangle )
@@ -77,5 +76,5 @@ int render_filled_rectangle( struct rectangle rectangle )
 		.h = rectangle.h
 	};
 
-	return SDL_RenderFillRectF( render.handle, &r );
+	return SDL_RenderFillRect( render.handle, &r );
 }

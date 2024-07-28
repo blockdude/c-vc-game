@@ -129,7 +129,7 @@ int input_process_events( void )
     {
         switch ( event.type )
         {
-            case SDL_QUIT:
+            case SDL_EVENT_QUIT:
                 {
                     size_t len = dynarr_size( input.quit_cb );
                     for ( size_t i = 0; i < len; i++ )
@@ -138,56 +138,52 @@ int input_process_events( void )
                 }
                 break;
 
-            case SDL_WINDOWEVENT:
-
-                switch ( event.window.event )
+                /*
+            case SDL_EVENT_WINDOW_RESIZED:
+            case SDL_EVENT_WINDOW_SIZE_CHANGED:
                 {
-                    case SDL_WINDOWEVENT_RESIZED:
-                    case SDL_WINDOWEVENT_SIZE_CHANGED:
-                        {
-                            size_t len = dynarr_size( input.resize_cb );
-                            for ( size_t i = 0; i < len; i++ )
-                                input.resize_cb[ i ]( event.window.data1, event.window.data2 );
-                        }
-                        break;
+                    size_t len = dynarr_size( input.resize_cb );
+                    for ( size_t i = 0; i < len; i++ )
+                        input.resize_cb[ i ]( event.window.data1, event.window.data2 );
                 }
+                break;
+                */
+
+            case SDL_EVENT_KEY_DOWN:
+
+                key_down( &input.key[ event.key.scancode ] );
 
                 break;
 
-            case SDL_KEYDOWN:
+            case SDL_EVENT_KEY_UP:
 
-                key_down( &input.key[ event.key.keysym.scancode ] );
-
-                break;
-
-            case SDL_KEYUP:
-
-                key_up( &input.key[ event.key.keysym.scancode ] );
+                key_up( &input.key[ event.key.scancode ] );
 
                 break;
 
-            case SDL_MOUSEBUTTONDOWN:
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
                 key_down( &input.mouse.button[ button_from_sdl( event.button.button ) ] );
 
                 break;
 
-            case SDL_MOUSEBUTTONUP:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
 
                 key_up( &input.mouse.button[ button_from_sdl( event.button.button ) ] );
 
                 break;
 
-            case SDL_MOUSEWHEEL:
+            case SDL_EVENT_MOUSE_WHEEL:
 
                 input.mouse.wheel.x += event.wheel.x;
                 input.mouse.wheel.y += event.wheel.y;
-                input.mouse.wheel.fx += event.wheel.preciseX;
-                input.mouse.wheel.fy += event.wheel.preciseY;
+                // fix this
+                input.mouse.wheel.fx += event.wheel.x;
+                input.mouse.wheel.fy += event.wheel.y;
 
                 break;
 
-            case SDL_MOUSEMOTION:
+            case SDL_EVENT_MOUSE_MOTION:
 
                 input.mouse.pos.x = event.motion.x;
                 input.mouse.pos.y = event.motion.y;
