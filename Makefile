@@ -43,8 +43,11 @@ MAKEFLAGS = -j$(NPROC) --no-print-directory
 # BUILD & SUBMODULE DIRECTORIES
 # -----------------------------
 
-BLD_DIR = bld
-LIB_DIR = lib
+BLD_DIR  = bld
+LIB_DIR  = lib
+SDL3_DIR = $(LIB_DIR)/SDL3
+GLAD_DIR = $(LIB_DIR)/glad
+CGLM_DIR = $(LIB_DIR)/cglm
 
 # =============================
 
@@ -78,14 +81,14 @@ CXXFLAGS = -g -Wall -Wextra -std=c++17 -ggdb3 -pedantic
 LDFLAGS	 = 
 LDLIBS	 = -lm
 
-INCLUDE += -Iengine
-INCLUDE += -Ilib/SDL3/include
-INCLUDE += -Ilib/glad/include
-INCLUDE += -Ilib/cglm/include
+INCLUDE += -Ivce
+INCLUDE += -I$(SDL3_DIR)/include
+INCLUDE += -I$(GLAD_DIR)/include
+INCLUDE += -I$(CGLM_DIR)/include
 
-LDFLAGS += -Llib/SDL3/build
-LDFLAGS += -Llib/glad/obj
-LDFLAGS += -Llib/cglm
+LDFLAGS += -L$(BLD_DIR)/sdl3/bin
+LDFLAGS += -L$(BLD_DIR)/glad/bin
+LDFLAGS += -L$(BLD_DIR)/cglm/bin
 
 LDLIBS  += -l:libSDL3.so
 LDLIBS  += -l:glad.o
@@ -145,13 +148,18 @@ PHONY += build-libs
 # VC ENGINE
 # -----------------------------
 
-SRC_DIR_ENGINE = engine
+SRC_DIR_ENGINE = vce
 BIN_DIR_ENGINE = $(BLD_DIR)/$(SRC_DIR_ENGINE)/bin
 OBJ_DIR_ENGINE = $(BLD_DIR)/$(SRC_DIR_ENGINE)/obj
 DEP_DIR_ENGINE = $(BLD_DIR)/$(SRC_DIR_ENGINE)/dep
 
 TARGET_ENGINE = $(BIN_DIR_ENGINE)/libVCE.so
-SRC_ENGINE = $(wildcard $(SRC_DIR_ENGINE)/*.c) $(wildcard $(SRC_DIR_ENGINE)/**/*.c) $(wildcard $(SRC_DIR_ENGINE)/**/**/*.c) $(wildcard $(SRC_DIR_ENGINE)/**/**/**/*.c)
+
+SRC_ENGINE = $(wildcard $(SRC_DIR_ENGINE)/*.c) \
+			 $(wildcard $(SRC_DIR_ENGINE)/**/*.c) \
+			 $(wildcard $(SRC_DIR_ENGINE)/**/**/*.c) \
+			 $(wildcard $(SRC_DIR_ENGINE)/**/**/**/*.c)
+
 OBJ_ENGINE = $(SRC_ENGINE:$(SRC_DIR_ENGINE)/%.c=$(OBJ_DIR_ENGINE)/%.o)
 DEP_ENGINE = $(SRC_ENGINE:$(SRC_DIR_ENGINE)/%.c=$(DEP_DIR_ENGINE)/%.d)
 
@@ -176,13 +184,18 @@ PHONY += build-engine
 # VC GAME
 # -----------------------------
 
-SRC_DIR_GAME = game
+SRC_DIR_GAME = vcg
 BIN_DIR_GAME = $(BLD_DIR)/$(SRC_DIR_GAME)/bin
 OBJ_DIR_GAME = $(BLD_DIR)/$(SRC_DIR_GAME)/obj
 DEP_DIR_GAME = $(BLD_DIR)/$(SRC_DIR_GAME)/dep
 
 TARGET_GAME = $(BIN_DIR_GAME)/main
-SRC_GAME = $(wildcard $(SRC_DIR_GAME)/*.c) $(wildcard $(SRC_DIR_GAME)/**/*.c) $(wildcard $(SRC_DIR_GAME)/**/**/*.c) $(wildcard $(SRC_DIR_GAME)/**/**/**/*.c)
+
+SRC_GAME = $(wildcard $(SRC_DIR_GAME)/*.c) \
+		   $(wildcard $(SRC_DIR_GAME)/**/*.c) \
+		   $(wildcard $(SRC_DIR_GAME)/**/**/*.c) \
+		   $(wildcard $(SRC_DIR_GAME)/**/**/**/*.c)
+
 OBJ_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.c=$(OBJ_DIR_GAME)/%.o)
 DEP_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.c=$(DEP_DIR_GAME)/%.d)
 
