@@ -53,9 +53,6 @@ CLEAN   += (cd cglm && make clean);
 # ENTRY POINT
 # -----------------------------
 
-all: build
-	@:
-
 build:
 	@$(BLDLIBS)
 	@echo > build

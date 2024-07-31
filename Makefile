@@ -131,13 +131,8 @@ TEST     = $(TEST_SRC:$(TEST_SRC_DIR)/%.c=%)
 # ENTRY POINT
 # -----------------------------
 
+all: build
 PHONY += all
-all: build-libs build-engine build-game
-
-build-libs:
-	@cd lib; $(MAKE)
-
-PHONY += build-libs
 
 # =============================
 
@@ -163,8 +158,6 @@ SRC_ENGINE = $(wildcard $(SRC_DIR_ENGINE)/*.c) \
 OBJ_ENGINE = $(SRC_ENGINE:$(SRC_DIR_ENGINE)/%.c=$(OBJ_DIR_ENGINE)/%.o)
 DEP_ENGINE = $(SRC_ENGINE:$(SRC_DIR_ENGINE)/%.c=$(DEP_DIR_ENGINE)/%.d)
 
-build-engine: $(TARGET_ENGINE) build-libs
-
 $(TARGET_ENGINE): $(OBJ_ENGINE)
 	$(RUN_CMD_LTLINK) $(LD) -shared -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
@@ -173,7 +166,6 @@ $(OBJ_ENGINE): $(OBJ_DIR_ENGINE)/%.o: $(SRC_DIR_ENGINE)/%.c
 
 DEPS += $(DEP_ENGINE)
 DIRS += $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) $(dir $(OBJ_ENGINE)) $(dir $(DEP_ENGINE))
-PHONY += build-engine
 
 # =============================
 
@@ -199,8 +191,6 @@ SRC_GAME = $(wildcard $(SRC_DIR_GAME)/*.c) \
 OBJ_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.c=$(OBJ_DIR_GAME)/%.o)
 DEP_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.c=$(DEP_DIR_GAME)/%.d)
 
-build-game: $(TARGET_GAME) build-engine
-
 $(TARGET_GAME): $(OBJ_GAME)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) -L$(BIN_DIR_ENGINE) $(LDLIBS) -l:libVCE.so
 
@@ -209,7 +199,6 @@ $(OBJ_GAME): $(OBJ_DIR_GAME)/%.o: $(SRC_DIR_GAME)/%.c
 
 DEPS += $(DEP_GAME)
 DIRS += $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) $(dir $(OBJ_GAME)) $(dir $(DEP_GAME))
-PHONY += build-game
 
 # =============================
 
@@ -239,39 +228,20 @@ PHONY += build-game
 
 # =============================
 # -----------------------------
-# ENGINE
+# BUILD & RUN
 # -----------------------------
 
-#$(ENGINE_TARGET): $(TEST_BIN_DIR)/%: $(TEST_OBJ_DIR)/%.o $(OBJ:$(OBJ_DIR)/main.o=) $(LIBS)
-#	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-#
-#$(ENGINE_OBJ): $(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.c
-#	$(RUN_CMD_CC) $(CC) $(INCLUDE) -I$(TEST_SRC_DIR) $(CPPFLAGS) -DINSTANTIATE_MAIN $(CFLAGS) -MMD -MP -MF $(<:$(TEST_SRC_DIR)/%.c=$(TEST_DEP_DIR)/%.d) -MT $@ -o $@ -c $<
+run: build
+	@exec ./scripts/run.sh
 
+build:
+	@cd lib; $(MAKE) -s
+	@$(MAKE) -s $(TARGET_ENGINE)
+	@$(MAKE) -s $(TARGET_GAME)
+
+PHONY += build run
 
 # =============================
-
-
-
-## =============================
-## -----------------------------
-## VC GAME
-## -----------------------------
-#
-#PHONY += run
-#run: all
-#	LD_PRELOAD=lib/SDL3/build/libSDL3.so $(BIN)
-#
-#PHONY += build
-#build: $(BIN) $(SO)
-#
-#$(BIN): $(OBJ) $(LIBS)
-#	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-#
-#$(OBJ): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-#	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d) -MT $@ -o $@ -c $<
-#
-## =============================
 
 
 
@@ -283,7 +253,8 @@ PHONY += build-game
 PHONY += clean clean-all
 
 clean:
-	@rm -r $(BLD_DIR) 2> /dev/null || true
+	@rm -r $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) 2> /dev/null || true
+	@rm -r $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) 2> /dev/null || true
 
 clean-all: clean
 	@cd lib; $(MAKE) clean
