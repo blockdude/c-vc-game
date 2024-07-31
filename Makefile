@@ -86,9 +86,9 @@ INCLUDE += -I$(SDL3_DIR)/include
 INCLUDE += -I$(GLAD_DIR)/include
 INCLUDE += -I$(CGLM_DIR)/include
 
-LDFLAGS += -L$(BLD_DIR)/sdl3/bin
-LDFLAGS += -L$(BLD_DIR)/glad/bin
-LDFLAGS += -L$(BLD_DIR)/cglm/bin
+LDFLAGS += -L$(BLD_DIR)/bin/sdl3
+LDFLAGS += -L$(BLD_DIR)/bin/glad
+LDFLAGS += -L$(BLD_DIR)/bin/cglm
 
 LDLIBS  += -l:libSDL3.so
 LDLIBS  += -l:glad.o
@@ -112,20 +112,6 @@ DIRS  = $(BLD_DIR)
 
 
 
-TEST_BLD_DIR = $(BLD_DIR)/test
-TEST_SRC_DIR = test
-TEST_BIN_DIR = $(TEST_BLD_DIR)/bin
-TEST_OBJ_DIR = $(TEST_BLD_DIR)/obj
-TEST_DEP_DIR = $(TEST_BLD_DIR)/dep
-
-TEST_SRC = $(wildcard $(TEST_SRC_DIR)/*.c)
-TEST_OBJ = $(TEST_SRC:$(TEST_SRC_DIR)/%.c=$(TEST_OBJ_DIR)/%.o)
-TEST_DEP = $(TEST_SRC:$(TEST_SRC_DIR)/%.c=$(TEST_DEP_DIR)/%.d)
-TEST_BIN = $(TEST_SRC:$(TEST_SRC_DIR)/%.c=$(TEST_BIN_DIR)/%)
-TEST     = $(TEST_SRC:$(TEST_SRC_DIR)/%.c=%)
-
-
-
 # =============================
 # -----------------------------
 # ENTRY POINT
@@ -144,9 +130,9 @@ PHONY += all
 # -----------------------------
 
 SRC_DIR_ENGINE = vce
-BIN_DIR_ENGINE = $(BLD_DIR)/$(SRC_DIR_ENGINE)/bin
-OBJ_DIR_ENGINE = $(BLD_DIR)/$(SRC_DIR_ENGINE)/obj
-DEP_DIR_ENGINE = $(BLD_DIR)/$(SRC_DIR_ENGINE)/dep
+BIN_DIR_ENGINE = $(BLD_DIR)/bin/$(SRC_DIR_ENGINE)
+OBJ_DIR_ENGINE = $(BLD_DIR)/obj/$(SRC_DIR_ENGINE)
+DEP_DIR_ENGINE = $(BLD_DIR)/dep/$(SRC_DIR_ENGINE)
 
 TARGET_ENGINE = $(BIN_DIR_ENGINE)/libVCE.so
 
@@ -177,9 +163,9 @@ DIRS += $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) $(dir $(OBJ_ENGINE
 # -----------------------------
 
 SRC_DIR_GAME = vcg
-BIN_DIR_GAME = $(BLD_DIR)/$(SRC_DIR_GAME)/bin
-OBJ_DIR_GAME = $(BLD_DIR)/$(SRC_DIR_GAME)/obj
-DEP_DIR_GAME = $(BLD_DIR)/$(SRC_DIR_GAME)/dep
+BIN_DIR_GAME = $(BLD_DIR)/bin/$(SRC_DIR_GAME)
+OBJ_DIR_GAME = $(BLD_DIR)/obj/$(SRC_DIR_GAME)
+DEP_DIR_GAME = $(BLD_DIR)/dep/$(SRC_DIR_GAME)
 
 TARGET_GAME = $(BIN_DIR_GAME)/main
 
@@ -195,7 +181,7 @@ $(TARGET_GAME): $(OBJ_GAME)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) -L$(BIN_DIR_ENGINE) $(LDLIBS) -l:libVCE.so
 
 $(OBJ_GAME): $(OBJ_DIR_GAME)/%.o: $(SRC_DIR_GAME)/%.c
-	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_GAME)/%.c=$(DEP_DIR_GAME)/%.d) -MT $@ -o $@ -c $<
+	$(RUN_CMD_CC) $(CC) $(INCLUDE) -I$(SRC_DIR_GAME) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_GAME)/%.c=$(DEP_DIR_GAME)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_GAME)
 DIRS += $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) $(dir $(OBJ_GAME)) $(dir $(DEP_GAME))
@@ -206,21 +192,28 @@ DIRS += $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) $(dir $(OBJ_GAME)) $(dir
 
 # =============================
 # -----------------------------
-# UNIT TESTS
+# UNIT TEST VCE
 # -----------------------------
 
-#PHONY += test
-#test: $(TEST_BIN)
-#	@LD_PRELOAD=lib/SDL3/build/libSDL3.so $(TEST_BIN_DIR)/test_all --enable-mixed-units
-#
-#$(TEST): %: $(TEST_BIN_DIR)/%
-#	@LD_PRELOAD=lib/SDL3/build/libSDL3.so $(TEST_BIN_DIR)/$@ --enable-mixed-units
-#
-#$(TEST_BIN): $(TEST_BIN_DIR)/%: $(TEST_OBJ_DIR)/%.o $(OBJ:$(OBJ_DIR)/main.o=) $(LIBS)
-#	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-#
-#$(TEST_OBJ): $(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.c
-#	$(RUN_CMD_CC) $(CC) $(INCLUDE) -I$(TEST_SRC_DIR) $(CPPFLAGS) -DINSTANTIATE_MAIN $(CFLAGS) -MMD -MP -MF $(<:$(TEST_SRC_DIR)/%.c=$(TEST_DEP_DIR)/%.d) -MT $@ -o $@ -c $<
+SRC_DIR_TEST = test
+BIN_DIR_TEST = $(BLD_DIR)/bin/$(SRC_DIR_TEST)
+OBJ_DIR_TEST = $(BLD_DIR)/obj/$(SRC_DIR_TEST)
+DEP_DIR_TEST = $(BLD_DIR)/dep/$(SRC_DIR_TEST)
+
+TARGET_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=$(BIN_DIR_TEST)/%)
+
+SRC_TEST = $(wildcard $(SRC_DIR_TEST)/*.c)
+OBJ_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=$(OBJ_DIR_TEST)/%.o)
+DEP_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=$(DEP_DIR_TEST)/%.d)
+
+$(TARGET_TEST): $(BIN_DIR_TEST)/%: $(OBJ_DIR_TEST)/%.o
+	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) -L$(BIN_DIR_ENGINE) $(LDLIBS) -l:libVCE.so
+
+$(OBJ_TEST): $(OBJ_DIR_TEST)/%.o: $(SRC_DIR_TEST)/%.c
+	$(RUN_CMD_CC) $(CC) $(INCLUDE) -I$(SRC_DIR_TEST) $(CPPFLAGS) -DINSTANTIATE_MAIN $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_TEST)/%.c=$(DEP_DIR_TEST)/%.d) -MT $@ -o $@ -c $<
+
+DEPS += $(DEP_TEST)
+DIRS += $(BIN_DIR_TEST) $(OBJ_DIR_TEST) $(DEP_DIR_TEST)
 
 # =============================
 
@@ -228,18 +221,25 @@ DIRS += $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) $(dir $(OBJ_GAME)) $(dir
 
 # =============================
 # -----------------------------
-# BUILD & RUN
+# BUILD & RUN & TEST
 # -----------------------------
 
 run: build
-	@exec ./scripts/run.sh
+	@./scripts/run.sh bld/bin/vcg/main
 
 build:
 	@cd lib; $(MAKE) -s
 	@$(MAKE) -s $(TARGET_ENGINE)
 	@$(MAKE) -s $(TARGET_GAME)
 
-PHONY += build run
+test: $(TARGET_TEST)
+	@./scripts/run.sh "$(BIN_DIR_TEST)/test_all --enable-mixed-units"
+
+TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=%)
+$(TEST): %: $(BIN_DIR_TEST)/%
+	@./scripts/run.sh "$(BIN_DIR_TEST)/$@ --enable-mixed-units"
+
+PHONY += build run test
 
 # =============================
 
@@ -255,9 +255,11 @@ PHONY += clean clean-all
 clean:
 	@rm -r $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) 2> /dev/null || true
 	@rm -r $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) 2> /dev/null || true
+	@rm -r $(TEST_BIN_DIR) $(TEST_OBJ_DIR) $(TEST_DEP_DIR) 2> /dev/null || true
 
-clean-all: clean
+clean-all:
 	@cd lib; $(MAKE) clean
+	@rm -r $(BLD_DIR) 2> /dev/null || true
 
 # =============================
 
@@ -269,7 +271,7 @@ clean-all: clean
 # -----------------------------
 
 $(shell mkdir -p $(DIRS))
--include $(TEST_DEP) $(DEPS)
+-include $(DEPS)
 .PHONY: $(PHONY)
 
 # =============================
