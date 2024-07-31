@@ -5,11 +5,6 @@ obj
 tool
 .vim
 
-# ignore select shell script
-remote-make.sh
-run.sh
-run
-
 # ignore valgrind massif readouts
 massif.out.*
 
