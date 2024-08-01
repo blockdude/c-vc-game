@@ -1,6 +1,10 @@
 #ifndef DYNARR_H
 #define DYNARR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * A header only, C++ style dynamic array implementation.
  * Heavly influenced by eteran's c-vector.
@@ -439,5 +443,9 @@ static inline void *dynarr_increment_size_( void *darr, size_t stride, size_t n 
         }                                                           \
     }                                                               \
     while ( 0 )
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

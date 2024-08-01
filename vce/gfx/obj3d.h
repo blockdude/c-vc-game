@@ -1,6 +1,10 @@
 #ifndef OBJ3D_H
 #define OBJ3D_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * WaveFront object file loader.
  */
@@ -64,5 +68,9 @@ void obj3d_free( struct obj3d *obj );
 
 int  obj3d_square( struct obj3d *obj );
 int  obj3d_sphere( struct obj3d *obj );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

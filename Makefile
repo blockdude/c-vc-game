@@ -77,7 +77,7 @@ NM    = nm
 INCLUDE	 =
 CPPFLAGS = -DLOG_USE_COLOR
 CFLAGS	 = -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
-CXXFLAGS = -g -Wall -Wextra -std=c++17 -ggdb3 -pedantic
+CXXFLAGS = -g -Wall -Wextra -std=c++20 -ggdb3 -pedantic
 LDFLAGS	 = 
 LDLIBS	 = -lm
 
@@ -231,8 +231,9 @@ build:
 	@cd lib; $(MAKE) -s
 	@$(MAKE) -s $(TARGET_ENGINE)
 	@$(MAKE) -s $(TARGET_GAME)
+	@$(MAKE) -s $(TARGET_TEST)
 
-test: $(TARGET_TEST)
+test: build
 	@./scripts/run.sh "$(BIN_DIR_TEST)/test_all --enable-mixed-units"
 
 TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=%)
@@ -255,7 +256,7 @@ PHONY += clean clean-all
 clean:
 	@rm -r $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) 2> /dev/null || true
 	@rm -r $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) 2> /dev/null || true
-	@rm -r $(TEST_BIN_DIR) $(TEST_OBJ_DIR) $(TEST_DEP_DIR) 2> /dev/null || true
+	@rm -r $(BIN_DIR_TEST) $(OBJ_DIR_TEST) $(DEP_DIR_TEST) 2> /dev/null || true
 
 clean-all:
 	@cd lib; $(MAKE) clean
