@@ -59,9 +59,9 @@ CGLM_DIR = $(LIB_DIR)/cglm
 # -----------------------------
 
 SHELL = /bin/sh
-CXX   = g++
-CC    = gcc
-LD    = gcc
+CXX   = clang++
+CC    = clang
+LD    = clang
 AR    = ar
 NM    = nm
 
@@ -162,6 +162,8 @@ DIRS += $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) $(dir $(OBJ_ENGINE
 # VC GAME
 # -----------------------------
 
+CXX_EXT = cc
+
 SRC_DIR_GAME = vcg
 BIN_DIR_GAME = $(BLD_DIR)/bin/$(SRC_DIR_GAME)
 OBJ_DIR_GAME = $(BLD_DIR)/obj/$(SRC_DIR_GAME)
@@ -169,19 +171,19 @@ DEP_DIR_GAME = $(BLD_DIR)/dep/$(SRC_DIR_GAME)
 
 TARGET_GAME = $(BIN_DIR_GAME)/main
 
-SRC_GAME = $(wildcard $(SRC_DIR_GAME)/*.c) \
-		   $(wildcard $(SRC_DIR_GAME)/**/*.c) \
-		   $(wildcard $(SRC_DIR_GAME)/**/**/*.c) \
-		   $(wildcard $(SRC_DIR_GAME)/**/**/**/*.c)
+SRC_GAME = $(wildcard $(SRC_DIR_GAME)/*.$(CXX_EXT)) \
+		   $(wildcard $(SRC_DIR_GAME)/**/*.$(CXX_EXT)) \
+		   $(wildcard $(SRC_DIR_GAME)/**/**/*.$(CXX_EXT)) \
+		   $(wildcard $(SRC_DIR_GAME)/**/**/**/*.$(CXX_EXT)) \
 
-OBJ_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.c=$(OBJ_DIR_GAME)/%.o)
-DEP_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.c=$(DEP_DIR_GAME)/%.d)
+OBJ_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.$(CXX_EXT)=$(OBJ_DIR_GAME)/%.o)
+DEP_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.$(CXX_EXT)=$(DEP_DIR_GAME)/%.d)
 
 $(TARGET_GAME): $(OBJ_GAME)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ -lstdc++ $(LDFLAGS) -L$(BIN_DIR_ENGINE) $(LDLIBS) -l:libVCE.so
 
-$(OBJ_GAME): $(OBJ_DIR_GAME)/%.o: $(SRC_DIR_GAME)/%.c
-	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) -I$(SRC_DIR_GAME) $(CPPFLAGS) -DCGLM_USE_ANONYMOUS_STRUCT=0 $(CXXFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_GAME)/%.c=$(DEP_DIR_GAME)/%.d) -MT $@ -o $@ -c $<
+$(OBJ_GAME): $(OBJ_DIR_GAME)/%.o: $(SRC_DIR_GAME)/%.$(CXX_EXT)
+	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) -I$(SRC_DIR_GAME) $(CPPFLAGS) -DCGLM_USE_ANONYMOUS_STRUCT=0 $(CXXFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_GAME)/%.$(CXX_EXT)=$(DEP_DIR_GAME)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_GAME)
 DIRS += $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) $(dir $(OBJ_GAME)) $(dir $(DEP_GAME))

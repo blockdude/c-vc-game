@@ -4,7 +4,6 @@ extern "C" {
 #include <system/system.h>
 #include <state/state.h>
 #include <SDL3/SDL_version.h>
-#include <gfx/obj3d.h>
 }
 
 int main( int argc, char *argv[] )
