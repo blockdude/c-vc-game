@@ -1,6 +1,5 @@
 #include "input.h"
-#include "../util/util.h"
-#include <data/dynarr.h>
+#include <util/util.h>
 
 struct key_state
 {
@@ -22,13 +21,9 @@ struct mouse_state
     struct key_state button[ INPUT_MB_COUNT ];
 
     struct {
-        // integer wheel delta
-        int x;
-        int y;
-
-        // float wheel delta
-        float fx;
-        float fy;
+        // mouse wheel delta
+        float x;
+        float y;
     } wheel;
 
     struct {
@@ -105,8 +100,6 @@ static void input_reset( void )
     input.mouse.moved = false;
     input.mouse.wheel.x = 0;
     input.mouse.wheel.y = 0;
-    input.mouse.wheel.fx = 0;
-    input.mouse.wheel.fy = 0;
     input.mouse.pos.dx = 0;
     input.mouse.pos.dy = 0;
 }
@@ -138,16 +131,13 @@ int input_process_events( void )
                 }
                 break;
 
-                /*
             case SDL_EVENT_WINDOW_RESIZED:
-            case SDL_EVENT_WINDOW_SIZE_CHANGED:
                 {
                     size_t len = dynarr_size( input.resize_cb );
                     for ( size_t i = 0; i < len; i++ )
                         input.resize_cb[ i ]( event.window.data1, event.window.data2 );
                 }
                 break;
-                */
 
             case SDL_EVENT_KEY_DOWN:
 
@@ -177,9 +167,6 @@ int input_process_events( void )
 
                 input.mouse.wheel.x += event.wheel.x;
                 input.mouse.wheel.y += event.wheel.y;
-                // fix this
-                input.mouse.wheel.fx += event.wheel.x;
-                input.mouse.wheel.fy += event.wheel.y;
 
                 break;
 
@@ -262,14 +249,8 @@ void input_mouse_delta( int *x, int *y )
     if ( y ) *y = input.mouse.pos.dy;
 }
 
-void input_mouse_scroll( int *x, int *y )
+void input_mouse_scroll( float *x, float *y )
 {
     if ( x ) *x = input.mouse.wheel.x;
     if ( y ) *y = input.mouse.wheel.y;
-}
-
-void input_mouse_fscroll( float *x, float *y )
-{
-    if ( x ) *x = input.mouse.wheel.fx;
-    if ( y ) *y = input.mouse.wheel.fy;
 }

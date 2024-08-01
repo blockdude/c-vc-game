@@ -4,7 +4,7 @@
 #include <util/log.h>
 #include <util/types.h>
 #include <util/fmath.h>
-#include <data/dynarr.h>
+#include <util/dynarr.h>
 
 #include <math.h>
 #include <stdlib.h>

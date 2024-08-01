@@ -1,5 +1,5 @@
 #include "utest.h"
-#include <data/dynarr.h>
+#include <util/dynarr.h>
 
 /*
  * Testing dynarr_init and dynarr_free. Should assign our dynarr with an address

@@ -14,5 +14,6 @@
 #include "color.h"
 #include "shape.h"
 #include "log.h"
+#include "dynarr.h"
 
 #endif
