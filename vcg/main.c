@@ -1,13 +1,16 @@
+extern "C" {
 #include <gfx/window.h>
 #include <gfx/render.h>
 #include <system/system.h>
 #include <state/state.h>
 #include <SDL3/SDL_version.h>
+#include <gfx/obj3d.h>
+}
 
 int main( int argc, char *argv[] )
 {
 	// store arguments in a buffer
-	int buf_size = 256;
+	const int buf_size = 256;
 	char buf[ buf_size ];
 	int buf_pos = 0;
 	for ( int i = 0; i < argc; i++ )
