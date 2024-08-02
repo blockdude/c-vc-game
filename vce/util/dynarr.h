@@ -147,9 +147,12 @@ static inline void *dynarr_alloc_( size_t stride, size_t n )
     if ( vbase == NULL )
         return NULL;
 
-    struct metadata_ *md = CAST_TO_META_( vbase );
-    md->size = 0;
-    md->capacity = n;
+    struct metadata_ tmp = {
+        .size = 0,
+        .capacity = n
+    };
+
+    *CAST_TO_META_( vbase ) = tmp;
 
     return META_TO_DARR( vbase );
 }
@@ -371,26 +374,26 @@ static inline void *dynarr_increment_size_( void *darr, size_t stride, size_t n 
 #define dynarr_insert( darr, i, val ) \
     do                                                              \
     {                                                               \
-        size_t vsize = dynarr_size( darr );                         \
-        size_t vcap = dynarr_capacity( darr );                      \
-        if ( vcap <= vsize )                                        \
+        size_t size = dynarr_size( darr );                          \
+        size_t cap = dynarr_capacity( darr );                       \
+        if ( cap <= size )                                          \
         {                                                           \
             ( darr ) = dynarr_realloc_(                             \
                 ( darr ),                                           \
                 sizeof( *( darr ) ),                                \
-                dynarr_compute_growth_( vcap )                      \
+                dynarr_compute_growth_( cap )                       \
             );                                                      \
         }                                                           \
-        if ( ( i ) < vsize )                                        \
+        if ( ( i ) < size )                                         \
         {                                                           \
             dynarr_memmove_(                                        \
                 ( darr ) + ( i ) + 1,                               \
                 ( darr ) + ( i ),                                   \
-                ( vsize - ( i ) ) * sizeof( *( darr ) )             \
+                ( size - ( i ) ) * sizeof( *( darr ) )              \
             );                                                      \
         }                                                           \
         ( darr )[ ( i ) ] = ( val );                                \
-        dynarr_set_size_( ( darr ), vsize + 1 );                    \
+        dynarr_set_size_( ( darr ), size + 1 );                     \
     }                                                               \
     while ( 0 )
 
