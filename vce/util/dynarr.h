@@ -147,11 +147,9 @@ static inline void *dynarr_alloc_( size_t stride, size_t n )
     if ( vbase == NULL )
         return NULL;
 
-    ( *CAST_TO_META_( vbase ) ) =
-    ( struct metadata_ ) {
-        .size     = 0,
-        .capacity = n
-    };
+    struct metadata_ *md = CAST_TO_META_( vbase );
+    md->size = 0;
+    md->capacity = n;
 
     return META_TO_DARR( vbase );
 }

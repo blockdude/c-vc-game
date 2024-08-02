@@ -22,7 +22,15 @@ struct camera
 	float zfar;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void camera_init( struct camera *self, float fov );
 void camera_update( struct camera *self );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

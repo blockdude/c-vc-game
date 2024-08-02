@@ -1,10 +1,6 @@
 #ifndef OBJ3D_H
 #define OBJ3D_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
  * WaveFront object file loader.
  */
@@ -62,6 +58,10 @@ struct obj3d
 	vec3s max;
 	vec3s min;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int  obj3d_load( struct obj3d *obj, const char *file );
 void obj3d_free( struct obj3d *obj );

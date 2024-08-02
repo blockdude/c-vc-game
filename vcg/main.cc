@@ -1,10 +1,8 @@
-extern "C" {
 #include <gfx/window.h>
 #include <gfx/render.h>
 #include <system/system.h>
 #include <state/state.h>
 #include <SDL3/SDL_version.h>
-}
 
 int main( int argc, char *argv[] )
 {
@@ -21,7 +19,7 @@ int main( int argc, char *argv[] )
 
 	// setup
 	system_init();
-	window_init( &state.game );
+	window_init( NULL );
 	render_init();
 
 	// loop

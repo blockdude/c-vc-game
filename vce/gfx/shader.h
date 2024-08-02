@@ -4,16 +4,22 @@
 #include <glad/glad.h>
 #include <cglm/struct.h>
 
-struct VertexAttr {
+struct VertexAttr
+{
 	GLuint index;
 	const GLchar *name;
 };
 
-struct shader {
+struct shader
+{
 	GLuint handle;
 	GLuint vs_handle;
 	GLuint fs_handle;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int  shader_fbuild( struct shader *self, const char *vspath, const char *fspath );
 int  shader_tbuild( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen );
@@ -27,5 +33,9 @@ void shader_uniform_vec3( struct shader self, char *name, vec3s v );
 void shader_uniform_vec4( struct shader self, char *name, vec4s v );
 void shader_uniform_int( struct shader self, char *name, int v );
 void shader_uniform_uint( struct shader self, char *name, unsigned int v );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

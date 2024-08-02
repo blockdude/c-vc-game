@@ -67,6 +67,10 @@ struct window
 	float aspect;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // global window context (defined in window.c)
 extern struct window window;
 
@@ -88,5 +92,9 @@ int window_toggle_relative_mouse( void );
 int window_get_size( int *w, int *h );
 int window_get_fps( void );
 int window_get_tps( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

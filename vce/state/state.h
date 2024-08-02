@@ -2,7 +2,6 @@
 #define STATE_H
 
 #include "../gfx/window.h"
-#include "../world/world.h"
 
 #define DEFAULT_FRAME_RATE			60
 #define DEFAULT_TICK_RATE			60
@@ -12,10 +11,13 @@
 
 struct state
 {
-	struct world world;
 	struct window_state game;
 	struct window_state menu;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern struct state state;
 
@@ -76,5 +78,9 @@ struct state {
 	struct timing1 tick;
 };
 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

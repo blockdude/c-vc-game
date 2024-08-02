@@ -9,10 +9,7 @@
 #include <math.h>
 #include <assert.h>
 
-#include "types.h"
 #include "fmath.h"
-#include "color.h"
-#include "shape.h"
 #include "log.h"
 #include "dynarr.h"
 

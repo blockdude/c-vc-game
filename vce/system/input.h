@@ -98,6 +98,10 @@ enum input_button
 typedef void ( *input_resize_callback_fn )( int w, int h );
 typedef void ( *input_quit_callback_fn )( void );
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // input stuff
 int input_init( void );
 int input_free( void );
@@ -122,5 +126,9 @@ bool input_mouse_moved( void );
 void input_mouse_pos( int *x, int *y );
 void input_mouse_delta( int *x, int *y );
 void input_mouse_scroll( float *x, float *y );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

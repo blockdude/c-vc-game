@@ -1,6 +1,10 @@
 #ifndef FMATH_H
 #define FMATH_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <math.h>
 
 #define PI_2 GLM_PI_2
@@ -29,5 +33,9 @@ static inline void normalize( float x, float y, float *x_norm, float *y_norm )
     if ( x_norm ) *x_norm = x != 0 ? x / mag : 0;
     if ( y_norm ) *y_norm = y != 0 ? y / mag : 0;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

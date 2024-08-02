@@ -43,11 +43,11 @@ MAKEFLAGS = -j$(NPROC) --no-print-directory
 # BUILD & SUBMODULE DIRECTORIES
 # -----------------------------
 
-BLD_DIR  = bld
-LIB_DIR  = lib
-SDL3_DIR = $(LIB_DIR)/SDL3
-GLAD_DIR = $(LIB_DIR)/glad
-CGLM_DIR = $(LIB_DIR)/cglm
+BLD_PATH  = bld
+LIB_PATH  = lib
+SDL3_PATH = $(LIB_PATH)/SDL3
+GLAD_PATH = $(LIB_PATH)/glad
+CGLM_PATH = $(LIB_PATH)/cglm
 
 # =============================
 
@@ -82,13 +82,13 @@ LDFLAGS	 =
 LDLIBS	 = -lm
 
 INCLUDE += -Ivce
-INCLUDE += -I$(SDL3_DIR)/include
-INCLUDE += -I$(GLAD_DIR)/include
-INCLUDE += -I$(CGLM_DIR)/include
+INCLUDE += -I$(SDL3_PATH)/include
+INCLUDE += -I$(GLAD_PATH)/include
+INCLUDE += -I$(CGLM_PATH)/include
 
-LDFLAGS += -L$(BLD_DIR)/bin/sdl3
-LDFLAGS += -L$(BLD_DIR)/bin/glad
-LDFLAGS += -L$(BLD_DIR)/bin/cglm
+LDFLAGS += -L$(BLD_PATH)/bin/sdl3
+LDFLAGS += -L$(BLD_PATH)/bin/glad
+LDFLAGS += -L$(BLD_PATH)/bin/cglm
 
 LDLIBS  += -l:libSDL3.so
 LDLIBS  += -l:glad.o
@@ -106,7 +106,7 @@ LDLIBS  += -l:libcglm.a
 PHONY =
 CLEAN =
 DEPS  =
-DIRS  = $(BLD_DIR)
+DIRS  = $(BLD_PATH)
 
 # =============================
 
@@ -129,29 +129,29 @@ PHONY += all
 # VC ENGINE
 # -----------------------------
 
-SRC_DIR_ENGINE = vce
-BIN_DIR_ENGINE = $(BLD_DIR)/bin/$(SRC_DIR_ENGINE)
-OBJ_DIR_ENGINE = $(BLD_DIR)/obj/$(SRC_DIR_ENGINE)
-DEP_DIR_ENGINE = $(BLD_DIR)/dep/$(SRC_DIR_ENGINE)
+SRC_PATH_ENGINE = vce
+BIN_PATH_ENGINE = $(BLD_PATH)/bin/$(SRC_PATH_ENGINE)
+OBJ_PATH_ENGINE = $(BLD_PATH)/obj/$(SRC_PATH_ENGINE)
+DEP_PATH_ENGINE = $(BLD_PATH)/dep/$(SRC_PATH_ENGINE)
 
-TARGET_ENGINE = $(BIN_DIR_ENGINE)/libVCE.so
+TARGET_ENGINE = $(BIN_PATH_ENGINE)/libVCE.so
 
-SRC_ENGINE = $(wildcard $(SRC_DIR_ENGINE)/*.c) \
-			 $(wildcard $(SRC_DIR_ENGINE)/**/*.c) \
-			 $(wildcard $(SRC_DIR_ENGINE)/**/**/*.c) \
-			 $(wildcard $(SRC_DIR_ENGINE)/**/**/**/*.c)
+SRC_ENGINE = $(wildcard $(SRC_PATH_ENGINE)/*.c) \
+			 $(wildcard $(SRC_PATH_ENGINE)/**/*.c) \
+			 $(wildcard $(SRC_PATH_ENGINE)/**/**/*.c) \
+			 $(wildcard $(SRC_PATH_ENGINE)/**/**/**/*.c)
 
-OBJ_ENGINE = $(SRC_ENGINE:$(SRC_DIR_ENGINE)/%.c=$(OBJ_DIR_ENGINE)/%.o)
-DEP_ENGINE = $(SRC_ENGINE:$(SRC_DIR_ENGINE)/%.c=$(DEP_DIR_ENGINE)/%.d)
+OBJ_ENGINE = $(SRC_ENGINE:$(SRC_PATH_ENGINE)/%.c=$(OBJ_PATH_ENGINE)/%.o)
+DEP_ENGINE = $(SRC_ENGINE:$(SRC_PATH_ENGINE)/%.c=$(DEP_PATH_ENGINE)/%.d)
 
 $(TARGET_ENGINE): $(OBJ_ENGINE)
 	$(RUN_CMD_LTLINK) $(LD) -shared -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-$(OBJ_ENGINE): $(OBJ_DIR_ENGINE)/%.o: $(SRC_DIR_ENGINE)/%.c
-	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) -fpic $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_ENGINE)/%.c=$(DEP_DIR_ENGINE)/%.d) -MT $@ -o $@ -c $<
+$(OBJ_ENGINE): $(OBJ_PATH_ENGINE)/%.o: $(SRC_PATH_ENGINE)/%.c
+	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) -fpic $(CFLAGS) -MMD -MP -MF $(<:$(SRC_PATH_ENGINE)/%.c=$(DEP_PATH_ENGINE)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_ENGINE)
-DIRS += $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) $(dir $(OBJ_ENGINE)) $(dir $(DEP_ENGINE))
+DIRS += $(BIN_PATH_ENGINE) $(OBJ_PATH_ENGINE) $(DEP_PATH_ENGINE) $(dir $(OBJ_ENGINE)) $(dir $(DEP_ENGINE))
 
 # =============================
 
@@ -164,29 +164,29 @@ DIRS += $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) $(dir $(OBJ_ENGINE
 
 CXX_EXT = cc
 
-SRC_DIR_GAME = vcg
-BIN_DIR_GAME = $(BLD_DIR)/bin/$(SRC_DIR_GAME)
-OBJ_DIR_GAME = $(BLD_DIR)/obj/$(SRC_DIR_GAME)
-DEP_DIR_GAME = $(BLD_DIR)/dep/$(SRC_DIR_GAME)
+SRC_PATH_GAME = vcg
+BIN_PATH_GAME = $(BLD_PATH)/bin/$(SRC_PATH_GAME)
+OBJ_PATH_GAME = $(BLD_PATH)/obj/$(SRC_PATH_GAME)
+DEP_PATH_GAME = $(BLD_PATH)/dep/$(SRC_PATH_GAME)
 
-TARGET_GAME = $(BIN_DIR_GAME)/main
+TARGET_GAME = $(BIN_PATH_GAME)/main
 
-SRC_GAME = $(wildcard $(SRC_DIR_GAME)/*.$(CXX_EXT)) \
-		   $(wildcard $(SRC_DIR_GAME)/**/*.$(CXX_EXT)) \
-		   $(wildcard $(SRC_DIR_GAME)/**/**/*.$(CXX_EXT)) \
-		   $(wildcard $(SRC_DIR_GAME)/**/**/**/*.$(CXX_EXT)) \
+SRC_GAME = $(wildcard $(SRC_PATH_GAME)/*.$(CXX_EXT)) \
+		   $(wildcard $(SRC_PATH_GAME)/**/*.$(CXX_EXT)) \
+		   $(wildcard $(SRC_PATH_GAME)/**/**/*.$(CXX_EXT)) \
+		   $(wildcard $(SRC_PATH_GAME)/**/**/**/*.$(CXX_EXT)) \
 
-OBJ_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.$(CXX_EXT)=$(OBJ_DIR_GAME)/%.o)
-DEP_GAME = $(SRC_GAME:$(SRC_DIR_GAME)/%.$(CXX_EXT)=$(DEP_DIR_GAME)/%.d)
+OBJ_GAME = $(SRC_GAME:$(SRC_PATH_GAME)/%.$(CXX_EXT)=$(OBJ_PATH_GAME)/%.o)
+DEP_GAME = $(SRC_GAME:$(SRC_PATH_GAME)/%.$(CXX_EXT)=$(DEP_PATH_GAME)/%.d)
 
 $(TARGET_GAME): $(OBJ_GAME)
-	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ -lstdc++ $(LDFLAGS) -L$(BIN_DIR_ENGINE) $(LDLIBS) -l:libVCE.so
+	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ -lstdc++ $(LDFLAGS) -L$(BIN_PATH_ENGINE) $(LDLIBS) -l:libVCE.so
 
-$(OBJ_GAME): $(OBJ_DIR_GAME)/%.o: $(SRC_DIR_GAME)/%.$(CXX_EXT)
-	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) -I$(SRC_DIR_GAME) $(CPPFLAGS) -DCGLM_USE_ANONYMOUS_STRUCT=0 $(CXXFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_GAME)/%.$(CXX_EXT)=$(DEP_DIR_GAME)/%.d) -MT $@ -o $@ -c $<
+$(OBJ_GAME): $(OBJ_PATH_GAME)/%.o: $(SRC_PATH_GAME)/%.$(CXX_EXT)
+	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) -I$(SRC_PATH_GAME) $(CPPFLAGS) -DCGLM_USE_ANONYMOUS_STRUCT=0 $(CXXFLAGS) -MMD -MP -MF $(<:$(SRC_PATH_GAME)/%.$(CXX_EXT)=$(DEP_PATH_GAME)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_GAME)
-DIRS += $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) $(dir $(OBJ_GAME)) $(dir $(DEP_GAME))
+DIRS += $(BIN_PATH_GAME) $(OBJ_PATH_GAME) $(DEP_PATH_GAME) $(dir $(OBJ_GAME)) $(dir $(DEP_GAME))
 
 # =============================
 
@@ -197,25 +197,25 @@ DIRS += $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) $(dir $(OBJ_GAME)) $(dir
 # UNIT TEST VCE
 # -----------------------------
 
-SRC_DIR_TEST = test
-BIN_DIR_TEST = $(BLD_DIR)/bin/$(SRC_DIR_TEST)
-OBJ_DIR_TEST = $(BLD_DIR)/obj/$(SRC_DIR_TEST)
-DEP_DIR_TEST = $(BLD_DIR)/dep/$(SRC_DIR_TEST)
+SRC_PATH_TEST = test
+BIN_PATH_TEST = $(BLD_PATH)/bin/$(SRC_PATH_TEST)
+OBJ_PATH_TEST = $(BLD_PATH)/obj/$(SRC_PATH_TEST)
+DEP_PATH_TEST = $(BLD_PATH)/dep/$(SRC_PATH_TEST)
 
-TARGET_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=$(BIN_DIR_TEST)/%)
+TARGET_TEST = $(SRC_TEST:$(SRC_PATH_TEST)/%.c=$(BIN_PATH_TEST)/%)
 
-SRC_TEST = $(wildcard $(SRC_DIR_TEST)/*.c)
-OBJ_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=$(OBJ_DIR_TEST)/%.o)
-DEP_TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=$(DEP_DIR_TEST)/%.d)
+SRC_TEST = $(wildcard $(SRC_PATH_TEST)/*.c)
+OBJ_TEST = $(SRC_TEST:$(SRC_PATH_TEST)/%.c=$(OBJ_PATH_TEST)/%.o)
+DEP_TEST = $(SRC_TEST:$(SRC_PATH_TEST)/%.c=$(DEP_PATH_TEST)/%.d)
 
-$(TARGET_TEST): $(BIN_DIR_TEST)/%: $(OBJ_DIR_TEST)/%.o
-	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) -L$(BIN_DIR_ENGINE) $(LDLIBS) -l:libVCE.so
+$(TARGET_TEST): $(BIN_PATH_TEST)/%: $(OBJ_PATH_TEST)/%.o
+	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) -L$(BIN_PATH_ENGINE) $(LDLIBS) -l:libVCE.so
 
-$(OBJ_TEST): $(OBJ_DIR_TEST)/%.o: $(SRC_DIR_TEST)/%.c
-	$(RUN_CMD_CC) $(CC) $(INCLUDE) -I$(SRC_DIR_TEST) $(CPPFLAGS) -DINSTANTIATE_MAIN $(CFLAGS) -MMD -MP -MF $(<:$(SRC_DIR_TEST)/%.c=$(DEP_DIR_TEST)/%.d) -MT $@ -o $@ -c $<
+$(OBJ_TEST): $(OBJ_PATH_TEST)/%.o: $(SRC_PATH_TEST)/%.c
+	$(RUN_CMD_CC) $(CC) $(INCLUDE) -I$(SRC_PATH_TEST) $(CPPFLAGS) -DINSTANTIATE_MAIN $(CFLAGS) -MMD -MP -MF $(<:$(SRC_PATH_TEST)/%.c=$(DEP_PATH_TEST)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_TEST)
-DIRS += $(BIN_DIR_TEST) $(OBJ_DIR_TEST) $(DEP_DIR_TEST)
+DIRS += $(BIN_PATH_TEST) $(OBJ_PATH_TEST) $(DEP_PATH_TEST)
 
 # =============================
 
@@ -236,11 +236,11 @@ build:
 	@$(MAKE) -s $(TARGET_TEST)
 
 test: build
-	@./scripts/run.sh "$(BIN_DIR_TEST)/test_all --enable-mixed-units"
+	@./scripts/run.sh "$(BIN_PATH_TEST)/test_all --enable-mixed-units"
 
-TEST = $(SRC_TEST:$(SRC_DIR_TEST)/%.c=%)
-$(TEST): %: $(BIN_DIR_TEST)/%
-	@./scripts/run.sh "$(BIN_DIR_TEST)/$@ --enable-mixed-units"
+TEST = $(SRC_TEST:$(SRC_PATH_TEST)/%.c=%)
+$(TEST): %: $(BIN_PATH_TEST)/%
+	@./scripts/run.sh "$(BIN_PATH_TEST)/$@ --enable-mixed-units"
 
 PHONY += build run test
 
@@ -256,13 +256,13 @@ PHONY += build run test
 PHONY += clean clean-all
 
 clean:
-	@rm -r $(BIN_DIR_ENGINE) $(OBJ_DIR_ENGINE) $(DEP_DIR_ENGINE) 2> /dev/null || true
-	@rm -r $(BIN_DIR_GAME) $(OBJ_DIR_GAME) $(DEP_DIR_GAME) 2> /dev/null || true
-	@rm -r $(BIN_DIR_TEST) $(OBJ_DIR_TEST) $(DEP_DIR_TEST) 2> /dev/null || true
+	@rm -r $(BIN_PATH_ENGINE) $(OBJ_PATH_ENGINE) $(DEP_PATH_ENGINE) 2> /dev/null || true
+	@rm -r $(BIN_PATH_GAME) $(OBJ_PATH_GAME) $(DEP_PATH_GAME) 2> /dev/null || true
+	@rm -r $(BIN_PATH_TEST) $(OBJ_PATH_TEST) $(DEP_PATH_TEST) 2> /dev/null || true
 
 clean-all:
 	@cd lib; $(MAKE) clean
-	@rm -r $(BLD_DIR) 2> /dev/null || true
+	@rm -r $(BLD_PATH) 2> /dev/null || true
 
 # =============================
 

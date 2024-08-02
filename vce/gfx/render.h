@@ -1,7 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include "../util/util.h"
+#include <gfx/shape.h>
+#include <util/util.h>
 #include <SDL3/SDL.h>
 
 #define RENDER_SUCCESS	0
@@ -11,6 +12,10 @@ struct render
 {
 	SDL_Renderer *handle;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // global render context
 extern struct render render;
@@ -34,5 +39,9 @@ int render_triangle( struct triangle triangle );
 int render_filled_rectangle( struct rectangle rectangle );
 int render_filled_circle( struct circle circle );
 int render_filled_triangle( struct triangle triangle );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
