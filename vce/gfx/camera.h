@@ -6,13 +6,13 @@
 
 struct camera
 {
-	mat4s view;
-	mat4s proj;
+	mat4 view;
+	mat4 proj;
 
-	vec3s eye;		/* camera position */
-	vec3s target;	/* lookat position */
-	vec3s up;		/* camera tilt     */
-	vec3s right;
+	vec3 eye;		/* camera position */
+	vec3 target;	/* lookat position */
+	vec3 up;		/* camera tilt     */
+	vec3 right;
 
 	float pitch;
 	float yaw;
