@@ -1,5 +1,4 @@
 #include <gfx/window.h>
-#include <gfx/render.h>
 #include <system/system.h>
 #include <glad/glad.h>
 #include <state/stage.h>
@@ -14,7 +13,6 @@ int init( struct game *gm )
 	// setup
 	system_init();
 	window_init();
-	render_init();
 	( void )gm;
 
 	return 0;
@@ -23,7 +21,6 @@ int init( struct game *gm )
 int free( struct game *gm )
 {
 	// free memory
-	render_free();
 	window_free();
 	system_free();
 	( void )gm;
@@ -66,17 +63,17 @@ int main( int argc, char *argv[] )
 	// log arguments
 	log_info( "Arguments: %s", buf );
 
-	struct stage s = {
-		.init = app::init,
-		.free = app::free,
-		.tick = app::tick,
-		.update = app::update,
-		.render = app::render
-	};
 
 	struct game gm;
-	game_init( &gm, &s );
-	game_start( &gm );
+	game_init( &gm, {
+		.init   = app::init,
+		.free   = app::free,
+		.tick   = app::tick,
+		.update = app::update,
+		.render = app::render
+	});
+
+	game_loop( &gm );
 
 	return 0;
 }

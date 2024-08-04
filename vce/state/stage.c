@@ -7,8 +7,8 @@ static inline int internal_init_( struct game *gm )
     if ( gm == NULL )
         return 1;
 
-    if ( gm->current != NULL && gm->current->init != NULL )
-        gm->current->init( gm );
+    if ( gm->stage.init != NULL )
+        gm->stage.init( gm );
 
     return 0;
 }
@@ -18,8 +18,8 @@ static inline int internal_free_( struct game *gm )
     if ( gm == NULL )
         return 1;
 
-    if ( gm->current != NULL && gm->current->free != NULL )
-        gm->current->free( gm );
+    if ( gm->stage.free != NULL )
+        gm->stage.free( gm );
 
     return 0;
 }
@@ -29,8 +29,8 @@ static inline int internal_tick_( struct game *gm )
     if ( gm == NULL )
         return 1;
 
-    if ( gm->current != NULL && gm->current->tick != NULL )
-        gm->current->tick( gm );
+    if ( gm->stage.tick != NULL )
+        gm->stage.tick( gm );
 
     gm->tick_count++;
 
@@ -42,8 +42,8 @@ static inline int internal_update_( struct game *gm )
     if ( gm == NULL )
         return 1;
 
-    if ( gm->current != NULL && gm->current->update != NULL )
-        gm->current->update( gm );
+    if ( gm->stage.update != NULL )
+        gm->stage.update( gm );
 
     return 0;
 }
@@ -53,22 +53,19 @@ static inline int internal_render_( struct game *gm )
     if ( gm == NULL )
         return 1;
 
-    if ( gm->current != NULL && gm->current->render != NULL )
-        gm->current->render( gm );
+    if ( gm->stage.render != NULL )
+        gm->stage.render( gm );
 
     gm->frame_count++;
 
     return 0;
 }
 
-static int internal_start_( struct game *gm )
+static int internal_loop_( struct game *gm )
 {
-    log_debug( "Starting stage loop..." );
-
-	// init
+    log_debug( "Starting game loop..." );
     internal_init_( gm );
 
-	// setup game loop
     uint64_t frame_previous = SDL_GetTicks();
     double tick_time = 0;
 
@@ -134,10 +131,9 @@ soft_exit_:
     return 0;
 }
 
-int game_init( struct game *gm, struct stage *state )
+int game_init( struct game *gm, struct stage state )
 {
-	gm->current      = state;
-    gm->next         = NULL;
+	gm->stage        = state;
     gm->running      = false;
 
 	gm->frame_delta  = 0;
@@ -153,34 +149,28 @@ int game_init( struct game *gm, struct stage *state )
 	return 0;
 }
 
-void game_start( struct game *gm )
+void game_loop( struct game *gm )
 {
     if ( gm == NULL )
         return;
 
     gm->running = true;
-    internal_start_( gm );
+    internal_loop_( gm );
 }
 
-void game_free( struct game *gm )
-{
-    ( void )gm;
-}
-
-void game_set_state( struct game *gm, struct stage *state )
+void game_stop( struct game *gm )
 {
     gm->running = false;
-    gm->next = state;
 }
 
 void game_set_target_fps( struct game *gm, double target )
 {
-    gm->frame_target = 1000.0 / target;
+    gm->frame_target = target <= 0.0 ? 0.0 : 1000.0 / target;
 }
 
 void game_set_target_tps( struct game *gm, double target )
 {
-    gm->tick_target = 1000.0 / target;
+    gm->tick_target = target <= 0.0 ? 0.0 : 1000.0 / target;
 }
 
 uint64_t game_get_fps( struct game *gm )

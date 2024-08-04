@@ -20,8 +20,7 @@ struct stage
 
 struct game
 {
-	struct stage *current;
-	struct stage *next;
+	struct stage stage;
 	bool running;
 
 	// frame timing
@@ -41,12 +40,9 @@ struct game
 extern "C" {
 #endif
 
-int  game_init( struct game *gm, struct stage *state );
-void game_start( struct game *gm );
-void game_free( struct game *gm );
-
-void game_set_state( struct game *gm, struct stage *state );
-struct stage *game_get_state( struct game *gm );
+int  game_init( struct game *gm, struct stage state );
+void game_loop( struct game *gm );
+void game_stop( struct game *gm );
 
 void game_set_target_fps( struct game *gm, double target );
 void game_set_target_tps( struct game *gm, double target );
