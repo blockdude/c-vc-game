@@ -35,7 +35,7 @@ int tick( struct game *gm )
 
 int update( struct game *gm )
 {
-	std::string s = std::to_string( gm->frame_delta );
+	std::string s = std::to_string( gm->frame_count ) + " | " + std::to_string( gm->tick_count );
 	window_set_title( s.c_str() );
 	return 0;
 }
