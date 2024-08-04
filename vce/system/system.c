@@ -1,6 +1,6 @@
 #include "system.h"
 #include "input.h"
-#include "../util/log.h"
+#include <util/log.h>
 #include <SDL3/SDL.h>
 
 int system_init( void )

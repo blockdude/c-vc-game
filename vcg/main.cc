@@ -2,7 +2,7 @@
 #include <system/system.h>
 #include <glad/glad.h>
 #include <state/stage.h>
-#include <iostream>
+
 #include <string>
 
 namespace app

@@ -1,6 +1,5 @@
 #define SDL_FUNCTION_POINTER_IS_VOID_POINTER
 #include "window.h"
-#include "render.h"
 #include <SDL3/SDL_video.h>
 #include <stdalign.h>
 #include <system/input.h>
@@ -27,7 +26,7 @@ int window_init( void )
     }
 
     const int window_size = 700;
-    const Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_OPENGL;
+    const SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_OPENGL;
 
 	// init variables
 	window.quit = false;
