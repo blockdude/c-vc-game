@@ -5,7 +5,8 @@
 
 int system_init( void )
 {
-    log_info( "Initializing SDL subsystems" );
+
+    log_debug( "Initializing SDL subsystems" );
 
     SDL_InitFlags flags =
         SDL_INIT_TIMER |
@@ -24,7 +25,7 @@ int system_init( void )
         return SYSTEM_ERROR;
     }
 
-    log_info( "Initializing input" );
+    log_debug( "Initializing input" );
 
     input_init();
 
@@ -33,7 +34,7 @@ int system_init( void )
 
 int system_free( void )
 {
-    log_info( "Shutting down SDL subsystems" );
+    log_debug( "Shutting down SDL subsystems" );
     input_free();
     SDL_Quit();
     return SYSTEM_SUCCESS;

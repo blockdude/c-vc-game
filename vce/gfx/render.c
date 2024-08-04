@@ -12,7 +12,7 @@ int render_init( void )
 		return RENDER_ERROR;
 	}
 
-	log_info( "Creating SDL renderer" );
+	log_debug( "Creating SDL renderer" );
 
     render.handle = SDL_CreateRenderer( window.handle, NULL );
     if ( render.handle == NULL )
@@ -27,7 +27,7 @@ int render_init( void )
 
 int render_free( void )
 {
-	log_info( "Closing SDL renderer" );
+	log_debug( "Closing SDL renderer" );
 	SDL_DestroyRenderer( render.handle );
 	return RENDER_SUCCESS;
 }

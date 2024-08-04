@@ -1,8 +1,58 @@
 #include <gfx/window.h>
 #include <gfx/render.h>
 #include <system/system.h>
-#include <state/state.h>
-#include <SDL3/SDL_version.h>
+#include <glad/glad.h>
+#include <state/stage.h>
+#include <iostream>
+#include <string>
+
+namespace app
+{
+
+int init( struct game *gm )
+{
+	// setup
+	system_init();
+	window_init();
+	render_init();
+	( void )gm;
+
+	return 0;
+}
+
+int free( struct game *gm )
+{
+	// free memory
+	render_free();
+	window_free();
+	system_free();
+	( void )gm;
+	return 0;
+}
+
+int tick( struct game *gm )
+{
+	( void )gm;
+	return 0;
+}
+
+int update( struct game *gm )
+{
+	std::string s = std::to_string( gm->frame_delta );
+	window_set_title( s.c_str() );
+	return 0;
+}
+
+int render( struct game *gm )
+{
+	( void )gm;
+	glClearColor( 1.f, 1.f, 1.f, 1.f );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	SDL_GL_SwapWindow( window.handle );
+	return 0;
+}
+
+};
 
 int main( int argc, char *argv[] )
 {
@@ -14,21 +64,19 @@ int main( int argc, char *argv[] )
 		buf_pos += snprintf( buf + buf_pos, buf_size - buf_pos, "%s ", argv[ i ] );
 
 	// log arguments
-	log_debug( "Arguments: %s", buf );
-	log_debug( "SDL version: %d", SDL_GetVersion() );
+	log_info( "Arguments: %s", buf );
 
-	// setup
-	system_init();
-	window_init( NULL );
-	render_init();
+	struct stage s = {
+		.init = app::init,
+		.free = app::free,
+		.tick = app::tick,
+		.update = app::update,
+		.render = app::render
+	};
 
-	// loop
-	window_loop();
-
-	// free memory
-	render_free();
-	window_free();
-	system_free();
+	struct game gm;
+	game_init( &gm, &s );
+	game_start( &gm );
 
 	return 0;
 }

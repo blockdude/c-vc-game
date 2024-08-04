@@ -12,8 +12,12 @@ extern "C" {
 #define TAU ( 2 * PI )
 
 #define clamp( v, mn, mx ) max( mn, min( mx, v ) )
+
+#ifndef __cplusplus
 #define max( a, b ) ( ( a ) > ( b ) ? ( a ) : ( b ) )
 #define min( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
+#endif
+
 #define degtorad( x ) ( ( x ) * ( PI / 180.0f ) )
 #define radtodeg( x ) ( ( x ) * ( 180.0f / PI ) )
 
