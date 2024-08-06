@@ -1,79 +1,79 @@
 #include <gfx/window.h>
 #include <system/system.h>
 #include <glad/glad.h>
-#include <state/stage.h>
+#include <state/app.h>
 
 #include <string>
 
-namespace app
+namespace game
 {
 
-int init( struct game *gm )
+struct app app;
+
+int init( struct app *app )
 {
 	// setup
 	system_init();
 	window_init();
-	( void )gm;
+	( void )app;
 
 	return 0;
 }
 
-int free( struct game *gm )
+int free( struct app *app )
 {
 	// free memory
 	window_free();
 	system_free();
-	( void )gm;
+	( void )app;
 	return 0;
 }
 
-int tick( struct game *gm )
+int tick( struct app *app )
 {
-	( void )gm;
+	( void )app;
 	return 0;
 }
 
-int update( struct game *gm )
+int update( struct app *app )
 {
-	std::string s = std::to_string( gm->frame_count ) + " | " + std::to_string( gm->tick_count );
+	std::string s = std::to_string( app->frame_count ) + " | " + std::to_string( app->tick_count );
 	window_set_title( s.c_str() );
 	return 0;
 }
 
-int render( struct game *gm )
+int render( struct app *app )
 {
-	( void )gm;
+	( void )app;
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	SDL_GL_SwapWindow( window.handle );
 	return 0;
+}
+
+void start( void )
+{
+	app_init( &app, {
+		.init   = init,
+		.free   = free,
+		.tick   = tick,
+		.update = update,
+		.render = render
+	});
+
+	app_loop( &app );
 }
 
 };
 
 int main( int argc, char *argv[] )
 {
-	// store arguments in a buffer
-	const int buf_size = 256;
-	char buf[ buf_size ];
-	int buf_pos = 0;
+	std::string args;
 	for ( int i = 0; i < argc; i++ )
-		buf_pos += snprintf( buf + buf_pos, buf_size - buf_pos, "%s ", argv[ i ] );
+		args += argv[ i ];
 
-	// log arguments
-	log_info( "Arguments: %s", buf );
+	log_info( "Arguments: %s", args.c_str() );
 
-
-	struct game gm;
-	game_init( &gm, {
-		.init   = app::init,
-		.free   = app::free,
-		.tick   = app::tick,
-		.update = app::update,
-		.render = app::render
-	});
-
-	game_loop( &gm );
-
+	game::start();
 	return 0;
 }

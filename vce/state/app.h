@@ -1,11 +1,11 @@
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
 #include <stdint.h>
 #include <stdbool.h>
 
-struct game;
-typedef int ( *event_fn )( struct game* );
+struct app;
+typedef int ( *event_fn )( struct app* );
 
 // stage of events
 struct stage
@@ -18,7 +18,7 @@ struct stage
 	event_fn render;
 };
 
-struct game
+struct app
 {
 	struct stage stage;
 	bool running;
@@ -40,14 +40,14 @@ struct game
 extern "C" {
 #endif
 
-int  game_init( struct game *gm, struct stage state );
-void game_loop( struct game *gm );
-void game_stop( struct game *gm );
+int  app_init( struct app *self, struct stage state );
+void app_loop( struct app *self );
+void app_stop( struct app *self );
 
-void game_set_target_fps( struct game *gm, double target );
-void game_set_target_tps( struct game *gm, double target );
-uint64_t game_get_fps( struct game *gm );
-uint64_t game_get_tps( struct game *gm );
+void app_set_target_fps( struct app *self, double target );
+void app_set_target_tps( struct app *self, double target );
+uint64_t app_get_fps( struct app *self );
+uint64_t app_get_tps( struct app *self );
 
 #ifdef __cplusplus
 }

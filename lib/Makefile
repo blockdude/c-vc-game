@@ -73,4 +73,4 @@ clean:
 
 # =============================
 
-.PHONY: clean all
+.PHONY: clean
