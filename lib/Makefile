@@ -3,6 +3,7 @@
 # SDL LIB
 # -----------------------------
 
+TARGETS += ../bld/bin/sdl3/libSDL3.so
 BLDLIBS += (echo ----BUILDING SDL3----);
 BLDLIBS += (cd SDL3 && cmake -S . -B build && cmake --build build);
 BLDLIBS += (mkdir -p ../bld/bin/sdl3);
@@ -19,6 +20,7 @@ CLEAN   += (cd SDL3 && cmake --build build --target clean);
 # GLAD LIB
 # -----------------------------
 
+TARGETS += ../bld/bin/glad/glad.o
 BLDLIBS += (echo ----BUILDING GLAD----);
 BLDLIBS += (cd glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c -fpic src/glad.c);
 BLDLIBS += (echo [100%] built target glad);
@@ -39,6 +41,7 @@ ifeq ($(UNAME),Windows)
     CGLMEX = -G "MinGW Makefiles"
 endif
 
+TARGETS += ../bld/bin/cglm/libcglm.a
 BLDLIBS += (echo ----BUILDING CGLM----);
 BLDLIBS += (cd cglm && cmake . -DCGLM_STATIC=ON $(CGLMEX) && make);
 BLDLIBS += (mkdir -p ../bld/bin/cglm);
@@ -54,9 +57,10 @@ CLEAN   += (cd cglm && make clean);
 # ENTRY POINT
 # -----------------------------
 
-build:
+all: $(TARGETS)
+
+$(TARGETS) &:
 	@$(BLDLIBS)
-	@echo > build
 
 # =============================
 
@@ -69,8 +73,7 @@ build:
 
 clean:
 	@$(CLEAN)
-	@rm build 2> /dev/null || true
 
 # =============================
 
-.PHONY: clean
+.PHONY: clean all
