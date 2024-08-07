@@ -100,6 +100,18 @@ LDLIBS  += -l:libcglm.a
 
 # =============================
 # -----------------------------
+# OTHER VARIABLES
+# -----------------------------
+
+CXX_EXT = cc
+C_EXT   = c
+
+# =============================
+
+
+
+# =============================
+# -----------------------------
 # TRACKER VARIABLES
 # -----------------------------
 
@@ -161,8 +173,6 @@ DIRS += $(BIN_PATH_ENGINE) $(OBJ_PATH_ENGINE) $(DEP_PATH_ENGINE) $(dir $(OBJ_ENG
 # -----------------------------
 # VC GAME
 # -----------------------------
-
-CXX_EXT = cc
 
 SRC_PATH_GAME = vcg
 BIN_PATH_GAME = $(BLD_PATH)/bin/$(SRC_PATH_GAME)

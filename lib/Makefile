@@ -42,7 +42,7 @@ define BLD_GLAD
 endef
 
 TARGETS += ../bld/bin/glad/glad.o
-BLDLIBS += (CLEAN   += (rm -r glad/obj 2> /dev/null || true);
+CLEAN   += (rm -r glad/obj 2> /dev/null || true);
 
 # =============================
 
