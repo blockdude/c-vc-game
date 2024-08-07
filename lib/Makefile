@@ -3,7 +3,7 @@
 # SDL LIB
 # -----------------------------
 
-define BLD_SDL
+define BLD_SDL3
 
 @echo ----BUILDING SDL3----
 
@@ -13,7 +13,7 @@ define BLD_SDL
 # COPY SDL TO BUILD LOCATION
 @mkdir -p ../bld/bin/sdl3
 @cp SDL3/build/libSDL3.so ../bld/bin/sdl3
-@ln -s ../bld/bin/sdl3/libSDL3.so ../bld/bin/sdl3/libSDL3.so.0
+@cd ../bld/bin/sdl3 && ln -s libSDL3.so libSDL3.so.0
 
 endef
 
@@ -29,13 +29,20 @@ CLEAN   += (cd SDL3 && cmake --build build --target clean);
 # GLAD LIB
 # -----------------------------
 
+define BLD_GLAD
+
+@echo ----BUILDING GLAD----
+
+@cd glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c -fpic src/glad.c
+@echo [100%] built target glad
+
+@mkdir -p ../bld/bin/glad
+@cp glad/obj/glad.o ../bld/bin/glad
+
+endef
+
 TARGETS += ../bld/bin/glad/glad.o
-BLDLIBS += (echo ----BUILDING GLAD----);
-BLDLIBS += (cd glad && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c -fpic src/glad.c);
-BLDLIBS += (echo [100%] built target glad);
-BLDLIBS += (mkdir -p ../bld/bin/glad);
-BLDLIBS += (cp glad/obj/glad.o ../bld/bin/glad);
-CLEAN   += (rm -r glad/obj 2> /dev/null || true);
+BLDLIBS += (CLEAN   += (rm -r glad/obj 2> /dev/null || true);
 
 # =============================
 
@@ -50,11 +57,16 @@ ifeq ($(UNAME),Windows)
     CGLMEX = -G "MinGW Makefiles"
 endif
 
+define BLD_CGLM
+
+@echo ----BUILDING CGLM----
+@cd cglm && cmake . -DCGLM_STATIC=ON $(CGLMEX) && make
+@mkdir -p ../bld/bin/cglm
+@cp cglm/libcglm.a ../bld/bin/cglm
+
+endef
+
 TARGETS += ../bld/bin/cglm/libcglm.a
-BLDLIBS += (echo ----BUILDING CGLM----);
-BLDLIBS += (cd cglm && cmake . -DCGLM_STATIC=ON $(CGLMEX) && make);
-BLDLIBS += (mkdir -p ../bld/bin/cglm);
-BLDLIBS += (cp cglm/libcglm.a ../bld/bin/cglm);
 CLEAN   += (cd cglm && make clean);
 
 # =============================
@@ -69,8 +81,9 @@ CLEAN   += (cd cglm && make clean);
 all: $(TARGETS)
 
 $(TARGETS) &:
-	$(BLD_SDL)
-	@$(BLDLIBS)
+	$(BLD_SDL3)
+	$(BLD_GLAD)
+	$(BLD_CGLM)
 
 # =============================
 
