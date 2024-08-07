@@ -36,8 +36,6 @@ extern struct window window;
 
 // window setup and cleanup functions
 int window_init( void );
-int window_loop( void );
-int window_quit( void );
 int window_free( void );
 
 // window setters
@@ -47,8 +45,6 @@ int window_toggle_relative_mouse( void );
 
 // window getters
 int window_get_size( int *w, int *h );
-int window_get_fps( void );
-int window_get_tps( void );
 
 #ifdef __cplusplus
 }

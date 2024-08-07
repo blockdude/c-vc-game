@@ -119,6 +119,7 @@ PHONY =
 CLEAN =
 DEPS  =
 DIRS  = $(BLD_PATH)
+LIBS  = 
 
 # =============================
 
@@ -131,6 +132,96 @@ DIRS  = $(BLD_PATH)
 
 all: build
 PHONY += all
+
+# =============================
+
+
+
+# =============================
+# -----------------------------
+# SDL LIB
+# -----------------------------
+
+define BLD_SDL3
+
+echo ----BUILDING SDL3----
+
+# BUILD SDL
+cd $(SDL3_PATH) && cmake -S . -B build && cmake --build build
+
+# COPY SDL TO BUILD LOCATION
+cp $(SDL3_PATH)/build/libSDL3.so $(BLD_PATH)/bin/sdl3
+cd $(BLD_PATH)/bin/sdl3 && ln -s libSDL3.so libSDL3.so.0
+
+endef
+
+DIRS       += $(BLD_PATH)/bin/sdl3
+LIBS       += $(BLD_PATH)/bin/sdl3/libSDL3.so
+CLEAN_LIBS += (cd $(SDL3_PATH) && cmake --build build --target clean);
+
+# =============================
+
+
+
+# =============================
+# -----------------------------
+# GLAD LIB
+# -----------------------------
+
+define BLD_GLAD
+
+echo ----BUILDING GLAD----
+
+cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c -fpic src/glad.c
+echo [100%] built target glad
+
+cp $(GLAD_PATH)/obj/glad.o $(BLD_PATH)/bin/glad
+
+endef
+
+DIRS	   += $(BLD_PATH)/bin/glad
+LIBS       += $(BLD_PATH)/bin/glad/glad.o
+CLEAN_LIBS += (rm -r $(GLAD_PATH)/obj 2> /dev/null || true);
+
+# =============================
+
+
+
+# =============================
+# -----------------------------
+# CGLM LIB
+# -----------------------------
+
+ifeq ($(UNAME),Windows)
+    CGLMEX = -G "MinGW Makefiles"
+endif
+
+define BLD_CGLM
+
+echo ----BUILDING CGLM----
+cd $(CGLM_PATH) && cmake . -DCGLM_STATIC=ON $(CGLMEX) && make
+mkdir -p $(BLD_PATH)/bin/cglm
+cp $(CGLM_PATH)/libcglm.a $(BLD_PATH)/bin/cglm
+
+endef
+
+DIRS       += $(BLD_PATH)/bin/cglm
+LIBS       += $(BLD_PATH)/bin/cglm/libcglm.a
+CLEAN_LIBS += (cd $(CGLM_PATH) && make clean);
+
+# =============================
+
+
+
+# =============================
+# -----------------------------
+# BUILD LIBS
+# -----------------------------
+
+$(LIBS) &:
+	@$(BLD_SDL3)
+	@$(BLD_GLAD)
+	@$(BLD_CGLM)
 
 # =============================
 
@@ -159,7 +250,10 @@ DEP_ENGINE = $(SRC_ENGINE:$(SRC_PATH_ENGINE)/%.c=$(DEP_PATH_ENGINE)/%.d)
 $(TARGET_ENGINE): $(OBJ_ENGINE)
 	$(RUN_CMD_LTLINK) $(LD) -shared -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-$(OBJ_ENGINE): $(OBJ_PATH_ENGINE)/%.o: $(SRC_PATH_ENGINE)/%.c
+# Note: I put the $(LIBS) dep here instead of target because I
+# want the libs to compile first then the engine. Same applies to
+# why I did that for the game aswell
+$(OBJ_ENGINE): $(OBJ_PATH_ENGINE)/%.o: $(SRC_PATH_ENGINE)/%.c $(LIBS)
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) -fpic $(CFLAGS) -MMD -MP -MF $(<:$(SRC_PATH_ENGINE)/%.c=$(DEP_PATH_ENGINE)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_ENGINE)
@@ -192,7 +286,7 @@ DEP_GAME = $(SRC_GAME:$(SRC_PATH_GAME)/%.$(CXX_EXT)=$(DEP_PATH_GAME)/%.d)
 $(TARGET_GAME): $(OBJ_GAME)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ -lstdc++ $(LDFLAGS) -L$(BIN_PATH_ENGINE) $(LDLIBS) -l:libVCE.so
 
-$(OBJ_GAME): $(OBJ_PATH_GAME)/%.o: $(SRC_PATH_GAME)/%.$(CXX_EXT)
+$(OBJ_GAME): $(OBJ_PATH_GAME)/%.o: $(SRC_PATH_GAME)/%.$(CXX_EXT) $(TARGET_ENGINE)
 	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) -I$(SRC_PATH_GAME) $(CPPFLAGS) -DCGLM_USE_ANONYMOUS_STRUCT=0 $(CXXFLAGS) -MMD -MP -MF $(<:$(SRC_PATH_GAME)/%.$(CXX_EXT)=$(DEP_PATH_GAME)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_GAME)
@@ -204,7 +298,7 @@ DIRS += $(BIN_PATH_GAME) $(OBJ_PATH_GAME) $(DEP_PATH_GAME) $(dir $(OBJ_GAME)) $(
 
 # =============================
 # -----------------------------
-# UNIT TEST VCE
+# UNIT TESTS
 # -----------------------------
 
 SRC_PATH_TEST = test
@@ -221,7 +315,7 @@ DEP_TEST = $(SRC_TEST:$(SRC_PATH_TEST)/%.c=$(DEP_PATH_TEST)/%.d)
 $(TARGET_TEST): $(BIN_PATH_TEST)/%: $(OBJ_PATH_TEST)/%.o
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) -L$(BIN_PATH_ENGINE) $(LDLIBS) -l:libVCE.so
 
-$(OBJ_TEST): $(OBJ_PATH_TEST)/%.o: $(SRC_PATH_TEST)/%.c
+$(OBJ_TEST): $(OBJ_PATH_TEST)/%.o: $(SRC_PATH_TEST)/%.c $(TARGET_GAME)
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) -I$(SRC_PATH_TEST) $(CPPFLAGS) -DINSTANTIATE_MAIN $(CFLAGS) -MMD -MP -MF $(<:$(SRC_PATH_TEST)/%.c=$(DEP_PATH_TEST)/%.d) -MT $@ -o $@ -c $<
 
 DEPS += $(DEP_TEST)
@@ -239,13 +333,9 @@ DIRS += $(BIN_PATH_TEST) $(OBJ_PATH_TEST) $(DEP_PATH_TEST)
 run: build
 	@./scripts/run.sh bld/bin/vcg/main
 
-build:
-	@cd lib; $(MAKE) -s
-	@$(MAKE) -s $(TARGET_ENGINE)
-	@$(MAKE) -s $(TARGET_GAME)
-	@$(MAKE) -s $(TARGET_TEST)
+build: $(TARGET_GAME)
 
-test: build
+test: $(TARGET_TEST)
 	@./scripts/run.sh "$(BIN_PATH_TEST)/test_all --enable-mixed-units"
 
 TEST = $(SRC_TEST:$(SRC_PATH_TEST)/%.c=%)
@@ -271,8 +361,8 @@ clean:
 	@rm -r $(BIN_PATH_TEST) $(OBJ_PATH_TEST) $(DEP_PATH_TEST) 2> /dev/null || true
 
 clean-all:
-	@cd lib; $(MAKE) clean
 	@rm -r $(BLD_PATH) 2> /dev/null || true
+	@$(CLEAN_LIBS)
 
 # =============================
 
