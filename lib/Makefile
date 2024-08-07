@@ -3,12 +3,21 @@
 # SDL LIB
 # -----------------------------
 
+define BLD_SDL
+
+@echo ----BUILDING SDL3----
+
+# BUILD SDL
+@cd SDL3 && cmake -S . -B build && cmake --build build
+
+# COPY SDL TO BUILD LOCATION
+@mkdir -p ../bld/bin/sdl3
+@cp SDL3/build/libSDL3.so ../bld/bin/sdl3
+@ln -s ../bld/bin/sdl3/libSDL3.so ../bld/bin/sdl3/libSDL3.so.0
+
+endef
+
 TARGETS += ../bld/bin/sdl3/libSDL3.so
-BLDLIBS += (echo ----BUILDING SDL3----);
-BLDLIBS += (cd SDL3 && cmake -S . -B build && cmake --build build);
-BLDLIBS += (mkdir -p ../bld/bin/sdl3);
-BLDLIBS += (cp SDL3/build/libSDL3.so.*.*.* ../bld/bin/sdl3);
-BLDLIBS += (cd ../bld/bin/sdl3 && ln -s libSDL3.so.*.*.* libSDL3.so.0 && ln -s libSDL3.so.*.*.* libSDL3.so);
 CLEAN   += (cd SDL3 && cmake --build build --target clean);
 
 # =============================
@@ -60,6 +69,7 @@ CLEAN   += (cd cglm && make clean);
 all: $(TARGETS)
 
 $(TARGETS) &:
+	$(BLD_SDL)
 	@$(BLDLIBS)
 
 # =============================
