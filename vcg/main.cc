@@ -2,6 +2,8 @@
 #include <system/system.h>
 #include <glad/glad.h>
 #include <state/app.h>
+#include <cglm/cglm.h>
+#include <cglm/struct.h>
 
 #include <string>
 
