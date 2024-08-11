@@ -1,5 +1,5 @@
 #undef INSTANTIATE_MAIN
-#include "test_dynarr.c"
+#include "test_list.c"
 #include "test_obj3d.c"
 #include "test_kdtree.c"
 #define INSTANTIATE_MAIN
