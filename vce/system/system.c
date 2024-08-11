@@ -5,7 +5,6 @@
 
 int system_init( void )
 {
-
     log_debug( "Initializing SDL subsystems" );
 
     SDL_InitFlags flags =

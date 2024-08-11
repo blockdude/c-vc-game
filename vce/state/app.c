@@ -8,7 +8,7 @@ static inline int internal_init_( struct app *self )
         return 1;
 
     if ( self->stage.init != NULL )
-        self->stage.init( self );
+        self->stage.init();
 
     return 0;
 }
@@ -19,7 +19,7 @@ static inline int internal_free_( struct app *self )
         return 1;
 
     if ( self->stage.free != NULL )
-        self->stage.free( self );
+        self->stage.free();
 
     return 0;
 }
@@ -30,7 +30,7 @@ static inline int internal_tick_( struct app *self )
         return 1;
 
     if ( self->stage.tick != NULL )
-        self->stage.tick( self );
+        self->stage.tick();
 
     self->tick_count++;
 
@@ -43,7 +43,7 @@ static inline int internal_update_( struct app *self )
         return 1;
 
     if ( self->stage.update != NULL )
-        self->stage.update( self );
+        self->stage.update();
 
     return 0;
 }
@@ -54,7 +54,7 @@ static inline int internal_render_( struct app *self )
         return 1;
 
     if ( self->stage.render != NULL )
-        self->stage.render( self );
+        self->stage.render();
 
     self->frame_count++;
 
@@ -105,7 +105,7 @@ static int internal_loop_( struct app *self )
 
         // poll events
         if ( input_process_events() != 0 )
-            goto soft_exit_;
+            goto soft_exit;
         
         // maintain fixed time step for each tick
         while ( tick_time >= self->tick_target )
@@ -126,7 +126,7 @@ static int internal_loop_( struct app *self )
             SDL_Delay( delay );
     }
 
-soft_exit_:
+soft_exit:
 	internal_free_( self );
     return 0;
 }

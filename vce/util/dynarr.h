@@ -41,7 +41,7 @@ struct metadata_
  * Return: The new address of the given pointer.
  */
 #define DARR_TO_META_( darr ) ( ( ( struct metadata_ * ) ( darr ) ) - 1 )
-#define META_TO_DARR( darr ) ( ( void * ) ( ( ( struct metadata_ * ) ( darr ) ) + 1 ) )
+#define META_TO_DARR_( darr ) ( ( void * ) ( ( ( struct metadata_ * ) ( darr ) ) + 1 ) )
 #define CAST_TO_META_( darr ) ( ( struct metadata_ * ) ( darr ) )
 
 /**
@@ -154,7 +154,7 @@ static inline void *dynarr_alloc_( size_t stride, size_t n )
 
     *CAST_TO_META_( vbase ) = tmp;
 
-    return META_TO_DARR( vbase );
+    return META_TO_DARR_( vbase );
 }
 
 /**
@@ -179,7 +179,7 @@ static inline void *dynarr_realloc_( void *darr, size_t stride, size_t n )
     {
         void *vbase = DARR_TO_META_( darr );
         vbase = realloc( vbase, v_size );
-        darr = vbase ? META_TO_DARR( vbase ) : NULL;
+        darr = vbase ? META_TO_DARR_( vbase ) : NULL;
         dynarr_set_capacity_( darr, n );
     }
     else
@@ -206,21 +206,21 @@ static inline void *dynarr_realloc_( void *darr, size_t stride, size_t n )
  */
 static inline void *dynarr_increment_size_( void *darr, size_t stride, size_t n )
 {
-        size_t vsize = dynarr_size( darr );
-        size_t vcap = dynarr_capacity( darr );
+    size_t vsize = dynarr_size( darr );
+    size_t vcap = dynarr_capacity( darr );
 
-        if ( vcap <= vsize + n - 1 )
-        {
-            darr = dynarr_realloc_(
-                darr,
-                stride,
-                dynarr_compute_growth_( vcap + n - 1 )
-            );
-        }
+    if ( vcap <= vsize + n - 1 )
+    {
+        darr = dynarr_realloc_(
+            darr,
+            stride,
+            dynarr_compute_growth_( vcap + n - 1 )
+        );
+    }
 
-        dynarr_set_size_( darr, vsize + n );
+    dynarr_set_size_( darr, vsize + n );
 
-        return darr;
+    return darr;
 }
 
 /**

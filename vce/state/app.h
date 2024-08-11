@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 struct app;
-typedef int ( *event_fn )( struct app* );
+typedef int ( *event_fn )( void );
 
 // stage of events
 struct stage
