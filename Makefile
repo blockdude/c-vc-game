@@ -87,7 +87,7 @@ NM    = nm
 # -----------------------------
 
 INCLUDE	 =
-CPPFLAGS = -DLOG_USE_COLOR
+CPPFLAGS = -DLOG_USE_COLOR -DDEBUG
 CFLAGS	 = -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
 CXXFLAGS = -g -Wall -Wextra -std=c++20 -ggdb3 -pedantic
 LDFLAGS	 = 
@@ -288,11 +288,11 @@ endef
 
 $(eval $(call DEFVARS,ENGINE,vce,c,libVCE.so))
 
-$(ENGINE_TARGET): LDFLAGS += -shared
+$(ENGINE_TARGET): private LDFLAGS += -shared
 $(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(ENGINE_OBJ) $(LDFLAGS) $(LDLIBS)
 
-$(ENGINE_OBJ): CFLAGS += -fpic
+$(ENGINE_OBJ): private CFLAGS += -fpic
 $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.c
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(ENGINE_SRC_PATH)/%.c=$(ENGINE_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
@@ -307,14 +307,13 @@ $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.c
 
 $(eval $(call DEFVARS,GAME,vcg,cc,main))
 
-$(GAME_TARGET): LDFLAGS += -L$(ENGINE_BIN_PATH)
-$(GAME_TARGET): LDLIBS  += -lstdc++
-$(GAME_TARGET): LDLIBS  += -l:libVCE.so
-$(GAME_TARGET): $(GAME_OBJ) | $(ENGINE_TARGET)
+$(GAME_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH)
+$(GAME_TARGET): private LDLIBS  += -lstdc++ -l:libVCE.so
+$(GAME_TARGET): $(GAME_OBJ) $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
-$(GAME_OBJ): INCLUDE  += -I$(GAME_SRC_PATH)
-$(GAME_OBJ): CPPFLAGS += -DCGLM_USE_ANONYMOUS_STRUCT=0
+$(GAME_OBJ): private INCLUDE  += -I$(GAME_SRC_PATH)
+$(GAME_OBJ): private CPPFLAGS += -DCGLM_USE_ANONYMOUS_STRUCT=0
 $(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(CXX_EXT)
 	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -MF $(<:$(GAME_SRC_PATH)/%.$(CXX_EXT)=$(GAME_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
@@ -328,13 +327,13 @@ $(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(CXX_EXT)
 # -----------------------------
 $(eval $(call DEFVARS,TEST,test,c,$$(TEST_SRC:$$(TEST_SRC_PATH)/%.c=%)))
 
-$(TEST_TARGET): LDFLAGS += -L$(ENGINE_BIN_PATH)
-$(TEST_TARGET): LDLIBS  += -l:libVCE.so
+$(TEST_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH)
+$(TEST_TARGET): private LDLIBS  += -l:libVCE.so
 $(TEST_TARGET): $(TEST_BIN_PATH)/%: $(TEST_OBJ_PATH)/%.o
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-$(TEST_OBJ): CPPFLAGS += -DINSTANTIATE_MAIN
-$(TEST_OBJ): INCLUDE  += -I$(TEST_SRC_PATH)
+$(TEST_OBJ): private CPPFLAGS += -DINSTANTIATE_MAIN
+$(TEST_OBJ): private INCLUDE  += -I$(TEST_SRC_PATH)
 $(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c $(GAME_TARGET)
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(TEST_SRC_PATH)/%.c=$(TEST_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
