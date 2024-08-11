@@ -8,7 +8,7 @@ static inline int internal_init_( struct app *self )
         return 1;
 
     if ( self->stage.init != NULL )
-        self->stage.init();
+        self->stage.init( self );
 
     return 0;
 }
@@ -19,7 +19,7 @@ static inline int internal_free_( struct app *self )
         return 1;
 
     if ( self->stage.free != NULL )
-        self->stage.free();
+        self->stage.free( self );
 
     return 0;
 }
@@ -30,7 +30,7 @@ static inline int internal_tick_( struct app *self )
         return 1;
 
     if ( self->stage.tick != NULL )
-        self->stage.tick();
+        self->stage.tick( self );
 
     self->tick_count++;
 
@@ -43,7 +43,7 @@ static inline int internal_update_( struct app *self )
         return 1;
 
     if ( self->stage.update != NULL )
-        self->stage.update();
+        self->stage.update( self );
 
     return 0;
 }
@@ -54,7 +54,7 @@ static inline int internal_render_( struct app *self )
         return 1;
 
     if ( self->stage.render != NULL )
-        self->stage.render();
+        self->stage.render( self );
 
     self->frame_count++;
 
