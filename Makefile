@@ -335,7 +335,7 @@ $(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.$(TEST_SRC_EXT) $(GAME_TAR
 # -----------------------------
 
 run: build
-	@./scripts/run.sh bld/bin/vcg/main
+	@./scripts/run.sh $(GAME_TARGET)
 
 build: debug
 
