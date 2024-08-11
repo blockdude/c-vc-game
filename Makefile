@@ -93,7 +93,6 @@ CXXFLAGS = -std=c++20
 LDFLAGS	 =
 LDLIBS	 = -lm
 
-INCLUDE += -Ivce
 INCLUDE += -I$(SDL3_PATH)/include
 INCLUDE += -I$(GLAD_PATH)/include
 INCLUDE += -I$(CGLM_PATH)/include
@@ -251,9 +250,9 @@ $1_SRC_PATH = $2
 $1_SRC_EXT  = $3
 $1_TARGET   = $$(addprefix $$($1_BIN_PATH)/,$4)
 
-$1_BIN_PATH = $(BIN_PATH)/$$($1_SRC_PATH)
-$1_OBJ_PATH = $(OBJ_PATH)/$$($1_SRC_PATH)
-$1_DEP_PATH = $(DEP_PATH)/$$($1_SRC_PATH)
+$1_BIN_PATH = $(BIN_PATH)/$$(shell basename $$($1_SRC_PATH))
+$1_OBJ_PATH = $(OBJ_PATH)/$$(shell basename $$($1_SRC_PATH))
+$1_DEP_PATH = $(DEP_PATH)/$$(shell basename $$($1_SRC_PATH))
 
 $1_SRC = $$(call find,$$($1_SRC_PATH),*.$$($1_SRC_EXT))
 $1_OBJ = $$($1_SRC:$$($1_SRC_PATH)/%.$$($1_SRC_EXT)=$$($1_OBJ_PATH)/%.o)
@@ -274,12 +273,13 @@ endef
 # VC ENGINE
 # -----------------------------
 
-$(eval $(call DEFVARS,ENGINE,vce,c,libVCE.so))
+$(eval $(call DEFVARS,ENGINE,src/engine,c,libVCE.so))
 
 $(ENGINE_TARGET): private LDFLAGS += -shared
 $(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(ENGINE_OBJ) $(LDFLAGS) $(LDLIBS)
 
+$(ENGINE_OBJ): private INCLUDE  += -I$(ENGINE_SRC_PATH)
 $(ENGINE_OBJ): private CFLAGS += -fpic
 $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)=$(ENGINE_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
@@ -293,14 +293,14 @@ $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)
 # VC GAME
 # -----------------------------
 
-$(eval $(call DEFVARS,GAME,vcg,cc,main))
+$(eval $(call DEFVARS,GAME,src/game,cc,main))
 
 $(GAME_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH)
 $(GAME_TARGET): private LDLIBS  += -lstdc++ -l:libVCE.so
 $(GAME_TARGET): $(GAME_OBJ) | $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
-$(GAME_OBJ): private INCLUDE  += -I$(GAME_SRC_PATH)
+$(GAME_OBJ): private INCLUDE  += -I$(GAME_SRC_PATH) -I$(ENGINE_SRC_PATH)
 $(GAME_OBJ): private CPPFLAGS += -DCGLM_USE_ANONYMOUS_STRUCT=0
 $(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(GAME_SRC_EXT)
 	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -MF $(<:$(GAME_SRC_PATH)/%.$(GAME_SRC_EXT)=$(GAME_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
@@ -320,7 +320,7 @@ $(TEST_TARGET): private LDLIBS  += -l:libVCE.so
 $(TEST_TARGET): $(TEST_BIN_PATH)/%: $(TEST_OBJ_PATH)/%.o
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-$(TEST_OBJ): private INCLUDE  += -I$(TEST_SRC_PATH)
+$(TEST_OBJ): private INCLUDE  += -I$(TEST_SRC_PATH) -I$(GAME_SRC_PATH) -I$(ENGINE_SRC_PATH)
 $(TEST_OBJ): private CPPFLAGS += -DINSTANTIATE_MAIN
 $(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.$(TEST_SRC_EXT) $(GAME_TARGET)
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(TEST_SRC_PATH)/%.$(TEST_SRC_EXT)=$(TEST_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
