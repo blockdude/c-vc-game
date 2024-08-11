@@ -289,8 +289,8 @@ endef
 $(eval $(call DEFVARS,ENGINE,vce,c,libVCE.so))
 
 $(ENGINE_TARGET): LDFLAGS += -shared
-$(ENGINE_TARGET): $(ENGINE_OBJ)
-	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+$(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
+	$(RUN_CMD_LTLINK) $(LD) -o $@ $(ENGINE_OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(ENGINE_OBJ): CFLAGS += -fpic
 $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.c
@@ -310,8 +310,8 @@ $(eval $(call DEFVARS,GAME,vcg,cc,main))
 $(GAME_TARGET): LDFLAGS += -L$(ENGINE_BIN_PATH)
 $(GAME_TARGET): LDLIBS  += -lstdc++
 $(GAME_TARGET): LDLIBS  += -l:libVCE.so
-$(GAME_TARGET): $(GAME_OBJ)
-	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+$(GAME_TARGET): $(GAME_OBJ) | $(ENGINE_TARGET)
+	$(RUN_CMD_LTLINK) $(LD) -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(GAME_OBJ): INCLUDE  += -I$(GAME_SRC_PATH)
 $(GAME_OBJ): CPPFLAGS += -DCGLM_USE_ANONYMOUS_STRUCT=0
@@ -335,7 +335,7 @@ $(TEST_TARGET): $(TEST_BIN_PATH)/%: $(TEST_OBJ_PATH)/%.o
 
 $(TEST_OBJ): CPPFLAGS += -DINSTANTIATE_MAIN
 $(TEST_OBJ): INCLUDE  += -I$(TEST_SRC_PATH)
-$(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
+$(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c $(GAME_TARGET)
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(TEST_SRC_PATH)/%.c=$(TEST_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
 # =============================
@@ -350,20 +350,16 @@ $(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
 run: build
 	@./scripts/run.sh bld/bin/vcg/main
 
-build:
-	@$(MAKE) -s $(LIBS)
-	@$(MAKE) -s $(ENGINE_TARGET)
-	@$(MAKE) -s $(GAME_TARGET)
-	@$(MAKE) -s $(TEST_TARGET)
+build: $(GAME_TARGET)
 
-test: build
+test: $(TEST_TARGET) $(GAME_TARGET)
 	@./scripts/run.sh "$(TEST_BIN_PATH)/test_all --enable-mixed-units"
 
 TEST = $(TEST_SRC:$(TEST_SRC_PATH)/%.c=%)
 $(TEST): %: $(TEST_BIN_PATH)/%
 	@./scripts/run.sh "$(TEST_BIN_PATH)/$@ --enable-mixed-units"
 
-PHONY += build run test game engine libs
+PHONY += build run test
 
 # =============================
 
