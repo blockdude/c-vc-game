@@ -4,7 +4,7 @@
 #include <gfx/window.h>
 #include <system/system.h>
 #include <glad/glad.h>
-#include <state/app.h>
+#include <system/app.h>
 #include <cglm/struct.h>
 
 static int init( struct app *app )

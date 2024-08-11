@@ -124,7 +124,7 @@ int input_process_events( void )
         {
             case SDL_EVENT_QUIT:
                 {
-                    size_t len = dynarr_size( input.quit_cb );
+                    size_t len = list_size( input.quit_cb );
                     for ( size_t i = 0; i < len; i++ )
                         input.quit_cb[ i ]();
                     result = INPUT_QUIT;
@@ -133,7 +133,7 @@ int input_process_events( void )
 
             case SDL_EVENT_WINDOW_RESIZED:
                 {
-                    size_t len = dynarr_size( input.resize_cb );
+                    size_t len = list_size( input.resize_cb );
                     for ( size_t i = 0; i < len; i++ )
                         input.resize_cb[ i ]( event.window.data1, event.window.data2 );
                 }
@@ -187,13 +187,13 @@ int input_process_events( void )
 
 int input_push_resize_callback( input_resize_callback_fn fn )
 {
-    dynarr_push_back( input.resize_cb, fn );
+    list_push_back( input.resize_cb, fn );
     return INPUT_SUCCESS;
 }
 
 int input_push_quit_callback( input_quit_callback_fn fn )
 {
-    dynarr_push_back( input.quit_cb, fn );
+    list_push_back( input.quit_cb, fn );
     return INPUT_SUCCESS;
 }
 

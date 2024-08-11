@@ -4,7 +4,7 @@
 #include <util/log.h>
 #include <util/types.h>
 #include <util/fmath.h>
-#include <util/dynarr.h>
+#include <util/list.h>
 
 #include <math.h>
 #include <stdlib.h>
@@ -30,7 +30,7 @@ static inline void obj3d_append_face_vertex_( struct obj3d *obj, const char *ver
 	f.vt = obj->vt[ b - 1 ];
 	f.vn = obj->vn[ c - 1 ];
 
-	dynarr_push_back( obj->fv, f );
+	list_push_back( obj->fv, f );
 }
 
 static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
@@ -65,21 +65,21 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 		{
 			vec3s tmp;
 			sscanf( buffer, "%*s %f %f %f", &tmp.x, &tmp.y, &tmp.z );
-			dynarr_push_back( obj->vp, tmp );
+			list_push_back( obj->vp, tmp );
 		}
 		// get a texture coordinates
 		else if ( strcmp( lexeme, "vt" ) == 0 )
 		{
 			vec2s tmp;
 			sscanf( buffer, "%*s %f %f", &tmp.x, &tmp.y );
-			dynarr_push_back( obj->vt, tmp );
+			list_push_back( obj->vt, tmp );
 		}
 		// get a vertex normal
 		else if ( strcmp( lexeme, "vn" ) == 0 )
 		{
 			vec3s tmp;
 			sscanf( buffer, "%*s %f %f %f", &tmp.x, &tmp.y, &tmp.z );
-			dynarr_push_back( obj->vn, tmp );
+			list_push_back( obj->vn, tmp );
 		}
 		// get a face
 		else if ( strcmp( lexeme, "f" ) == 0 )
@@ -115,7 +115,7 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 
 static inline void obj3d_set_min_max_( struct obj3d *obj )
 {
-	size_t len = dynarr_size( obj->vp );
+	size_t len = list_size( obj->vp );
 	vec3s min = len > 0 ? obj->vp[ 0 ] : ( vec3s ){ 0 };
 	vec3s max = len > 0 ? obj->vp[ 0 ] : ( vec3s ){ 0 };
 
@@ -138,15 +138,15 @@ static inline void obj3d_compute_extent_( struct obj3d *obj )
 
 static inline void obj3d_compute_properties_( struct obj3d *obj )
 {
-	obj->fv_len			= dynarr_size( obj->fv );
-	obj->vp_len			= dynarr_size( obj->vp );
-	obj->vt_len			= dynarr_size( obj->vt );
-	obj->vn_len			= dynarr_size( obj->vn );
+	obj->fv_len			= list_size( obj->fv );
+	obj->vp_len			= list_size( obj->vp );
+	obj->vt_len			= list_size( obj->vt );
+	obj->vn_len			= list_size( obj->vn );
 
-	obj->fv_nbytes		= dynarr_size( obj->fv ) * sizeof( *obj->fv );
-	obj->vp_nbytes		= dynarr_size( obj->vp ) * sizeof( *obj->vp );
-	obj->vt_nbytes		= dynarr_size( obj->vt ) * sizeof( *obj->vt );
-	obj->vn_nbytes		= dynarr_size( obj->vn ) * sizeof( *obj->vn );
+	obj->fv_nbytes		= list_size( obj->fv ) * sizeof( *obj->fv );
+	obj->vp_nbytes		= list_size( obj->vp ) * sizeof( *obj->vp );
+	obj->vt_nbytes		= list_size( obj->vt ) * sizeof( *obj->vt );
+	obj->vn_nbytes		= list_size( obj->vn ) * sizeof( *obj->vn );
 
 	obj->val_size		= sizeof( float );
 
@@ -188,8 +188,8 @@ int obj3d_load( struct obj3d *obj, const char *file )
 
 void obj3d_free( struct obj3d *obj )
 {
-	dynarr_free( obj->fv );
-	dynarr_free( obj->vp );
-	dynarr_free( obj->vt );
-	dynarr_free( obj->vn );
+	list_free( obj->fv );
+	list_free( obj->vp );
+	list_free( obj->vt );
+	list_free( obj->vn );
 }
