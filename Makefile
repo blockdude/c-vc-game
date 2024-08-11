@@ -87,10 +87,10 @@ NM    = nm
 # -----------------------------
 
 INCLUDE	 =
-CPPFLAGS = -DLOG_USE_COLOR -DDEBUG
-CFLAGS	 = -g -Wall -Wextra -std=c11 -ggdb3 -pedantic
-CXXFLAGS = -g -Wall -Wextra -std=c++20 -ggdb3 -pedantic
-LDFLAGS	 = 
+CPPFLAGS = -DLOG_USE_COLOR
+CFLAGS	 = -std=c11
+CXXFLAGS = -std=c++20
+LDFLAGS	 =
 LDLIBS	 = -lm
 
 INCLUDE += -Ivce
@@ -105,18 +105,6 @@ LDFLAGS += -L$(BLD_PATH)/bin/cglm
 LDLIBS  += -l:libSDL3.so
 LDLIBS  += -l:glad.o
 LDLIBS  += -l:libcglm.a
-
-# =============================
-
-
-
-# =============================
-# -----------------------------
-# OTHER VARIABLES
-# -----------------------------
-
-CXX_EXT = cc
-C_EXT   = c
 
 # =============================
 
@@ -293,8 +281,8 @@ $(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(ENGINE_OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(ENGINE_OBJ): private CFLAGS += -fpic
-$(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.c
-	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(ENGINE_SRC_PATH)/%.c=$(ENGINE_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
+$(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)
+	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)=$(ENGINE_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
 # =============================
 
@@ -309,13 +297,13 @@ $(eval $(call DEFVARS,GAME,vcg,cc,main))
 
 $(GAME_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH)
 $(GAME_TARGET): private LDLIBS  += -lstdc++ -l:libVCE.so
-$(GAME_TARGET): $(GAME_OBJ) $(ENGINE_TARGET)
+$(GAME_TARGET): $(GAME_OBJ) | $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(GAME_OBJ): private INCLUDE  += -I$(GAME_SRC_PATH)
 $(GAME_OBJ): private CPPFLAGS += -DCGLM_USE_ANONYMOUS_STRUCT=0
-$(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(CXX_EXT)
-	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -MF $(<:$(GAME_SRC_PATH)/%.$(CXX_EXT)=$(GAME_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
+$(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(GAME_SRC_EXT)
+	$(RUN_CMD_CXX) $(CXX) $(INCLUDE) $(CPPFLAGS) $(CXXFLAGS) -MMD -MP -MF $(<:$(GAME_SRC_PATH)/%.$(GAME_SRC_EXT)=$(GAME_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
 # =============================
 
@@ -332,10 +320,10 @@ $(TEST_TARGET): private LDLIBS  += -l:libVCE.so
 $(TEST_TARGET): $(TEST_BIN_PATH)/%: $(TEST_OBJ_PATH)/%.o
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-$(TEST_OBJ): private CPPFLAGS += -DINSTANTIATE_MAIN
 $(TEST_OBJ): private INCLUDE  += -I$(TEST_SRC_PATH)
-$(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c $(GAME_TARGET)
-	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(TEST_SRC_PATH)/%.c=$(TEST_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
+$(TEST_OBJ): private CPPFLAGS += -DINSTANTIATE_MAIN
+$(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.$(TEST_SRC_EXT) $(GAME_TARGET)
+	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(TEST_SRC_PATH)/%.$(TEST_SRC_EXT)=$(TEST_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
 # =============================
 
@@ -349,16 +337,26 @@ $(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c $(GAME_TARGET)
 run: build
 	@./scripts/run.sh bld/bin/vcg/main
 
-build: $(GAME_TARGET)
+build: debug
 
-test: $(TEST_TARGET) $(GAME_TARGET)
+debug: CPPFLAGS += -DDEBUG
+debug: CFLAGS   += -g -Wall -Wextra -Wshadow -Werror -ggdb3 -pedantic -fpic
+debug: CXXFLAGS += -g -Wall -Wextra -Wshadow -Werror -ggdb3 -pedantic -fpic
+debug: $(GAME_TARGET)
+
+release: CPPFLAGS += -DRELEASE
+release: CFLAGS   += -O3 -Wall
+release: CXXFLAGS += -O3 -Wall
+release: $(GAME_TARGET)
+
+test: $(TEST_TARGET) debug
 	@./scripts/run.sh "$(TEST_BIN_PATH)/test_all --enable-mixed-units"
 
 TEST = $(TEST_SRC:$(TEST_SRC_PATH)/%.c=%)
 $(TEST): %: $(TEST_BIN_PATH)/%
 	@./scripts/run.sh "$(TEST_BIN_PATH)/$@ --enable-mixed-units"
 
-PHONY += build run test
+PHONY += debug release build run test
 
 # =============================
 
