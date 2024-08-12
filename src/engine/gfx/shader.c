@@ -185,49 +185,49 @@ void shader_bind( struct shader self )
 	glUseProgram( self.handle );
 }
 
-void shader_uniform_mat4( struct shader self, char *name, mat4s m )
+void shader_uniform_mat4( struct shader self, const char *name, mat4 m )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniformMatrix4fv( idx, 1, GL_FALSE, ( const GLfloat * )&m.raw );
+    glUniformMatrix4fv( idx, 1, GL_FALSE, ( const GLfloat * )m );
 }
 
-void shader_uniform_float( struct shader self, char *name, float f )
+void shader_uniform_float( struct shader self, const char *name, float f )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform1f( idx, f );
 }
 
-void shader_uniform_vec2( struct shader self, char *name, vec2s v )
+void shader_uniform_vec2( struct shader self, const char *name, vec2s v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform2f( idx, v.x, v.y );
 }
 
-void shader_uniform_vec3( struct shader self, char *name, vec3s v )
+void shader_uniform_vec3( struct shader self, const char *name, vec3s v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform3f( idx, v.x, v.y, v.z );
 }
 
-void shader_uniform_vec4( struct shader self, char *name, vec4s v )
+void shader_uniform_vec4( struct shader self, const char *name, vec4s v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform4f( idx, v.x, v.y, v.z, v.w );
 }
 
-void shader_uniform_int( struct shader self, char *name, int v )
+void shader_uniform_int( struct shader self, const char *name, int v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
     glUniform1i( idx, v );
 }
 
-void shader_uniform_uint( struct shader self, char *name, unsigned int v )
+void shader_uniform_uint( struct shader self, const char *name, unsigned int v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );

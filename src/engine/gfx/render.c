@@ -1,6 +1,11 @@
 #include "render.h"
 #include "window.h"
 
+struct render
+{
+	SDL_Renderer *handle;
+};
+
 // global renderer
 struct render render;
 

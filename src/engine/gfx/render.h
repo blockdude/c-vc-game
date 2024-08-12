@@ -8,17 +8,9 @@
 #define RENDER_SUCCESS	0
 #define RENDER_ERROR	-1
 
-struct render
-{
-	SDL_Renderer *handle;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-// global render context
-extern struct render render;
 
 int render_init( void );
 int render_free( void );

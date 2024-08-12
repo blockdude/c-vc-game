@@ -26,13 +26,13 @@ int  shader_tbuild( struct shader *self, const char *vstext, size_t vslen, const
 void shader_free( struct shader self );
 void shader_bind( struct shader self );
 
-void shader_uniform_mat4( struct shader self, char *name, mat4s m );
-void shader_uniform_float( struct shader self, char *name, float f );
-void shader_uniform_vec2( struct shader self, char *name, vec2s v );
-void shader_uniform_vec3( struct shader self, char *name, vec3s v );
-void shader_uniform_vec4( struct shader self, char *name, vec4s v );
-void shader_uniform_int( struct shader self, char *name, int v );
-void shader_uniform_uint( struct shader self, char *name, unsigned int v );
+void shader_uniform_mat4( struct shader self, const char *name, mat4 m );
+void shader_uniform_float( struct shader self, const char *name, float f );
+void shader_uniform_vec2( struct shader self, const char *name, vec2s v );
+void shader_uniform_vec3( struct shader self, const char *name, vec3s v );
+void shader_uniform_vec4( struct shader self, const char *name, vec4s v );
+void shader_uniform_int( struct shader self, const char *name, int v );
+void shader_uniform_uint( struct shader self, const char *name, unsigned int v );
 
 #ifdef __cplusplus
 }

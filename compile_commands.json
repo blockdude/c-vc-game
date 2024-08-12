@@ -10,7 +10,7 @@
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DCGLM_USE_ANONYMOUS_STRUCT=0",
-      "-std=c++20",
+      "-std=c++23",
       "-g",
       "-Wall",
       "-Wextra",
