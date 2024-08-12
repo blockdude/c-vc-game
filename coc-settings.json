@@ -1,3 +1,5 @@
 {
-  "inlayHint.enable": false
+  "clangd.arguments": [
+    "--inlay-hints=false"
+  ]
 }

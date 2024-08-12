@@ -1,4 +1,0 @@
--Ivce
--Ilib/glad/include
--Ilib/cglm/include
--Ilib/SDL3/include

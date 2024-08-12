@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include <system/app.h>
 #include <cglm/struct.h>
+#include <util/list.h>
 
 static int init( struct app *app )
 {
@@ -58,7 +59,6 @@ int main( int argc, char *argv[] )
 	log_info( "Arguments: %s", args.c_str() );
 
 	struct app app;
-
 	app_init( &app, {
 		.init   = init,
 		.free   = free,

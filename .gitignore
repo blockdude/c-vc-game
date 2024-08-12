@@ -4,6 +4,7 @@ old
 obj
 tool
 .vim
+.cache
 
 # ignore valgrind massif readouts
 massif.out.*

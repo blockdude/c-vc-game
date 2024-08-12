@@ -236,7 +236,9 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
     {                                                               \
         if ( !( lst ) )                                             \
         {                                                           \
-            ( lst ) = list_alloc_( sizeof( *( lst ) ), ( c ) );     \
+            ( lst ) = ( __typeof__( lst ) ) list_alloc_(            \
+                sizeof( *( lst ) ), ( c )                           \
+            );                                                      \
         }                                                           \
     }                                                               \
     while ( 0 )
@@ -272,7 +274,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
     {                                                               \
         if ( list_capacity( lst ) < ( n ) )                         \
         {                                                           \
-            ( lst ) = list_realloc_(                                \
+            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
                 ( n )                                               \
@@ -323,7 +325,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
         size_t cap = list_capacity( lst );                          \
         if ( cap <= size )                                          \
         {                                                           \
-            ( lst ) = list_realloc_(                                \
+            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
                 list_compute_growth_( cap )                         \
@@ -378,7 +380,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
         size_t cap = list_capacity( lst );                          \
         if ( cap <= size )                                          \
         {                                                           \
-            ( lst ) = list_realloc_(                                \
+            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
                 list_compute_growth_( cap )                         \
@@ -436,7 +438,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
     {                                                               \
         if ( lst )                                                  \
         {                                                           \
-            ( lst ) = list_realloc_(                                \
+            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
                 list_size( lst )                                    \

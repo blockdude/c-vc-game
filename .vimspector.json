@@ -4,7 +4,7 @@
 			"adapter": "vscode-cpptools",
 			"configuration": {
 				"request": "launch",
-				"program": "${workspaceRoot}/.bld/bin/main",
+				"program": "${workspaceRoot}/bld/bin/game/main",
 				"cwd": "${workspaceRoot}",
 				"externalConsole": true,
 				"MIMode": "gdb"
