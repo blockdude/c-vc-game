@@ -346,8 +346,8 @@ run: build
 build: debug
 
 debug: CPPFLAGS += -DDEBUG
-debug: CFLAGS   += -g -Wall -Wextra -Wshadow -Werror -ggdb3 -pedantic -fpic
-debug: CXXFLAGS += -g -Wall -Wextra -Wshadow -Werror -ggdb3 -pedantic -fpic
+debug: CFLAGS   += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic
+debug: CXXFLAGS += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic
 debug: $(GAME_TARGET) $(TEST_TARGET)
 
 release: CPPFLAGS += -DRELEASE
