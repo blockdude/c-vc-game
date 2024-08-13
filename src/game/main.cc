@@ -14,11 +14,26 @@
 #include <util/list.h>
 #include <gfx/gfx.h>
 
-static struct camera camera;
-static struct obj3d dragon;
+static const GLfloat square[] = {
+    -1.0f, -1.0f,
+     1.0f, -1.0f,
+     1.0f,  1.0f,
+
+     1.0f,  1.0f,
+    -1.0f,  1.0f,
+    -1.0f, -1.0f
+};
+
 static struct shader shader;
 static struct vao vao;
 static struct vbo vbo;
+
+#define SIZE 256
+
+char buff_a[ SIZE * SIZE ];
+char buff_b[ SIZE * SIZE ];
+char *out = buff_a;
+char *buf = buff_b;
 
 static int init( struct app *app )
 {
@@ -26,57 +41,25 @@ static int init( struct app *app )
 	system_init();
 	window_init();
 	app_set_target_fps( app, 0 );
+	app_set_target_tps( app, 1 );
 	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
 
-	if ( obj3d_load( &dragon, "res/objects/dragon.obj" ) != 0 )
-	{
-		exit( 1 );
-	}
-
-	if ( shader_fbuild( &shader, "res/shaders/vert.glsl", "res/shaders/frag.glsl" ) != 0 )
-	{
-		exit( 1 );
-	}
-
+	shader_fbuild( &shader, "res/shaders/simple.vert", "res/shaders/simple.frag" );
 	shader_bind( shader );
 
 	vao = vao_create();
 	vao_bind( vao );
-
 	vbo = vbo_create( GL_ARRAY_BUFFER, false );
 	vbo_bind( vbo );
+	vbo_buff( vbo, ( void * ) square, sizeof( square ) );
+	int position_i = glGetAttribLocation( shader.handle, "position" );
+	vao_attr( vao, vbo, position_i, 2, GL_FLOAT, 0, 0 );
 
-	vbo_buff( vbo, dragon.fv, dragon.fv_nbytes );
-
-	GLuint pos_loc = glGetAttribLocation( shader.handle, "position" );
-	GLuint norm_loc = glGetAttribLocation( shader.handle, "normal" );
-
-	vao_attr(
-		vao, vbo,
-		pos_loc,
-		dragon.vp_nval,
-		GL_FLOAT,
-		dragon.stride,
-		dragon.vp_offset
-	);
-
-	vao_attr(
-		vao, vbo,
-		norm_loc,
-		dragon.vn_nval,
-		GL_FLOAT,
-		dragon.stride,
-		dragon.vn_offset
-	);
-
-	camera_init( &camera, degtorad( 90 ) );
-	camera.eye[ 0 ] = dragon.center.raw[ 0 ];
-	camera.eye[ 1 ] = dragon.center.raw[ 1 ];
-	camera.eye[ 2 ] = dragon.center.raw[ 2 ] + dragon.dia;
-	camera.pitch = degtorad( 0 );
-	camera.yaw = degtorad( 180 );
+	// randomize our grid
+	for (int i = 0; i < SIZE * SIZE; i++)
+		buf[ i ] = rand() % 2;
 
 	return 0;
 }
@@ -84,7 +67,9 @@ static int init( struct app *app )
 static int free( struct app *app )
 {
 	( void )app;
-	obj3d_free( &dragon );
+	vbo_free( vbo );
+	vao_free( vao );
+	shader_free( shader );
 	window_free();
 	system_free();
 	return 0;
@@ -102,17 +87,47 @@ static int update( struct app *app )
 {
 	( void ) app;
 
-	mat4 model_matrix = {
-		{ 1, 0, 0, 0 },
-		{ 0, 1, 0, 0 },
-		{ 0, 0, 1, 0 },
-		{ 0, 0, 0, 1 }
-	};
+	// update alive state
+	for ( int i = 0; i < SIZE * SIZE; i++ )
+	{
+		out[ i ] = buf[ i ];
 
-	camera_update( &camera );
-	shader_uniform_mat4( shader, "view_matrix", camera.view );
-	shader_uniform_mat4( shader, "proj_matrix", camera.proj );
-	shader_uniform_mat4( shader, "model_matrix", model_matrix );
+		int x = i % SIZE;			// column
+		int y = ( i - x ) / SIZE;	// row
+
+		// wrap around left right
+		int l = ( x - 1 ) < 0 ? SIZE - 1 : x - 1;
+		int r = ( x + 1 ) % SIZE;
+
+		// wrap around above below
+		int a = ( y - 1 ) < 0 ? SIZE - 1 : y - 1;
+		int b = ( y + 1 ) % SIZE;
+
+		int neighbors =
+			// get above
+			buf[ a * SIZE + l ] +
+			buf[ a * SIZE + x ] +
+			buf[ a * SIZE + r ] +
+			// get middle
+			buf[ y * SIZE + l ] +
+			buf[ y * SIZE + r ] +
+			// get below
+			buf[ b * SIZE + l ] +
+			buf[ b * SIZE + x ] +
+			buf[ b * SIZE + r ];
+
+		// cell rules
+		if ( neighbors >= 4 || neighbors <= 1 )
+			out[ i ] = 0;
+		else if ( neighbors == 3 )
+			out[ i ] = 1;
+
+	}
+
+	//swap buffers
+	char *tmp = out;
+	out = buf;
+	buf = tmp;
 
 	return 0;
 }
@@ -123,13 +138,21 @@ static int render( struct app *app )
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	glDrawArrays(
-		GL_TRIANGLES,
-		0,
-		dragon.fv_len
-	);
+	for ( int i = 0; i < SIZE * SIZE; i++ )
+	{
+		if ( out[ i ] == 0 )
+			continue;
+
+		int x = i % SIZE;
+		int y = ( i - x ) / SIZE;
+
+		vec2 offset = { ( float ) x, ( float ) y };
+		shader_uniform_vec2( shader, "offset", offset );
+		glDrawArrays( GL_TRIANGLES, 0, 6 );
+	}
 
 	SDL_GL_SwapWindow( window.handle );
+
 	return 0;
 }
 

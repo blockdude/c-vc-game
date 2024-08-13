@@ -28,9 +28,9 @@ void shader_bind( struct shader self );
 
 void shader_uniform_mat4( struct shader self, const char *name, mat4 m );
 void shader_uniform_float( struct shader self, const char *name, float f );
-void shader_uniform_vec2( struct shader self, const char *name, vec2s v );
-void shader_uniform_vec3( struct shader self, const char *name, vec3s v );
-void shader_uniform_vec4( struct shader self, const char *name, vec4s v );
+void shader_uniform_vec2( struct shader self, const char *name, vec2 v );
+void shader_uniform_vec3( struct shader self, const char *name, vec3 v );
+void shader_uniform_vec4( struct shader self, const char *name, vec4 v );
 void shader_uniform_int( struct shader self, const char *name, int v );
 void shader_uniform_uint( struct shader self, const char *name, unsigned int v );
 

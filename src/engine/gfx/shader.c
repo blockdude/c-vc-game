@@ -199,25 +199,25 @@ void shader_uniform_float( struct shader self, const char *name, float f )
     glUniform1f( idx, f );
 }
 
-void shader_uniform_vec2( struct shader self, const char *name, vec2s v )
+void shader_uniform_vec2( struct shader self, const char *name, vec2 v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniform2f( idx, v.x, v.y );
+	glUniform2fv( idx, 1, v );
 }
 
-void shader_uniform_vec3( struct shader self, const char *name, vec3s v )
+void shader_uniform_vec3( struct shader self, const char *name, vec3 v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniform3f( idx, v.x, v.y, v.z );
+    glUniform3fv( idx, 1, v );
 }
 
-void shader_uniform_vec4( struct shader self, const char *name, vec4s v )
+void shader_uniform_vec4( struct shader self, const char *name, vec4 v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniform4f( idx, v.x, v.y, v.z, v.w );
+    glUniform4fv( idx, 1, v );
 }
 
 void shader_uniform_int( struct shader self, const char *name, int v )
