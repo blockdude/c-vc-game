@@ -343,6 +343,9 @@ $(TEST_OBJ): $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.$(TEST_SRC_EXT)
 run: build
 	@./scripts/run.sh $(GAME_TARGET)
 
+rto: build
+	@timeout 5s ./scripts/run.sh $(GAME_TARGET)
+
 build: debug
 
 debug: CPPFLAGS += -DDEBUG

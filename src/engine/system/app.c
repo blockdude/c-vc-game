@@ -120,10 +120,9 @@ static int internal_loop_( struct app *self )
         // calculate & store frame time
         self->frame_delta = ( double ) frame_delta / 1000.0;
 
-        // selfly fps cap
+        // apply fps cap
         int delay = frame_current + self->frame_target - SDL_GetTicks();
-        if ( delay > 0 )
-            SDL_Delay( delay );
+        if ( delay > 0 ) SDL_Delay( delay );
     }
 
 soft_exit:

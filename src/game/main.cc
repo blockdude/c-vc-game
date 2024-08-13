@@ -1,5 +1,7 @@
+#include "SDL3/SDL_video.h"
 #include "gfx/camera.h"
 #include "gfx/vbo.h"
+#include "system/input.h"
 #include <string>
 
 #include <util/log.h>
@@ -24,6 +26,7 @@ static int init( struct app *app )
 	system_init();
 	window_init();
 	app_set_target_fps( app, 0 );
+	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
 
@@ -90,14 +93,14 @@ static int free( struct app *app )
 static int tick( struct app *app )
 {
 	( void )app;
+	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
+	window_set_title( s.c_str() );
 	return 0;
 }
 
 static int update( struct app *app )
 {
-	( void )app;
-	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
-	window_set_title( s.c_str() );
+	( void ) app;
 
 	mat4 model_matrix = {
 		{ 1, 0, 0, 0 },
