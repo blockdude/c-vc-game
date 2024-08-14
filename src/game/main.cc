@@ -1,7 +1,8 @@
+#include "SDL3/SDL_render.h"
 #include "SDL3/SDL_video.h"
-#include "gfx/camera.h"
+#include "gfx/render.h"
+#include "gfx/shape.h"
 #include "gfx/vbo.h"
-#include "system/input.h"
 #include <string>
 
 #include <util/log.h>
@@ -28,7 +29,7 @@ static struct shader shader;
 static struct vao vao;
 static struct vbo vbo;
 
-#define SIZE 256
+#define SIZE 512
 
 char buff_a[ SIZE * SIZE ];
 char buff_b[ SIZE * SIZE ];
@@ -40,14 +41,17 @@ static int init( struct app *app )
 	( void )app;
 	system_init();
 	window_init();
+	render_init();
 	app_set_target_fps( app, 0 );
 	app_set_target_tps( app, 1 );
-	SDL_GL_SetSwapInterval( 0 );
+	SDL_GL_SetSwapInterval( 1 );
 
 	glEnable( GL_DEPTH_TEST );
 
 	shader_fbuild( &shader, "res/shaders/simple.vert", "res/shaders/simple.frag" );
 	shader_bind( shader );
+	shader_uniform_float( shader, "size", SIZE );
+
 
 	vao = vao_create();
 	vao_bind( vao );
@@ -59,7 +63,7 @@ static int init( struct app *app )
 
 	// randomize our grid
 	for (int i = 0; i < SIZE * SIZE; i++)
-		buf[ i ] = rand() % 2;
+		buf[ i ] = ( rand() % 50 ) == 0 ? 1 : buf[ i ];
 
 	return 0;
 }
@@ -70,6 +74,7 @@ static int free( struct app *app )
 	vbo_free( vbo );
 	vao_free( vao );
 	shader_free( shader );
+	render_free();
 	window_free();
 	system_free();
 	return 0;
@@ -80,6 +85,7 @@ static int tick( struct app *app )
 	( void )app;
 	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
 	window_set_title( s.c_str() );
+
 	return 0;
 }
 
@@ -90,6 +96,7 @@ static int update( struct app *app )
 	// update alive state
 	for ( int i = 0; i < SIZE * SIZE; i++ )
 	{
+		buf[ i ] = ( rand() % 50000 ) == 0 ? 1 : buf[ i ];
 		out[ i ] = buf[ i ];
 
 		int x = i % SIZE;			// column

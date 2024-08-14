@@ -15,8 +15,10 @@
 
 #define clamp( v, mn, mx ) max( mn, min( mx, v ) )
 
+#ifndef __cplusplus
 #define max( a, b ) ( ( a ) > ( b ) ? ( a ) : ( b ) )
 #define min( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
+#endif
 
 #define degtorad( x ) ( ( x ) * ( PI / 180.0f ) )
 #define radtodeg( x ) ( ( x ) * ( 180.0f / PI ) )
@@ -37,7 +39,7 @@ static inline int fltcmp( double a, double b, double epsilon )
 	if ( a == 0 || b == 0 || ( ab_a + ab_b < DBL_MIN ) )
 		return diff < ( epsilon * DBL_MIN );
 
-	return diff / min( ( ab_a + ab_b ), DBL_MAX ) < epsilon;
+	return diff / fmin( ( ab_a + ab_b ), DBL_MAX ) < epsilon;
 }
 
 #ifdef __cplusplus
