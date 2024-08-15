@@ -1,8 +1,3 @@
-#include "SDL3/SDL_render.h"
-#include "SDL3/SDL_video.h"
-#include "gfx/render.h"
-#include "gfx/shape.h"
-#include "gfx/vbo.h"
 #include <string>
 
 #include <util/log.h>
@@ -29,12 +24,12 @@ static struct shader shader;
 static struct vao vao;
 static struct vbo vbo;
 
-#define SIZE 512
+#define SIZE 128
 
-char buff_a[ SIZE * SIZE ];
-char buff_b[ SIZE * SIZE ];
-char *out = buff_a;
-char *buf = buff_b;
+int buff_a[ SIZE * SIZE ];
+int buff_b[ SIZE * SIZE ];
+int *out = buff_a;
+int *buf = buff_b;
 
 static int init( struct app *app )
 {
@@ -44,13 +39,14 @@ static int init( struct app *app )
 	render_init();
 	app_set_target_fps( app, 0 );
 	app_set_target_tps( app, 1 );
-	SDL_GL_SetSwapInterval( 1 );
+	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
 
-	shader_fbuild( &shader, "res/shaders/simple.vert", "res/shaders/simple.frag" );
+	if ( shader_fbuild( &shader, "res/shaders/instancing.vert", "res/shaders/simple.frag" ) != 0 )
+		exit( 1 );
+
 	shader_bind( shader );
-	shader_uniform_float( shader, "size", SIZE );
 
 
 	vao = vao_create();
@@ -63,7 +59,7 @@ static int init( struct app *app )
 
 	// randomize our grid
 	for (int i = 0; i < SIZE * SIZE; i++)
-		buf[ i ] = ( rand() % 50 ) == 0 ? 1 : buf[ i ];
+		buf[ i ] = ( rand() % 2 ) == 0 ? 1 : buf[ i ];
 
 	return 0;
 }
@@ -96,7 +92,7 @@ static int update( struct app *app )
 	// update alive state
 	for ( int i = 0; i < SIZE * SIZE; i++ )
 	{
-		buf[ i ] = ( rand() % 50000 ) == 0 ? 1 : buf[ i ];
+		//buf[ i ] = ( rand() % 50000 ) == 0 ? 1 : buf[ i ];
 		out[ i ] = buf[ i ];
 
 		int x = i % SIZE;			// column
@@ -132,7 +128,7 @@ static int update( struct app *app )
 	}
 
 	//swap buffers
-	char *tmp = out;
+	int *tmp = out;
 	out = buf;
 	buf = tmp;
 
@@ -145,18 +141,21 @@ static int render( struct app *app )
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	for ( int i = 0; i < SIZE * SIZE; i++ )
-	{
-		if ( out[ i ] == 0 )
-			continue;
+	//for ( int i = 0; i < SIZE * SIZE; i++ )
+	//{
+	//	int x = i % SIZE;
+	//	int y = ( i - x ) / SIZE;
 
-		int x = i % SIZE;
-		int y = ( i - x ) / SIZE;
-
-		vec2 offset = { ( float ) x, ( float ) y };
-		shader_uniform_vec2( shader, "offset", offset );
-		glDrawArrays( GL_TRIANGLES, 0, 6 );
-	}
+	//	vec2 offset = { ( float ) x, ( float ) y };
+	//	shader_uniform_vec2( shader, "offset", offset );
+	//	shader_uniform_int( shader, "state", out[ i ] );
+	//	glDrawArrays( GL_TRIANGLES, 0, 6 );
+	//}
+	
+	GLint state_i = glGetUniformLocation( shader.handle, "state" );
+	if ( state_i < 0 ) log_warn( "did not uniform" );
+	glUniform1iv(state_i, SIZE * SIZE, out );
+	glDrawArraysInstanced( GL_TRIANGLES, 0, 6, SIZE * SIZE );
 
 	SDL_GL_SwapWindow( window.handle );
 
