@@ -23,6 +23,7 @@ static const GLfloat square[] = {
 static struct shader shader;
 static struct vao vao;
 static struct vbo vbo;
+static int state_i;
 
 #define SIZE 128
 
@@ -36,9 +37,8 @@ static int init( struct app *app )
 	( void )app;
 	system_init();
 	window_init();
-	render_init();
 	app_set_target_fps( app, 0 );
-	app_set_target_tps( app, 1 );
+	app_set_target_tps( app, 60 );
 	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
@@ -47,6 +47,7 @@ static int init( struct app *app )
 		exit( 1 );
 
 	shader_bind( shader );
+	state_i = glGetUniformLocation( shader.handle, "state" );
 
 
 	vao = vao_create();
@@ -70,7 +71,6 @@ static int free( struct app *app )
 	vbo_free( vbo );
 	vao_free( vao );
 	shader_free( shader );
-	render_free();
 	window_free();
 	system_free();
 	return 0;
@@ -124,7 +124,6 @@ static int update( struct app *app )
 			out[ i ] = 0;
 		else if ( neighbors == 3 )
 			out[ i ] = 1;
-
 	}
 
 	//swap buffers
@@ -152,8 +151,6 @@ static int render( struct app *app )
 	//	glDrawArrays( GL_TRIANGLES, 0, 6 );
 	//}
 	
-	GLint state_i = glGetUniformLocation( shader.handle, "state" );
-	if ( state_i < 0 ) log_warn( "did not uniform" );
 	glUniform1iv(state_i, SIZE * SIZE, out );
 	glDrawArraysInstanced( GL_TRIANGLES, 0, 6, SIZE * SIZE );
 

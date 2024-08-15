@@ -16,7 +16,6 @@ static void resize_callback_( int w, int h )
     glViewport( 0, 0, w, h );
 }
 
-// base init
 int window_init( void )
 {
     // skip init if already done
@@ -37,10 +36,10 @@ int window_init( void )
     window.aspect = 1.f;
 
     // Request an OpenGL 3.3 context (should be core)
-    SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
+    SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
 
     // Request a depth buffer
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
@@ -105,7 +104,6 @@ int window_free( void )
 
 int window_get_size( int *w, int *h )
 {
-    //SDL_GetWindowSize( window.handle, w, h );
     *w = window.w;
     *h = window.h;
     return WINDOW_SUCCESS;
@@ -120,7 +118,7 @@ int window_set_title( const char *title )
 int window_set_relative_mouse( bool state )
 {
     window.relative_mouse = state;
-    SDL_WarpMouseInWindow( window.handle, window.w / 2, window.h / 2 );
+    SDL_WarpMouseInWindow( window.handle, ( float ) window.w / 2.0f, ( float ) window.h / 2.0f );
     SDL_SetRelativeMouseMode( state );
     return WINDOW_SUCCESS;
 }
@@ -128,7 +126,7 @@ int window_set_relative_mouse( bool state )
 int window_toggle_relative_mouse( void )
 {
     window.relative_mouse = !window.relative_mouse;
-    SDL_WarpMouseInWindow( window.handle, window.w / 2, window.h / 2 );
+    SDL_WarpMouseInWindow( window.handle, ( float ) window.w / 2.0f, ( float ) window.h / 2.0f );
     SDL_SetRelativeMouseMode( window.relative_mouse );
     return WINDOW_SUCCESS;
 }

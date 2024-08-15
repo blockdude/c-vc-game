@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define TIMESCALE 1000.0
+
 struct app;
 typedef int ( *event_fn )( struct app *app );
 

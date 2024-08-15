@@ -82,7 +82,7 @@ static int internal_loop_( struct app *self )
         uint64_t frame_delta = frame_current - frame_previous;
 
         // update fps & tps every second
-        if ( frame_current - frame_timer >= 1000 )
+        if ( frame_current - frame_timer >= TIMESCALE )
         {
             // get variables
             uint64_t ticks  = self->tick_count - tick_last;
@@ -118,7 +118,7 @@ static int internal_loop_( struct app *self )
         internal_render_( self );
 
         // calculate & store frame time
-        self->frame_delta = ( double ) frame_delta / 1000.0;
+        self->frame_delta = ( double ) frame_delta / TIMESCALE;
 
         // apply fps cap
         int delay = frame_current + self->frame_target - SDL_GetTicks();
@@ -136,12 +136,12 @@ int app_init( struct app *self, struct stage state )
     self->running      = false;
 
 	self->frame_delta  = 0;
-	self->frame_target = 1000.0 / 60.0;
+	self->frame_target = TIMESCALE / 60.0;
 	self->frame_rate   = 0;
 	self->frame_count  = 0;
 
 	self->tick_delta   = 0;
-	self->tick_target  = 1000.0 / 30.0;
+	self->tick_target  = TIMESCALE / 30.0;
 	self->tick_rate    = 0;
 	self->tick_count   = 0;
 
@@ -164,12 +164,12 @@ void app_stop( struct app *self )
 
 void app_set_target_fps( struct app *self, double target )
 {
-    self->frame_target = target <= 0.0 ? 0.0 : 1000.0 / target;
+    self->frame_target = target <= 0.0 ? 0.0 : TIMESCALE / target;
 }
 
 void app_set_target_tps( struct app *self, double target )
 {
-    self->tick_target = target <= 0.0 ? 0.0 : 1000.0 / target;
+    self->tick_target = target <= 0.0 ? 0.0 : TIMESCALE / target;
 }
 
 uint64_t app_get_fps( struct app *self )
