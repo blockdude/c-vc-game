@@ -1,10 +1,6 @@
 #ifndef LIST_H
 #define LIST_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
  * A header only, C++ style dynamic array implementation.
  * Heavly influenced by eteran's c-vector.
@@ -91,6 +87,7 @@ struct _metadata
  * Return: A size_t with size or capacity value.
  */
 #define list_size( lst ) ( ( lst ) ? _LIST_TO_META( lst )->size : ( size_t ) 0 )
+
 #define list_capacity( lst ) ( ( lst ) ? _LIST_TO_META( lst )->capacity : ( size_t ) 0 )
 
 /**
@@ -446,9 +443,5 @@ static inline void *_list_increment_size( void *lst, size_t stride, size_t n )
         }                                                           \
     }                                                               \
     while ( 0 )
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

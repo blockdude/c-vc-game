@@ -5,3 +5,5 @@ Game.
 
 # TODO
 * Clean up shader code.
+* Make linear algebra lib.
+* 
