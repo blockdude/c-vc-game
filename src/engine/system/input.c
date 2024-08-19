@@ -27,17 +27,17 @@ struct mouse_state
     } wheel;
 
     struct {
-        // position relative to window
-        int x;
-        int y;
+        // relative mouse position
+        float x;
+        float y;
 
-        // delta x and y
-        int dx;
-        int dy;
+        // mouse delta
+        float dx;
+        float dy;
 
-        // global position
-        int gx;
-        int gy;
+        // global mouse position
+        float gx;
+        float gy;
     } pos;
 
     bool moved;
@@ -48,11 +48,16 @@ struct input
     struct key_state key[ INPUT_KB_COUNT ];
     struct mouse_state mouse;
 
-    input_resize_callback_fn *resize_cb;
-    input_quit_callback_fn *quit_cb;
+    resize_cb_fn *resize_cb;
+    quit_cb_fn *quit_cb;
 };
 
-static struct input input;
+static struct input input = {
+    .key        = { 0 },
+    .mouse      = { 0 },
+    .resize_cb  = NULL,
+    .quit_cb    = NULL
+};
 
 static enum input_button button_from_sdl( Uint8 sdlbutton )
 {
@@ -104,14 +109,7 @@ static void input_reset( void )
     input.mouse.pos.dy = 0;
 }
 
-int input_init( void )
-{
-    input.resize_cb = NULL;
-    input.quit_cb = NULL;
-    return INPUT_SUCCESS;
-}
-
-int input_process_events( void )
+int input_poll( void )
 {
     input_reset();
 
@@ -185,20 +183,15 @@ int input_process_events( void )
     return result;
 }
 
-int input_push_resize_callback( input_resize_callback_fn fn )
+int input_resize_add_listener( resize_cb_fn fn )
 {
     list_push_back( input.resize_cb, fn );
     return INPUT_SUCCESS;
 }
 
-int input_push_quit_callback( input_quit_callback_fn fn )
+int input_quit_add_listener( quit_cb_fn fn )
 {
     list_push_back( input.quit_cb, fn );
-    return INPUT_SUCCESS;
-}
-
-int input_free( void )
-{
     return INPUT_SUCCESS;
 }
 
@@ -237,13 +230,13 @@ bool input_mouse_moved( void )
     return input.mouse.moved;
 }
 
-void input_mouse_pos( int *x, int *y )
+void input_mouse_pos( float *x, float *y )
 {
     if ( x ) *x = input.mouse.pos.x;
     if ( y ) *y = input.mouse.pos.y;
 }
 
-void input_mouse_delta( int *x, int *y )
+void input_mouse_delta( float *x, float *y )
 {
     if ( x ) *x = input.mouse.pos.dx;
     if ( y ) *y = input.mouse.pos.dy;

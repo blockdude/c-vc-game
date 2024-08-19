@@ -4,25 +4,32 @@
 #include <glad/glad.h>
 #include <cglm/struct.h>
 
-struct VertexAttr
+enum shader_status
 {
-	GLuint index;
-	const GLchar *name;
+	SHADER_SUCCESS					= 0,
+	SHADER_VS_COMPILE_ERROR			= 1,
+	SHADER_FS_COMPILE_ERROR			= 2,
+	SHADER_PROGRAM_LINKING_ERROR	= 3,
+	SHADER_INVALID_FILE_PATH		= 4,
 };
+
+//struct VertexAttr
+//{
+//	GLuint index;
+//	const GLchar *name;
+//};
 
 struct shader
 {
 	GLuint handle;
-	GLuint vs_handle;
-	GLuint fs_handle;
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int  shader_fbuild( struct shader *self, const char *vspath, const char *fspath );
-int  shader_tbuild( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen );
+int  shader_loadf( struct shader *self, const char *vspath, const char *fspath );
+int  shader_load( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen );
 void shader_free( struct shader self );
 void shader_bind( struct shader self );
 

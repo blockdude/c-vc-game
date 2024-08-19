@@ -43,7 +43,7 @@ static int init( struct app *app )
 
 	glEnable( GL_DEPTH_TEST );
 
-	if ( shader_fbuild( &shader, "res/shaders/instancing.vert", "res/shaders/simple.frag" ) != 0 )
+	if ( shader_loadf( &shader, "res/shaders/instancing.vert", "res/shaders/simple.frag" ) != 0 )
 		exit( 1 );
 
 	shader_bind( shader );
@@ -92,7 +92,6 @@ static int update( struct app *app )
 	// update alive state
 	for ( int i = 0; i < SIZE * SIZE; i++ )
 	{
-		//buf[ i ] = ( rand() % 50000 ) == 0 ? 1 : buf[ i ];
 		out[ i ] = buf[ i ];
 
 		int x = i % SIZE;			// column
@@ -139,17 +138,6 @@ static int render( struct app *app )
 	( void )app;
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	//for ( int i = 0; i < SIZE * SIZE; i++ )
-	//{
-	//	int x = i % SIZE;
-	//	int y = ( i - x ) / SIZE;
-
-	//	vec2 offset = { ( float ) x, ( float ) y };
-	//	shader_uniform_vec2( shader, "offset", offset );
-	//	shader_uniform_int( shader, "state", out[ i ] );
-	//	glDrawArrays( GL_TRIANGLES, 0, 6 );
-	//}
 	
 	glUniform1iv(state_i, SIZE * SIZE, out );
 	glDrawArraysInstanced( GL_TRIANGLES, 0, 6, SIZE * SIZE );

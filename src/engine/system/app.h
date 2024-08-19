@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define TIMESCALE 1000.0
+#define TIMESCALE 1000.0f
 
 struct app;
 typedef int ( *event_fn )( struct app *app );
@@ -26,15 +26,15 @@ struct app
 	bool running;
 
 	// frame timing
-	double   frame_delta;
-	double   frame_target;
-	uint64_t frame_rate;
+	float    frame_delta;
+	float    frame_target;
+	int      frame_rate;
 	uint64_t frame_count;
 
 	// tick timing
-	double   tick_delta;
-	double   tick_target;
-	uint64_t tick_rate;
+	float    tick_delta;
+	float    tick_target;
+	int      tick_rate;
 	uint64_t tick_count;
 };
 
@@ -46,10 +46,10 @@ int  app_init( struct app *self, struct stage state );
 void app_loop( struct app *self );
 void app_stop( struct app *self );
 
-void app_set_target_fps( struct app *self, double target );
-void app_set_target_tps( struct app *self, double target );
-uint64_t app_get_fps( struct app *self );
-uint64_t app_get_tps( struct app *self );
+void app_set_target_fps( struct app *self, float target );
+void app_set_target_tps( struct app *self, float target );
+int  app_get_fps( struct app *self );
+int  app_get_tps( struct app *self );
 
 #ifdef __cplusplus
 }

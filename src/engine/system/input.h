@@ -4,9 +4,12 @@
 #include <stdbool.h>
 #include <SDL3/SDL.h>
 
-#define INPUT_SUCCESS 0
-#define INPUT_QUIT 1
-#define INPUT_ERROR -1
+enum input_status
+{
+    INPUT_ERROR               = -1,
+    INPUT_SUCCESS             =  0,
+    INPUT_QUIT                =  1
+};
 
 // keyboard buton input
 enum input_key
@@ -95,26 +98,18 @@ enum input_button
     INPUT_MB_LAST             = INPUT_MB_COUNT - 1
 };
 
-typedef void ( *input_resize_callback_fn )( int w, int h );
-typedef void ( *input_quit_callback_fn )( void );
+typedef void ( *resize_cb_fn )( int w, int h );
+typedef void ( *quit_cb_fn )( void );
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// input stuff
-int input_init( void );
-int input_free( void );
+int input_poll( void );
 
-/*
- * tmp callback setter for window resizing and quit
- * (for use in window.c only)
- */
-int input_process_events( void );
-int input_push_resize_callback( input_resize_callback_fn fn );
-int input_push_quit_callback( input_quit_callback_fn fn );
+int input_resize_add_listener( resize_cb_fn fn );
+int input_quit_add_listener( quit_cb_fn fn );
 
-// 
 bool input_key_down( enum input_key key );
 bool input_key_up( enum input_key key );
 bool input_key_press( enum input_key key );
@@ -123,8 +118,8 @@ bool input_mouse_down( enum input_button button );
 bool input_mouse_up( enum input_button button );
 bool input_mouse_press( enum input_button button );
 bool input_mouse_moved( void );
-void input_mouse_pos( int *x, int *y );
-void input_mouse_delta( int *x, int *y );
+void input_mouse_pos( float *x, float *y );
+void input_mouse_delta( float *x, float *y );
 void input_mouse_scroll( float *x, float *y );
 
 #ifdef __cplusplus

@@ -5,7 +5,7 @@
 
 void camera_init( struct camera *self, float fov )
 {
-	*self = ( struct camera ){ 0 };
+	*self = ( struct camera ) { 0 };
 
 	self->fov = fov;
 	self->aspect = window.aspect;
@@ -18,7 +18,7 @@ void camera_init( struct camera *self, float fov )
 void camera_update( struct camera *self )
 {
 	// bound pitch at +- pi/2 and yaw in [0, tau]
-	self->pitch = clamp( self->pitch, -PI_2 + 0.000001f, PI_2 - 0.000001f );
+	self->pitch = CLAMP( self->pitch, -PI_2 + EPSILON, PI_2 - EPSILON );
 	self->yaw = ( self->yaw < 0 ? TAU : 0.0f ) + fmodf( self->yaw, TAU );
 
 	vec3 target = {

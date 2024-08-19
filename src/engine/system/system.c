@@ -1,12 +1,9 @@
 #include "system.h"
-#include "input.h"
 #include <util/log.h>
 #include <SDL3/SDL.h>
 
 int system_init( void )
 {
-    log_debug( "Initializing SDL subsystems" );
-
     SDL_InitFlags flags =
         SDL_INIT_TIMER      |
         SDL_INIT_AUDIO      |
@@ -24,17 +21,14 @@ int system_init( void )
         return SYSTEM_ERROR;
     }
 
-    log_debug( "Initializing input" );
-
-    input_init();
+    log_info( "Successfully initialized SDL subsystems" );
 
     return SYSTEM_SUCCESS;
 }
 
 int system_free( void )
 {
-    log_debug( "Shutting down SDL subsystems" );
-    input_free();
+    log_info( "Shutting down SDL subsystems" );
     SDL_Quit();
     return SYSTEM_SUCCESS;
 }

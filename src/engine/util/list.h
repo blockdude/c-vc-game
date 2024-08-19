@@ -14,7 +14,7 @@ extern "C" {
 #include <stdlib.h>
 
 /**
- * struct metadata_ - Structure for list metadata.
+ * struct _metadata - Structure for list metadata.
  * @size: Number of usable elements.
  * @capacity: Number of elements allowed in the list before reallocating.
  *
@@ -22,7 +22,7 @@ extern "C" {
  *
  * Structure for list metadata.
  */
-struct metadata_
+struct _metadata
 {
     size_t size;
     size_t capacity;
@@ -40,12 +40,12 @@ struct metadata_
  *
  * Return: The new address of the given pointer.
  */
-#define LIST_TO_META_( lst ) ( ( ( struct metadata_ * ) ( lst ) ) - 1 )
-#define META_TO_LIST_( lst ) ( ( void * ) ( ( ( struct metadata_ * ) ( lst ) ) + 1 ) )
-#define CAST_TO_META_( lst ) ( ( struct metadata_ * ) ( lst ) )
+#define _LIST_TO_META( lst ) ( ( ( struct _metadata * ) ( lst ) ) - 1 )
+#define _META_TO_LIST( lst ) ( ( void * ) ( ( ( struct _metadata * ) ( lst ) ) + 1 ) )
+#define _CAST_TO_META( lst ) ( ( struct _metadata * ) ( lst ) )
 
 /**
- * list_compute_growth_() - Calculates the next growth.
+ * _list_compute_growth() - Calculates the next growth.
  * @size: Initial size to compute next growth.
  *
  * For internal use only.
@@ -54,7 +54,7 @@ struct metadata_
  *
  * Return: The next growth rate.
  */
-#define list_compute_growth_( size ) ( ( size_t ) ( size * 1.5 + 1 ) )
+#define _list_compute_growth( size ) ( ( size_t ) ( size * 1.5 + 1 ) )
 
 /**
  * list_*_() - Memory manipulation.
@@ -69,19 +69,19 @@ struct metadata_
  *
  * Return: The destination pointer.
  */
-#define list_memset_( dst, val, n ) memset( ( dst ), ( val ), ( n ) )
-#define list_memmove_( dst, src, n ) memmove( ( dst ), ( src ), ( n ) )
-#define list_memcpy_( dst, src, n ) memcpy( ( dst ), ( src ), ( n ) )
+#define _list_memset( dst, val, n ) memset( ( dst ), ( val ), ( n ) )
+#define _list_memmove( dst, src, n ) memmove( ( dst ), ( src ), ( n ) )
+#define _list_memcpy( dst, src, n ) memcpy( ( dst ), ( src ), ( n ) )
 
 /**
- * list_free_() - Free list memory.
+ * _list_free() - Free list memory.
  * @lst: The list to be freed.
  *
  * For internal use only.
  *
  * Free list memory.
  */
-#define list_free_( lst ) free( LIST_TO_META_( lst ) )
+#define _list_free( lst ) free( _LIST_TO_META( lst ) )
 
 /**
  * list_size() - Gets the size of the list.
@@ -90,11 +90,11 @@ struct metadata_
  *
  * Return: A size_t with size or capacity value.
  */
-#define list_size( lst ) ( ( lst ) ? LIST_TO_META_( lst )->size : ( size_t ) 0 )
-#define list_capacity( lst ) ( ( lst ) ? LIST_TO_META_( lst )->capacity : ( size_t ) 0 )
+#define list_size( lst ) ( ( lst ) ? _LIST_TO_META( lst )->size : ( size_t ) 0 )
+#define list_capacity( lst ) ( ( lst ) ? _LIST_TO_META( lst )->capacity : ( size_t ) 0 )
 
 /**
- * list_set_size_() - Sets the size in the list's metadata.
+ * _list_set_size() - Sets the size in the list's metadata.
  * @lst: Pointer to the list.
  * @s: The new size to assign.
  *
@@ -102,16 +102,16 @@ struct metadata_
  *
  * Assign the size in a list.
  */
-static inline void list_set_size_( void *lst, size_t s )
+static inline void _list_set_size( void *lst, size_t s )
 {
     if ( lst )
     {
-        LIST_TO_META_( lst )->size = s;
+        _LIST_TO_META( lst )->size = s;
     }
 }
 
 /**
- * list_set_capacity_() - Sets the capacity in the list's metadata.
+ * _list_set_capacity() - Sets the capacity in the list's metadata.
  * @lst: Pointer to the list.
  * @c: The new capacity to assign.
  *
@@ -119,16 +119,16 @@ static inline void list_set_size_( void *lst, size_t s )
  *
  * Assign the capacity in a list.
  */
-static inline void list_set_capacity_( void *lst, size_t c )
+static inline void _list_set_capacity( void *lst, size_t c )
 {
     if ( lst )
     {
-        LIST_TO_META_( lst )->capacity = c;
+        _LIST_TO_META( lst )->capacity = c;
     }
 }
 
 /**
- * list_alloc_() - Allocates and initialized a new list.
+ * _list_alloc() - Allocates and initialized a new list.
  * @stride: Size of a single element.
  * @n: Number of elements to allocate.
  *
@@ -139,26 +139,26 @@ static inline void list_set_capacity_( void *lst, size_t c )
  * Return: A pointer to the new list. Will return NULL if it failed to
  *         allocate the memory.
  */
-static inline void *list_alloc_( size_t stride, size_t n )
+static inline void *_list_alloc( size_t stride, size_t n )
 {
-    size_t size = sizeof( struct metadata_ ) + ( stride * n );
+    size_t size = sizeof( struct _metadata ) + ( stride * n );
     void *base = malloc( size );
 
     if ( base == NULL )
         return NULL;
 
-    struct metadata_ tmp = {
+    struct _metadata tmp = {
         .size = 0,
         .capacity = n
     };
 
-    *CAST_TO_META_( base ) = tmp;
+    *_CAST_TO_META( base ) = tmp;
 
-    return META_TO_LIST_( base );
+    return _META_TO_LIST( base );
 }
 
 /**
- * list_realloc_() - Realloces a list to a new size.
+ * _list_realloc() - Realloces a list to a new size.
  * @lst: Vector to reallocate.
  * @stride: Size of a single element.
  * @n: Number of elements to reallocate to.
@@ -171,27 +171,27 @@ static inline void *list_alloc_( size_t stride, size_t n )
  * Return: A pointer to the new address of the list. Will return NULL if
  *         it failed to allocate the memory.
  */
-static inline void *list_realloc_( void *lst, size_t stride, size_t n )
+static inline void *_list_realloc( void *lst, size_t stride, size_t n )
 {
-    size_t size = sizeof( struct metadata_ ) + ( stride * n );
+    size_t size = sizeof( struct _metadata ) + ( stride * n );
 
     if ( lst )
     {
-        void *base = LIST_TO_META_( lst );
+        void *base = _LIST_TO_META( lst );
         base = realloc( base, size );
-        lst = base ? META_TO_LIST_( base ) : NULL;
-        list_set_capacity_( lst, n );
+        lst = base ? _META_TO_LIST( base ) : NULL;
+        _list_set_capacity( lst, n );
     }
     else
     {
-        lst = list_alloc_( stride, n );
+        lst = _list_alloc( stride, n );
     }
 
     return lst;
 }
 
 /**
- * list_increment_size_() - Increments the size in list metadata.
+ * _list_increment_size() - Increments the size in list metadata.
  * @lst: Vector to increment.
  * @stride: Size of an element.
  * @n: Number to increment size by.
@@ -204,21 +204,21 @@ static inline void *list_realloc_( void *lst, size_t stride, size_t n )
  * Return: A pointer to the the list. Can return NULL if memory failed to be
  *         allocated.
  */
-static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
+static inline void *_list_increment_size( void *lst, size_t stride, size_t n )
 {
     size_t size = list_size( lst );
     size_t cap = list_capacity( lst );
 
     if ( cap <= size + n - 1 )
     {
-        lst = list_realloc_(
+        lst = _list_realloc(
             lst,
             stride,
-            list_compute_growth_( cap + n - 1 )
+            _list_compute_growth( cap + n - 1 )
         );
     }
 
-    list_set_size_( lst, size + n );
+    _list_set_size( lst, size + n );
 
     return lst;
 }
@@ -236,7 +236,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
     {                                                               \
         if ( !( lst ) )                                             \
         {                                                           \
-            ( lst ) = ( __typeof__( lst ) ) list_alloc_(            \
+            ( lst ) = ( __typeof__( lst ) ) _list_alloc(            \
                 sizeof( *( lst ) ), ( c )                           \
             );                                                      \
         }                                                           \
@@ -254,7 +254,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
     {                                                               \
         if ( lst )                                                  \
         {                                                           \
-            list_free_( lst );                                      \
+            _list_free( lst );                                      \
             ( lst ) = NULL;                                         \
         }                                                           \
     }                                                               \
@@ -274,7 +274,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
     {                                                               \
         if ( list_capacity( lst ) < ( n ) )                         \
         {                                                           \
-            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
+            ( lst ) = ( __typeof__( lst ) ) _list_realloc(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
                 ( n )                                               \
@@ -299,13 +299,13 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
         list_reserve( ( lst ), ( n ) );                             \
         if ( size < ( n ) )                                         \
         {                                                           \
-            list_memset_(                                           \
+            _list_memset(                                           \
                 ( lst ) + size,                                     \
                 0,                                                  \
                 ( ( n ) - size ) * sizeof( *( lst ) )               \
             );                                                      \
         }                                                           \
-        list_set_size_( ( lst ) , ( n ) );                          \
+        _list_set_size( ( lst ) , ( n ) );                          \
     }                                                               \
     while ( 0 )
 
@@ -325,14 +325,14 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
         size_t cap = list_capacity( lst );                          \
         if ( cap <= size )                                          \
         {                                                           \
-            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
+            ( lst ) = ( __typeof__( lst ) ) _list_realloc(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
-                list_compute_growth_( cap )                         \
+                _list_compute_growth( cap )                         \
             );                                                      \
         }                                                           \
         ( lst )[ size ] = ( val );                                  \
-        list_set_size_( ( lst ), size + 1 );                        \
+        _list_set_size( ( lst ), size + 1 );                        \
     }                                                               \
     while ( 0 )
 
@@ -346,7 +346,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
 #define list_pop_back( lst ) \
     do                                                              \
     {                                                               \
-        list_set_size_( ( lst ), list_size( lst ) - 1 );            \
+        _list_set_size( ( lst ), list_size( lst ) - 1 );            \
     }                                                               \
     while ( 0 )
 
@@ -360,7 +360,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
 #define list_clear( lst ) \
     do                                                              \
     {                                                               \
-        list_set_size_( ( lst ), 0 );                               \
+        _list_set_size( ( lst ), 0 );                               \
     }                                                               \
     while ( 0 )
 
@@ -380,22 +380,22 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
         size_t cap = list_capacity( lst );                          \
         if ( cap <= size )                                          \
         {                                                           \
-            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
+            ( lst ) = ( __typeof__( lst ) ) _list_realloc(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
-                list_compute_growth_( cap )                         \
+                _list_compute_growth( cap )                         \
             );                                                      \
         }                                                           \
         if ( ( i ) < size )                                         \
         {                                                           \
-            list_memmove_(                                          \
+            _list_memmove(                                          \
                 ( lst ) + ( i ) + 1,                                \
                 ( lst ) + ( i ),                                    \
                 ( size - ( i ) ) * sizeof( *( lst ) )               \
             );                                                      \
         }                                                           \
         ( lst )[ ( i ) ] = ( val );                                 \
-        list_set_size_( ( lst ), size + 1 );                        \
+        _list_set_size( ( lst ), size + 1 );                        \
     }                                                               \
     while ( 0 )
 
@@ -415,12 +415,12 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
             size_t size = list_size( lst );                         \
             if ( ( i ) < size )                                     \
             {                                                       \
-                list_memmove_(                                      \
+                _list_memmove(                                      \
                     ( lst ) + ( i ),                                \
                     ( lst ) + ( i ) + 1,                            \
                     ( size - ( i ) - 1 ) * sizeof( *( lst ) )       \
                 );                                                  \
-                list_set_size_( ( lst ), size - 1 );                \
+                _list_set_size( ( lst ), size - 1 );                \
             }                                                       \
         }                                                           \
     }                                                               \
@@ -438,7 +438,7 @@ static inline void *list_increment_size_( void *lst, size_t stride, size_t n )
     {                                                               \
         if ( lst )                                                  \
         {                                                           \
-            ( lst ) = ( __typeof__( lst ) ) list_realloc_(          \
+            ( lst ) = ( __typeof__( lst ) ) _list_realloc(          \
                 ( lst ),                                            \
                 sizeof( *( lst ) ),                                 \
                 list_size( lst )                                    \

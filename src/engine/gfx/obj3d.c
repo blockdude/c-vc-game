@@ -6,12 +6,11 @@
 #include <util/fmath.h>
 #include <util/list.h>
 
-#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-static inline void obj3d_init_( struct obj3d *obj )
+static inline void obj3d_init( struct obj3d *obj )
 {
 	obj->fv = NULL;
 	obj->vp = NULL;
@@ -19,7 +18,7 @@ static inline void obj3d_init_( struct obj3d *obj )
 	obj->vn = NULL;
 }
 
-static inline void obj3d_append_face_vertex_( struct obj3d *obj, const char *vert )
+static inline void obj3d_append_face_vertex( struct obj3d *obj, const char *vert )
 {
 	struct vert f;
 	int a, b, c;
@@ -33,7 +32,7 @@ static inline void obj3d_append_face_vertex_( struct obj3d *obj, const char *ver
 	list_push_back( obj->fv, f );
 }
 
-static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
+static inline int obj3d_load_mesh( struct obj3d *obj, const char *file )
 {
 	const size_t buffer_size = 1024;
 	char buffer[ buffer_size ];
@@ -101,9 +100,9 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 			// parse vertex
 			for ( int i = 0; i <= vert_count - 3; i++ )
 			{
-				obj3d_append_face_vertex_( obj, vert_idx[ 0 ] );
-				obj3d_append_face_vertex_( obj, vert_idx[ 1 + i ] );
-				obj3d_append_face_vertex_( obj, vert_idx[ 2 + i ] );
+				obj3d_append_face_vertex( obj, vert_idx[ 0 ] );
+				obj3d_append_face_vertex( obj, vert_idx[ 1 + i ] );
+				obj3d_append_face_vertex( obj, vert_idx[ 2 + i ] );
 			}
 		}
 	}
@@ -113,7 +112,7 @@ static inline int obj3d_load_mesh_( struct obj3d *obj, const char *file )
 	return 0;
 }
 
-static inline void obj3d_set_min_max_( struct obj3d *obj )
+static inline void obj3d_set_min_max( struct obj3d *obj )
 {
 	size_t len = list_size( obj->vp );
 	vec3s min = len > 0 ? obj->vp[ 0 ] : ( vec3s ){ 0 };
@@ -129,14 +128,14 @@ static inline void obj3d_set_min_max_( struct obj3d *obj )
 	obj->max = max;
 }
 
-static inline void obj3d_compute_extent_( struct obj3d *obj )
+static inline void obj3d_compute_extent( struct obj3d *obj )
 {
-	obj3d_set_min_max_( obj );
+	obj3d_set_min_max( obj );
 	obj->dia = glms_vec3_distance( obj->min, obj->max );
 	obj->center = glms_vec3_center( obj->min, obj->max );
 }
 
-static inline void obj3d_compute_properties_( struct obj3d *obj )
+static inline void obj3d_compute_properties( struct obj3d *obj )
 {
 	obj->fv_len			= list_size( obj->fv );
 	obj->vp_len			= list_size( obj->vp );
@@ -167,15 +166,15 @@ int obj3d_load( struct obj3d *obj, const char *file )
 	if ( obj == NULL || file == NULL )
 		return 1;
 
-	obj3d_init_( obj );
-	if ( obj3d_load_mesh_( obj, file ) != 0 )
+	obj3d_init( obj );
+	if ( obj3d_load_mesh( obj, file ) != 0 )
 	{
 		obj3d_free( obj );
 		return 2;
 	}
 
-	obj3d_compute_extent_( obj );
-	obj3d_compute_properties_( obj );
+	obj3d_compute_extent( obj );
+	obj3d_compute_properties( obj );
 
 	if ( obj->fv_len == 0 )
 	{

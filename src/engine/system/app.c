@@ -2,7 +2,7 @@
 #include <util/log.h>
 #include <system/input.h>
 
-static inline int internal_init_( struct app *self )
+static inline int internal_init( struct app *self )
 {
     if ( self == NULL )
         return 1;
@@ -13,7 +13,7 @@ static inline int internal_init_( struct app *self )
     return 0;
 }
 
-static inline int internal_free_( struct app *self )
+static inline int internal_free( struct app *self )
 {
     if ( self == NULL )
         return 1;
@@ -24,7 +24,7 @@ static inline int internal_free_( struct app *self )
     return 0;
 }
 
-static inline int internal_tick_( struct app *self )
+static inline int internal_tick( struct app *self )
 {
     if ( self == NULL )
         return 1;
@@ -37,7 +37,7 @@ static inline int internal_tick_( struct app *self )
     return 0;
 }
 
-static inline int internal_update_( struct app *self )
+static inline int internal_update( struct app *self )
 {
     if ( self == NULL )
         return 1;
@@ -48,7 +48,7 @@ static inline int internal_update_( struct app *self )
     return 0;
 }
 
-static inline int internal_render_( struct app *self )
+static inline int internal_render( struct app *self )
 {
     if ( self == NULL )
         return 1;
@@ -61,10 +61,10 @@ static inline int internal_render_( struct app *self )
     return 0;
 }
 
-static int internal_loop_( struct app *self )
+static int internal_loop( struct app *self )
 {
-    log_debug( "Starting self loop..." );
-    internal_init_( self );
+    log_info( "Starting application loop" );
+    internal_init( self );
 
     uint64_t frame_previous = SDL_GetTicks();
     double tick_time = 0;
@@ -85,8 +85,8 @@ static int internal_loop_( struct app *self )
         if ( frame_current - frame_timer >= TIMESCALE )
         {
             // get variables
-            uint64_t ticks  = self->tick_count - tick_last;
-            uint64_t frames = self->frame_count - frame_last;
+            int ticks  = self->tick_count - tick_last;
+            int frames = self->frame_count - frame_last;
 
             // store rate per second
             self->frame_rate = frames;
@@ -104,21 +104,21 @@ static int internal_loop_( struct app *self )
         tick_time += frame_delta;
 
         // poll events
-        if ( input_process_events() != 0 )
+        if ( input_poll() == INPUT_QUIT )
             goto soft_exit;
         
         // maintain fixed time step for each tick
         while ( tick_time >= self->tick_target )
         {
-            internal_tick_( self );
+            internal_tick( self );
             tick_time -= self->tick_target;
         }
 
-        internal_update_( self );
-        internal_render_( self );
+        internal_update( self );
+        internal_render( self );
 
         // calculate & store frame time
-        self->frame_delta = ( double ) frame_delta / TIMESCALE;
+        self->frame_delta = frame_delta / TIMESCALE;
 
         // apply fps cap
         int delay = frame_current + self->frame_target - SDL_GetTicks();
@@ -126,7 +126,7 @@ static int internal_loop_( struct app *self )
     }
 
 soft_exit:
-	internal_free_( self );
+	internal_free( self );
     return 0;
 }
 
@@ -136,12 +136,12 @@ int app_init( struct app *self, struct stage state )
     self->running      = false;
 
 	self->frame_delta  = 0;
-	self->frame_target = TIMESCALE / 60.0;
+	self->frame_target = TIMESCALE / 60.0f;
 	self->frame_rate   = 0;
 	self->frame_count  = 0;
 
 	self->tick_delta   = 0;
-	self->tick_target  = TIMESCALE / 30.0;
+	self->tick_target  = TIMESCALE / 30.0f;
 	self->tick_rate    = 0;
 	self->tick_count   = 0;
 
@@ -154,7 +154,7 @@ void app_loop( struct app *self )
         return;
 
     self->running = true;
-    internal_loop_( self );
+    internal_loop( self );
 }
 
 void app_stop( struct app *self )
@@ -162,22 +162,22 @@ void app_stop( struct app *self )
     self->running = false;
 }
 
-void app_set_target_fps( struct app *self, double target )
+void app_set_target_fps( struct app *self, float target )
 {
-    self->frame_target = target <= 0.0 ? 0.0 : TIMESCALE / target;
+    self->frame_target = target <= 0.0f ? 0.0f : TIMESCALE / target;
 }
 
-void app_set_target_tps( struct app *self, double target )
+void app_set_target_tps( struct app *self, float target )
 {
-    self->tick_target = target <= 0.0 ? 0.0 : TIMESCALE / target;
+    self->tick_target = target <= 0.0f ? 0.0f : TIMESCALE / target;
 }
 
-uint64_t app_get_fps( struct app *self )
+int app_get_fps( struct app *self )
 {
     return self->frame_rate;
 }
 
-uint64_t app_get_tps( struct app *self )
+int app_get_tps( struct app *self )
 {
     return self->tick_rate;
 }

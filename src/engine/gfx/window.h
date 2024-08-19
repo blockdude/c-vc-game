@@ -4,10 +4,11 @@
 #include <util/util.h>
 #include <SDL3/SDL.h>
 
-#define WINDOW_SUCCESS	 0
-#define WINDOW_ERROR	-1
-#define WINDOW_EXIT      1
-#define WINDOW_HARD_EXIT 2
+enum window_status
+{
+	WINDOW_SUCCESS = 0,
+	WINDOW_ERROR = 1
+};
 
 struct window
 {
@@ -17,7 +18,6 @@ struct window
 	SDL_GLContext context;
 
 	// is the window running
-	bool quit;
 	bool initialized;
 	bool relative_mouse;
 
