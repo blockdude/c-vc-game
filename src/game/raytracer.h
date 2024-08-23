@@ -60,11 +60,11 @@ static const GLfloat vertices[] = {
 int init( struct app *app )
 {
     ( void ) app;
-	app_set_target_fps( app, 0 );
+	app_set_target_fps( app, 20 );
 	app_set_target_tps( app, 60 );
-	SDL_GL_SetSwapInterval( 1 );
+	SDL_GL_SetSwapInterval( 0 );
 
-    glEnable( GL_DEPTH_TEST );
+    //glEnable( GL_DEPTH_TEST );
 
     log_info( "Loading and compiling shaders..." );
     if ( shader_load( &shader, ( char * )vert_glsl, vert_glsl_len, ( char * )frag_glsl, frag_glsl_len ) != 0 )

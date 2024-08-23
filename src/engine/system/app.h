@@ -24,6 +24,7 @@ struct app
 {
 	struct stage stage;
 	bool running;
+	bool skip_ticks;
 
 	// frame timing
 	float    frame_delta;

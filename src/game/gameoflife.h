@@ -35,8 +35,9 @@ int *buf = buff_b;
 static int init( struct app *app )
 {
 	( void )app;
-	app_set_target_fps( app, 0 );
-	app_set_target_tps( app, 60 );
+	app_set_target_fps( app, 144 );
+	app_set_target_tps( app, 144 );
+	app->skip_ticks = true;
 	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
@@ -75,15 +76,6 @@ static int free( struct app *app )
 static int tick( struct app *app )
 {
 	( void )app;
-	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
-	window_set_title( s.c_str() );
-
-	return 0;
-}
-
-static int update( struct app *app )
-{
-	( void ) app;
 
 	// update alive state
 	for ( int i = 0; i < SIZE * SIZE; i++ )
@@ -125,6 +117,15 @@ static int update( struct app *app )
 	int *tmp = out;
 	out = buf;
 	buf = tmp;
+
+	return 0;
+}
+
+static int update( struct app *app )
+{
+	( void ) app;
+	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
+	window_set_title( s.c_str() );
 
 	return 0;
 }

@@ -67,7 +67,7 @@ static int internal_loop( struct app *self )
     internal_init( self );
 
     uint64_t frame_previous = SDL_GetTicks();
-    double tick_time = 0;
+    float tick_time = 0;
 
     uint64_t tick_last = 0;
     uint64_t frame_last = 0;
@@ -110,6 +110,20 @@ static int internal_loop( struct app *self )
         // maintain fixed time step for each tick
         while ( tick_time >= self->tick_target )
         {
+            if ( self->skip_ticks )
+            {
+                uint64_t frame_time = SDL_GetTicks();
+                uint64_t delta_time = frame_time - frame_previous;
+
+                // if our delta time excedes our target
+                // delta time then we skip ticks.
+                if ( delta_time > self->frame_target )
+                {
+                    tick_time -= self->frame_target;
+                    break;
+                }
+            }
+
             internal_tick( self );
             tick_time -= self->tick_target;
         }
@@ -134,6 +148,7 @@ int app_init( struct app *self, struct stage state )
 {
 	self->stage        = state;
     self->running      = false;
+    self->skip_ticks   = false;
 
 	self->frame_delta  = 0;
 	self->frame_target = TIMESCALE / 60.0f;
