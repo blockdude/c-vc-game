@@ -18,11 +18,11 @@ int main( int argc, char *argv[] )
 
 	struct app app;
 	app_init( &app, {
-		.init   = game_init,
-		.free   = game_free,
-		.tick   = game_tick,
-		.update = game_update,
-		.render = game_render
+		.init   = init,
+		.free   = free,
+		.tick   = tick,
+		.update = update,
+		.render = render
 	});
 
 	app_loop( &app );

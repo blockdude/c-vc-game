@@ -2,7 +2,7 @@
 #define SHADER_H
 
 #include <glad/glad.h>
-#include <cglm/struct.h>
+#include <util/types.h>
 
 enum shader_status
 {
@@ -33,11 +33,11 @@ int  shader_load( struct shader *self, const char *vstext, size_t vslen, const c
 void shader_free( struct shader self );
 void shader_bind( struct shader self );
 
-void shader_uniform_mat4( struct shader self, const char *name, mat4 m );
+void shader_uniform_mat4( struct shader self, const char *name, mat4_t m );
 void shader_uniform_float( struct shader self, const char *name, float f );
-void shader_uniform_vec2( struct shader self, const char *name, vec2 v );
-void shader_uniform_vec3( struct shader self, const char *name, vec3 v );
-void shader_uniform_vec4( struct shader self, const char *name, vec4 v );
+void shader_uniform_vec2( struct shader self, const char *name, vec2_t v );
+void shader_uniform_vec3( struct shader self, const char *name, vec3_t v );
+void shader_uniform_vec4( struct shader self, const char *name, vec4_t v );
 void shader_uniform_int( struct shader self, const char *name, int v );
 void shader_uniform_uint( struct shader self, const char *name, unsigned int v );
 

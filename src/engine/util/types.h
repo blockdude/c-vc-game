@@ -58,4 +58,9 @@ typedef struct mat4_s
 	float m30, m31, m32, m33;
 } mat4_t;
 
+typedef struct float16v_s
+{
+	float v[ 16 ];
+} float16v_t;
+
 #endif

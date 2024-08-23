@@ -17,6 +17,8 @@
 // Module Functions Definition - Matrix math
 //----------------------------------------------------------------------------------
 
+#define mat4_to_float( m ) ( mat4_to_floatv( m ).v )
+
 // Compute matrix determinant
 static inline float mat4_det( mat4_t m )
 {
@@ -555,35 +557,33 @@ static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
     return result;
 }
 
-/*
 // Get float array of matrix data
-static inline float16 MatrixToFloatV(Matrix mat)
+static inline float16v_t mat4_to_floatv( mat4_t mat )
 {
-    float16 result = { 0 };
+    float16v_t result = { 0 };
 
-    result.v[0] = mat.m0;
-    result.v[1] = mat.m1;
-    result.v[2] = mat.m2;
-    result.v[3] = mat.m3;
+    result.v[  0 ] = mat.m00;
+    result.v[  1 ] = mat.m10;
+    result.v[  2 ] = mat.m20;
+    result.v[  3 ] = mat.m30;
 
-    result.v[4] = mat.m4;
-    result.v[5] = mat.m5;
-    result.v[6] = mat.m6;
-    result.v[7] = mat.m7;
+    result.v[  4 ] = mat.m01;
+    result.v[  5 ] = mat.m11;
+    result.v[  6 ] = mat.m21;
+    result.v[  7 ] = mat.m31;
 
-    result.v[8] = mat.m8;
-    result.v[9] = mat.m9;
-    result.v[10] = mat.m10;
-    result.v[11] = mat.m11;
+    result.v[  8 ] = mat.m02;
+    result.v[  9 ] = mat.m12;
+    result.v[ 10 ] = mat.m22;
+    result.v[ 11 ] = mat.m32;
 
-    result.v[12] = mat.m12;
-    result.v[13] = mat.m13;
-    result.v[14] = mat.m14;
-    result.v[15] = mat.m15;
+    result.v[ 12 ] = mat.m03;
+    result.v[ 13 ] = mat.m13;
+    result.v[ 14 ] = mat.m23;
+    result.v[ 15 ] = mat.m33;
 
     return result;
 }
-*/
 
 // Decompose a transformation matrix into its rotational, translational and scaling components
 static inline void mat4_decompose( mat4_t mat, vec3_t *translation, quat_t *rotation, vec3_t *scale )

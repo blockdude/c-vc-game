@@ -13,12 +13,14 @@
 #include "SDL3/SDL_video.h"
 #include "gfx/window.h"
 
+#include <string>
+
 /* ================================== */
 /* obj stuff */
 /* ================================== */
 static struct camera camera;
-static vec3s light_pos   = {{ 0.0f, 5.0f, 0.0f }};
-static vec3s light_color = {{ 1.0f, 1.0f, 1.0f }};
+static vec3_t light_pos   = { 0.0f, 5.0f, 0.0f };
+static vec3_t light_color = { 1.0f, 1.0f, 1.0f };
 /* ================================== */
 
 /* ================================== */
@@ -55,7 +57,7 @@ static const GLfloat vertices[] = {
 };
 /* ================================== */
 
-int game_init( struct app *app )
+int init( struct app *app )
 {
     ( void ) app;
 	app_set_target_fps( app, 0 );
@@ -94,43 +96,43 @@ int game_init( struct app *app )
     camera.yaw   = DEGTORAD( 0 );
 
     // uniform objects to fragment shader
-    shader_uniform_vec3( shader, "plane.pos",  vec3{ 0.0f, -1.0f, 0.0f } );
-    shader_uniform_vec3( shader, "plane.norm", vec3{ 0.0f,  1.0f, 0.0f } );
+    shader_uniform_vec3( shader, "plane.pos",  { 0.0f, -1.0f, 0.0f } );
+    shader_uniform_vec3( shader, "plane.norm", { 0.0f,  1.0f, 0.0f } );
 
-    shader_uniform_vec3( shader,  "lights[0].pos",    light_pos.raw );
-    shader_uniform_vec3( shader,  "lights[0].color",  light_color.raw );
+    shader_uniform_vec3( shader,  "lights[0].pos",    light_pos );
+    shader_uniform_vec3( shader,  "lights[0].color",  light_color );
     shader_uniform_float( shader, "lights[0].radius", 1.0f );
     shader_uniform_float( shader, "lights[0].reach",  300.0f );
     shader_uniform_float( shader, "lights[0].power",  1.0f );
 
     shader_uniform_uint( shader,  "objects[0].type", 1 );
-    shader_uniform_vec3( shader,  "objects[0].pos", vec3{ 3.0f, 0.0f, 0.0f } );
+    shader_uniform_vec3( shader,  "objects[0].pos", { 3.0f, 0.0f, 0.0f } );
     shader_uniform_float( shader, "objects[0].scale", 1.0f );
-    shader_uniform_vec3( shader,  "objects[0].mat.color", vec3{ 0.0f, 1.0f, 0.0f } );
+    shader_uniform_vec3( shader,  "objects[0].mat.color", { 0.0f, 1.0f, 0.0f } );
     shader_uniform_float( shader, "objects[0].mat.reflectiveness", 0.0f );
 
     shader_uniform_uint( shader,  "objects[1].type", 1 );
-    shader_uniform_vec3( shader,  "objects[1].pos", vec3{ 0.0f, 0.0f, 0.0f } );
+    shader_uniform_vec3( shader,  "objects[1].pos", { 0.0f, 0.0f, 0.0f } );
     shader_uniform_float( shader, "objects[1].scale", 1.0f );
-    shader_uniform_vec3( shader,  "objects[1].mat.color", vec3{ 0.0f, 0.0f, 1.0f } );
+    shader_uniform_vec3( shader,  "objects[1].mat.color", { 0.0f, 0.0f, 1.0f } );
     shader_uniform_float( shader, "objects[1].mat.reflectiveness", 1.0f );
 
     shader_uniform_uint( shader,  "objects[2].type", 1 );
-    shader_uniform_vec3( shader,  "objects[2].pos", vec3{ -3.0f, 0.0f, 0.0f } );
+    shader_uniform_vec3( shader,  "objects[2].pos", { -3.0f, 0.0f, 0.0f } );
     shader_uniform_float( shader, "objects[2].scale", 1.0f );
-    shader_uniform_vec3( shader,  "objects[2].mat.color", vec3{ 1.0f, 0.0f, 0.0f } );
+    shader_uniform_vec3( shader,  "objects[2].mat.color", { 1.0f, 0.0f, 0.0f } );
     shader_uniform_float( shader, "objects[2].mat.reflectiveness", 0.5f );
 
     shader_uniform_uint( shader,  "objects[3].type", 1 );
-    shader_uniform_vec3( shader,  "objects[3].pos", vec3{ 0.0f, 0.0f, 3.0f } );
+    shader_uniform_vec3( shader,  "objects[3].pos", { 0.0f, 0.0f, 3.0f } );
     shader_uniform_float( shader, "objects[3].scale", 1.0f );
-    shader_uniform_vec3( shader,  "objects[3].mat.color", vec3{ 1.0f, 1.0f, 1.0f } );
+    shader_uniform_vec3( shader,  "objects[3].mat.color", { 1.0f, 1.0f, 1.0f } );
     shader_uniform_float( shader, "objects[3].mat.reflectiveness", 0.8f );
 
     shader_uniform_uint( shader,  "objects[4].type", 1 );
-    shader_uniform_vec3( shader,  "objects[4].pos", vec3{ 0.0f, 0.0f, -3.0f } );
+    shader_uniform_vec3( shader,  "objects[4].pos", { 0.0f, 0.0f, -3.0f } );
     shader_uniform_float( shader, "objects[4].scale", 1.0f );
-    shader_uniform_vec3( shader,  "objects[4].mat.color", vec3{ 0.8f, 0.8f, 0.8f } );
+    shader_uniform_vec3( shader,  "objects[4].mat.color", { 0.8f, 0.8f, 0.8f } );
     shader_uniform_float( shader, "objects[4].mat.reflectiveness", 0.08f );
 
     window_set_relative_mouse( true );
@@ -138,7 +140,7 @@ int game_init( struct app *app )
     return 0;
 }
 
-int game_free( struct app *app )
+int free( struct app *app )
 {
     ( void ) app;
     vbo_free( vbo );
@@ -147,7 +149,7 @@ int game_free( struct app *app )
     return 0;
 }
 
-int game_tick( struct app *app )
+int tick( struct app *app )
 {
     ( void ) app;
 	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
@@ -155,7 +157,7 @@ int game_tick( struct app *app )
     return 0;
 }
 
-int game_update( struct app *app )
+int update( struct app *app )
 {
     ( void ) app;
 
@@ -164,39 +166,39 @@ int game_update( struct app *app )
     /* CHARACTER MOVEMENT		   */
     /* --------------------------- */
 
-    vec3 direction = { 0, 0, 0 };
+    vec3_t direction = { 0, 0, 0 };
     if ( input_key_press( INPUT_KB_W ) )
     {
-        direction[ 0 ] += sinf( camera.yaw );
-        direction[ 2 ] += cosf( camera.yaw );
+        direction.x += sinf( camera.yaw );
+        direction.z += cosf( camera.yaw );
     }
 
     if ( input_key_press( INPUT_KB_S ) )
     {
-        direction[ 0 ] -= sinf( camera.yaw );
-        direction[ 2 ] -= cosf( camera.yaw );
+        direction.x -= sinf( camera.yaw );
+        direction.z -= cosf( camera.yaw );
     }
 
     if ( input_key_press( INPUT_KB_A ) )
     {
-        direction[ 0 ] += cosf( camera.yaw );
-        direction[ 2 ] -= sinf( camera.yaw );
+        direction.x += cosf( camera.yaw );
+        direction.z -= sinf( camera.yaw );
     }
 
     if ( input_key_press( INPUT_KB_D ) )
     {
-        direction[ 0 ] -= cosf( camera.yaw );
-        direction[ 2 ] += sinf( camera.yaw );
+        direction.x -= cosf( camera.yaw );
+        direction.z += sinf( camera.yaw );
     }
 
     if ( input_key_press( INPUT_KB_SPACE ) )
     {
-        direction[ 1 ] += 1;
+        direction.y += 1;
     }
 
     if ( input_key_press( INPUT_KB_LEFT_SHIFT ) )
     {
-        direction[ 1 ] -= 1;
+        direction.y -= 1;
     }
 
     if ( input_mouse_moved() )
@@ -212,21 +214,13 @@ int game_update( struct app *app )
         window_toggle_relative_mouse();
     }
 
-    glm_vec3_scale( direction, speed * app->frame_delta, direction );
-    camera.eye = vec3_add( camera.eye, vec3_t( direction[ 0 ], direction[ 1 ], direction[ 2 ] ) );
+    direction = vec3_scale( direction, speed * app->frame_delta );
+    camera.eye = vec3_add( camera.eye, direction );
     camera.aspect = window.aspect;
     camera_update( &camera );
 
-    vec3 eye = { camera.eye.x, camera.eye.y, camera.eye.z };
-    mat4 view = {
-        { camera.view.m00, camera.view.m10, camera.view.m20, camera.view.m30 },
-        { camera.view.m01, camera.view.m11, camera.view.m21, camera.view.m31 },
-        { camera.view.m02, camera.view.m12, camera.view.m22, camera.view.m32 },
-        { camera.view.m03, camera.view.m13, camera.view.m23, camera.view.m33 },
-    };
-
-    shader_uniform_vec3( shader, "camera.eye", eye );
-    shader_uniform_mat4( shader, "camera.view", view );
+    shader_uniform_vec3( shader, "camera.eye", camera.eye );
+    shader_uniform_mat4( shader, "camera.view", camera.view );
     shader_uniform_float( shader, "camera.fov", camera.fov );
 
     /* ======================================================== */
@@ -236,32 +230,32 @@ int game_update( struct app *app )
     /* LIGHT MOVEMENT		       */
     /* --------------------------- */
 
-    direction[ 0 ] = 0;
-    direction[ 1 ] = 0;
-    direction[ 2 ] = 0;
+    direction.x = 0;
+    direction.y = 0;
+    direction.z = 0;
     if ( input_key_press( INPUT_KB_LEFT ) )
     {
-        direction[ 0 ] += 1;
+        direction.x += 1;
     }
 
     if ( input_key_press( INPUT_KB_RIGHT ) )
     {
-        direction[ 0 ] -= 1;
+        direction.x -= 1;
     }
 
     if ( input_key_press( INPUT_KB_UP ) )
     {
-        direction[ 2 ] += 1;
+        direction.z += 1;
     }
 
     if ( input_key_press( INPUT_KB_DOWN ) )
     {
-        direction[ 2 ] -= 1;
+        direction.z -= 1;
     }
 
-    glm_vec3_scale( direction, speed * app->frame_delta, direction );
-    glm_vec3_add( light_pos.raw, direction, light_pos.raw );
-    shader_uniform_vec3( shader,  "lights[0].pos", light_pos.raw );
+    direction = vec3_scale( direction, speed * app->frame_delta );
+    light_pos = vec3_add( light_pos, direction );
+    shader_uniform_vec3( shader,  "lights[0].pos", light_pos );
 
     /* ======================================================== */
 
@@ -272,27 +266,27 @@ int game_update( struct app *app )
 
     if ( input_key_down( INPUT_KB_1 ) )
     {
-        shader_uniform_vec3( shader, "lights[0].color", light_color.raw );
+        shader_uniform_vec3( shader, "lights[0].color", light_color );
     }
 
     if ( input_key_down( INPUT_KB_2 ) )
     {
-        shader_uniform_vec3( shader, "lights[0].color", vec3{ 0.4f, 0.9f, 1.0f } );
+        shader_uniform_vec3( shader, "lights[0].color", { 0.4f, 0.9f, 1.0f } );
     }
 
     if ( input_key_down( INPUT_KB_3 ) )
     {
-        shader_uniform_vec3( shader, "lights[0].color", vec3{ 1.0f, 0.2f, 1.0f } );
+        shader_uniform_vec3( shader, "lights[0].color", { 1.0f, 0.2f, 1.0f } );
     }
 
     if ( input_key_down( INPUT_KB_4 ) )
     {
-        shader_uniform_vec3( shader, "lights[0].color", vec3{ 0.7f, 0.6f, 0.2f } );
+        shader_uniform_vec3( shader, "lights[0].color", { 0.7f, 0.6f, 0.2f } );
     }
 
     if ( input_key_down( INPUT_KB_5 ) )
     {
-        shader_uniform_vec3( shader, "lights[0].color", vec3{ 0.8f, 0.7f, 0.8f } );
+        shader_uniform_vec3( shader, "lights[0].color", { 0.8f, 0.7f, 0.8f } );
     }
 
     if ( input_key_down( INPUT_KB_6 ) )
@@ -321,12 +315,12 @@ int game_update( struct app *app )
 
     /* ======================================================== */
 
-    shader_uniform_vec2( shader, "resolution", vec2{ ( float )window.w, ( float )window.h } );
+    shader_uniform_vec2( shader, "resolution", { ( float )window.w, ( float )window.h } );
 
     return 0;
 }
 
-int game_render( struct app *app )
+int render( struct app *app )
 {
     ( void ) app;
     glClearColor( 1.f, 1.f, 1.f, 1.f );

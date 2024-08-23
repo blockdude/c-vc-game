@@ -6,7 +6,7 @@
 #include <system/app.h>
 #include <cglm/struct.h>
 #include <util/list.h>
-#include <util/fmath.h>
+#include <util/math.h>
 #include <util/list.h>
 #include <gfx/gfx.h>
 
