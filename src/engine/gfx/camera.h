@@ -1,18 +1,17 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <cglm/cglm.h>
-#include <cglm/struct.h>
+#include <util/types.h>
 
 struct camera
 {
-	mat4 view;
-	mat4 proj;
+	mat4_t view;
+	mat4_t proj;
 
-	vec3 eye;		/* camera position */
-	vec3 target;	/* lookat position */
-	vec3 up;		/* camera tilt     */
-	vec3 right;
+	vec3_t eye;		/* camera position */
+	vec3_t target;	/* lookat position */
+	vec3_t up;		/* camera tilt     */
+	vec3_t right;
 
 	float pitch;
 	float yaw;

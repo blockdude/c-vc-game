@@ -1,0 +1,643 @@
+#ifndef MAT4_H
+#define MAT4_H
+
+#include <math.h>
+#include "types.h"
+#include "util.h"
+#include "vec3.h"
+#include "quat.h"
+
+/*
+ * This is a fork of the raymath v1.5 library.
+ * There are no modifications other than some formating and
+ * naming differences.
+ */
+
+//----------------------------------------------------------------------------------
+// Module Functions Definition - Matrix math
+//----------------------------------------------------------------------------------
+
+// Compute matrix determinant
+static inline float mat4_det( mat4_t m )
+{
+    float result = 0.0f;
+
+    // Cache the matrix values (speed optimization)
+    float a00 = m.m00, a01 = m.m10, a02 = m.m20, a03 = m.m30;
+    float a10 = m.m01, a11 = m.m11, a12 = m.m21, a13 = m.m31;
+    float a20 = m.m02, a21 = m.m12, a22 = m.m22, a23 = m.m32;
+    float a30 = m.m03, a31 = m.m13, a32 = m.m23, a33 = m.m33;
+
+    result = a30 * a21 * a12 * a03 - a20 * a31 * a12 * a03 - a30 * a11 * a22 * a03 + a10 * a31 * a22 * a03 +
+             a20 * a11 * a32 * a03 - a10 * a21 * a32 * a03 - a30 * a21 * a02 * a13 + a20 * a31 * a02 * a13 +
+             a30 * a01 * a22 * a13 - a00 * a31 * a22 * a13 - a20 * a01 * a32 * a13 + a00 * a21 * a32 * a13 +
+             a30 * a11 * a02 * a23 - a10 * a31 * a02 * a23 - a30 * a01 * a12 * a23 + a00 * a31 * a12 * a23 +
+             a10 * a01 * a32 * a23 - a00 * a11 * a32 * a23 - a20 * a11 * a02 * a33 + a10 * a21 * a02 * a33 +
+             a20 * a01 * a12 * a33 - a00 * a21 * a12 * a33 - a10 * a01 * a22 * a33 + a00 * a11 * a22 * a33;
+
+    return result;
+}
+
+// Get the trace of the matrix (sum of the values along the diagonal)
+static inline float mat4_trace( mat4_t m )
+{
+    float result = ( m.m00 + m.m11 + m.m22 + m.m33 );
+    return result;
+}
+
+// Transposes provided matrix
+static inline mat4_t mat4_transpose( mat4_t m )
+{
+    mat4_t result = { 0 };
+
+    result.m00 = m.m00;
+    result.m10 = m.m01;
+    result.m20 = m.m02;
+    result.m30 = m.m03;
+    result.m01 = m.m10;
+    result.m11 = m.m11;
+    result.m21 = m.m12;
+    result.m31 = m.m13;
+    result.m02 = m.m20;
+    result.m12 = m.m21;
+    result.m22 = m.m22;
+    result.m32 = m.m23;
+    result.m03 = m.m30;
+    result.m13 = m.m31;
+    result.m23 = m.m32;
+    result.m33 = m.m33;
+
+    return result;
+}
+
+// Invert provided matrix
+static inline mat4_t mat4_invert( mat4_t m )
+{
+    mat4_t result = { 0 };
+
+    // Cache the matrix values (speed optimization)
+    float a00 = m.m00, a01 = m.m10, a02 = m.m20, a03 = m.m30;
+    float a10 = m.m01, a11 = m.m11, a12 = m.m21, a13 = m.m31;
+    float a20 = m.m02, a21 = m.m12, a22 = m.m22, a23 = m.m32;
+    float a30 = m.m03, a31 = m.m13, a32 = m.m23, a33 = m.m33;
+
+    float b00 = a00 * a11 - a01 * a10;
+    float b01 = a00 * a12 - a02 * a10;
+    float b02 = a00 * a13 - a03 * a10;
+    float b03 = a01 * a12 - a02 * a11;
+    float b04 = a01 * a13 - a03 * a11;
+    float b05 = a02 * a13 - a03 * a12;
+    float b06 = a20 * a31 - a21 * a30;
+    float b07 = a20 * a32 - a22 * a30;
+    float b08 = a20 * a33 - a23 * a30;
+    float b09 = a21 * a32 - a22 * a31;
+    float b10 = a21 * a33 - a23 * a31;
+    float b11 = a22 * a33 - a23 * a32;
+
+    // Calculate the invert determinant (inlined to avoid double-caching)
+    float idet = 1.0f/(b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+
+    result.m00 = (  a11 * b11 - a12 * b10 + a13 * b09) * idet;
+    result.m10 = ( -a01 * b11 + a02 * b10 - a03 * b09) * idet;
+    result.m20 = (  a31 * b05 - a32 * b04 + a33 * b03) * idet;
+    result.m30 = ( -a21 * b05 + a22 * b04 - a23 * b03) * idet;
+    result.m01 = ( -a10 * b11 + a12 * b08 - a13 * b07) * idet;
+    result.m11 = (  a00 * b11 - a02 * b08 + a03 * b07) * idet;
+    result.m21 = ( -a30 * b05 + a32 * b02 - a33 * b01) * idet;
+    result.m31 = (  a20 * b05 - a22 * b02 + a23 * b01) * idet;
+    result.m02 = (  a10 * b10 - a11 * b08 + a13 * b06) * idet;
+    result.m12 = ( -a00 * b10 + a01 * b08 - a03 * b06) * idet;
+    result.m22 = (  a30 * b04 - a31 * b02 + a33 * b00) * idet;
+    result.m32 = ( -a20 * b04 + a21 * b02 - a23 * b00) * idet;
+    result.m03 = ( -a10 * b09 + a11 * b07 - a12 * b06) * idet;
+    result.m13 = (  a00 * b09 - a01 * b07 + a02 * b06) * idet;
+    result.m23 = ( -a30 * b03 + a31 * b01 - a32 * b00) * idet;
+    result.m33 = (  a20 * b03 - a21 * b01 + a22 * b00) * idet;
+
+    return result;
+}
+
+// Get identity matrix
+static inline mat4_t mat4_identity( void )
+{
+    mat4_t result = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+    return result;
+}
+
+// Add two matrices
+static inline mat4_t mat4_add( mat4_t l, mat4_t r )
+{
+    mat4_t result = { 0 };
+
+    result.m00 = l.m00 + r.m00;
+    result.m10 = l.m10 + r.m10;
+    result.m20 = l.m20 + r.m20;
+    result.m30 = l.m30 + r.m30;
+    result.m01 = l.m01 + r.m01;
+    result.m11 = l.m11 + r.m11;
+    result.m21 = l.m21 + r.m21;
+    result.m31 = l.m31 + r.m31;
+    result.m02 = l.m02 + r.m02;
+    result.m12 = l.m12 + r.m12;
+    result.m22 = l.m22 + r.m22;
+    result.m32 = l.m32 + r.m32;
+    result.m03 = l.m03 + r.m03;
+    result.m13 = l.m13 + r.m13;
+    result.m23 = l.m23 + r.m23;
+    result.m33 = l.m33 + r.m33;
+
+    return result;
+}
+
+// Subtract two matrices (left - right)
+static inline mat4_t mat4_sub( mat4_t l, mat4_t r )
+{
+    mat4_t result = { 0 };
+
+    result.m00 = l.m00 - r.m00;
+    result.m10 = l.m10 - r.m10;
+    result.m20 = l.m20 - r.m20;
+    result.m30 = l.m30 - r.m30;
+    result.m01 = l.m01 - r.m01;
+    result.m11 = l.m11 - r.m11;
+    result.m21 = l.m21 - r.m21;
+    result.m31 = l.m31 - r.m31;
+    result.m02 = l.m02 - r.m02;
+    result.m12 = l.m12 - r.m12;
+    result.m22 = l.m22 - r.m22;
+    result.m32 = l.m32 - r.m32;
+    result.m03 = l.m03 - r.m03;
+    result.m13 = l.m13 - r.m13;
+    result.m23 = l.m23 - r.m23;
+    result.m33 = l.m33 - r.m33;
+
+    return result;
+}
+
+// Get two matrix multiplication
+// NOTE: When multiplying matrices... the order matters!
+static inline mat4_t mat4_mul( mat4_t l, mat4_t r )
+{
+    mat4_t result = { 0 };
+
+    result.m00 = l.m00 * r.m00 + l.m10 * r.m01 + l.m20 * r.m02 + l.m30 * r.m03;
+    result.m10 = l.m00 * r.m10 + l.m10 * r.m11 + l.m20 * r.m12 + l.m30 * r.m13;
+    result.m20 = l.m00 * r.m20 + l.m10 * r.m21 + l.m20 * r.m22 + l.m30 * r.m23;
+    result.m30 = l.m00 * r.m30 + l.m10 * r.m31 + l.m20 * r.m32 + l.m30 * r.m33;
+    result.m01 = l.m01 * r.m00 + l.m11 * r.m01 + l.m21 * r.m02 + l.m31 * r.m03;
+    result.m11 = l.m01 * r.m10 + l.m11 * r.m11 + l.m21 * r.m12 + l.m31 * r.m13;
+    result.m21 = l.m01 * r.m20 + l.m11 * r.m21 + l.m21 * r.m22 + l.m31 * r.m23;
+    result.m31 = l.m01 * r.m30 + l.m11 * r.m31 + l.m21 * r.m32 + l.m31 * r.m33;
+    result.m02 = l.m02 * r.m00 + l.m12 * r.m01 + l.m22 * r.m02 + l.m32 * r.m03;
+    result.m12 = l.m02 * r.m10 + l.m12 * r.m11 + l.m22 * r.m12 + l.m32 * r.m13;
+    result.m22 = l.m02 * r.m20 + l.m12 * r.m21 + l.m22 * r.m22 + l.m32 * r.m23;
+    result.m32 = l.m02 * r.m30 + l.m12 * r.m31 + l.m22 * r.m32 + l.m32 * r.m33;
+    result.m03 = l.m03 * r.m00 + l.m13 * r.m01 + l.m23 * r.m02 + l.m33 * r.m03;
+    result.m13 = l.m03 * r.m10 + l.m13 * r.m11 + l.m23 * r.m12 + l.m33 * r.m13;
+    result.m23 = l.m03 * r.m20 + l.m13 * r.m21 + l.m23 * r.m22 + l.m33 * r.m23;
+    result.m33 = l.m03 * r.m30 + l.m13 * r.m31 + l.m23 * r.m32 + l.m33 * r.m33;
+
+    return result;
+}
+
+// Get translation matrix
+static inline mat4_t mat4_translate( vec3_t v )
+{
+    mat4_t result = {
+		1.0f, 0.0f, 0.0f, v.x,
+        0.0f, 1.0f, 0.0f, v.y,
+        0.0f, 0.0f, 1.0f, v.z,
+        0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+    return result;
+}
+
+// Create rotation matrix from axis and angle
+// NOTE: Angle should be provided in radians
+static inline mat4_t mat4_rotate( vec3_t axis, float angle )
+{
+    mat4_t result = { 0 };
+
+    float x = axis.x, y = axis.y, z = axis.z;
+    float len = x * x + y * y + z * z;
+
+    if ( ( len != 1.0f ) && ( len != 0.0f ) )
+    {
+        float ilen = 1.0f / sqrtf( len );
+        x *= ilen;
+        y *= ilen;
+        z *= ilen;
+    }
+
+    float sin = sinf( angle );
+    float cos = cosf( angle );
+    float t = 1.0f - cos;
+
+    result.m00 = x * x * t + cos;
+    result.m10 = y * x * t + z * sin;
+    result.m20 = z * x * t - y * sin;
+    result.m30 = 0.0f;
+
+    result.m01 = x * y * t - z * sin;
+    result.m11 = y * y * t + cos;
+    result.m21 = z * y * t + x * sin;
+    result.m31 = 0.0f;
+
+    result.m02 = x * z * t + y * sin;
+    result.m12 = y * z * t - x * sin;
+    result.m22 = z * z * t + cos;
+    result.m32 = 0.0f;
+
+    result.m03 = 0.0f;
+    result.m13 = 0.0f;
+    result.m23 = 0.0f;
+    result.m33 = 1.0f;
+
+    return result;
+}
+
+// Get x-rotation matrix
+// NOTE: Angle must be provided in radians
+static inline mat4_t mat4_rotate_x( float angle )
+{
+    mat4_t result = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+	}; // MatrixIdentity()
+
+    float cos = cosf( angle );
+    float sin = sinf( angle );
+
+    result.m11 =  cos;
+    result.m21 =  sin;
+    result.m12 = -sin;
+    result.m22 =  cos;
+
+    return result;
+}
+
+// Get y-rotation matrix
+// NOTE: Angle must be provided in radians
+static inline mat4_t mat4_rotate_y( float angle )
+{
+    mat4_t result = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+	}; // MatrixIdentity()
+
+    float cos = cosf(angle);
+    float sin = sinf(angle);
+
+    result.m00 =  cos;
+    result.m20 = -sin;
+    result.m02 =  sin;
+    result.m22 =  cos;
+
+    return result;
+}
+
+// Get z-rotation matrix
+// NOTE: Angle must be provided in radians
+static inline mat4_t mat4_rotate_z( float angle )
+{
+    mat4_t result = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	}; // MatrixIdentity()
+
+    float cos = cosf(angle);
+    float sin = sinf(angle);
+
+    result.m00 =  cos;
+    result.m10 =  sin;
+    result.m01 = -sin;
+    result.m11 =  cos;
+
+    return result;
+}
+
+
+// Get xyz-rotation matrix
+// NOTE: Angle must be provided in radians
+static inline mat4_t mat_rotate_xyz( vec3_t angle )
+{
+    mat4_t result = {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	}; // MatrixIdentity()
+
+    float cosz = cosf( -angle.z );
+    float sinz = sinf( -angle.z );
+    float cosy = cosf( -angle.y );
+    float siny = sinf( -angle.y );
+    float cosx = cosf( -angle.x );
+    float sinx = sinf( -angle.x );
+
+    result.m00 = cosz * cosy;
+    result.m10 = ( cosz * siny * sinx ) - ( sinz * cosx );
+    result.m20 = ( cosz * siny * cosx ) + ( sinz * sinx );
+
+    result.m01 = sinz * cosy;
+    result.m11 = ( sinz * siny * sinx ) + ( cosz * cosx );
+    result.m21 = ( sinz * siny * cosx ) - ( cosz * sinx );
+
+    result.m02 = -siny;
+    result.m12 = cosy * sinx;
+    result.m22 = cosy * cosx;
+
+    return result;
+}
+
+// Get zyx-rotation matrix
+// NOTE: Angle must be provided in radians
+static inline mat4_t mat4_rotate_zyx( vec3_t angle )
+{
+    mat4_t result = { 0 };
+
+    float cosz = cosf( angle.z );
+    float sinz = sinf( angle.z );
+    float cosy = cosf( angle.y );
+    float siny = sinf( angle.y );
+    float cosx = cosf( angle.x );
+    float sinx = sinf( angle.x );
+
+    result.m00 = cosz * cosy;
+    result.m01 = cosz * siny * sinx - cosx * sinz;
+    result.m02 = sinz * sinx + cosz * cosx * siny;
+    result.m03 = 0.0f;
+
+    result.m10 = cosy * sinz;
+    result.m11 = cosz * cosx + sinz * siny * sinx;
+    result.m12 = cosx * sinz * siny - cosz * sinx;
+    result.m13 = 0.0f;
+
+    result.m20 = -siny;
+    result.m21 = cosy * sinx;
+    result.m22 = cosy * cosx;
+    result.m23 = 0.0f;
+
+    result.m30 = 0.0f;
+    result.m31 = 0.0f;
+    result.m32 = 0.0f;
+    result.m33 = 1.0f;
+
+    return result;
+}
+
+// Get scaling matrix
+static inline mat4_t mat4_scale( vec3_t v )
+{
+    mat4_t result = {
+		v.x,  0.0f, 0.0f, 0.0f,
+		0.0f, v.y,  0.0f, 0.0f,
+		0.0f, 0.0f, v.z,  0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+    return result;
+}
+
+// Get perspective projection matrix
+static inline mat4_t mat4_frustum( double left, double right, double bottom, double top, double near, double far )
+{
+    mat4_t result = { 0 };
+
+    float rl = ( float )( right - left );
+    float tb = ( float )( top - bottom );
+    float fn = ( float )( far - near );
+
+    result.m00 = ( ( float )near * 2.0f ) / rl;
+    result.m10 = 0.0f;
+    result.m20 = 0.0f;
+    result.m30 = 0.0f;
+
+    result.m01 = 0.0f;
+    result.m11 = ( ( float )near * 2.0f ) / tb;
+    result.m21 = 0.0f;
+    result.m31 = 0.0f;
+
+    result.m02 = ( ( float )right + ( float )left ) / rl;
+    result.m12 = ( ( float )top + ( float )bottom ) / tb;
+    result.m22 = -( ( float )far + ( float )near ) / fn;
+    result.m32 = -1.0f;
+
+    result.m03 = 0.0f;
+    result.m13 = 0.0f;
+    result.m23 = -( ( float )far * ( float )near * 2.0f ) / fn;
+    result.m33 = 0.0f;
+
+    return result;
+}
+
+// Get perspective projection matrix
+// NOTE: Fovy angle must be provided in radians
+static inline mat4_t mat4_perspective( double fovy, double aspect, double near, double far )
+{
+    mat4_t result = { 0 };
+
+    double top = near * tan( fovy * 0.5 );
+    double bottom = -top;
+    double right = top * aspect;
+    double left = -right;
+
+    // MatrixFrustum( -right, right, -top, top, near, far );
+    float rl = ( float )( right - left );
+    float tb = ( float )( top - bottom );
+    float fn = ( float )( far - near );
+
+    result.m00 = ( ( float ) near * 2.0f ) / rl;
+    result.m11 = ( ( float ) near * 2.0f ) / tb;
+    result.m02 = ( ( float ) right + ( float ) left ) / rl;
+    result.m12 = ( ( float ) top + ( float ) bottom ) / tb;
+    result.m22 = -( ( float ) far + ( float ) near ) / fn;
+    result.m32 = -1.0f;
+    result.m23 = -( ( float ) far * ( float ) near * 2.0f ) / fn;
+
+    return result;
+}
+
+// Get orthographic projection matrix
+static inline mat4_t mat4_ortho( double left, double right, double bottom, double top, double near, double far )
+{
+    mat4_t result = { 0 };
+
+    float rl = ( float )( right - left );
+    float tb = ( float )( top - bottom );
+    float fn = ( float )( far - near );
+
+    result.m00 = 2.0f / rl;
+    result.m10 = 0.0f;
+    result.m20 = 0.0f;
+    result.m30 = 0.0f;
+    result.m01 = 0.0f;
+    result.m11 = 2.0f / tb;
+    result.m21 = 0.0f;
+    result.m31 = 0.0f;
+    result.m02 = 0.0f;
+    result.m12 = 0.0f;
+    result.m22 = -2.0f / fn;
+    result.m32 = 0.0f;
+    result.m03 = -( ( float ) left + ( float ) right ) / rl;
+    result.m13 = -( ( float ) top + ( float ) bottom ) / tb;
+    result.m23 = -( ( float ) far + ( float ) near ) / fn;
+    result.m33 = 1.0f;
+
+    return result;
+}
+
+// Get camera look-at matrix (view matrix)
+static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
+{
+    mat4_t result = { 0 };
+
+    float len = 0.0f;
+    float ilen = 0.0f;
+
+    // Vector3Subtract( eye, target )
+    vec3_t vz = { eye.x - target.x, eye.y - target.y, eye.z - target.z };
+
+    // Vector3Normalize( vz )
+    vec3_t v = vz;
+    len = sqrtf( v.x * v.x + v.y * v.y + v.z * v.z );
+    if ( len == 0.0f ) len = 1.0f;
+    ilen = 1.0f / len;
+    vz.x *= ilen;
+    vz.y *= ilen;
+    vz.z *= ilen;
+
+    // Vector3CrossProduct( up, vz )
+    vec3_t vx = { up.y * vz.z - up.z * vz.y, up.z * vz.x - up.x * vz.z, up.x * vz.y - up.y * vz.x };
+
+    // Vector3Normalize( x )
+    v = vx;
+    len = sqrtf( v.x * v.x + v.y * v.y + v.z * v.z );
+    if ( len == 0.0f ) len = 1.0f;
+    ilen = 1.0f / len;
+    vx.x *= ilen;
+    vx.y *= ilen;
+    vx.z *= ilen;
+
+    // Vector3CrossProduct( vz, vx )
+    vec3_t vy = { vz.y * vx.z - vz.z * vx.y, vz.z * vx.x - vz.x * vx.z, vz.x * vx.y - vz.y * vx.x };
+
+    result.m00 = vx.x;
+    result.m10 = vy.x;
+    result.m20 = vz.x;
+    result.m30 = 0.0f;
+    result.m01 = vx.y;
+    result.m11 = vy.y;
+    result.m21 = vz.y;
+    result.m31 = 0.0f;
+    result.m02 = vx.z;
+    result.m12 = vy.z;
+    result.m22 = vz.z;
+    result.m32 = 0.0f;
+    result.m03 = -( vx.x * eye.x + vx.y * eye.y + vx.z * eye.z );   // Vector3DotProduct( vx, eye )
+    result.m13 = -( vy.x * eye.x + vy.y * eye.y + vy.z * eye.z );   // Vector3DotProduct( vy, eye )
+    result.m23 = -( vz.x * eye.x + vz.y * eye.y + vz.z * eye.z );   // Vector3DotProduct( vz, eye )
+    result.m33 = 1.0f;
+
+    return result;
+}
+
+/*
+// Get float array of matrix data
+static inline float16 MatrixToFloatV(Matrix mat)
+{
+    float16 result = { 0 };
+
+    result.v[0] = mat.m0;
+    result.v[1] = mat.m1;
+    result.v[2] = mat.m2;
+    result.v[3] = mat.m3;
+
+    result.v[4] = mat.m4;
+    result.v[5] = mat.m5;
+    result.v[6] = mat.m6;
+    result.v[7] = mat.m7;
+
+    result.v[8] = mat.m8;
+    result.v[9] = mat.m9;
+    result.v[10] = mat.m10;
+    result.v[11] = mat.m11;
+
+    result.v[12] = mat.m12;
+    result.v[13] = mat.m13;
+    result.v[14] = mat.m14;
+    result.v[15] = mat.m15;
+
+    return result;
+}
+*/
+
+// Decompose a transformation matrix into its rotational, translational and scaling components
+static inline void mat4_decompose( mat4_t mat, vec3_t *translation, quat_t *rotation, vec3_t *scale )
+{
+    // Extract translation.
+    translation->x = mat.m03;
+    translation->y = mat.m13;
+    translation->z = mat.m23;
+
+    // Extract upper-left for determinant computation
+    const float a = mat.m00;
+    const float b = mat.m01;
+    const float c = mat.m02;
+    const float d = mat.m10;
+    const float e = mat.m11;
+    const float f = mat.m12;
+    const float g = mat.m20;
+    const float h = mat.m21;
+    const float i = mat.m22;
+    const float A = e * i - f * h;
+    const float B = f * g - d * i;
+    const float C = d * h - e * g;
+
+    // Extract scale
+    const float det = a * A + b * B + c * C;
+    vec3_t abc = { a, b, c };
+    vec3_t def = { d, e, f };
+    vec3_t ghi = { g, h, i };
+
+    float scalex = vec3_len( abc );
+    float scaley = vec3_len( def );
+    float scalez = vec3_len( ghi );
+    vec3_t s = { scalex, scaley, scalez };
+
+    if ( det < 0 ) s = vec3_negate( s );
+
+    *scale = s;
+
+    // Remove scale from the matrix if it is not close to zero
+    mat4_t clone = mat;
+    if ( !flteq( det, 0, EPSILON ) )
+    {
+        clone.m00 /= s.x;
+        clone.m11 /= s.y;
+        clone.m22 /= s.z;
+
+        // Extract rotation
+        *rotation = quat_from_mat4( clone );
+    }
+    else
+    {
+        // Set to identity if close to zero
+        *rotation = quat_identity();
+    }
+}
+
+#endif

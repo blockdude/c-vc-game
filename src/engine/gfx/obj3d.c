@@ -3,7 +3,7 @@
 
 #include <util/log.h>
 #include <util/types.h>
-#include <util/fmath.h>
+#include <util/math.h>
 #include <util/list.h>
 
 #include <stdlib.h>

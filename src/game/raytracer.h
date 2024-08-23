@@ -1,4 +1,5 @@
-#include <util/util.h>
+#include <util/math.h>
+#include <util/log.h>
 #include <system/input.h>
 #include <system/app.h>
 #include <gfx/gfx.h>
@@ -57,6 +58,9 @@ static const GLfloat vertices[] = {
 int game_init( struct app *app )
 {
     ( void ) app;
+	app_set_target_fps( app, 0 );
+	app_set_target_tps( app, 60 );
+	SDL_GL_SetSwapInterval( 1 );
 
     glEnable( GL_DEPTH_TEST );
 
@@ -146,6 +150,8 @@ int game_free( struct app *app )
 int game_tick( struct app *app )
 {
     ( void ) app;
+	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
+	window_set_title( s.c_str() );
     return 0;
 }
 
@@ -207,12 +213,20 @@ int game_update( struct app *app )
     }
 
     glm_vec3_scale( direction, speed * app->frame_delta, direction );
-    glm_vec3_add( camera.eye, direction, camera.eye );
+    camera.eye = vec3_add( camera.eye, vec3_t( direction[ 0 ], direction[ 1 ], direction[ 2 ] ) );
     camera.aspect = window.aspect;
     camera_update( &camera );
 
-    shader_uniform_vec3( shader, "camera.eye", camera.eye );
-    shader_uniform_mat4( shader, "camera.view", camera.view );
+    vec3 eye = { camera.eye.x, camera.eye.y, camera.eye.z };
+    mat4 view = {
+        { camera.view.m00, camera.view.m10, camera.view.m20, camera.view.m30 },
+        { camera.view.m01, camera.view.m11, camera.view.m21, camera.view.m31 },
+        { camera.view.m02, camera.view.m12, camera.view.m22, camera.view.m32 },
+        { camera.view.m03, camera.view.m13, camera.view.m23, camera.view.m33 },
+    };
+
+    shader_uniform_vec3( shader, "camera.eye", eye );
+    shader_uniform_mat4( shader, "camera.view", view );
     shader_uniform_float( shader, "camera.fov", camera.fov );
 
     /* ======================================================== */

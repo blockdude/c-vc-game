@@ -1,5 +1,0 @@
-{
-  "clangd.arguments": [
-    "--inlay-hints=false"
-  ]
-}

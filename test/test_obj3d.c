@@ -1,6 +1,6 @@
 #include "utest.h"
 #include <gfx/obj3d.h>
-#include <util/fmath.h>
+#include <util/math.h>
 
 struct obj3d_test_fixture
 {
@@ -120,19 +120,19 @@ UTEST_F( obj3d_test_fixture, validate_extent )
 {
 	struct obj3d *obj = &utest_fixture->obj;
 
-	EXPECT_TRUE( fltcmp( obj->dia, 17.460607338f, 0.000000001f ) );
+	EXPECT_TRUE( flteq( obj->dia, 17.460607338f, 0.000000001f ) );
 
-	EXPECT_TRUE( fltcmp( obj->center.x, 0.00865102f, 0.00000001f ) );
-	EXPECT_TRUE( fltcmp( obj->center.y, 6.98831547f, 0.00000001f ) );
-	EXPECT_TRUE( fltcmp( obj->center.z, 0.8941009f , 0.0000001f  ) );
+	EXPECT_TRUE( flteq( obj->center.x, 0.00865102f, 0.00000001f ) );
+	EXPECT_TRUE( flteq( obj->center.y, 6.98831547f, 0.00000001f ) );
+	EXPECT_TRUE( flteq( obj->center.z, 0.8941009f , 0.0000001f  ) );
 
-	EXPECT_TRUE( fltcmp( obj->min.x, -4.32404613f, 0.00000001f ) );
-	EXPECT_TRUE( fltcmp( obj->min.y, 0.025872f   , 0.000001f   ) );
-	EXPECT_TRUE( fltcmp( obj->min.z, -2.1009481f , 0.0000001f  ) );
+	EXPECT_TRUE( flteq( obj->min.x, -4.32404613f, 0.00000001f ) );
+	EXPECT_TRUE( flteq( obj->min.y, 0.025872f   , 0.000001f   ) );
+	EXPECT_TRUE( flteq( obj->min.z, -2.1009481f , 0.0000001f  ) );
 
-	EXPECT_TRUE( fltcmp( obj->max.x, 4.34134817f , 0.00000001f ) );
-	EXPECT_TRUE( fltcmp( obj->max.y, 13.95075893f, 0.00000001f ) );
-	EXPECT_TRUE( fltcmp( obj->max.z, 3.8891499f  , 0.0000001f  ) );
+	EXPECT_TRUE( flteq( obj->max.x, 4.34134817f , 0.00000001f ) );
+	EXPECT_TRUE( flteq( obj->max.y, 13.95075893f, 0.00000001f ) );
+	EXPECT_TRUE( flteq( obj->max.z, 3.8891499f  , 0.0000001f  ) );
 }
 
 UTEST_F( obj3d_test_fixture, validate_properties )

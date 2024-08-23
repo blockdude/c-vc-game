@@ -1,5 +1,6 @@
 #include "render.h"
 #include "window.h"
+#include <util/log.h>
 
 struct render
 {

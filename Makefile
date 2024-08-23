@@ -349,8 +349,8 @@ rto: build
 build: debug
 
 debug: CPPFLAGS += -DDEBUG
-debug: CFLAGS   += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic
-debug: CXXFLAGS += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic
+debug: CFLAGS   += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic -Wno-missing-field-initializers
+debug: CXXFLAGS += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic -Wno-missing-field-initializers
 debug: $(GAME_TARGET) $(TEST_TARGET)
 
 release: CPPFLAGS += -DRELEASE

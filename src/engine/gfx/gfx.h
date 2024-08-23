@@ -2,7 +2,6 @@
 #define GRAPHICS_H
 
 #include "camera.h"
-#include "color.h"
 #include "obj3d.h"
 #include "render.h"
 #include "shader.h"

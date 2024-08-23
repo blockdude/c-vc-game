@@ -1,5 +1,5 @@
 #include "input.h"
-#include <util/util.h>
+#include <util/list.h>
 
 struct key_state
 {

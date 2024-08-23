@@ -1,8 +1,12 @@
 #include "window.h"
+
 #include <SDL3/SDL_video.h>
 #include <stdalign.h>
-#include <system/input.h>
+
 #include <glad/glad.h>
+
+#include <system/input.h>
+#include <util/log.h>
 
 // global window context
 struct window window;
