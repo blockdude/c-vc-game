@@ -133,77 +133,79 @@ static inline mat4_t mat4_identity( void )
 }
 
 // Add two matrices
-static inline mat4_t mat4_add( mat4_t l, mat4_t r )
+static inline mat4_t mat4_add( mat4_t a, mat4_t b )
 {
     mat4_t result = { 0 };
 
-    result.m00 = l.m00 + r.m00;
-    result.m10 = l.m10 + r.m10;
-    result.m20 = l.m20 + r.m20;
-    result.m30 = l.m30 + r.m30;
-    result.m01 = l.m01 + r.m01;
-    result.m11 = l.m11 + r.m11;
-    result.m21 = l.m21 + r.m21;
-    result.m31 = l.m31 + r.m31;
-    result.m02 = l.m02 + r.m02;
-    result.m12 = l.m12 + r.m12;
-    result.m22 = l.m22 + r.m22;
-    result.m32 = l.m32 + r.m32;
-    result.m03 = l.m03 + r.m03;
-    result.m13 = l.m13 + r.m13;
-    result.m23 = l.m23 + r.m23;
-    result.m33 = l.m33 + r.m33;
+    result.m00 = a.m00 + b.m00;
+    result.m10 = a.m10 + b.m10;
+    result.m20 = a.m20 + b.m20;
+    result.m30 = a.m30 + b.m30;
+    result.m01 = a.m01 + b.m01;
+    result.m11 = a.m11 + b.m11;
+    result.m21 = a.m21 + b.m21;
+    result.m31 = a.m31 + b.m31;
+    result.m02 = a.m02 + b.m02;
+    result.m12 = a.m12 + b.m12;
+    result.m22 = a.m22 + b.m22;
+    result.m32 = a.m32 + b.m32;
+    result.m03 = a.m03 + b.m03;
+    result.m13 = a.m13 + b.m13;
+    result.m23 = a.m23 + b.m23;
+    result.m33 = a.m33 + b.m33;
 
     return result;
 }
 
 // Subtract two matrices (left - right)
-static inline mat4_t mat4_sub( mat4_t l, mat4_t r )
+// a - left matrix
+// b - right matrix
+static inline mat4_t mat4_sub( mat4_t a, mat4_t b )
 {
     mat4_t result = { 0 };
 
-    result.m00 = l.m00 - r.m00;
-    result.m10 = l.m10 - r.m10;
-    result.m20 = l.m20 - r.m20;
-    result.m30 = l.m30 - r.m30;
-    result.m01 = l.m01 - r.m01;
-    result.m11 = l.m11 - r.m11;
-    result.m21 = l.m21 - r.m21;
-    result.m31 = l.m31 - r.m31;
-    result.m02 = l.m02 - r.m02;
-    result.m12 = l.m12 - r.m12;
-    result.m22 = l.m22 - r.m22;
-    result.m32 = l.m32 - r.m32;
-    result.m03 = l.m03 - r.m03;
-    result.m13 = l.m13 - r.m13;
-    result.m23 = l.m23 - r.m23;
-    result.m33 = l.m33 - r.m33;
+    result.m00 = a.m00 - b.m00;
+    result.m10 = a.m10 - b.m10;
+    result.m20 = a.m20 - b.m20;
+    result.m30 = a.m30 - b.m30;
+    result.m01 = a.m01 - b.m01;
+    result.m11 = a.m11 - b.m11;
+    result.m21 = a.m21 - b.m21;
+    result.m31 = a.m31 - b.m31;
+    result.m02 = a.m02 - b.m02;
+    result.m12 = a.m12 - b.m12;
+    result.m22 = a.m22 - b.m22;
+    result.m32 = a.m32 - b.m32;
+    result.m03 = a.m03 - b.m03;
+    result.m13 = a.m13 - b.m13;
+    result.m23 = a.m23 - b.m23;
+    result.m33 = a.m33 - b.m33;
 
     return result;
 }
 
 // Get two matrix multiplication
 // NOTE: When multiplying matrices... the order matters!
-static inline mat4_t mat4_mul( mat4_t l, mat4_t r )
+static inline mat4_t mat4_mul( mat4_t a, mat4_t b )
 {
     mat4_t result = { 0 };
 
-    result.m00 = l.m00 * r.m00 + l.m10 * r.m01 + l.m20 * r.m02 + l.m30 * r.m03;
-    result.m10 = l.m00 * r.m10 + l.m10 * r.m11 + l.m20 * r.m12 + l.m30 * r.m13;
-    result.m20 = l.m00 * r.m20 + l.m10 * r.m21 + l.m20 * r.m22 + l.m30 * r.m23;
-    result.m30 = l.m00 * r.m30 + l.m10 * r.m31 + l.m20 * r.m32 + l.m30 * r.m33;
-    result.m01 = l.m01 * r.m00 + l.m11 * r.m01 + l.m21 * r.m02 + l.m31 * r.m03;
-    result.m11 = l.m01 * r.m10 + l.m11 * r.m11 + l.m21 * r.m12 + l.m31 * r.m13;
-    result.m21 = l.m01 * r.m20 + l.m11 * r.m21 + l.m21 * r.m22 + l.m31 * r.m23;
-    result.m31 = l.m01 * r.m30 + l.m11 * r.m31 + l.m21 * r.m32 + l.m31 * r.m33;
-    result.m02 = l.m02 * r.m00 + l.m12 * r.m01 + l.m22 * r.m02 + l.m32 * r.m03;
-    result.m12 = l.m02 * r.m10 + l.m12 * r.m11 + l.m22 * r.m12 + l.m32 * r.m13;
-    result.m22 = l.m02 * r.m20 + l.m12 * r.m21 + l.m22 * r.m22 + l.m32 * r.m23;
-    result.m32 = l.m02 * r.m30 + l.m12 * r.m31 + l.m22 * r.m32 + l.m32 * r.m33;
-    result.m03 = l.m03 * r.m00 + l.m13 * r.m01 + l.m23 * r.m02 + l.m33 * r.m03;
-    result.m13 = l.m03 * r.m10 + l.m13 * r.m11 + l.m23 * r.m12 + l.m33 * r.m13;
-    result.m23 = l.m03 * r.m20 + l.m13 * r.m21 + l.m23 * r.m22 + l.m33 * r.m23;
-    result.m33 = l.m03 * r.m30 + l.m13 * r.m31 + l.m23 * r.m32 + l.m33 * r.m33;
+    result.m00 = a.m00 * b.m00 + a.m10 * b.m01 + a.m20 * b.m02 + a.m30 * b.m03;
+    result.m10 = a.m00 * b.m10 + a.m10 * b.m11 + a.m20 * b.m12 + a.m30 * b.m13;
+    result.m20 = a.m00 * b.m20 + a.m10 * b.m21 + a.m20 * b.m22 + a.m30 * b.m23;
+    result.m30 = a.m00 * b.m30 + a.m10 * b.m31 + a.m20 * b.m32 + a.m30 * b.m33;
+    result.m01 = a.m01 * b.m00 + a.m11 * b.m01 + a.m21 * b.m02 + a.m31 * b.m03;
+    result.m11 = a.m01 * b.m10 + a.m11 * b.m11 + a.m21 * b.m12 + a.m31 * b.m13;
+    result.m21 = a.m01 * b.m20 + a.m11 * b.m21 + a.m21 * b.m22 + a.m31 * b.m23;
+    result.m31 = a.m01 * b.m30 + a.m11 * b.m31 + a.m21 * b.m32 + a.m31 * b.m33;
+    result.m02 = a.m02 * b.m00 + a.m12 * b.m01 + a.m22 * b.m02 + a.m32 * b.m03;
+    result.m12 = a.m02 * b.m10 + a.m12 * b.m11 + a.m22 * b.m12 + a.m32 * b.m13;
+    result.m22 = a.m02 * b.m20 + a.m12 * b.m21 + a.m22 * b.m22 + a.m32 * b.m23;
+    result.m32 = a.m02 * b.m30 + a.m12 * b.m31 + a.m22 * b.m32 + a.m32 * b.m33;
+    result.m03 = a.m03 * b.m00 + a.m13 * b.m01 + a.m23 * b.m02 + a.m33 * b.m03;
+    result.m13 = a.m03 * b.m10 + a.m13 * b.m11 + a.m23 * b.m12 + a.m33 * b.m13;
+    result.m23 = a.m03 * b.m20 + a.m13 * b.m21 + a.m23 * b.m22 + a.m33 * b.m23;
+    result.m33 = a.m03 * b.m30 + a.m13 * b.m31 + a.m23 * b.m32 + a.m33 * b.m33;
 
     return result;
 }
@@ -558,51 +560,51 @@ static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
 }
 
 // Get float array of matrix data
-static inline float16v_t mat4_to_floatv( mat4_t mat )
+static inline float16v_t mat4_to_floatv( mat4_t m )
 {
     float16v_t result = { 0 };
 
-    result.v[  0 ] = mat.m00;
-    result.v[  1 ] = mat.m10;
-    result.v[  2 ] = mat.m20;
-    result.v[  3 ] = mat.m30;
+    result.v[  0 ] = m.m00;
+    result.v[  1 ] = m.m10;
+    result.v[  2 ] = m.m20;
+    result.v[  3 ] = m.m30;
 
-    result.v[  4 ] = mat.m01;
-    result.v[  5 ] = mat.m11;
-    result.v[  6 ] = mat.m21;
-    result.v[  7 ] = mat.m31;
+    result.v[  4 ] = m.m01;
+    result.v[  5 ] = m.m11;
+    result.v[  6 ] = m.m21;
+    result.v[  7 ] = m.m31;
 
-    result.v[  8 ] = mat.m02;
-    result.v[  9 ] = mat.m12;
-    result.v[ 10 ] = mat.m22;
-    result.v[ 11 ] = mat.m32;
+    result.v[  8 ] = m.m02;
+    result.v[  9 ] = m.m12;
+    result.v[ 10 ] = m.m22;
+    result.v[ 11 ] = m.m32;
 
-    result.v[ 12 ] = mat.m03;
-    result.v[ 13 ] = mat.m13;
-    result.v[ 14 ] = mat.m23;
-    result.v[ 15 ] = mat.m33;
+    result.v[ 12 ] = m.m03;
+    result.v[ 13 ] = m.m13;
+    result.v[ 14 ] = m.m23;
+    result.v[ 15 ] = m.m33;
 
     return result;
 }
 
 // Decompose a transformation matrix into its rotational, translational and scaling components
-static inline void mat4_decompose( mat4_t mat, vec3_t *translation, quat_t *rotation, vec3_t *scale )
+static inline void mat4_decompose( mat4_t m, vec3_t *translation, quat_t *rotation, vec3_t *scale )
 {
     // Extract translation.
-    translation->x = mat.m03;
-    translation->y = mat.m13;
-    translation->z = mat.m23;
+    translation->x = m.m03;
+    translation->y = m.m13;
+    translation->z = m.m23;
 
     // Extract upper-left for determinant computation
-    const float a = mat.m00;
-    const float b = mat.m01;
-    const float c = mat.m02;
-    const float d = mat.m10;
-    const float e = mat.m11;
-    const float f = mat.m12;
-    const float g = mat.m20;
-    const float h = mat.m21;
-    const float i = mat.m22;
+    const float a = m.m00;
+    const float b = m.m01;
+    const float c = m.m02;
+    const float d = m.m10;
+    const float e = m.m11;
+    const float f = m.m12;
+    const float g = m.m20;
+    const float h = m.m21;
+    const float i = m.m22;
     const float A = e * i - f * h;
     const float B = f * g - d * i;
     const float C = d * h - e * g;
@@ -623,7 +625,7 @@ static inline void mat4_decompose( mat4_t mat, vec3_t *translation, quat_t *rota
     *scale = s;
 
     // Remove scale from the matrix if it is not close to zero
-    mat4_t clone = mat;
+    mat4_t clone = m;
     if ( !flteq( det, 0, EPSILON ) )
     {
         clone.m00 /= s.x;

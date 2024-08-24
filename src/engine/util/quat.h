@@ -130,58 +130,58 @@ static inline quat_t quat_div( quat_t p, quat_t q )
 }
 
 // Calculate linear interpolation between two quaternions
-static inline quat_t quat_lerp( quat_t a, quat_t b, float t )
+static inline quat_t quat_lerp( quat_t p, quat_t q, float t )
 {
     quat_t result = { 0 };
 
-    result.x = a.x + t * ( b.x - a.x );
-    result.y = a.y + t * ( b.y - a.y );
-    result.z = a.z + t * ( b.z - a.z );
-    result.w = a.w + t * ( b.w - a.w );
+    result.x = p.x + t * ( q.x - p.x );
+    result.y = p.y + t * ( q.y - p.y );
+    result.z = p.z + t * ( q.z - p.z );
+    result.w = p.w + t * ( q.w - p.w );
 
     return result;
 }
 
 // Calculate slerp-optimized interpolation between two quaternions
-static inline quat_t quat_nlerp( quat_t a, quat_t b, float t )
+static inline quat_t quat_nlerp( quat_t p, quat_t q, float t )
 {
     quat_t result = { 0 };
 
-    // quat_tLerp(a, b, t)
-    result.x = a.x + t * ( b.x - a.x );
-    result.y = a.y + t * ( b.y - a.y );
-    result.z = a.z + t * ( b.z - a.z );
-    result.w = a.w + t * ( b.w - a.w );
+    // quat_tLerp(p, q, t)
+    result.x = p.x + t * ( q.x - p.x );
+    result.y = p.y + t * ( q.y - p.y );
+    result.z = p.z + t * ( q.z - p.z );
+    result.w = p.w + t * ( q.w - p.w );
 
-    // quat_tNormalize(q);
-    quat_t q = result;
-    float len = sqrtf( q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w );
+    // quat_Normalize(n);
+    quat_t n = result;
+    float len = sqrtf( n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w );
     if ( len == 0.0f ) len = 1.0f;
     float ilen = 1.0f / len;
 
-    result.x = q.x * ilen;
-    result.y = q.y * ilen;
-    result.z = q.z * ilen;
-    result.w = q.w * ilen;
+    result.x = n.x * ilen;
+    result.y = n.y * ilen;
+    result.z = n.z * ilen;
+    result.w = n.w * ilen;
 
     return result;
 }
 
 // Calculates spherical linear interpolation between two quaternions
-static inline quat_t quat_slerp( quat_t a, quat_t b, float t, float epsilon )
+static inline quat_t quat_slerp( quat_t p, quat_t q, float t, float epsilon )
 {
     quat_t result = { 0 };
 
-    float cos_half_theta = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+    float cos_half_theta = p.x * q.x + p.y * q.y + p.z * q.z + p.w * q.w;
 
     if ( cos_half_theta < 0.0f )
     {
-        b.x = -b.x; b.y = -b.y; b.z = -b.z; b.w = -b.w;
+        q.x = -q.x; q.y = -q.y; q.z = -q.z; q.w = -q.w;
         cos_half_theta = -cos_half_theta;
     }
 
-    if ( fabsf( cos_half_theta ) >= 1.0f ) result = a;
-    else if ( cos_half_theta > 0.95f ) result = quat_nlerp( a, b, t );
+    if ( fabsf( cos_half_theta ) >= 1.0f ) result = p;
+    else if ( cos_half_theta > 0.95f ) result = quat_nlerp( p, q, t );
     else
     {
         float half_theta = acosf( cos_half_theta );
@@ -189,20 +189,20 @@ static inline quat_t quat_slerp( quat_t a, quat_t b, float t, float epsilon )
 
         if ( fabsf( sin_half_theta ) < epsilon )
         {
-            result.x = ( a.x * 0.5f + b.x * 0.5f );
-            result.y = ( a.y * 0.5f + b.y * 0.5f );
-            result.z = ( a.z * 0.5f + b.z * 0.5f );
-            result.w = ( a.w * 0.5f + b.w * 0.5f );
+            result.x = ( p.x * 0.5f + q.x * 0.5f );
+            result.y = ( p.y * 0.5f + q.y * 0.5f );
+            result.z = ( p.z * 0.5f + q.z * 0.5f );
+            result.w = ( p.w * 0.5f + q.w * 0.5f );
         }
         else
         {
             float ratio_a = sinf( ( 1.0f - t ) * half_theta ) / sin_half_theta;
             float ratio_b = sinf( t * half_theta )/sin_half_theta;
 
-            result.x = ( a.x * ratio_a + b.x * ratio_b );
-            result.y = ( a.y * ratio_a + b.y * ratio_b );
-            result.z = ( a.z * ratio_a + b.z * ratio_b );
-            result.w = ( a.w * ratio_a + b.w * ratio_b );
+            result.x = ( p.x * ratio_a + q.x * ratio_b );
+            result.y = ( p.y * ratio_a + q.y * ratio_b );
+            result.z = ( p.z * ratio_a + q.z * ratio_b );
+            result.w = ( p.w * ratio_a + q.w * ratio_b );
         }
     }
 
@@ -211,7 +211,7 @@ static inline quat_t quat_slerp( quat_t a, quat_t b, float t, float epsilon )
 
 // Calculate quaternion cubic spline interpolation using Cubic Hermite Spline algorithm
 // as described in the GLTF 2.0 specification: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#interpolation-cubic
-static inline quat_t quat_cubic_hermite_spline( quat_t a, quat_t out_tan_a, quat_t b, quat_t in_tan_b, float t )
+static inline quat_t quat_cubic_hermite_spline( quat_t p, quat_t out_tan_p, quat_t q, quat_t in_tan_q, float t )
 {
     float t2 = t * t;
     float t3 = t2 * t;
@@ -220,10 +220,10 @@ static inline quat_t quat_cubic_hermite_spline( quat_t a, quat_t out_tan_a, quat
     float h01 = -2.0f * t3 + 3.0f * t2;
     float h11 = t3 - t2;
 
-    quat_t p0 = quat_scale( a, h00 );
-    quat_t m0 = quat_scale( out_tan_a, h10 );
-    quat_t p1 = quat_scale( b, h01 );
-    quat_t m1 = quat_scale( in_tan_b, h11 );
+    quat_t p0 = quat_scale( p, h00 );
+    quat_t m0 = quat_scale( out_tan_p, h10 );
+    quat_t p1 = quat_scale( q, h01 );
+    quat_t m1 = quat_scale( in_tan_q, h11 );
 
     quat_t result = { 0 };
 
@@ -236,29 +236,29 @@ static inline quat_t quat_cubic_hermite_spline( quat_t a, quat_t out_tan_a, quat
 }
 
 // Calculate quaternion based on the rotation from vector a to vector b
-static inline quat_t quat_from_vec3s( vec3_t a, vec3_t b )
+static inline quat_t quat_from_vec3s( vec3_t p, vec3_t q )
 {
     quat_t result = { 0 };
 
-    float dot = ( a.x * b.x + a.y * b.y + a.z * b.z );    // vec3_DotProduct(a, b) | cos2theta
-    vec3_t cross = { a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x }; // Vecbr3CrossProduct(a, b)
+    float dot = ( p.x * q.x + p.y * q.y + p.z * q.z );    // vec3_DotProduct(p, q) | cos2theta
+    vec3_t cross = { p.y * q.z - p.z * q.y, p.z * q.x - p.x * q.z, p.x * q.y - p.y * q.x }; // Vecbr3CrossProduct(p, q)
 
     result.x = cross.x;
     result.y = cross.y;
     result.z = cross.z;
     result.w = 1.0f + dot;
 
-    // quat_tNormalize(q);
-    // NOTE: Normalize b essentially nlerp the original and identity b 0.5
-    quat_t q = result;
-    float len = sqrtf( q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w );
+    // quat_tNormalize(n);
+    // NOTE: Normalize q essentially nlerp the original and identity q 0.5
+    quat_t n = result;
+    float len = sqrtf( n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w );
     if ( len == 0.0f ) len = 1.0f;
     float ilen = 1.0f / len;
 
-    result.x = q.x * ilen;
-    result.y = q.y * ilen;
-    result.z = q.z * ilen;
-    result.w = q.w * ilen;
+    result.x = n.x * ilen;
+    result.y = n.y * ilen;
+    result.z = n.z * ilen;
+    result.w = n.w * ilen;
 
     return result;
 }

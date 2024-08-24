@@ -60,7 +60,7 @@ static const GLfloat vertices[] = {
 int init( struct app *app )
 {
     ( void ) app;
-	app_set_target_fps( app, 20 );
+	app_set_target_fps( app, 0 );
 	app_set_target_tps( app, 60 );
 	SDL_GL_SetSwapInterval( 0 );
 
