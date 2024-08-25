@@ -1,17 +1,16 @@
-struct vert
-{
-	vec3s vp;
-	vec2s vt;
-	vec3s vn;
-};
+#ifndef MESH_H
+#define MESH_H
+
+#include <util/types.h>
+#include "vao.h"
+#include "vbo.h"
 
 struct mesh
 {
-	// dynarrs
-	struct vert *fv;	/* face vertices (v, vt, and vn)		*/
-	vec3s *vp;			/* vertex positions				x, y, z	*/
-	vec2s *vt;			/* vertex texture coordinates	u, v	*/
-	vec3s *vn;			/* vertex normal				x, y, z	*/
+	float *vp;	/* vertex positions				x,  y,  z	*/
+	float *vt;	/* vertex texture coordinates	u,  v		*/
+	float *vn;	/* vertex normal				x,  y,  z	*/
+	float *fv;  /* face vertices                v, vt, vn	*/
 
 	size_t fv_len;
 	size_t vp_len;
@@ -42,8 +41,34 @@ struct mesh
 	size_t vn_offset;
 
 	// extent info
-	float dia;
-	vec3s center;
-	vec3s max;
-	vec3s min;
+	float  dia;
+	vec3_t center;
+	vec3_t max;
+	vec3_t min;
+
+	// raylib uses seperate vbo for each vertex type and I don't
+	// know why. Ill stick to one for now but may change my mind.
+	struct vao vao;
+	struct vbo vbo;
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*
+ * WaveFront object file loader.
+ */
+
+int  mesh_load( struct mesh *obj, const char *file );
+void mesh_free( struct mesh *obj );
+
+int  mesh_cube( struct mesh *obj );
+int  mesh_square( struct mesh *obj );
+int  mesh_sphere( struct mesh *obj );
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

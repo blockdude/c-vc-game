@@ -3,8 +3,8 @@
 #include <system/system.h>
 #include <system/app.h>
 
-#include "raytracer.h"
-//#include "gameoflife.h"
+//#include "raytracer.h"
+#include "gameoflife.h"
 
 int main( int argc, char *argv[] )
 {

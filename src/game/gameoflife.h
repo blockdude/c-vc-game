@@ -27,18 +27,18 @@ static int state_idx;
 
 #define SIZE 128
 
-int buff_a[ SIZE * SIZE ];
-int buff_b[ SIZE * SIZE ];
-int *out = buff_a;
-int *buf = buff_b;
+static int buff_a[ SIZE * SIZE ];
+static int buff_b[ SIZE * SIZE ];
+static int *out = buff_a;
+static int *buf = buff_b;
 
 static int init( struct app *app )
 {
 	( void )app;
-	app_set_target_fps( app, 144 );
-	app_set_target_tps( app, 144 );
+	app_set_target_fps( app, 0 );
+	app_set_target_tps( app, 0 );
 	app->skip_ticks = true;
-	SDL_GL_SetSwapInterval( 0 );
+	SDL_GL_SetSwapInterval( 1 );
 
 	glEnable( GL_DEPTH_TEST );
 

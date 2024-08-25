@@ -106,6 +106,18 @@ static inline vec3_t vec3_perpendicular( vec3_t v )
     return result;
 }
 
+// Calcuate the center point of two vectors
+static inline vec3_t vec3_center( vec3_t a, vec3_t b )
+{
+    vec3_t result = { 0.0f };
+
+    result.x = ( a.x + b.x ) / 2.0f;
+    result.y = ( a.y + b.y ) / 2.0f;
+    result.z = ( a.z + b.z ) / 2.0f;
+    
+    return result;
+}
+
 // Calculate vector length
 static inline float vec3_len( vec3_t v )
 {

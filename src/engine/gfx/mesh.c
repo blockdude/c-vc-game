@@ -10,29 +10,36 @@
 #include <string.h>
 #include <stdio.h>
 
-static inline void obj3d_init( struct obj3d *obj )
+static inline void mesh_init( struct mesh *obj )
 {
-	obj->fv = NULL;
 	obj->vp = NULL;
 	obj->vt = NULL;
 	obj->vn = NULL;
+	obj->fv = NULL;
 }
 
-static inline void obj3d_append_face_vertex( struct obj3d *obj, const char *vert )
+static inline void mesh_append_face_vertex( struct mesh *obj, const char *vert )
 {
-	struct vert f;
 	int a, b, c;
-
 	sscanf( vert, "%d/%d/%d", &a, &b, &c );
 
-	f.vp = obj->vp[ a - 1 ];
-	f.vt = obj->vt[ b - 1 ];
-	f.vn = obj->vn[ c - 1 ];
+	a = ( a - 1 ) * 3;
+	b = ( b - 1 ) * 2;
+	c = ( c - 1 ) * 3;
 
-	list_push_back( obj->fv, f );
+	list_push_back( obj->fv, obj->vp[ a + 0 ] );
+	list_push_back( obj->fv, obj->vp[ a + 1 ] );
+	list_push_back( obj->fv, obj->vp[ a + 2 ] );
+
+	list_push_back( obj->fv, obj->vt[ b + 0 ] );
+	list_push_back( obj->fv, obj->vt[ b + 1 ] );
+
+	list_push_back( obj->fv, obj->vn[ c + 0 ] );
+	list_push_back( obj->fv, obj->vn[ c + 1 ] );
+	list_push_back( obj->fv, obj->vn[ c + 2 ] );
 }
 
-static inline int obj3d_load_mesh( struct obj3d *obj, const char *file )
+static inline int mesh_load_mesh( struct mesh *obj, const char *file )
 {
 	const size_t buffer_size = 1024;
 	char buffer[ buffer_size ];
@@ -62,23 +69,28 @@ static inline int obj3d_load_mesh( struct obj3d *obj, const char *file )
 		// get a vertex position
 		if ( strcmp( lexeme, "v" ) == 0 )
 		{
-			vec3s tmp;
-			sscanf( buffer, "%*s %f %f %f", &tmp.x, &tmp.y, &tmp.z );
-			list_push_back( obj->vp, tmp );
+			float x, y, z;
+			sscanf( buffer, "%*s %f %f %f", &x, &y, &z );
+			list_push_back( obj->vp, x );
+			list_push_back( obj->vp, y );
+			list_push_back( obj->vp, z );
 		}
 		// get a texture coordinates
 		else if ( strcmp( lexeme, "vt" ) == 0 )
 		{
-			vec2s tmp;
-			sscanf( buffer, "%*s %f %f", &tmp.x, &tmp.y );
-			list_push_back( obj->vt, tmp );
+			float u, v;
+			sscanf( buffer, "%*s %f %f", &u, &v );
+			list_push_back( obj->vt, u );
+			list_push_back( obj->vt, v );
 		}
 		// get a vertex normal
 		else if ( strcmp( lexeme, "vn" ) == 0 )
 		{
-			vec3s tmp;
-			sscanf( buffer, "%*s %f %f %f", &tmp.x, &tmp.y, &tmp.z );
-			list_push_back( obj->vn, tmp );
+			float x, y, z;
+			sscanf( buffer, "%*s %f %f %f", &x, &y, &z );
+			list_push_back( obj->vn, x );
+			list_push_back( obj->vn, y );
+			list_push_back( obj->vn, z );
 		}
 		// get a face
 		else if ( strcmp( lexeme, "f" ) == 0 )
@@ -100,9 +112,9 @@ static inline int obj3d_load_mesh( struct obj3d *obj, const char *file )
 			// parse vertex
 			for ( int i = 0; i <= vert_count - 3; i++ )
 			{
-				obj3d_append_face_vertex( obj, vert_idx[ 0 ] );
-				obj3d_append_face_vertex( obj, vert_idx[ 1 + i ] );
-				obj3d_append_face_vertex( obj, vert_idx[ 2 + i ] );
+				mesh_append_face_vertex( obj, vert_idx[ 0 ] );
+				mesh_append_face_vertex( obj, vert_idx[ 1 + i ] );
+				mesh_append_face_vertex( obj, vert_idx[ 2 + i ] );
 			}
 		}
 	}
@@ -112,30 +124,44 @@ static inline int obj3d_load_mesh( struct obj3d *obj, const char *file )
 	return 0;
 }
 
-static inline void obj3d_set_min_max( struct obj3d *obj )
+static inline void mesh_set_min_max( struct mesh *obj )
 {
 	size_t len = list_size( obj->vp );
-	vec3s min = len > 0 ? obj->vp[ 0 ] : ( vec3s ){ 0 };
-	vec3s max = len > 0 ? obj->vp[ 0 ] : ( vec3s ){ 0 };
 
-	for ( size_t i = 0; i < len; i++ )
+	if ( len <= 0 )
 	{
-		min = glms_vec3_minv( min, obj->vp[ i ] );
-		max = glms_vec3_maxv( max, obj->vp[ i ] );
+		obj->min = vec3_zero();
+		obj->max = vec3_zero();
+		return;
+	}
+
+	vec3_t min = { obj->vp[ 0 ], obj->vp[ 1 ], obj->vp[ 2 ] };
+	vec3_t max = { obj->vp[ 0 ], obj->vp[ 1 ], obj->vp[ 2 ] };
+
+	for ( size_t i = 0; i < len; i += 3 )
+	{
+		vec3_t v = {
+			obj->vp[ i + 0 ],
+			obj->vp[ i + 1 ],
+			obj->vp[ i + 2 ]
+		};
+
+		min = vec3_min( min, v );
+		max = vec3_max( max, v );
 	}
 
 	obj->min = min;
 	obj->max = max;
 }
 
-static inline void obj3d_compute_extent( struct obj3d *obj )
+static inline void mesh_compute_extent( struct mesh *obj )
 {
-	obj3d_set_min_max( obj );
-	obj->dia = glms_vec3_distance( obj->min, obj->max );
-	obj->center = glms_vec3_center( obj->min, obj->max );
+	mesh_set_min_max( obj );
+	obj->dia = vec3_dist( obj->min, obj->max );
+	obj->center = vec3_center( obj->min, obj->max );
 }
 
-static inline void obj3d_compute_properties( struct obj3d *obj )
+static inline void mesh_compute_properties( struct mesh *obj )
 {
 	obj->fv_len			= list_size( obj->fv );
 	obj->vp_len			= list_size( obj->vp );
@@ -161,34 +187,34 @@ static inline void obj3d_compute_properties( struct obj3d *obj )
 	obj->vn_offset		= ( ( obj->vp_nval + obj->vt_nval ) * obj->val_size );
 }
 
-int obj3d_load( struct obj3d *obj, const char *file )
+int mesh_load( struct mesh *obj, const char *file )
 {
 	if ( obj == NULL || file == NULL )
 		return 1;
 
-	obj3d_init( obj );
-	if ( obj3d_load_mesh( obj, file ) != 0 )
+	mesh_init( obj );
+	if ( mesh_load_mesh( obj, file ) != 0 )
 	{
-		obj3d_free( obj );
+		mesh_free( obj );
 		return 2;
 	}
 
-	obj3d_compute_extent( obj );
-	obj3d_compute_properties( obj );
+	mesh_compute_extent( obj );
+	mesh_compute_properties( obj );
 
 	if ( obj->fv_len == 0 )
 	{
-		obj3d_free( obj );
+		mesh_free( obj );
 		return 3;
 	}
 
 	return 0;
 }
 
-void obj3d_free( struct obj3d *obj )
+void mesh_free( struct mesh *obj )
 {
-	list_free( obj->fv );
 	list_free( obj->vp );
 	list_free( obj->vt );
 	list_free( obj->vn );
+	list_free( obj->fv );
 }
