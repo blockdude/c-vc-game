@@ -15,9 +15,70 @@ static const float square[] = {
     -1.0f, -1.0f, 0.0f,
      1.0f, -1.0f, 0.0f,
      1.0f,  1.0f, 0.0f,
+
      1.0f,  1.0f, 0.0f,
     -1.0f,  1.0f, 0.0f,
     -1.0f, -1.0f, 0.0f
+};
+
+static const float cube[] = {
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+
+     1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+
+
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+
+
+
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+
+
+
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+
+
+
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+
+
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
 };
 
 static struct camera camera;
@@ -28,7 +89,7 @@ static struct vbo vbo;
 static int init( struct app *app )
 {
 	( void )app;
-	app_set_target_fps( app, 0 );
+	app_set_target_fps( app, 200 );
 	app_set_target_tps( app, 30 );
 	window_set_relative_mouse( true );
 	SDL_GL_SetSwapInterval( 0 );
@@ -44,14 +105,14 @@ static int init( struct app *app )
 	vao_bind( vao );
 	vbo = vbo_create( GL_ARRAY_BUFFER, false );
 	vbo_bind( vbo );
-	vbo_buff( vbo, ( void * ) square, sizeof( square ) );
+	vbo_buff( vbo, ( void * ) cube, sizeof( cube ) );
 	int position_i = glGetAttribLocation( shader.handle, "position" );
 	vao_attr( vao, vbo, position_i, 3, GL_FLOAT, 0, 0 );
 
 	camera_init( &camera, DEGTORAD( 45 ) );
 	camera.eye.x = 0;
 	camera.eye.y = 0;
-	camera.eye.z = -1;
+	camera.eye.z = 0;
 	camera.pitch = DEGTORAD( 0 );
 	camera.yaw = DEGTORAD( 0 );
 
@@ -71,7 +132,14 @@ static int tick( struct app *app )
 {
 	( void )app;
 
-	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
+	std::string s =
+        std::to_string( app->frame_rate ) + " | " +
+        std::to_string( app->frame_avg ) + " | " +
+        std::to_string( 1.0f / app->frame_delta ) + " | " +
+        std::to_string( app->frame_delta ) + " | " +
+        std::to_string( app->frame_target ) + " | " +
+        std::to_string( app->frame_count );
+
 	window_set_title( s.c_str() );
 
 	return 0;
@@ -149,7 +217,7 @@ static int render( struct app *app )
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	glDrawArrays( GL_TRIANGLES, 0, 6 );
+	glDrawArrays( GL_TRIANGLES, 0, 36 );
 
 	SDL_GL_SwapWindow( window.handle );
 

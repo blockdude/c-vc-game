@@ -51,23 +51,25 @@ static int internal_loop( struct app *self )
     log_info( "Starting application loop" );
     internal_init( self );
 
-    uint64_t frame_previous = SDL_GetTicks();
+    uint64_t frame_prev = SDL_GetTicks();
     float tick_time = 0;
 
     uint64_t tick_last = 0;
     uint64_t frame_last = 0;
 
-    uint64_t frame_timer = frame_previous;
+    uint64_t frame_timer = frame_prev;
+    uint64_t frame_total = 0;
+    float frame_skip = 0;
 
 	// begin main loop
     while ( self->running )
     {
         // get frame timing
-        uint64_t frame_current = SDL_GetTicks();
-        uint64_t frame_delta = frame_current - frame_previous;
+        uint64_t frame_start = SDL_GetTicks();
+        uint64_t frame_delta = frame_start - frame_prev;
 
         // update fps & tps every second
-        if ( frame_current - frame_timer >= TIMESCALE )
+        if ( frame_start - frame_timer >= TIMESCALE )
         {
             // get variables
             int ticks  = self->tick_count - tick_last;
@@ -82,33 +84,20 @@ static int internal_loop( struct app *self )
             frame_last = self->frame_count;
 
             // reset timer
-            frame_timer = frame_current;
+            frame_timer = frame_start;
         }
 
-        frame_previous = frame_current;
+        frame_prev = frame_start;
         tick_time += frame_delta;
+        frame_total += frame_delta;
 
-        // poll events
+        // poll/handle events
         if ( input_poll() == INPUT_QUIT )
             goto soft_exit;
         
         // maintain fixed time step for each tick
         while ( tick_time >= self->tick_target )
         {
-            if ( self->skip_ticks )
-            {
-                uint64_t frame_time = SDL_GetTicks();
-                uint64_t delta_time = frame_time - frame_previous;
-
-                // if our delta time excedes our target
-                // delta time then we skip ticks.
-                if ( delta_time > self->frame_target )
-                {
-                    tick_time -= self->frame_target;
-                    break;
-                }
-            }
-
             internal_tick( self );
             tick_time -= self->tick_target;
         }
@@ -116,12 +105,25 @@ static int internal_loop( struct app *self )
         internal_update( self );
         internal_render( self );
 
-        // calculate & store frame time
         self->frame_delta = frame_delta / TIMESCALE;
+        self->frame_avg   = TIMESCALE / ( ( float ) frame_total / self->frame_count );
 
         // apply fps cap
-        int delay = frame_current + self->frame_target - SDL_GetTicks();
-        if ( delay > 0 ) SDL_Delay( delay );
+        int frame_time = frame_start - SDL_GetTicks();
+        int delay = self->frame_target - frame_time;
+        if ( frame_time < self->frame_target )
+        {
+            //frame_skip += ( delay - ( int ) delay );
+            //if ( frame_skip > 2.0f )
+            //{
+            //    delay += 1.0f;
+            //    frame_skip -= 2.0f;
+            //}
+
+            SDL_Delay( delay );
+        }
+
+        log_debug( "%f", frame_skip );
     }
 
 soft_exit:
@@ -143,11 +145,13 @@ int app_init( struct app *self, event_fn init, event_fn free, event_fn tick, eve
 
         .frame_delta  = 0,
         .frame_target = TIMESCALE / 60.0f,
+        .frame_avg    = 0.0f,
         .frame_rate   = 0,
         .frame_count  = 0,
 
         .tick_delta   = 0,
         .tick_target  = TIMESCALE / 30.0f,
+        .tick_avg     = 0.0f,
         .tick_rate    = 0,
         .tick_count   = 0
     };
@@ -173,12 +177,12 @@ void app_stop( struct app *self )
 
 void app_set_target_fps( struct app *self, float target )
 {
-    self->frame_target = target <= 0.0f ? 0.0f : TIMESCALE / target;
+    self->frame_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
 }
 
 void app_set_target_tps( struct app *self, float target )
 {
-    self->tick_target = target <= 0.0f ? 0.0f : TIMESCALE / target;
+    self->tick_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
 }
 
 int app_get_fps( struct app *self )

@@ -29,3 +29,5 @@ Game.
 * Create a mesh_render function that renders the mesh after you
     have uploaded it to the gpu so you don't have to call glDraw
     directly.
+
+* Fix frame rate inconsistencies.

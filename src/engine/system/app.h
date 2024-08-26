@@ -23,12 +23,14 @@ struct app
 	// frame timing
 	float    frame_delta;
 	float    frame_target;
+	float    frame_avg;
 	int      frame_rate;
 	uint64_t frame_count;
 
 	// tick timing
 	float    tick_delta;
 	float    tick_target;
+	float    tick_avg;
 	int      tick_rate;
 	uint64_t tick_count;
 };
