@@ -51,33 +51,36 @@ static int internal_loop( struct app *self )
     log_info( "Starting application loop" );
     internal_init( self );
 
-    uint64_t frame_prev = SDL_GetTicks();
-    float tick_time = 0;
-
-    uint64_t tick_last = 0;
-    uint64_t frame_last = 0;
-
+    uint64_t frame_prev  = SDL_GetTicks();
     uint64_t frame_timer = frame_prev;
-    uint64_t frame_total = 0;
-    float frame_skip = 0;
+    uint64_t frame_last  = 0;
+
+    uint64_t tick_last  = 0;
+    float    tick_time  = 0;
+
+    uint64_t elapsed_time = 0;
 
 	// begin main loop
     while ( self->running )
     {
         // get frame timing
         uint64_t frame_start = SDL_GetTicks();
-        uint64_t frame_delta = frame_start - frame_prev;
+        uint64_t delta_time = frame_start - frame_prev;
+
+        frame_prev    = frame_start;
+        elapsed_time += delta_time;
+        tick_time    += delta_time;
+
+        self->frame_delta = delta_time / TIMESCALE;
+        self->frame_avg   = TIMESCALE * ( ( float ) self->frame_count / elapsed_time );
+        self->tick_avg    = TIMESCALE * ( ( float ) self->tick_count  / elapsed_time );
 
         // update fps & tps every second
         if ( frame_start - frame_timer >= TIMESCALE )
         {
-            // get variables
-            int ticks  = self->tick_count - tick_last;
-            int frames = self->frame_count - frame_last;
-
             // store rate per second
-            self->frame_rate = frames;
-            self->tick_rate = ticks;
+            self->frame_rate = self->frame_count - frame_last;
+            self->tick_rate = self->tick_count - tick_last;
 
             // store this frame/tick
             tick_last  = self->tick_count;
@@ -86,10 +89,6 @@ static int internal_loop( struct app *self )
             // reset timer
             frame_timer = frame_start;
         }
-
-        frame_prev = frame_start;
-        tick_time += frame_delta;
-        frame_total += frame_delta;
 
         // poll/handle events
         if ( input_poll() == INPUT_QUIT )
@@ -105,25 +104,12 @@ static int internal_loop( struct app *self )
         internal_update( self );
         internal_render( self );
 
-        self->frame_delta = frame_delta / TIMESCALE;
-        self->frame_avg   = TIMESCALE / ( ( float ) frame_total / self->frame_count );
-
         // apply fps cap
         int frame_time = frame_start - SDL_GetTicks();
-        int delay = self->frame_target - frame_time;
         if ( frame_time < self->frame_target )
         {
-            //frame_skip += ( delay - ( int ) delay );
-            //if ( frame_skip > 2.0f )
-            //{
-            //    delay += 1.0f;
-            //    frame_skip -= 2.0f;
-            //}
-
-            SDL_Delay( delay );
+            SDL_Delay( self->frame_target - frame_time );
         }
-
-        log_debug( "%f", frame_skip );
     }
 
 soft_exit:

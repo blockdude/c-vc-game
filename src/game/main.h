@@ -89,7 +89,7 @@ static struct vbo vbo;
 static int init( struct app *app )
 {
 	( void )app;
-	app_set_target_fps( app, 200 );
+	app_set_target_fps( app, 144 );
 	app_set_target_tps( app, 30 );
 	window_set_relative_mouse( true );
 	SDL_GL_SetSwapInterval( 0 );
@@ -135,7 +135,6 @@ static int tick( struct app *app )
 	std::string s =
         std::to_string( app->frame_rate ) + " | " +
         std::to_string( app->frame_avg ) + " | " +
-        std::to_string( 1.0f / app->frame_delta ) + " | " +
         std::to_string( app->frame_delta ) + " | " +
         std::to_string( app->frame_target ) + " | " +
         std::to_string( app->frame_count );
@@ -149,7 +148,7 @@ static int update( struct app *app )
 {
 	( void ) app;
 
-    vec3_t direction = { 0, 0, 0 };
+    vec3_t direction = vec3_zero();
     if ( input_key_press( INPUT_KB_W ) )
     {
         direction.x += sinf( camera.yaw );
