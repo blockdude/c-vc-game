@@ -11,6 +11,7 @@
 #include <util/math.h>
 #include <util/list.h>
 #include <gfx/gfx.h>
+#include <system/input.h>
 
 static struct camera camera;
 static struct shader shader;
@@ -25,6 +26,7 @@ static int init( struct app *app )
 	window_init();
 	app_set_target_fps( app, 0 );
 	app_set_target_tps( app, 30 );
+    window_set_relative_mouse( true );
 	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
@@ -34,7 +36,7 @@ static int init( struct app *app )
 		exit( 1 );
 	}
 
-	if ( shader_loadf( &shader, "res/shaders/vert.glsl", "res/shaders/frag.glsl" ) != 0 )
+	if ( shader_loadf( &shader, "res/shaders/mesh.vert", "res/shaders/mesh.frag" ) != 0 )
 	{
 		exit( 1 );
 	}
@@ -100,6 +102,58 @@ static int tick( struct app *app )
 static int update( struct app *app )
 {
 	( void )app;
+
+    vec3_t direction = { 0, 0, 0 };
+    if ( input_key_press( INPUT_KB_W ) )
+    {
+        direction.x += sinf( camera.yaw );
+        direction.z += cosf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_S ) )
+    {
+        direction.x -= sinf( camera.yaw );
+        direction.z -= cosf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_A ) )
+    {
+        direction.x += cosf( camera.yaw );
+        direction.z -= sinf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_D ) )
+    {
+        direction.x -= cosf( camera.yaw );
+        direction.z += sinf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_SPACE ) )
+    {
+        direction.y += 1;
+    }
+
+    if ( input_key_press( INPUT_KB_LEFT_SHIFT ) )
+    {
+        direction.y -= 1;
+    }
+
+    if ( input_mouse_moved() )
+    {
+        float dx, dy;
+        input_mouse_delta( &dx, &dy );
+        camera.yaw   -= dx * 0.0009f;
+        camera.pitch -= dy * 0.0009f;
+    }
+
+    if ( input_key_down( INPUT_KB_ESCAPE ) )
+    {
+        window_toggle_relative_mouse();
+    }
+
+    direction = vec3_scale( direction, 10.0f * app->frame_delta );
+    camera.eye = vec3_add( camera.eye, direction );
+    camera.aspect = window.aspect;
 
 	mat4_t model_matrix = mat4_identity();
 

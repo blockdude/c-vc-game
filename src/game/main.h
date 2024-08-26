@@ -9,38 +9,36 @@
 #include <util/math.h>
 #include <util/list.h>
 #include <gfx/gfx.h>
+#include <system/input.h>
 
-static const GLfloat square[] = {
-    -1.0f, -1.0f,
-     1.0f, -1.0f,
-     1.0f,  1.0f,
-
-     1.0f,  1.0f,
-    -1.0f,  1.0f,
-    -1.0f, -1.0f
+static const float square[] = {
+    -1.0f, -1.0f, 0.0f,
+     1.0f, -1.0f, 0.0f,
+     1.0f,  1.0f, 0.0f,
+     1.0f,  1.0f, 0.0f,
+    -1.0f,  1.0f, 0.0f,
+    -1.0f, -1.0f, 0.0f
 };
 
 static struct camera camera;
 static struct shader shader;
 static struct vao vao;
 static struct vbo vbo;
-static int state_idx;
 
 static int init( struct app *app )
 {
 	( void )app;
 	app_set_target_fps( app, 0 );
 	app_set_target_tps( app, 30 );
+	window_set_relative_mouse( true );
 	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
 
-	if ( shader_loadf( &shader, "res/shaders/instancing.vert", "res/shaders/simple.frag" ) != 0 )
+	if ( shader_loadf( &shader, "res/shaders/2d.vert", "res/shaders/2d.frag" ) != 0 )
 		exit( 1 );
 
 	shader_bind( shader );
-	state_idx = glGetUniformLocation( shader.handle, "state" );
-
 
 	vao = vao_create();
 	vao_bind( vao );
@@ -48,7 +46,14 @@ static int init( struct app *app )
 	vbo_bind( vbo );
 	vbo_buff( vbo, ( void * ) square, sizeof( square ) );
 	int position_i = glGetAttribLocation( shader.handle, "position" );
-	vao_attr( vao, vbo, position_i, 2, GL_FLOAT, 0, 0 );
+	vao_attr( vao, vbo, position_i, 3, GL_FLOAT, 0, 0 );
+
+	camera_init( &camera, DEGTORAD( 45 ) );
+	camera.eye.x = 0;
+	camera.eye.y = 0;
+	camera.eye.z = -1;
+	camera.pitch = DEGTORAD( 0 );
+	camera.yaw = DEGTORAD( 0 );
 
 	return 0;
 }
@@ -76,6 +81,65 @@ static int update( struct app *app )
 {
 	( void ) app;
 
+    vec3_t direction = { 0, 0, 0 };
+    if ( input_key_press( INPUT_KB_W ) )
+    {
+        direction.x += sinf( camera.yaw );
+        direction.z += cosf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_S ) )
+    {
+        direction.x -= sinf( camera.yaw );
+        direction.z -= cosf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_A ) )
+    {
+        direction.x += cosf( camera.yaw );
+        direction.z -= sinf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_D ) )
+    {
+        direction.x -= cosf( camera.yaw );
+        direction.z += sinf( camera.yaw );
+    }
+
+    if ( input_key_press( INPUT_KB_SPACE ) )
+    {
+        direction.y += 1;
+    }
+
+    if ( input_key_press( INPUT_KB_LEFT_SHIFT ) )
+    {
+        direction.y -= 1;
+    }
+
+    if ( input_mouse_moved() )
+    {
+        float dx, dy;
+        input_mouse_delta( &dx, &dy );
+        camera.yaw   -= dx * 0.0009f;
+        camera.pitch -= dy * 0.0009f;
+    }
+
+    if ( input_key_down( INPUT_KB_ESCAPE ) )
+    {
+        window_toggle_relative_mouse();
+    }
+
+    direction = vec3_scale( direction, 10.0f * app->frame_delta );
+    camera.eye = vec3_add( camera.eye, direction );
+    camera.aspect = window.aspect;
+
+	mat4_t model_matrix = mat4_identity();
+
+	camera_update( &camera );
+	shader_uniform_mat4( shader, "view_matrix", camera.view );
+	shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+	shader_uniform_mat4( shader, "model_matrix", model_matrix );
+
 	return 0;
 }
 
@@ -84,6 +148,8 @@ static int render( struct app *app )
 	( void )app;
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	glDrawArrays( GL_TRIANGLES, 0, 6 );
 
 	SDL_GL_SwapWindow( window.handle );
 

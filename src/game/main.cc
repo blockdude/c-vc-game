@@ -5,10 +5,10 @@
 #include <util/log.h>
 #include <gfx/gfx.h>
 
-#include "ex/raytracer.h"
+//#include "ex/raytracer.h"
 //#include "ex/gameoflife.h"
 //#include "ex/dragon.h"
-//#include "main.h"
+#include "main.h"
 
 int main( int argc, char *argv[] )
 {
