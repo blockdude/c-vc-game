@@ -2,7 +2,7 @@
 #define GRAPHICS_H
 
 #include "camera.h"
-#include "obj3d.h"
+#include "mesh.h"
 #include "render.h"
 #include "shader.h"
 #include "shape.h"

@@ -1,5 +1,4 @@
-#include "obj3d.h"
-#include "cglm/struct/vec3.h"
+#include "mesh.h"
 
 #include <util/log.h>
 #include <util/types.h>
@@ -112,9 +111,9 @@ static inline int mesh_load_mesh( struct mesh *obj, const char *file )
 			// parse vertex
 			for ( int i = 0; i <= vert_count - 3; i++ )
 			{
-				mesh_append_face_vertex( obj, vert_idx[ 0 ] );
-				mesh_append_face_vertex( obj, vert_idx[ 1 + i ] );
-				mesh_append_face_vertex( obj, vert_idx[ 2 + i ] );
+				mesh_append_face_vertex( obj, vert_idx[ i + 0 ] );
+				mesh_append_face_vertex( obj, vert_idx[ i + 1 ] );
+				mesh_append_face_vertex( obj, vert_idx[ i + 2 ] );
 			}
 		}
 	}

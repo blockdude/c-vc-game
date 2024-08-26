@@ -1,0 +1,128 @@
+#include "gfx/camera.h"
+#include "gfx/vbo.h"
+#include "util/mat4.h"
+#include <string>
+
+#include <util/log.h>
+#include <system/system.h>
+#include <glad/glad.h>
+#include <system/app.h>
+#include <util/list.h>
+#include <util/math.h>
+#include <util/list.h>
+#include <gfx/gfx.h>
+
+static struct camera camera;
+static struct shader shader;
+static struct mesh dragon;
+static struct vao vao;
+static struct vbo vbo;
+
+static int init( struct app *app )
+{
+	( void )app;
+	system_init();
+	window_init();
+	app_set_target_fps( app, 0 );
+	app_set_target_tps( app, 30 );
+	SDL_GL_SetSwapInterval( 0 );
+
+	glEnable( GL_DEPTH_TEST );
+
+	if ( mesh_load( &dragon, "res/objects/dragon.obj" ) != 0 )
+	{
+		exit( 1 );
+	}
+
+	if ( shader_loadf( &shader, "res/shaders/vert.glsl", "res/shaders/frag.glsl" ) != 0 )
+	{
+		exit( 1 );
+	}
+
+	shader_bind( shader );
+
+	vao = vao_create();
+	vao_bind( vao );
+
+	vbo = vbo_create( GL_ARRAY_BUFFER, false );
+	vbo_bind( vbo );
+
+	vbo_buff( vbo, dragon.fv, dragon.fv_nbytes );
+
+	GLuint pos_loc = glGetAttribLocation( shader.handle, "position" );
+	GLuint norm_loc = glGetAttribLocation( shader.handle, "normal" );
+
+	vao_attr(
+		vao, vbo,
+		pos_loc,
+		dragon.vp_nval,
+		GL_FLOAT,
+		dragon.stride,
+		dragon.vp_offset
+	);
+
+	vao_attr(
+		vao, vbo,
+		norm_loc,
+		dragon.vn_nval,
+		GL_FLOAT,
+		dragon.stride,
+		dragon.vn_offset
+	);
+
+	camera_init( &camera, DEGTORAD( 90 ) );
+	camera.eye.x = dragon.center.x;
+	camera.eye.y = dragon.center.y;
+	camera.eye.z = dragon.center.z + dragon.dia;
+	camera.pitch = DEGTORAD( 0 );
+	camera.yaw = DEGTORAD( 180 );
+
+	return 0;
+}
+
+static int free( struct app *app )
+{
+	( void )app;
+	mesh_free( &dragon );
+	window_free();
+	system_free();
+	return 0;
+}
+
+static int tick( struct app *app )
+{
+	( void )app;
+	std::string s = std::to_string( app->frame_rate ) + " | " + std::to_string( app->tick_rate );
+	window_set_title( s.c_str() );
+	return 0;
+}
+
+static int update( struct app *app )
+{
+	( void )app;
+
+	mat4_t model_matrix = mat4_identity();
+
+	camera_update( &camera );
+	shader_uniform_mat4( shader, "view_matrix", camera.view );
+	shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+	shader_uniform_mat4( shader, "model_matrix", model_matrix );
+
+	return 0;
+}
+
+static int render( struct app *app )
+{
+	( void )app;
+	glClearColor( 1.f, 1.f, 1.f, 1.f );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	glDrawArrays(
+		GL_TRIANGLES,
+		0,
+		dragon.fv_len
+	);
+
+	SDL_GL_SwapWindow( window.handle );
+	return 0;
+}

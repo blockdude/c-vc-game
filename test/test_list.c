@@ -467,7 +467,33 @@ UTEST( list, multi_ref )
 	list_free( v );
 	ASSERT_FALSE( v );
 	ASSERT_FALSE( *vptr );
+}
 
+/*
+ * Test multiple references to the same list.
+ */
+UTEST( list, multi_ref_2 )
+{
+	int *v0 = NULL;
+	list_init( v0, 3 );
+	int *v1 = v0;
+
+	ASSERT_TRUE( v0 );
+	ASSERT_TRUE( v1 );
+
+	list_push_back( v0, 10 );
+	list_push_back( v1, 15 );
+	list_push_back( v0, 10 );
+
+	EXPECT_EQ( v0[ 0 ], v1[ 0 ] );
+	EXPECT_EQ( v0[ 1 ], v1[ 1 ] );
+	EXPECT_EQ( v0[ 2 ], v1[ 2 ] );
+
+	list_free( v0 );
+	v1 = v0;
+
+	ASSERT_FALSE( v0 );
+	ASSERT_FALSE( v1 );
 }
 
 #ifdef INSTANTIATE_MAIN
