@@ -4,33 +4,24 @@
 
 static inline int internal_init( struct app *self )
 {
-    if ( self == NULL )
-        return 1;
-
-    if ( self->stage.init != NULL )
-        self->stage.init( self );
+    if ( self->init != NULL )
+        self->init( self );
 
     return 0;
 }
 
 static inline int internal_free( struct app *self )
 {
-    if ( self == NULL )
-        return 1;
-
-    if ( self->stage.free != NULL )
-        self->stage.free( self );
+    if ( self->free != NULL )
+        self->free( self );
 
     return 0;
 }
 
 static inline int internal_tick( struct app *self )
 {
-    if ( self == NULL )
-        return 1;
-
-    if ( self->stage.tick != NULL )
-        self->stage.tick( self );
+    if ( self->tick != NULL )
+        self->tick( self );
 
     self->tick_count++;
 
@@ -39,22 +30,16 @@ static inline int internal_tick( struct app *self )
 
 static inline int internal_update( struct app *self )
 {
-    if ( self == NULL )
-        return 1;
-
-    if ( self->stage.update != NULL )
-        self->stage.update( self );
+    if ( self->update != NULL )
+        self->update( self );
 
     return 0;
 }
 
 static inline int internal_render( struct app *self )
 {
-    if ( self == NULL )
-        return 1;
-
-    if ( self->stage.render != NULL )
-        self->stage.render( self );
+    if ( self->render != NULL )
+        self->render( self );
 
     self->frame_count++;
 
@@ -144,21 +129,30 @@ soft_exit:
     return 0;
 }
 
-int app_init( struct app *self, struct stage state )
+int app_init( struct app *self, event_fn init, event_fn free, event_fn tick, event_fn update, event_fn render )
 {
-	self->stage        = state;
-    self->running      = false;
-    self->skip_ticks   = false;
+    struct app a = {
+        .init         = init,
+        .free         = free,
+        .tick         = tick,
+        .update       = update,
+        .render       = render,
 
-	self->frame_delta  = 0;
-	self->frame_target = TIMESCALE / 60.0f;
-	self->frame_rate   = 0;
-	self->frame_count  = 0;
+        .running      = false,
+        .skip_ticks   = false,
 
-	self->tick_delta   = 0;
-	self->tick_target  = TIMESCALE / 30.0f;
-	self->tick_rate    = 0;
-	self->tick_count   = 0;
+        .frame_delta  = 0,
+        .frame_target = TIMESCALE / 60.0f,
+        .frame_rate   = 0,
+        .frame_count  = 0,
+
+        .tick_delta   = 0,
+        .tick_target  = TIMESCALE / 30.0f,
+        .tick_rate    = 0,
+        .tick_count   = 0
+    };
+
+    *self = a;
 
 	return 0;
 }

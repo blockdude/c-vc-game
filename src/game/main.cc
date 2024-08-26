@@ -2,10 +2,13 @@
 
 #include <system/system.h>
 #include <system/app.h>
+#include <util/log.h>
+#include <gfx/gfx.h>
 
-//#include "raytracer.h"
-#include "gameoflife.h"
-//#include "dragon.h"
+#include "ex/raytracer.h"
+//#include "ex/gameoflife.h"
+//#include "ex/dragon.h"
+//#include "main.h"
 
 int main( int argc, char *argv[] )
 {
@@ -19,13 +22,13 @@ int main( int argc, char *argv[] )
 	window_init();
 
 	struct app app;
-	app_init( &app, {
-		.init   = init,
-		.free   = free,
-		.tick   = tick,
-		.update = update,
-		.render = render
-	});
+	app_init( &app,
+		init,
+		free,
+		tick,
+		update,
+		render
+	);
 
 	app_loop( &app );
 

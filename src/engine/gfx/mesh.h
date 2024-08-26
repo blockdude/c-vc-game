@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include <util/types.h>
+#include "shader.h"
 #include "vao.h"
 #include "vbo.h"
 
@@ -62,6 +63,8 @@ extern "C" {
 
 int  mesh_load( struct mesh *obj, const char *file );
 void mesh_free( struct mesh *obj );
+
+int  mesh_upload( struct mesh *obj, struct shader shader );
 
 int  mesh_cube( struct mesh *obj );
 int  mesh_square( struct mesh *obj );

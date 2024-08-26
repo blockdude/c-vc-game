@@ -1,11 +1,11 @@
 #ifndef KDTREE_H
 #define KDTREE_H
 
+#define KDT_DATA_TYPE int
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define KDT_DATA_TYPE int
 
 struct kdtree;
 
