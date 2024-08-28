@@ -3,13 +3,15 @@
 #include <util/log.h>
 #include <system/system.h>
 #include <glad/glad.h>
-#include <system/app.h>
+#include <util/app.h>
 #include <cglm/struct.h>
 #include <util/list.h>
 #include <util/math.h>
 #include <util/list.h>
-#include <gfx/gfx.h>
+#include <graphics/gfx.h>
 #include <system/input.h>
+#include <system/window.h>
+#include <system/core.h>
 
 static const float square[] = {
     -1.0f, -1.0f, 0.0f,
@@ -149,56 +151,56 @@ static int update( struct app *app )
 	( void ) app;
 
     vec3_t direction = vec3_zero();
-    if ( input_key_press( INPUT_KB_W ) )
+    if ( input_key_press( KB_W ) )
     {
         direction.x += sinf( camera.yaw );
         direction.z += cosf( camera.yaw );
     }
 
-    if ( input_key_press( INPUT_KB_S ) )
+    if ( input_key_press( KB_S ) )
     {
         direction.x -= sinf( camera.yaw );
         direction.z -= cosf( camera.yaw );
     }
 
-    if ( input_key_press( INPUT_KB_A ) )
+    if ( input_key_press( KB_A ) )
     {
         direction.x += cosf( camera.yaw );
         direction.z -= sinf( camera.yaw );
     }
 
-    if ( input_key_press( INPUT_KB_D ) )
+    if ( input_key_press( KB_D ) )
     {
         direction.x -= cosf( camera.yaw );
         direction.z += sinf( camera.yaw );
     }
 
-    if ( input_key_press( INPUT_KB_SPACE ) )
+    if ( input_key_press( KB_SPACE ) )
     {
         direction.y += 1;
     }
 
-    if ( input_key_press( INPUT_KB_LEFT_SHIFT ) )
+    if ( input_key_press( KB_LSHIFT ) )
     {
         direction.y -= 1;
     }
 
     if ( input_mouse_moved() )
     {
-        float dx, dy;
-        input_mouse_delta( &dx, &dy );
-        camera.yaw   -= dx * 0.0009f;
-        camera.pitch -= dy * 0.0009f;
+        vec2_t d = input_mouse_delta();
+        camera.yaw   -= d.x * 0.0009f;
+        camera.pitch -= d.y * 0.0009f;
     }
 
-    if ( input_key_down( INPUT_KB_ESCAPE ) )
+    if ( input_key_down( KB_ESCAPE ) )
     {
         window_toggle_relative_mouse();
     }
 
+    direction = vec3_normalize( direction );
     direction = vec3_scale( direction, 10.0f * app->frame_delta );
     camera.eye = vec3_add( camera.eye, direction );
-    camera.aspect = window.aspect;
+    camera.aspect = core.window.aspect;
 
 	mat4_t model_matrix = mat4_identity();
 
@@ -216,9 +218,10 @@ static int render( struct app *app )
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glDrawArrays( GL_TRIANGLES, 0, 36 );
 
-	SDL_GL_SwapWindow( window.handle );
+    window_swap();
 
 	return 0;
 }

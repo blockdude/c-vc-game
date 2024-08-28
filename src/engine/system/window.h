@@ -10,35 +10,19 @@ enum window_status
 	WINDOW_ERROR = 1
 };
 
-struct window
-{
-	// handle to sdl window and opengl context
-	SDL_Window *handle;
-	// note: glcontext is an alias for void *
-	SDL_GLContext context;
-
-	// is the window running
-	bool initialized;
-	bool relative_mouse;
-
-	// keeps track of width, height and aspect ratio
-	int w;
-	int h;
-	float aspect;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-// global window context (defined in window.c)
-extern struct window window;
 
 // window setup and cleanup functions
 int window_init( void );
 int window_free( void );
 
+// swap the graphics buffer
+void window_swap( void );
+
 // window setters
+int window_set_size( int w, int h );
 int window_set_title( const char *title );
 int window_set_relative_mouse( bool state );
 int window_toggle_relative_mouse( void );

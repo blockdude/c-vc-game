@@ -1,5 +1,5 @@
 #include "utest.h"
-#include <gfx/mesh.h>
+#include <graphics/mesh.h>
 #include <util/math.h>
 
 struct mesh_test_fixture

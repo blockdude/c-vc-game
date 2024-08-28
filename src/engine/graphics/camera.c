@@ -1,5 +1,5 @@
 #include "camera.h"
-#include "window.h"
+#include <system/core.h>
 #include <util/math.h>
 #include <cglm/cglm.h>
 
@@ -8,7 +8,7 @@ void camera_init( struct camera *self, float fov )
 	*self = ( struct camera ) { 0 };
 
 	self->fov = fov;
-	self->aspect = window.aspect;
+	self->aspect = core.window.aspect;
 	self->znear = 0.01f;
 	self->zfar = 1000.0f;
 

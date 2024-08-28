@@ -1,41 +1,22 @@
 #include "window.h"
-
-#include <SDL3/SDL_video.h>
-#include <stdalign.h>
+#include "SDL3/SDL_video.h"
+#include "core.h"
 
 #include <glad/glad.h>
-
-#include <system/input.h>
 #include <util/log.h>
-
-// global window context
-struct window window;
-
-static void update_viewport( int w, int h )
-{
-    window.w = w;
-    window.h = h;
-    window.aspect = ( float )w / ( float )h;
-    glViewport( 0, 0, w, h );
-}
 
 int window_init( void )
 {
-    // skip init if already done
-    if ( window.initialized )
-    {
-        return WINDOW_SUCCESS;
-    }
-
     const int window_size = 700;
-    const SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_OPENGL;
 
 	// init variables
-    window.initialized = false;
-    window.relative_mouse = false;
-    window.w = window_size;
-    window.h = window_size;
-    window.aspect = 1.f;
+    core.window.initialized = false;
+    core.window.relative_mouse = false;
+    core.window.w = window_size;
+    core.window.h = window_size;
+    core.window.aspect = 1.f;
+
+    const SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_OPENGL;
 
     // Request an OpenGL 4.6 context (should be core)
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
@@ -48,21 +29,21 @@ int window_init( void )
     SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
 
     // create sdl2 window
-    window.handle = SDL_CreateWindow( "Application", window_size, window_size, window_flags );
-    if ( !window.handle )
+    core.platform.window = SDL_CreateWindow( "Application", core.window.w, core.window.h, window_flags );
+    if ( !core.platform.window )
     {
-        log_error( "Failed to initialize window. Unable to create SDL window: %s", SDL_GetError() );
+        log_error( "Failed to initialize core.window. Unable to create SDL window: %s", SDL_GetError() );
         return WINDOW_ERROR;
     }
     log_trace( "Created SDL window" );
 
     // create opengl context
-    window.context = SDL_GL_CreateContext( window.handle );
-    if ( !window.context )
+    core.platform.glcontext = SDL_GL_CreateContext( core.platform.window );
+    if ( !core.platform.glcontext )
     {
         // if we cannot create the gl context then close the window and report an error
-        log_error( "Failed to initialize window. Unable to create OpenGL context: %s", SDL_GetError() );
-        SDL_DestroyWindow( window.handle );
+        log_error( "Failed to initialize core.window. Unable to create OpenGL context: %s", SDL_GetError() );
+        SDL_DestroyWindow( core.platform.window );
         return WINDOW_ERROR;
     }
     log_trace( "Created OpenGL context" );
@@ -71,8 +52,8 @@ int window_init( void )
     if ( !gladLoadGLLoader( ( GLADloadproc ) SDL_GL_GetProcAddress ) )
     {
         log_error( "Failed to initialize opengl" );
-        SDL_GL_DestroyContext( window.context );
-        SDL_DestroyWindow( window.handle );
+        SDL_GL_DestroyContext( core.platform.glcontext );
+        SDL_DestroyWindow( core.platform.window );
         return WINDOW_ERROR;
     }
     log_trace( "Initialized OpenGL" );
@@ -88,48 +69,52 @@ int window_init( void )
 			SDL_VERSIONNUM_MINOR( SDL_VERSION ),
 			SDL_VERSIONNUM_MICRO( SDL_VERSION ) );
 
-    input_resize_add_listener( update_viewport );
 
-    window.initialized = true;
+    core.window.initialized = true;
     return WINDOW_SUCCESS;
 }
 
 int window_free( void )
 {
     log_info( "Closing OpenGL context" );
-    SDL_GL_DestroyContext( window.context );
+    SDL_GL_DestroyContext( core.platform.glcontext );
     log_info( "Closing SDL window" );
-    SDL_DestroyWindow( window.handle );
-	window.initialized = false;
+    SDL_DestroyWindow( core.platform.window );
+	core.window.initialized = false;
 
     return WINDOW_SUCCESS;
 }
 
+void window_swap( void )
+{
+    SDL_GL_SwapWindow( core.platform.window );
+}
+
 int window_get_size( int *w, int *h )
 {
-    *w = window.w;
-    *h = window.h;
+    *w = core.window.w;
+    *h = core.window.h;
     return WINDOW_SUCCESS;
 }
 
 int window_set_title( const char *title )
 {
-    SDL_SetWindowTitle( window.handle, title );
+    SDL_SetWindowTitle( core.platform.window, title );
     return WINDOW_SUCCESS;
 }
 
 int window_set_relative_mouse( bool state )
 {
-    window.relative_mouse = state;
-    SDL_WarpMouseInWindow( window.handle, ( float ) window.w / 2.0f, ( float ) window.h / 2.0f );
-    SDL_SetWindowRelativeMouseMode( window.handle, state );
+    core.window.relative_mouse = state;
+    SDL_WarpMouseInWindow( core.platform.window, ( float ) core.window.w / 2.0f, ( float ) core.window.h / 2.0f );
+    SDL_SetWindowRelativeMouseMode( core.platform.window , state );
     return WINDOW_SUCCESS;
 }
 
 int window_toggle_relative_mouse( void )
 {
-    window.relative_mouse = !window.relative_mouse;
-    SDL_WarpMouseInWindow( window.handle, ( float ) window.w / 2.0f, ( float ) window.h / 2.0f );
-    SDL_SetWindowRelativeMouseMode( window.handle, window.relative_mouse );
+    core.window.relative_mouse = !core.window.relative_mouse;
+    SDL_WarpMouseInWindow( core.platform.window , ( float ) core.window.w / 2.0f, ( float ) core.window.h / 2.0f );
+    SDL_SetWindowRelativeMouseMode( core.platform.window , core.window.relative_mouse );
     return WINDOW_SUCCESS;
 }

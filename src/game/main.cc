@@ -1,9 +1,10 @@
 #include <string>
 
+#include <system/window.h>
 #include <system/system.h>
-#include <system/app.h>
+#include <util/app.h>
 #include <util/log.h>
-#include <gfx/gfx.h>
+#include <graphics/gfx.h>
 
 //#include "ex/raytracer.h"
 //#include "ex/gameoflife.h"

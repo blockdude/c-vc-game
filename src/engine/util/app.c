@@ -1,6 +1,7 @@
 #include "app.h"
 #include <util/log.h>
 #include <system/input.h>
+#include <SDL3/SDL.h>
 
 static inline int internal_init( struct app *self )
 {

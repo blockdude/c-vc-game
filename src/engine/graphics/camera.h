@@ -16,6 +16,7 @@ struct camera
 	float pitch;
 	float yaw;
 	float roll;
+
 	float fov;
 	float aspect;
 	float znear;

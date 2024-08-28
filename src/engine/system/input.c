@@ -1,117 +1,162 @@
 #include "input.h"
+#include "core.h"
 #include <util/list.h>
+#include <glad/glad.h>
 
-struct key_state
-{
-    // true when button is down ( lasts one frame )
-    bool down;
+static const int key_map[ SDL_NUM_SCANCODES ] = {
+    KB_NONE,           // SDL_SCANCODE_UNKNOWN
 
-    // true when button is up ( lasts one frame )
-    bool up;
+    0, 0, 0,
 
-    // true when while button is held down
-    bool press;
+    KB_A,              // SDL_SCANCODE_A
+    KB_B,              // SDL_SCANCODE_B
+    KB_C,              // SDL_SCANCODE_C
+    KB_D,              // SDL_SCANCODE_D
+    KB_E,              // SDL_SCANCODE_E
+    KB_F,              // SDL_SCANCODE_F
+    KB_G,              // SDL_SCANCODE_G
+    KB_H,              // SDL_SCANCODE_H
+    KB_I,              // SDL_SCANCODE_I
+    KB_J,              // SDL_SCANCODE_J
+    KB_K,              // SDL_SCANCODE_K
+    KB_L,              // SDL_SCANCODE_L
+    KB_M,              // SDL_SCANCODE_M
+    KB_N,              // SDL_SCANCODE_N
+    KB_O,              // SDL_SCANCODE_O
+    KB_P,              // SDL_SCANCODE_P
+    KB_Q,              // SDL_SCANCODE_Q
+    KB_R,              // SDL_SCANCODE_R
+    KB_S,              // SDL_SCANCODE_S
+    KB_T,              // SDL_SCANCODE_T
+    KB_U,              // SDL_SCANCODE_U
+    KB_V,              // SDL_SCANCODE_V
+    KB_W,              // SDL_SCANCODE_W
+    KB_X,              // SDL_SCANCODE_X
+    KB_Y,              // SDL_SCANCODE_Y
+    KB_Z,              // SDL_SCANCODE_Z
 
-    // true when key is double pressed lasts one frame
-    bool repeat;
+    KB_1,              // SDL_SCANCODE_1
+    KB_2,              // SDL_SCANCODE_2
+    KB_3,              // SDL_SCANCODE_3
+    KB_4,              // SDL_SCANCODE_4
+    KB_5,              // SDL_SCANCODE_5
+    KB_6,              // SDL_SCANCODE_6
+    KB_7,              // SDL_SCANCODE_7
+    KB_8,              // SDL_SCANCODE_8
+    KB_9,              // SDL_SCANCODE_9
+    KB_0,              // SDL_SCANCODE_0
+
+    KB_RETURN,         // SDL_SCANCODE_RETURN
+    KB_ESCAPE,         // SDL_SCANCODE_ESCAPE
+    KB_BACKSPACE,      // SDL_SCANCODE_BACKSPACE
+    KB_TAB,            // SDL_SCANCODE_TAB
+    KB_SPACE,          // SDL_SCANCODE_SPACE
+    KB_MINUS,          // SDL_SCANCODE_MINUS
+    KB_EQUAL,          // SDL_SCANCODE_EQUALS
+    KB_LBRACKET,       // SDL_SCANCODE_LEFTBRACKET
+    KB_RBRACKET,       // SDL_SCANCODE_RIGHTBRACKET
+    KB_BACKSLASH,      // SDL_SCANCODE_BACKSLASH
+    0,                 // SDL_SCANCODE_NONUSHASH
+    0,                 // SDL_SCANCODE_SEMICOLON
+    0,                 // SDL_SCANCODE_APOSTROPHE
+    0,                 // SDL_SCANCODE_GRAVE
+    0,                 // SDL_SCANCODE_COMMA
+    0,                 // SDL_SCANCODE_PERIOD
+    0,                 // SDL_SCANCODE_SLASH
+    0,                 // SDL_SCANCODE_CAPSLOCK
+    0,                 // SDL_SCANCODE_F1
+    0,                 // SDL_SCANCODE_F2
+    0,                 // SDL_SCANCODE_F3
+    0,                 // SDL_SCANCODE_F4
+    0,                 // SDL_SCANCODE_F5
+    0,                 // SDL_SCANCODE_F6
+    0,                 // SDL_SCANCODE_F7
+    0,                 // SDL_SCANCODE_F8
+    0,                 // SDL_SCANCODE_F9
+    0,                 // SDL_SCANCODE_F10
+    0,                 // SDL_SCANCODE_F11
+    0,                 // SDL_SCANCODE_F12
+    0,                 // SDL_SCANCODE_PRINTSCREEN
+    0,                 // SDL_SCANCODE_SCROLLLOCK
+    0,                 // SDL_SCANCODE_PAUSE
+    0,                 // SDL_SCANCODE_INSERT
+    0,                 // SDL_SCANCODE_HOME
+    0,                 // SDL_SCANCODE_PAGEUP
+    0,                 // SDL_SCANCODE_DELETE
+    0,                 // SDL_SCANCODE_END
+    0,                 // SDL_SCANCODE_PAGEDOWN
+    KB_RIGHT,          // SDL_SCANCODE_RIGHT
+    KB_LEFT,           // SDL_SCANCODE_LEFT
+    KB_DOWN,           // SDL_SCANCODE_DOWN
+    KB_UP,             // SDL_SCANCODE_UP
+    0,                 // SDL_SCANCODE_NUMLOCKCLEAR
+    0,                 // SDL_SCANCODE_KP_DIVIDE
+    0,                 // SDL_SCANCODE_KP_MULTIPLY
+    0,                 // SDL_SCANCODE_KP_MINUS
+    0,                 // SDL_SCANCODE_KP_PLUS
+    0,                 // SDL_SCANCODE_KP_ENTER
+    0,                 // SDL_SCANCODE_KP_1
+    0,                 // SDL_SCANCODE_KP_2
+    0,                 // SDL_SCANCODE_KP_3
+    0,                 // SDL_SCANCODE_KP_4
+    0,                 // SDL_SCANCODE_KP_5
+    0,                 // SDL_SCANCODE_KP_6
+    0,                 // SDL_SCANCODE_KP_7
+    0,                 // SDL_SCANCODE_KP_8
+    0,                 // SDL_SCANCODE_KP_9
+    0,                 // SDL_SCANCODE_KP_0
+    0,                 // SDL_SCANCODE_KP_PERIOD
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    KB_LCTRL,          //SDL_SCANCODE_LCTRL
+    KB_LSHIFT,         //SDL_SCANCODE_LSHIFT
+    KB_LALT,           //SDL_SCANCODE_LALT
+    KB_LMETA,          //SDL_SCANCODE_LGUI
+    KB_RCTRL,          //SDL_SCANCODE_RCTRL
+    KB_RSHIFT,         //SDL_SCANCODE_RSHIFT
+    KB_RALT,           //SDL_SCANCODE_RALT
+    KB_RMETA,          //SDL_SCANCODE_RGUI
 };
 
-struct mouse_state
-{
-    struct key_state button[ INPUT_MB_COUNT ];
-
-    struct {
-        // mouse wheel delta
-        float x;
-        float y;
-    } wheel;
-
-    struct {
-        // relative mouse position
-        float x;
-        float y;
-
-        // mouse delta
-        float dx;
-        float dy;
-
-        // global mouse position
-        float gx;
-        float gy;
-    } pos;
-
-    bool moved;
+static const int button_map[] = {
+    0,
+    MB_LEFT,
+    MB_MIDDLE,
+    MB_RIGHT,
+    MB_FORWARD,
+    MB_BACK
 };
 
-struct input
+static int get_key( SDL_Scancode code )
 {
-    struct key_state key[ INPUT_KB_COUNT ];
-    struct mouse_state mouse;
-
-    resize_cb_fn *resize_cb;
-    quit_cb_fn *quit_cb;
-};
-
-static struct input input = {
-    .key        = { 0 },
-    .mouse      = { 0 },
-    .resize_cb  = NULL,
-    .quit_cb    = NULL
-};
-
-static enum input_button button_from_sdl( Uint8 sdlbutton )
-{
-    switch ( sdlbutton )
-    {
-        case SDL_BUTTON_LEFT: return INPUT_MB_LEFT;
-        case SDL_BUTTON_RIGHT: return INPUT_MB_RIGHT;
-        case SDL_BUTTON_MIDDLE: return INPUT_MB_MIDDLE;
-        case SDL_BUTTON_X1: return INPUT_MB_XA;
-        case SDL_BUTTON_X2: return INPUT_MB_XB;
-    }
-
-    return INPUT_MB_FIRST;
+    return key_map[ code ];
 }
 
-static void key_up( struct key_state *state )
+static int get_button( int button )
 {
-    state->up = state->press;
-    state->press = false;
-}
-
-static void key_down( struct key_state *state )
-{
-    state->down = !state->press;
-    state->press = true;
-}
-
-static void key_update( struct key_state *state )
-{
-    state->down = false;
-    state->up = false;
-}
-
-static void input_reset( void )
-{
-    // reset keys
-    for ( int i = 0; i < INPUT_KB_COUNT; i++ )
-        key_update( &input.key[ i ] );
-
-    // reset mouse buttons
-    for ( int i = 0; i < INPUT_MB_COUNT; i++ )
-        key_update( &input.mouse.button[ i ] );
-
-    // reset mouse events
-    input.mouse.moved = false;
-    input.mouse.wheel.x = 0;
-    input.mouse.wheel.y = 0;
-    input.mouse.pos.dx = 0;
-    input.mouse.pos.dy = 0;
+    return button_map[ button ];
 }
 
 int input_poll( void )
 {
-    input_reset();
+    // reset keys
+    for ( int i = 0; i < KB_COUNT; i++ )
+        core.input.keyboard.state[ i ] &= ~( INPUT_DOWN | INPUT_UP );
+
+    // reset mouse buttons
+    for ( int i = 0; i < MB_COUNT; i++ )
+        core.input.mouse.state[ i ] &= ~( INPUT_DOWN | INPUT_UP );
+
+    // reset mouse events
+    core.input.mouse.moved = false;
+    core.input.mouse.wheel.x = 0;
+    core.input.mouse.wheel.y = 0;
+    core.input.mouse.pos.delta.x = 0;
+    core.input.mouse.pos.delta.y = 0;
 
     int result = INPUT_SUCCESS;
 
@@ -121,60 +166,58 @@ int input_poll( void )
         switch ( event.type )
         {
             case SDL_EVENT_QUIT:
-                {
-                    size_t len = list_size( input.quit_cb );
-                    for ( size_t i = 0; i < len; i++ )
-                        input.quit_cb[ i ]();
-                    result = INPUT_QUIT;
-                }
+
+                result = INPUT_QUIT;
+
                 break;
 
             case SDL_EVENT_WINDOW_RESIZED:
-                {
-                    size_t len = list_size( input.resize_cb );
-                    for ( size_t i = 0; i < len; i++ )
-                        input.resize_cb[ i ]( event.window.data1, event.window.data2 );
-                }
+
+                core.window.w = event.window.data1;
+                core.window.h = event.window.data2;
+                core.window.aspect = ( float ) core.window.w / core.window.h;
+                glViewport( 0, 0, core.window.w, core.window.h );
+
                 break;
 
             case SDL_EVENT_KEY_DOWN:
 
-                key_down( &input.key[ event.key.scancode ] );
+                core.input.keyboard.state[ get_key( event.key.scancode ) ] = INPUT_DOWN | INPUT_PRESS;
 
                 break;
 
             case SDL_EVENT_KEY_UP:
 
-                key_up( &input.key[ event.key.scancode ] );
+                core.input.keyboard.state[ get_key( event.key.scancode ) ] = INPUT_UP;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-                key_down( &input.mouse.button[ button_from_sdl( event.button.button ) ] );
+                core.input.mouse.state[ get_button( event.button.button ) ] = INPUT_DOWN | INPUT_PRESS;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
 
-                key_up( &input.mouse.button[ button_from_sdl( event.button.button ) ] );
+                core.input.mouse.state[ get_button( event.button.button ) ] = INPUT_UP;
 
                 break;
 
             case SDL_EVENT_MOUSE_WHEEL:
 
-                input.mouse.wheel.x += event.wheel.x;
-                input.mouse.wheel.y += event.wheel.y;
+                core.input.mouse.wheel.x += event.wheel.x;
+                core.input.mouse.wheel.y += event.wheel.y;
 
                 break;
 
             case SDL_EVENT_MOUSE_MOTION:
 
-                input.mouse.pos.x = event.motion.x;
-                input.mouse.pos.y = event.motion.y;
-                input.mouse.pos.dx += event.motion.xrel;
-                input.mouse.pos.dy += event.motion.yrel;
-                input.mouse.moved = true;
+                core.input.mouse.pos.rel.x = event.motion.x;
+                core.input.mouse.pos.rel.y = event.motion.y;
+                core.input.mouse.pos.delta.x += event.motion.xrel;
+                core.input.mouse.pos.delta.y += event.motion.yrel;
+                core.input.mouse.moved = true;
 
                 break;
         }
@@ -183,67 +226,67 @@ int input_poll( void )
     return result;
 }
 
-int input_resize_add_listener( resize_cb_fn fn )
+bool input_key_down( int key )
 {
-    list_push_back( input.resize_cb, fn );
-    return INPUT_SUCCESS;
+    return core.input.keyboard.state[ key ] & INPUT_DOWN;
 }
 
-int input_quit_add_listener( quit_cb_fn fn )
+bool input_key_up( int key )
 {
-    list_push_back( input.quit_cb, fn );
-    return INPUT_SUCCESS;
+    return core.input.keyboard.state[ key ] & INPUT_UP;
 }
 
-bool input_key_down( enum input_key key )
+bool input_key_press( int key )
 {
-    return input.key[ key ].down;
+    return core.input.keyboard.state[ key ] & INPUT_PRESS;
 }
 
-bool input_key_up( enum input_key key )
+bool input_mouse_down( int button )
 {
-    return input.key[ key ].up;
+    return core.input.mouse.state[ button ] & INPUT_DOWN;
 }
 
-bool input_key_press( enum input_key key )
+bool input_mouse_up( int button )
 {
-    return input.key[ key ].press;
+    return core.input.mouse.state[ button ] & INPUT_UP;
 }
 
-bool input_mouse_down( enum input_button button )
+bool input_mouse_press( int button )
 {
-    return input.mouse.button[ button ].down;
-}
-
-bool input_mouse_up( enum input_button button )
-{
-    return input.mouse.button[ button ].up;
-}
-
-bool input_mouse_press( enum input_button button )
-{
-    return input.mouse.button[ button ].press;
+    return core.input.mouse.state[ button ] & INPUT_PRESS;
 }
 
 bool input_mouse_moved( void )
 {
-    return input.mouse.moved;
+    return core.input.mouse.moved;
 }
 
-void input_mouse_pos( float *x, float *y )
+vec2_t input_mouse_pos( void )
 {
-    if ( x ) *x = input.mouse.pos.x;
-    if ( y ) *y = input.mouse.pos.y;
+    vec2_t result = { 0 };
+
+    result.x = core.input.mouse.pos.rel.x;
+    result.y = core.input.mouse.pos.rel.y;
+
+    return result;
 }
 
-void input_mouse_delta( float *x, float *y )
+vec2_t input_mouse_delta( void )
 {
-    if ( x ) *x = input.mouse.pos.dx;
-    if ( y ) *y = input.mouse.pos.dy;
+    vec2_t result = { 0 };
+
+    result.x = core.input.mouse.pos.delta.x;
+    result.y = core.input.mouse.pos.delta.y;
+
+    return result;
 }
 
-void input_mouse_scroll( float *x, float *y )
+vec2_t input_mouse_scroll( void )
 {
-    if ( x ) *x = input.mouse.wheel.x;
-    if ( y ) *y = input.mouse.wheel.y;
+    vec2_t result = { 0 };
+
+    result.x = core.input.mouse.wheel.x;
+    result.y = core.input.mouse.wheel.y;
+
+    return result;
 }

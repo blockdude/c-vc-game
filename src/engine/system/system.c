@@ -1,6 +1,6 @@
 #include "system.h"
 #include <util/log.h>
-#include <SDL3/SDL.h>
+#include <glad/glad.h>
 
 int system_init( void )
 {
