@@ -31,15 +31,10 @@ int system_init( void )
     iflags |= SDL_INIT_VIDEO;
 
     if ( core.flags & CORE_HEADLESS )
-    {
         iflags &= ~SDL_INIT_VIDEO;
-        iflags &= ~SDL_INIT_EVENTS;
-    }
 
     if ( core.flags & CORE_NO_AUDIO )
-    {
         iflags &= ~SDL_INIT_AUDIO;
-    }
 
     if ( SDL_Init( iflags ) != 0 )
     {

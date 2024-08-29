@@ -1,7 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <util/util.h>
+#include <util/types.h>
 
 enum window_status
 {
