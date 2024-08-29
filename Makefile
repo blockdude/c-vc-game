@@ -28,8 +28,6 @@ find = $(wildcard $1/$2) \
 	   $(wildcard $1/**/**/$2) \
 	   $(wildcard $1/**/**/**/$2)
 
-#rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $2,$d))
-
 # =============================
 
 

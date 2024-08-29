@@ -9,7 +9,8 @@ enum core_status
 
 enum core_flags
 {
-	CORE_HEADLESS = 0x01
+	CORE_HEADLESS = 0x01,
+	CORE_NO_AUDIO = 0x02
 };
 
 #ifdef __cplusplus

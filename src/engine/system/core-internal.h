@@ -3,6 +3,7 @@
 
 #include "input.h"
 #include <util/types.h>
+#include <util/app.h>
 
 /*
  * Definition for core data structure to store the state of the
@@ -56,7 +57,7 @@ struct core
 	 */
 	struct
 	{
-		int s;
+		struct app state;
 	} app;
 };
 

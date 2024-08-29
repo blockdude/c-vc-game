@@ -141,7 +141,7 @@ static inline int shader_build_text( struct shader *self, const char *vstext, si
 		log_warn( "Vertex shader [ ID: %d ] failed to compile" );
 		return SHADER_VS_COMPILE_ERROR;
 	}
-	log_info( "Vertex shader [ ID: %d ] compiled successfully", vs_handle );
+	log_trace( "Vertex shader [ ID: %d ] compiled successfully", vs_handle );
 
 	if ( fs_status == GL_FALSE )
 	{
@@ -150,7 +150,7 @@ static inline int shader_build_text( struct shader *self, const char *vstext, si
 		log_warn( "Fragment shader [ ID: %d ] failed to compile" );
 		return SHADER_FS_COMPILE_ERROR;
 	}
-	log_info( "Fragment shader [ ID: %d ] compiled successfully", fs_handle );
+	log_trace( "Fragment shader [ ID: %d ] compiled successfully", fs_handle );
 
 	self->handle = shader_link_program( vs_handle, fs_handle );
 	GLint sp_status = shader_get_status( self->handle, GL_LINK_STATUS, glGetProgramiv );
@@ -162,7 +162,7 @@ static inline int shader_build_text( struct shader *self, const char *vstext, si
 		log_warn( "Program shader [ ID: %d ] failed to link", self->handle );
 		return SHADER_PROGRAM_LINKING_ERROR;
 	}
-	log_info( "Program shader [ ID: %d ] successfully loaded", self->handle );
+	log_trace( "Program shader [ ID: %d ] successfully loaded", self->handle );
 
 	return SHADER_SUCCESS;
 }

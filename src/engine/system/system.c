@@ -31,7 +31,15 @@ int system_init( void )
     iflags |= SDL_INIT_VIDEO;
 
     if ( core.flags & CORE_HEADLESS )
+    {
         iflags &= ~SDL_INIT_VIDEO;
+        iflags &= ~SDL_INIT_EVENTS;
+    }
+
+    if ( core.flags & CORE_NO_AUDIO )
+    {
+        iflags &= ~SDL_INIT_AUDIO;
+    }
 
     if ( SDL_Init( iflags ) != 0 )
     {
@@ -107,7 +115,7 @@ int system_free( void )
     }
 
     SDL_Quit();
-    log_info( "Cleaning up SDL subsystems" );
+    log_info( "Cleaned up SDL subsystems" );
 
     system.window = NULL;
     system.context = NULL;
