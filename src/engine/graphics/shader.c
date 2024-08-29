@@ -121,7 +121,7 @@ static inline GLuint shader_link_program( GLuint vs, GLuint fs )
 	return handle;
 }
 
-static inline int shader_build_util( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen, const char *vspath, const char *fspath )
+static inline int shader_build_text( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen, const char *vspath, const char *fspath )
 {
 	*self = ( struct shader ) { 0 };
 
@@ -138,19 +138,19 @@ static inline int shader_build_util( struct shader *self, const char *vstext, si
 	{
 		glDeleteShader( vs_handle );
 		glDeleteShader( fs_handle );
-		log_warn( "Vertex shader failed to compile" );
+		log_warn( "Vertex shader [ ID: %d ] failed to compile" );
 		return SHADER_VS_COMPILE_ERROR;
 	}
-	log_info( "Vertex shader compiled successfully" );
+	log_info( "Vertex shader [ ID: %d ] compiled successfully", vs_handle );
 
 	if ( fs_status == GL_FALSE )
 	{
 		glDeleteShader( vs_handle );
 		glDeleteShader( fs_handle );
-		log_warn( "Fragment shader failed to compile" );
+		log_warn( "Fragment shader [ ID: %d ] failed to compile" );
 		return SHADER_FS_COMPILE_ERROR;
 	}
-	log_info( "Fragment shader compiled successfully" );
+	log_info( "Fragment shader [ ID: %d ] compiled successfully", fs_handle );
 
 	self->handle = shader_link_program( vs_handle, fs_handle );
 	GLint sp_status = shader_get_status( self->handle, GL_LINK_STATUS, glGetProgramiv );
@@ -159,10 +159,10 @@ static inline int shader_build_util( struct shader *self, const char *vstext, si
 	if ( sp_status == GL_FALSE )
 	{
 		glDeleteProgram( self->handle );
-		log_warn( "Program shader failed to link" );
+		log_warn( "Program shader [ ID: %d ] failed to link", self->handle );
 		return SHADER_PROGRAM_LINKING_ERROR;
 	}
-	log_info( "Program shader successfully loaded" );
+	log_info( "Program shader [ ID: %d ] successfully loaded", self->handle );
 
 	return SHADER_SUCCESS;
 }
@@ -172,7 +172,7 @@ int shader_load( struct shader *self, const char *vstext, size_t vslen, const ch
 	if ( self == NULL )
 		return SHADER_SUCCESS;
 
-	return shader_build_util( self, vstext, vslen, fstext, fslen, NULL, NULL );
+	return shader_build_text( self, vstext, vslen, fstext, fslen, NULL, NULL );
 }
 
 int shader_loadf( struct shader *self, const char *vspath, const char *fspath )
@@ -186,9 +186,9 @@ int shader_loadf( struct shader *self, const char *vspath, const char *fspath )
 	char *fstext = shader_load_text( fspath, &fslen );
 
 	if ( !vstext || !fstext )
-		return 4;
+		return SHADER_INVALID_FILE_PATH;
 
-	int result = shader_build_util( self, vstext, vslen, fstext, fslen, vspath, fspath );
+	int result = shader_build_text( self, vstext, vslen, fstext, fslen, vspath, fspath );
 
 	free( vstext );
 	free( fstext );

@@ -94,7 +94,6 @@ static int init( struct app *app )
 	app_set_target_fps( app, 144 );
 	app_set_target_tps( app, 30 );
 	window_set_relative_mouse( true );
-	SDL_GL_SetSwapInterval( 0 );
 
 	glEnable( GL_DEPTH_TEST );
 

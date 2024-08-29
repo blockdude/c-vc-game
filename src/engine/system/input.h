@@ -103,10 +103,15 @@ enum input_button
 
 enum input_state
 {
-    INPUT_DOWN    = 1,
-    INPUT_UP      = 2,
-    INPUT_PRESS   = 4,
-    INPUT_REPEAT  = 8
+    INPUT_DOWN         = 0x01,
+    INPUT_UP           = 0x02,
+    INPUT_PRESS        = 0x04,
+    INPUT_REPEAT       = 0x08,
+
+    INPUT_PREV_DOWN    = 0x10,
+    INPUT_PREV_UP      = 0x20,
+    INPUT_PREV_PRESS   = 0x40,
+    INPUT_PREV_REPEAT  = 0x80
 };
 
 #ifdef __cplusplus

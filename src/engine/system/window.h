@@ -2,7 +2,6 @@
 #define WINDOW_H
 
 #include <util/util.h>
-#include <SDL3/SDL.h>
 
 enum window_status
 {
@@ -14,11 +13,7 @@ enum window_status
 extern "C" {
 #endif
 
-// window setup and cleanup functions
-int window_init( void );
-int window_free( void );
-
-// swap the graphics buffer
+// swap the screen buffer
 void window_swap( void );
 
 // window setters
@@ -29,6 +24,9 @@ int window_toggle_relative_mouse( void );
 
 // window getters
 int window_get_size( int *w, int *h );
+
+// get the sdl handle
+void *window_get_handle( void );
 
 #ifdef __cplusplus
 }

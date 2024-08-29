@@ -9,38 +9,38 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-struct point
+typedef struct point_s
 {
 	float x, y;
-};
+} point_t;
 
-struct line
+typedef struct line_s
 {
 	float x0, y0;
 	float x1, y1;
-};
+} line_t;
 
-struct rectangle
+typedef struct rectangle_s
 {
 	float x;
 	float y;
 	float w;
 	float h;
-};
+} rectangle_t;
 
-struct circle
+typedef struct circle_s
 {
 	float x;
 	float y;
 	float r;
-};
+} circle_t;
 
-struct triangle
+typedef struct triangle_s
 {
 	float x0, y0;
 	float x1, y1;
 	float x2, y2;
-};
+} triangle_t;
 
 typedef struct color_s
 {

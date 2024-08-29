@@ -1,7 +1,7 @@
 #include "app.h"
 #include <util/log.h>
 #include <system/input.h>
-#include <SDL3/SDL.h>
+#include <system/time.h>
 
 static inline int internal_init( struct app *self )
 {
@@ -49,10 +49,10 @@ static inline int internal_render( struct app *self )
 
 static int internal_loop( struct app *self )
 {
-    log_info( "Starting application loop" );
+    log_trace( "Starting application loop" );
     internal_init( self );
 
-    uint64_t frame_prev  = SDL_GetTicks();
+    uint64_t frame_prev  = time_now();
     uint64_t frame_timer = frame_prev;
     uint64_t frame_last  = 0;
 
@@ -65,7 +65,7 @@ static int internal_loop( struct app *self )
     while ( self->running )
     {
         // get frame timing
-        uint64_t frame_start = SDL_GetTicks();
+        uint64_t frame_start = time_now();
         uint64_t delta_time = frame_start - frame_prev;
 
         frame_prev    = frame_start;
@@ -106,10 +106,10 @@ static int internal_loop( struct app *self )
         internal_render( self );
 
         // apply fps cap
-        int frame_time = frame_start - SDL_GetTicks();
+        int frame_time = frame_start - time_now();
         if ( frame_time < self->frame_target )
         {
-            SDL_Delay( self->frame_target - frame_time );
+            time_wait( self->frame_target - frame_time );
         }
     }
 

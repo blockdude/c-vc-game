@@ -4,8 +4,6 @@
 #include "input.h"
 #include <util/types.h>
 
-#include <SDL3/SDL.h>
-
 /*
  * Definition for core data structure to store the state of the
  * program. I like this better than having mulitple global
@@ -16,17 +14,11 @@ struct core
 {
 	struct
 	{
-		SDL_Window *window;
-		SDL_GLContext glcontext;
-	} platform;
+		const char *title;
 
-	struct
-	{
-		// is the window running
 		bool initialized;
 		bool relative_mouse;
 
-		// keeps track of width, height and aspect ratio
 		unsigned int w;
 		unsigned int h;
 		float aspect;
@@ -42,6 +34,7 @@ struct core
 		struct
 		{
 			int state[ MB_COUNT ];
+
 			vec2_t wheel;
 
 			struct
@@ -54,8 +47,33 @@ struct core
 			bool moved;
 		} mouse;
 	} input;
+
+	/*
+	 * Keep track of the app state
+	 */
+	struct
+	{
+		int s;
+	} app;
+};
+
+enum core_status
+{
+	CORE_SUCCESS = 0,
+	CORE_ERROR   = 1
 };
 
 extern struct core core;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int core_init( void );
+int core_free( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
