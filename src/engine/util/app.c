@@ -49,7 +49,6 @@ static inline int internal_render( struct app *self )
 
 static int internal_loop( struct app *self )
 {
-    log_trace( "Starting application loop" );
     internal_init( self );
 
     uint64_t frame_prev  = time_now();

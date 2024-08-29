@@ -1,10 +1,13 @@
 #include "core.h"
+#include "core-internal.h"
 #include "system.h"
 
 struct core core = { 0 };
 
-int core_init( void )
+int core_init( unsigned int flags )
 {
+    core.flags = flags;
+
     core.window.title = "GAME";
     core.window.initialized = false;
     core.window.relative_mouse = false;

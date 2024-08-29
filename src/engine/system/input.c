@@ -1,5 +1,6 @@
 #include "input.h"
 #include "core.h"
+#include "core-internal.h"
 
 bool input_key_down( int key )
 {

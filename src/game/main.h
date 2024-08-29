@@ -12,6 +12,7 @@
 #include <system/input.h>
 #include <system/window.h>
 #include <system/core.h>
+#include <system/core-internal.h>
 
 static const float square[] = {
     -1.0f, -1.0f, 0.0f,

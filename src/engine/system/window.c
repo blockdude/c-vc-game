@@ -1,5 +1,5 @@
 #include "window.h"
-#include "core.h"
+#include "core-internal.h"
 
 int window_get_size( int *w, int *h )
 {

@@ -1,5 +1,5 @@
 #include "camera.h"
-#include <system/core.h>
+#include <system/core-internal.h>
 #include <util/math.h>
 #include <cglm/cglm.h>
 

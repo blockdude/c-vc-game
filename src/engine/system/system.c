@@ -1,5 +1,6 @@
 #include "system.h"
 #include "core.h"
+#include "core-internal.h"
 
 #include "window.h"
 #include "input.h"
@@ -23,17 +24,23 @@ static struct
 
 int system_init( void )
 {
-    SDL_InitFlags iflags =
-        SDL_INIT_TIMER |
-        SDL_INIT_AUDIO |
-        SDL_INIT_VIDEO |
-        SDL_INIT_EVENTS;
+    SDL_InitFlags iflags = 0;
+    iflags |= SDL_INIT_TIMER;
+    iflags |= SDL_INIT_AUDIO;
+    iflags |= SDL_INIT_EVENTS;
+    iflags |= SDL_INIT_VIDEO;
+
+    if ( core.flags & CORE_HEADLESS )
+        iflags &= ~SDL_INIT_VIDEO;
 
     if ( SDL_Init( iflags ) != 0 )
     {
         log_error( "Unable to initialize SDL: %s", SDL_GetError() );
         return SYSTEM_ERROR;
     }
+
+    if ( core.flags & CORE_HEADLESS )
+        goto finish;
 
     const SDL_WindowFlags wflags =
         SDL_WINDOW_RESIZABLE            |
@@ -71,11 +78,12 @@ int system_init( void )
         return SYSTEM_ERROR;
     }
 
-    log_info( "System successfully initialized" );
     log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
     log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
     log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
     log_info( "SL Version  : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+
+finish:
 	log_info( "SDL Version : %d.%d.%d",
 			SDL_VERSIONNUM_MAJOR( SDL_VERSION ),
 			SDL_VERSIONNUM_MINOR( SDL_VERSION ),
