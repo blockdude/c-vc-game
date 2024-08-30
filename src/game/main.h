@@ -92,9 +92,9 @@ static struct vbo vbo;
 static int init( struct app *app )
 {
 	( void )app;
-	app_set_target_fps( app, 144 );
-	app_set_target_tps( app, 30 );
-	window_set_relative_mouse( true );
+	app_target_fps_set( app, 144 );
+	app_target_tps_set( app, 30 );
+	window_relative_mouse( true );
 
 	glEnable( GL_DEPTH_TEST );
 
@@ -194,7 +194,7 @@ static int update( struct app *app )
 
     if ( input_key_down( KB_ESCAPE ) )
     {
-        window_toggle_relative_mouse();
+        window_relative_mouse_toggle();
     }
 
     direction = vec3_normalize( direction );

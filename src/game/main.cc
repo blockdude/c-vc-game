@@ -1,16 +1,14 @@
 #include <string>
 
 #include <system/core.h>
-#include <system/window.h>
-
 #include <util/app.h>
 #include <util/log.h>
 
 //#include "ex/raytracer.h"
 //#include "ex/gameoflife.h"
 //#include "ex/dragon.h"
-#include "ex/headless.h"
-//#include "main.h"
+//#include "ex/headless.h"
+#include "main.h"
 
 int main( int argc, char *argv[] )
 {
@@ -22,13 +20,9 @@ int main( int argc, char *argv[] )
 
 	log_info( "Arguments: %s", args.c_str() );
 
-	core_init();
-	//window_init();
-
+	core_init( WINDOW | AUDIO | INPUT | TIMER );
 	app_init( &app, init, free, tick, update, render );
 	app_loop( &app );
-
-	//window_free();
 	core_free();
 
 	return 0;

@@ -13,22 +13,19 @@ enum window_status
 extern "C" {
 #endif
 
-int window_init( void );
-int window_free( void );
+void window_state_set( unsigned int flags );
+void window_state_clear( unsigned int flags );
 
-// swap the screen buffer
 void window_swap( void );
 
-// window setters
 int window_set_size( int w, int h );
 int window_set_title( const char *title );
-int window_set_relative_mouse( bool state );
-int window_toggle_relative_mouse( void );
+int window_relative_mouse( bool state );
+int window_relative_mouse_toggle( void );
 
-// window getters
 int window_get_size( int *w, int *h );
 
-// get the sdl handle
+// get sdl handle
 void *window_get_handle( void );
 
 #ifdef __cplusplus

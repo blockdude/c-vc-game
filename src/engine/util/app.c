@@ -161,22 +161,22 @@ void app_stop( struct app *self )
     self->running = false;
 }
 
-void app_set_target_fps( struct app *self, float target )
+void app_target_fps_set( struct app *self, float target )
 {
     self->frame_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
 }
 
-void app_set_target_tps( struct app *self, float target )
+void app_target_tps_set( struct app *self, float target )
 {
     self->tick_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
 }
 
-int app_get_fps( struct app *self )
+int app_fps( struct app *self )
 {
     return self->frame_rate;
 }
 
-int app_get_tps( struct app *self )
+int app_tps( struct app *self )
 {
     return self->tick_rate;
 }

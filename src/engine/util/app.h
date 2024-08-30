@@ -39,10 +39,10 @@ int  app_init( struct app *self, event_fn init, event_fn free, event_fn tick, ev
 void app_loop( struct app *self );
 void app_stop( struct app *self );
 
-void app_set_target_fps( struct app *self, float target );
-void app_set_target_tps( struct app *self, float target );
-int  app_get_fps( struct app *self );
-int  app_get_tps( struct app *self );
+void app_target_fps_set( struct app *self, float target );
+void app_target_tps_set( struct app *self, float target );
+int  app_fps( struct app *self );
+int  app_tps( struct app *self );
 
 #ifdef __cplusplus
 }

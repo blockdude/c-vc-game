@@ -29,22 +29,86 @@ int system_init( void )
 			SDL_VERSIONNUM_MINOR( SDL_VERSION ),
 			SDL_VERSIONNUM_MICRO( SDL_VERSION ) );
 
-    if ( SDL_Init( SDL_INIT_TIMER ) != 0 )
+    if ( ( core.flags & TIMER ) > 0 )
     {
-        log_error( "Unable to initialize SDL timer: %s", SDL_GetError() );
-        return SYSTEM_ERROR;
+        if ( SDL_Init( SDL_INIT_TIMER ) != 0 )
+        {
+            log_warn( "Unable to initialize SDL timer system: %s", SDL_GetError() );
+        }
     }
 
-    if ( SDL_Init( SDL_INIT_AUDIO ) != 0 )
+    if ( ( core.flags & AUDIO ) > 0 )
     {
-        log_error( "Unable to initialize SDL audio: %s", SDL_GetError() );
-        return SYSTEM_ERROR;
+        if ( SDL_Init( SDL_INIT_AUDIO ) != 0 )
+        {
+            log_warn( "Unable to initialize SDL audio system: %s", SDL_GetError() );
+        }
     }
 
-    if ( SDL_Init( SDL_INIT_EVENTS ) != 0 )
+    if ( ( core.flags & INPUT ) > 0 )
     {
-        log_error( "Unable to initialize SDL events: %s", SDL_GetError() );
-        return SYSTEM_ERROR;
+        if ( SDL_Init( SDL_INIT_EVENTS ) != 0 )
+        {
+            log_warn( "Unable to initialize SDL event system: %s", SDL_GetError() );
+        }
+    }
+
+    if ( ( core.flags & WINDOW ) > 0 )
+    {
+        if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
+        {
+            log_warn( "Unable to initialize SDL video system: %s", SDL_GetError() );
+            goto window_setup_cleanup;
+        }
+
+        const SDL_WindowFlags flags =
+            SDL_WINDOW_RESIZABLE            |
+            SDL_WINDOW_HIGH_PIXEL_DENSITY   |
+            SDL_WINDOW_OPENGL;
+
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
+        SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
+        SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+        SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
+
+        system.window = SDL_CreateWindow( core.window.title, core.window.w, core.window.h, flags );
+        if ( system.window == NULL )
+        {
+            log_error( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
+            goto window_setup_cleanup;
+        }
+
+        system.context = SDL_GL_CreateContext( system.window );
+        if ( system.context == NULL )
+        {
+            log_error( "Failed to initialize system. Unable to create OpenGL context: %s", SDL_GetError() );
+            goto window_setup_cleanup;
+        }
+
+        int loaded = gladLoadGLLoader( ( GLADloadproc ) SDL_GL_GetProcAddress );
+        if ( loaded == 0 )
+        {
+            log_error( "Failed to load opengl functions" );
+            goto window_setup_cleanup;
+        }
+
+        log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
+        log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
+        log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
+        log_info( "SL Version  : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+        goto window_setup_finish;
+
+window_setup_cleanup:
+        if ( system.context )
+            SDL_GL_DestroyContext( system.context );
+        if ( system.window )
+            SDL_DestroyWindow( system.window );
+        goto window_setup_exit;
+window_setup_finish:
+        core.window.initialized = true;
+window_setup_exit:
     }
 
     return SYSTEM_SUCCESS;
@@ -52,8 +116,23 @@ int system_init( void )
 
 int system_free( void )
 {
+    if ( system.context )
+    {
+        SDL_GL_DestroyContext( system.context );
+        log_info( "Destroyed OpenGL context" );
+    }
+
+    if ( system.window )
+    {
+        SDL_DestroyWindow( system.window );
+        log_info( "Destroyed SDL window" );
+    }
+
     SDL_Quit();
     log_info( "Cleaned up SDL subsystems" );
+
+    system.window = NULL;
+    system.context = NULL;
 
     return SYSTEM_SUCCESS;
 }
@@ -71,87 +150,6 @@ int system_free( void )
  * -----------------------------
  */
 
-int window_init( void )
-{
-    core.window.title = "GAME";
-    core.window.initialized = false;
-    core.window.relative_mouse = false;
-    core.window.w = 700;
-    core.window.h = 700;
-    core.window.aspect = 1.0f;
-
-    if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
-    {
-        log_warn( "Unable to initialize SDL video: %s", SDL_GetError() );
-        return WINDOW_ERROR;
-    }
-
-    const SDL_WindowFlags flags =
-        SDL_WINDOW_RESIZABLE            |
-        SDL_WINDOW_HIGH_PIXEL_DENSITY   |
-        SDL_WINDOW_OPENGL;
-
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
-    SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
-    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
-
-    system.window = SDL_CreateWindow( core.window.title, core.window.w, core.window.h, flags );
-    if ( system.window == NULL )
-    {
-        log_error( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
-        system_free();
-        return WINDOW_ERROR;
-    }
-
-    system.context = SDL_GL_CreateContext( system.window );
-    if ( system.context == NULL )
-    {
-        log_error( "Failed to initialize system. Unable to create OpenGL context: %s", SDL_GetError() );
-        system_free();
-        return WINDOW_ERROR;
-    }
-
-    int loaded = gladLoadGLLoader( ( GLADloadproc ) SDL_GL_GetProcAddress );
-    if ( loaded == 0 )
-    {
-        log_error( "Failed to load opengl functions" );
-        system_free();
-        return WINDOW_ERROR;
-    }
-
-    log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
-    log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
-    log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
-    log_info( "SL Version  : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
-
-    core.window.initialized = true;
-
-    return WINDOW_SUCCESS;
-}
-
-int window_free( void )
-{
-    if ( system.context )
-    {
-        SDL_GL_DestroyContext( system.context );
-        log_info( "Destroyed OpenGL context" );
-    }
-
-    if ( system.window )
-    {
-        SDL_DestroyWindow( system.window );
-        log_info( "Destroyed SDL window" );
-    }
-
-    system.window = NULL;
-    system.context = NULL;
-
-    return WINDOW_SUCCESS;
-}
-
 void window_swap( void )
 {
     SDL_GL_SwapWindow( system.window );
@@ -163,7 +161,7 @@ int window_set_title( const char *title )
     return WINDOW_SUCCESS;
 }
 
-int window_set_relative_mouse( bool state )
+int window_relative_mouse( bool state )
 {
     core.window.relative_mouse = state;
     SDL_WarpMouseInWindow( system.window, core.window.w / 2.0f, core.window.h / 2.0f );
@@ -171,7 +169,7 @@ int window_set_relative_mouse( bool state )
     return WINDOW_SUCCESS;
 }
 
-int window_toggle_relative_mouse( void )
+int window_relative_mouse_toggle( void )
 {
     core.window.relative_mouse = !core.window.relative_mouse;
     SDL_WarpMouseInWindow( system.window , core.window.w / 2.0f, core.window.h / 2.0f );

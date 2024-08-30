@@ -30,6 +30,7 @@ struct core
 
 	struct
 	{
+		bool initialized;
 		struct
 		{
 			int state[ KB_COUNT ];
