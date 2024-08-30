@@ -86,8 +86,8 @@ NM    = nm
 
 INCLUDE	 =
 CPPFLAGS = -DLOG_USE_COLOR
-CFLAGS	 = -std=c23
-CXXFLAGS = -std=c++23
+CFLAGS	 = -std=c11
+CXXFLAGS = -std=c++17
 LDFLAGS	 =
 LDLIBS	 =
 

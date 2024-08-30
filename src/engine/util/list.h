@@ -145,11 +145,7 @@ static inline void *_list_alloc( size_t stride, size_t n )
     if ( base == NULL )
         return NULL;
 
-    struct _metadata tmp = {
-        .size = 0,
-        .capacity = n
-    };
-
+    struct _metadata tmp = { 0, n };
     *_CAST_TO_META( base ) = tmp;
 
     return _META_TO_LIST( base );

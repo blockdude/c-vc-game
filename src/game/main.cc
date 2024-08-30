@@ -7,8 +7,8 @@
 //#include "ex/raytracer.h"
 //#include "ex/gameoflife.h"
 //#include "ex/dragon.h"
-//#include "ex/headless.h"
-#include "main.h"
+#include "ex/headless.h"
+//#include "main.h"
 
 int main( int argc, char *argv[] )
 {
@@ -20,7 +20,7 @@ int main( int argc, char *argv[] )
 
 	log_info( "Arguments: %s", args.c_str() );
 
-	core_init( WINDOW | AUDIO | INPUT | TIMER );
+	core_init( AUDIO | INPUT | TIMER );
 	app_init( &app, init, free, tick, update, render );
 	app_loop( &app );
 	core_free();

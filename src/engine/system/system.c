@@ -108,7 +108,7 @@ window_setup_cleanup:
         goto window_setup_exit;
 window_setup_finish:
         core.window.initialized = true;
-window_setup_exit:
+window_setup_exit:;
     }
 
     return SYSTEM_SUCCESS;
