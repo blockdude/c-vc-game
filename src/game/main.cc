@@ -1,6 +1,8 @@
 #include <string>
 
 #include <system/core.h>
+#include <system/window.h>
+
 #include <util/app.h>
 #include <util/log.h>
 
@@ -20,9 +22,13 @@ int main( int argc, char *argv[] )
 
 	log_info( "Arguments: %s", args.c_str() );
 
-	core_init( CORE_HEADLESS | CORE_NO_AUDIO );
+	core_init();
+	//window_init();
+
 	app_init( &app, init, free, tick, update, render );
 	app_loop( &app );
+
+	//window_free();
 	core_free();
 
 	return 0;

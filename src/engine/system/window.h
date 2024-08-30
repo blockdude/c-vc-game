@@ -6,12 +6,15 @@
 enum window_status
 {
 	WINDOW_SUCCESS = 0,
-	WINDOW_ERROR = 1
+	WINDOW_ERROR   = 1
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+int window_init( void );
+int window_free( void );
 
 // swap the screen buffer
 void window_swap( void );

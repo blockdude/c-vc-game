@@ -89,7 +89,7 @@ CPPFLAGS = -DLOG_USE_COLOR
 CFLAGS	 = -std=c23
 CXXFLAGS = -std=c++23
 LDFLAGS	 =
-LDLIBS	 = -lm
+LDLIBS	 =
 
 INCLUDE += -I$(SDL3_PATH)/include
 INCLUDE += -I$(GLAD_PATH)/include
@@ -102,6 +102,7 @@ LDFLAGS += -L$(BLD_PATH)/bin/cglm
 LDLIBS  += -l:libSDL3.so
 LDLIBS  += -l:glad.o
 LDLIBS  += -l:libcglm.a
+LDLIBS  += -lm -ldl
 
 # =============================
 
