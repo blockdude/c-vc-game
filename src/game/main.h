@@ -96,6 +96,8 @@ static int init( struct app *app )
 	app_target_tps_set( app, 30 );
 	window_relative_mouse( true );
 
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glEnable( GL_DEPTH_TEST );
 
 	if ( shader_loadf( &shader, "res/shaders/2d.vert", "res/shaders/2d.frag" ) != 0 )
@@ -218,7 +220,6 @@ static int render( struct app *app )
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glDrawArrays( GL_TRIANGLES, 0, 36 );
 
     window_swap();

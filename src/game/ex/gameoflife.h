@@ -1,14 +1,15 @@
 #include <string>
 
 #include <util/log.h>
-#include <system/system.h>
+#include <system/window.h>
+#include <system/time.h>
 #include <glad/glad.h>
-#include <system/app.h>
+#include <util/app.h>
 #include <cglm/struct.h>
 #include <util/list.h>
 #include <util/math.h>
 #include <util/list.h>
-#include <gfx/gfx.h>
+#include <graphics/gfx.h>
 
 static const GLfloat square[] = {
     -1.0f, -1.0f,
@@ -35,9 +36,8 @@ static int *buf = buff_b;
 static int init( struct app *app )
 {
 	( void )app;
-	app_set_target_fps( app, 0 );
-	app_set_target_tps( app, 30 );
-	SDL_GL_SetSwapInterval( 0 );
+	app_target_fps_set( app, 0 );
+	app_target_tps_set( app, 30 );
 
 	glEnable( GL_DEPTH_TEST );
 
@@ -57,6 +57,7 @@ static int init( struct app *app )
 	vao_attr( vao, vbo, position_i, 2, GL_FLOAT, 0, 0 );
 
 	// randomize our grid
+	srand( time( NULL ) );
 	for (int i = 0; i < SIZE * SIZE; i++)
 		buf[ i ] = ( rand() % 2 ) == 0 ? 1 : buf[ i ];
 
@@ -140,7 +141,7 @@ static int render( struct app *app )
 	glUniform1iv(state_idx, SIZE * SIZE, out );
 	glDrawArraysInstanced( GL_TRIANGLES, 0, 6, SIZE * SIZE );
 
-	SDL_GL_SwapWindow( window.handle );
+	window_swap();
 
 	return 0;
 }

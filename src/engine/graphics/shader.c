@@ -138,19 +138,19 @@ static inline int shader_build_text( struct shader *self, const char *vstext, si
 	{
 		glDeleteShader( vs_handle );
 		glDeleteShader( fs_handle );
-		log_warn( "Vertex shader [ ID: %d ] failed to compile" );
+		log_warn( "Vertex Shader [ID:%d] %s failed to compile", vs_handle, vspath ? vspath : "" );
 		return SHADER_VS_COMPILE_ERROR;
 	}
-	log_trace( "Vertex shader [ ID: %d ] compiled successfully", vs_handle );
+	log_info( "Vertex Shader [ID:%d] %s compiled successfully", vs_handle, vspath ? vspath : "" );
 
 	if ( fs_status == GL_FALSE )
 	{
 		glDeleteShader( vs_handle );
 		glDeleteShader( fs_handle );
-		log_warn( "Fragment shader [ ID: %d ] failed to compile" );
+		log_warn( "Fragment Shader [ID:%d] %s failed to compile", fs_handle, fspath ? fspath : "" );
 		return SHADER_FS_COMPILE_ERROR;
 	}
-	log_trace( "Fragment shader [ ID: %d ] compiled successfully", fs_handle );
+	log_info( "Fragment Shader [ID:%d] %s compiled successfully", fs_handle, fspath ? fspath : "" );
 
 	self->handle = shader_link_program( vs_handle, fs_handle );
 	GLint sp_status = shader_get_status( self->handle, GL_LINK_STATUS, glGetProgramiv );
@@ -159,10 +159,10 @@ static inline int shader_build_text( struct shader *self, const char *vstext, si
 	if ( sp_status == GL_FALSE )
 	{
 		glDeleteProgram( self->handle );
-		log_warn( "Program shader [ ID: %d ] failed to link", self->handle );
+		log_warn( "Shader Program [ID:%d|VS:%d|FS:%d] failed to link", self->handle, vs_handle, fs_handle );
 		return SHADER_PROGRAM_LINKING_ERROR;
 	}
-	log_trace( "Program shader [ ID: %d ] successfully loaded", self->handle );
+	log_info( "Shader Program [ID:%d|VS:%d|FS:%d] successfully loaded", self->handle, vs_handle, fs_handle );
 
 	return SHADER_SUCCESS;
 }

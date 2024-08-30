@@ -1,7 +1,6 @@
 #include "system.h"
 #include "core.h"
 #include "core-internal.h"
-
 #include "window.h"
 #include "input.h"
 
@@ -76,21 +75,21 @@ int system_init( void )
         system.window = SDL_CreateWindow( core.window.title, core.window.w, core.window.h, flags );
         if ( system.window == NULL )
         {
-            log_error( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
+            log_warn( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
             goto window_setup_cleanup;
         }
 
         system.context = SDL_GL_CreateContext( system.window );
         if ( system.context == NULL )
         {
-            log_error( "Failed to initialize system. Unable to create OpenGL context: %s", SDL_GetError() );
+            log_warn( "Failed to initialize system. Unable to create OpenGL context: %s", SDL_GetError() );
             goto window_setup_cleanup;
         }
 
         int loaded = gladLoadGLLoader( ( GLADloadproc ) SDL_GL_GetProcAddress );
         if ( loaded == 0 )
         {
-            log_error( "Failed to load opengl functions" );
+            log_warn( "Failed to load opengl functions" );
             goto window_setup_cleanup;
         }
 
