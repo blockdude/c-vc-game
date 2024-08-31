@@ -108,14 +108,29 @@ static void terrain_rand( void )
         float y = terrain[ yi ];
         float z = terrain[ zi ];
 
-        float w = 20.0f;
-        float v = 5.0f;
+        //float w = 20.0f;
+        //float v = 5.0f;
+        //float contour = ( sinf( x / w ) + cosf( z / w ) ) * v;
 
-        terrain[ yi ] = ( sinf( x / w ) + cosf( z / w ) ) * v;
+        //terrain[ yi ] = contour * v;
 
-        terrain[ ri ] = ( sinf( x / w ) + cosf( z / w ) ) * 0.3f;
-        terrain[ gi ] = ( sinf( x / w ) + cosf( z / w ) ) * 0.3f;
-        terrain[ bi ] = ( sinf( x / w ) + cosf( z / w ) ) * 0.3f;
+        //terrain[ ri ] = contour * 0.3f;
+        //terrain[ gi ] = contour * 0.3f;
+        //terrain[ bi ] = contour * 0.3f;
+
+        float o = 150.0f;
+        float c = 75.0f;
+        float w = 5000.0f;
+        float h = 50.0f;
+
+        float p = ( -1.0f / w ) * ( ( z - o ) * ( z - o ) );
+        float k = powf( EULER, p ) * sin( 2.0f * x / c );
+
+        terrain[ yi ] = k * h;
+
+        terrain[ ri ] = k * 0.3f;
+        terrain[ gi ] = k * 0.3f;
+        terrain[ bi ] = k * 0.3f;
     }
 }
 
