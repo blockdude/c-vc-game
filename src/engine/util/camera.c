@@ -31,13 +31,12 @@ void camera_update( struct camera *self )
 
 	direction    = vec3_normalize( direction );
 	self->target = vec3_add( self->eye, direction );
-	self->right  = vec3_cross( ( vec3_t ) { 0.0f, 1.0f, 0.0f }, direction );
-	self->up     = vec3_cross( direction, self->right );
+	self->up     = ( vec3_t ) { 0.0f, 1.0f, 0.0f };
 	self->view   = mat4_lookat( self->eye, self->target, self->up );
 
 	if ( self->type == ORTHOGRAPHIC )
 	{
-		float top = self->fov / ( self->zoom * 2.0f );
+		float top = 1.0f / self->zoom;
 		float right = top * self->aspect;
 		self->proj = mat4_ortho( -right, right, -top, top, self->near, self->far );
 	}

@@ -6,11 +6,12 @@
 enum camera_type
 {
 	PERSPECTIVE,
-	ORTHOGRAPHIC
+	ORTHOGRAPHIC,
 };
 
 struct camera
 {
+	// projection type
 	int type;
 
 	mat4_t view;
@@ -19,22 +20,24 @@ struct camera
 	vec3_t eye;		/* camera position */
 	vec3_t target;	/* lookat position */
 	vec3_t up;		/* camera tilt     */
-	vec3_t right;   /* idk             */
 
 	float pitch;
 	float yaw;
 	float roll;
+
 	float aspect;
 
-	float fov;
-	
 	/*
-	 * FYI: the z in znear and zfar mean the z axis
+	 * FYI: the z in znear and zfar mean the z axis which is the
+	 * depth axis. This should have been obvious but im stupid.
 	 */
-
 	float near;
 	float far;
+	
+	// perspective
+	float fov;
 
+	// orthographic - controls the size of the near and far clipping planes
 	float zoom;
 };
 

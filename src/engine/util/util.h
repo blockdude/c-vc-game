@@ -2,7 +2,6 @@
 #define UTIL_H
 
 #include <math.h>
-#include <float.h>
 
 #ifdef WIN32
 
@@ -14,7 +13,7 @@
 #define PI_2    1.57079632679489661923132169163975144f
 #define PI      3.14159265358979323846264338327950288f
 #define TAU     6.28318530717958647692528676655900576f
-#define EPSILON 0.000001f
+#define EPSILON 0.0001f
 
 #define CLAMP( v, mn, mx ) MAX( mn, MIN( mx, v ) )
 
