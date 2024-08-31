@@ -19,16 +19,21 @@ struct camera
 	vec3_t eye;		/* camera position */
 	vec3_t target;	/* lookat position */
 	vec3_t up;		/* camera tilt     */
-	vec3_t right;
+	vec3_t right;   /* idk             */
 
 	float pitch;
 	float yaw;
 	float roll;
+	float aspect;
 
 	float fov;
-	float aspect;
-	float znear;
-	float zfar;
+	
+	/*
+	 * FYI: the z in znear and zfar mean the z axis
+	 */
+
+	float near;
+	float far;
 
 	float zoom;
 };

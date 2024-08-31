@@ -111,6 +111,7 @@ static int init( struct app *app )
 	vao_attr( vao, vbo, color_idx   , 3, GL_FLOAT, sizeof( float ) * 6, sizeof( float ) * 3 );
 
 	camera_init( &camera, ORTHOGRAPHIC );
+    camera.fov   = PI / 4.0f;
 	camera.eye.x = 0;
 	camera.eye.y = 0;
 	camera.eye.z = 0;
@@ -207,8 +208,12 @@ static int update( struct app *app )
     direction = vec3_scale( direction, 10.0f * app->frame_delta );
     camera.eye = vec3_add( camera.eye, direction );
     camera.aspect = window_aspect();
-    camera.zoom -= input_mouse_scroll().y;
-    camera.zoom = CLAMP( camera.zoom, 1.0f, camera.zoom );
+    camera.zoom += ( ( camera.zoom / 50.0f ) * input_mouse_scroll().y );
+
+    if ( input_mouse_scroll().y != 0.0f )
+    {
+        log_debug( "Camera zoom: %f", camera.zoom );
+    }
 
 	mat4_t model_matrix = mat4_identity();
 
