@@ -45,17 +45,8 @@ static inline float normalize( float x, float min, float max )
  */
 static inline int flteq( float a, float b, float epsilon )
 {
-	const float ab_a = fabs( a );
-	const float ab_b = fabs( b );
-	const float diff = ( a - b );
-
-	if ( a == b )
-		return 1;
-
-	if ( a == 0 || b == 0 || ( ab_a + ab_b < FLT_MIN ) )
-		return diff < ( epsilon * FLT_MIN );
-
-	return diff / fmin( ( ab_a + ab_b ), FLT_MAX ) < epsilon;
+	int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
+    return result;
 }
 
 #endif

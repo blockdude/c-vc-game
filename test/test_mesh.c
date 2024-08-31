@@ -2,13 +2,13 @@
 #include <graphics/mesh.h>
 #include <util/math.h>
 
-struct mesh_test_fixture
+struct meshload
 {
 	int initialized;
 	struct mesh obj;
 };
 
-UTEST_F_SETUP( mesh_test_fixture )
+UTEST_F_SETUP( meshload )
 {
 	struct mesh *obj = &utest_fixture->obj;
 	utest_fixture->initialized = mesh_load( obj, "res/objects/rayman.obj" );
@@ -16,7 +16,7 @@ UTEST_F_SETUP( mesh_test_fixture )
 	ASSERT_GT( obj->fv_len, ( size_t )0 );
 }
 
-UTEST_F_TEARDOWN( mesh_test_fixture )
+UTEST_F_TEARDOWN( meshload )
 {
 	ASSERT_EQ( utest_fixture->initialized, 0 );
 	mesh_free( &utest_fixture->obj );
@@ -38,7 +38,7 @@ static int compare_face( const float *a, const float *b )
 	return res;
 }
 
-UTEST_F( mesh_test_fixture, validate_f )
+UTEST_F( meshload, validate_f )
 {
 	struct mesh *obj = &utest_fixture->obj;
 
@@ -61,7 +61,7 @@ UTEST_F( mesh_test_fixture, validate_f )
 	EXPECT_TRUE( compare_face( last_real, last_test ) );
 }
 
-UTEST_F( mesh_test_fixture, validate_v )
+UTEST_F( meshload, validate_v )
 {
 	struct mesh *obj = &utest_fixture->obj;
 
@@ -78,7 +78,7 @@ UTEST_F( mesh_test_fixture, validate_v )
 	EXPECT_EQ( v[ 2 ],  1.286151f );
 }
 
-UTEST_F( mesh_test_fixture, validate_vt )
+UTEST_F( meshload, validate_vt )
 {
 	struct mesh *obj = &utest_fixture->obj;
 
@@ -93,7 +93,7 @@ UTEST_F( mesh_test_fixture, validate_vt )
 	EXPECT_EQ( v[ 1 ], 0.3465f );
 }
 
-UTEST_F( mesh_test_fixture, validate_vn )
+UTEST_F( meshload, validate_vn )
 {
 	struct mesh *obj = &utest_fixture->obj;
 
@@ -110,7 +110,7 @@ UTEST_F( mesh_test_fixture, validate_vn )
 	EXPECT_EQ( v[ 2 ],  0.1175f );
 }
 
-UTEST_F( mesh_test_fixture, validate_extent )
+UTEST_F( meshload, validate_extent )
 {
 	struct mesh *obj = &utest_fixture->obj;
 
@@ -129,7 +129,7 @@ UTEST_F( mesh_test_fixture, validate_extent )
 	EXPECT_TRUE( flteq( obj->max.z, 3.8891499f  , 0.0000001f  ) );
 }
 
-UTEST_F( mesh_test_fixture, validate_properties )
+UTEST_F( meshload, validate_properties )
 {
 	struct mesh *obj = &utest_fixture->obj;
 
