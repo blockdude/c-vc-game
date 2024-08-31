@@ -154,7 +154,7 @@ void window_swap( void )
     SDL_GL_SwapWindow( system.window );
 }
 
-int window_set_title( const char *title )
+int window_title_set( const char *title )
 {
     SDL_SetWindowTitle( system.window, title );
     return WINDOW_SUCCESS;

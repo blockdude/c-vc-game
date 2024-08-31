@@ -3,8 +3,16 @@
 
 #include <util/types.h>
 
+enum camera_type
+{
+	PERSPECTIVE,
+	ORTHOGRAPHIC
+};
+
 struct camera
 {
+	int type;
+
 	mat4_t view;
 	mat4_t proj;
 
@@ -21,13 +29,15 @@ struct camera
 	float aspect;
 	float znear;
 	float zfar;
+
+	float zoom;
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void camera_init( struct camera *self, float fov );
+void camera_init( struct camera *self, int type );
 void camera_update( struct camera *self );
 
 #ifdef __cplusplus

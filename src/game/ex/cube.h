@@ -1,18 +1,17 @@
 #include <string>
 
 #include <util/log.h>
-#include <system/system.h>
-#include <glad/glad.h>
 #include <util/app.h>
-#include <cglm/struct.h>
 #include <util/list.h>
 #include <util/math.h>
 #include <util/list.h>
+#include <util/camera.h>
+
 #include <graphics/gfx.h>
-#include <system/input.h>
-#include <system/window.h>
+
 #include <system/core.h>
-#include <system/core-internal.h>
+#include <system/window.h>
+#include <system/input.h>
 
 static const float square[] = {
     -1.0f, -1.0f, 0.0f,
@@ -25,63 +24,59 @@ static const float square[] = {
 };
 
 static const float cube[] = {
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
+    // front
+     1.0f,  1.0f, -1.0f,   0.8f, 0.8f, 0.8f,
+     1.0f, -1.0f, -1.0f,   0.3f, 0.3f, 0.3f,
+    -1.0f, -1.0f, -1.0f,   0.3f, 0.3f, 0.3f,
 
-     1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,   0.8f, 0.8f, 0.8f,
+    -1.0f, -1.0f, -1.0f,   0.3f, 0.3f, 0.3f,
+    -1.0f,  1.0f, -1.0f,   0.8f, 0.8f, 0.8f,
 
+    // back
+    -1.0f,  1.0f,  1.0f,   0.8f, 0.8f, 0.8f,
+    -1.0f, -1.0f,  1.0f,   0.3f, 0.3f, 0.3f,
+     1.0f, -1.0f,  1.0f,   0.3f, 0.3f, 0.3f,
+                                           
+     1.0f,  1.0f,  1.0f,   0.8f, 0.8f, 0.8f,
+    -1.0f,  1.0f,  1.0f,   0.8f, 0.8f, 0.8f,
+     1.0f, -1.0f,  1.0f,   0.3f, 0.3f, 0.3f,
 
+     // top
+     1.0f,  1.0f,  1.0f,   0.9f, 0.9f, 0.9f,
+     1.0f,  1.0f, -1.0f,   0.9f, 0.9f, 0.9f,
+    -1.0f,  1.0f, -1.0f,   0.9f, 0.9f, 0.9f,
 
-     1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,   0.9f, 0.9f, 0.9f,
+    -1.0f,  1.0f, -1.0f,   0.9f, 0.9f, 0.9f,
+    -1.0f,  1.0f,  1.0f,   0.9f, 0.9f, 0.9f,
 
-     1.0f,  1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
+    // bottom
+     1.0f, -1.0f,  1.0f,   0.2f, 0.2f, 0.2f,
+    -1.0f, -1.0f, -1.0f,   0.2f, 0.2f, 0.2f,
+     1.0f, -1.0f, -1.0f,   0.2f, 0.2f, 0.2f,
 
+     1.0f, -1.0f,  1.0f,   0.2f, 0.2f, 0.2f,
+    -1.0f, -1.0f,  1.0f,   0.2f, 0.2f, 0.2f,
+    -1.0f, -1.0f, -1.0f,   0.2f, 0.2f, 0.2f,
 
+     // left
+     1.0f, -1.0f, -1.0f,   0.3f, 0.3f, 0.3f,
+     1.0f,  1.0f,  1.0f,   0.8f, 0.8f, 0.8f,
+     1.0f, -1.0f,  1.0f,   0.3f, 0.3f, 0.3f,
 
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,   0.8f, 0.8f, 0.8f,
+     1.0f, -1.0f, -1.0f,   0.3f, 0.3f, 0.3f,
+     1.0f,  1.0f, -1.0f,   0.8f, 0.8f, 0.8f,
 
-     1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-
-
-
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f,
-
-     1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-
-
-
-     1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f,
-
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-
-
-     1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-
-     1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f
+    // right
+    -1.0f, -1.0f, -1.0f,   0.3f, 0.3f, 0.3f,
+    -1.0f, -1.0f,  1.0f,   0.3f, 0.3f, 0.3f,
+    -1.0f,  1.0f,  1.0f,   0.8f, 0.8f, 0.8f,
+                                           
+    -1.0f, -1.0f, -1.0f,   0.3f, 0.3f, 0.3f,
+    -1.0f,  1.0f,  1.0f,   0.8f, 0.8f, 0.8f,
+    -1.0f,  1.0f, -1.0f,   0.8f, 0.8f, 0.8f
 };
 
 static struct camera camera;
@@ -96,8 +91,8 @@ static int init( struct app *app )
 	app_target_tps_set( app, 30 );
 	window_relative_mouse( true );
 
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glEnable( GL_DEPTH_TEST );
 
 	if ( shader_loadf( &shader, "res/shaders/2d.vert", "res/shaders/2d.frag" ) != 0 )
@@ -110,10 +105,12 @@ static int init( struct app *app )
 	vbo = vbo_create( GL_ARRAY_BUFFER, false );
 	vbo_bind( vbo );
 	vbo_buff( vbo, ( void * ) cube, sizeof( cube ) );
-	int position_i = glGetAttribLocation( shader.handle, "position" );
-	vao_attr( vao, vbo, position_i, 3, GL_FLOAT, 0, 0 );
+	int position_idx = glGetAttribLocation( shader.handle, "position" );
+	int color_idx    = glGetAttribLocation( shader.handle, "color" );
+	vao_attr( vao, vbo, position_idx, 3, GL_FLOAT, sizeof( float ) * 6, 0 );
+	vao_attr( vao, vbo, color_idx   , 3, GL_FLOAT, sizeof( float ) * 6, sizeof( float ) * 3 );
 
-	camera_init( &camera, DEGTORAD( 45 ) );
+	camera_init( &camera, ORTHOGRAPHIC );
 	camera.eye.x = 0;
 	camera.eye.y = 0;
 	camera.eye.z = 0;
@@ -138,12 +135,12 @@ static int tick( struct app *app )
 
 	std::string s =
         std::to_string( app->frame_rate ) + " | " +
-        std::to_string( app->frame_avg ) + " | " +
+        std::to_string( ( int ) ceilf( app->frame_avg ) ) + " | " +
         std::to_string( app->frame_delta ) + " | " +
         std::to_string( app->frame_target ) + " | " +
         std::to_string( app->frame_count );
 
-	window_set_title( s.c_str() );
+	window_title_set( s.c_str() );
 
 	return 0;
 }
@@ -199,10 +196,19 @@ static int update( struct app *app )
         window_relative_mouse_toggle();
     }
 
+    if ( input_key_down( KB_T ) )
+    {
+        camera.type = camera.type == PERSPECTIVE ? ORTHOGRAPHIC : PERSPECTIVE;
+        const char *type = camera.type == PERSPECTIVE ? "PERSPECTIVE" : "ORTHOGRAPHIC";
+        log_debug( "Camera type: %s", type );
+    }
+
     direction = vec3_normalize( direction );
     direction = vec3_scale( direction, 10.0f * app->frame_delta );
     camera.eye = vec3_add( camera.eye, direction );
-    camera.aspect = core.window.aspect;
+    camera.aspect = window_aspect();
+    camera.zoom -= input_mouse_scroll().y;
+    camera.zoom = CLAMP( camera.zoom, 1.0f, camera.zoom );
 
 	mat4_t model_matrix = mat4_identity();
 

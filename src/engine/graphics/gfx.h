@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include "camera.h"
+#include <glad/glad.h>
 #include "mesh.h"
 #include "shader.h"
 #include "vao.h"

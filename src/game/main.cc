@@ -8,7 +8,7 @@
 //#include "ex/gameoflife.h"
 //#include "ex/dragon.h"
 //#include "ex/headless.h"
-#include "main.h"
+#include "ex/cube.h"
 
 int main( int argc, char *argv[] )
 {

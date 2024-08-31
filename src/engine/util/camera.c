@@ -1,16 +1,19 @@
 #include "camera.h"
 #include <system/core-internal.h>
 #include <util/math.h>
-#include <cglm/cglm.h>
 
-void camera_init( struct camera *self, float fov )
+void camera_init( struct camera *self, int type )
 {
 	*self = ( struct camera ) { 0 };
 
-	self->fov = fov;
-	self->aspect = core.window.aspect;
+	self->type = type;
+
+	self->fov = PI / 4.0f;
+	self->aspect = 1.0f;
 	self->znear = 0.01f;
 	self->zfar = 1000.0f;
+
+	self->zoom = 1.0f;
 
 	camera_update( self );
 }
@@ -34,5 +37,13 @@ void camera_update( struct camera *self )
 	vec3_t center = vec3_add( self->eye, self->target );
 
 	self->view = mat4_lookat( self->eye, center, self->up );
-	self->proj = mat4_perspective( self->fov, self->aspect, self->znear, self->zfar );
+
+	if ( self->type == ORTHOGRAPHIC )
+	{
+		self->proj = mat4_ortho( -1.0f * self->zoom, 1.0f * self->zoom, -1.0f * self->zoom, 1.0f * self->zoom, 0.0f, 100.0f );
+	}
+	else
+	{
+		self->proj = mat4_perspective( self->fov, self->aspect, self->znear, self->zfar );
+	}
 }
