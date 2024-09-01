@@ -32,13 +32,13 @@ static void terrain_init( int s )
         {
             vec3_t color = { 0.0f, 0.0f, 0.0f };
 
-            vec3_t v0 = { ( float ) x,        0.0f, ( float ) y        };
-            vec3_t v1 = { ( float ) x + 1.0f, 0.0f, ( float ) y        };
-            vec3_t v2 = { ( float ) x       , 0.0f, ( float ) y + 1.0f };
+            vec3_t v0 = { ( float ) x - s / 2.0f,        0.0f, ( float ) y - s / 2.0f        };
+            vec3_t v1 = { ( float ) x - s / 2.0f + 1.0f, 0.0f, ( float ) y - s / 2.0f        };
+            vec3_t v2 = { ( float ) x - s / 2.0f       , 0.0f, ( float ) y - s / 2.0f + 1.0f };
 
-            vec3_t v3 = { ( float ) x + 1.0f, 0.0f, ( float ) y        };
-            vec3_t v4 = { ( float ) x + 1.0f, 0.0f, ( float ) y + 1.0f };
-            vec3_t v5 = { ( float ) x       , 0.0f, ( float ) y + 1.0f };
+            vec3_t v3 = { ( float ) x - s / 2.0f + 1.0f, 0.0f, ( float ) y - s / 2.0f        };
+            vec3_t v4 = { ( float ) x - s / 2.0f + 1.0f, 0.0f, ( float ) y - s / 2.0f + 1.0f };
+            vec3_t v5 = { ( float ) x - s / 2.0f       , 0.0f, ( float ) y - s / 2.0f + 1.0f };
 
             list_push_back( terrain, v0.x );
             list_push_back( terrain, v0.y );
@@ -118,7 +118,7 @@ static void terrain_rand( void )
         //terrain[ gi ] = contour * 0.3f;
         //terrain[ bi ] = contour * 0.3f;
 
-        float o = 150.0f;
+        float o = 0.0f;
         float c = 75.0f;
         float w = 5000.0f;
         float h = 50.0f;
