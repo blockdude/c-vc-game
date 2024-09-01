@@ -1,7 +1,6 @@
 #include <string>
 
 #include <util/log.h>
-#include <util/app.h>
 #include <util/list.h>
 #include <util/math.h>
 #include <util/list.h>
@@ -9,6 +8,7 @@
 
 #include <graphics/gfx.h>
 
+#include <system/app.h>
 #include <system/core.h>
 #include <system/window.h>
 #include <system/input.h>
@@ -84,21 +84,21 @@ static struct shader shader;
 static struct vao vao;
 static struct vbo vbo;
 
-static int init( struct app *app )
+static int init( void )
 {
-	( void )app;
-	app_target_fps_set( app, 144 );
-	app_target_tps_set( app, 30 );
+	app_target_fps_set( 144 );
+	app_target_tps_set( 30 );
 	window_relative_mouse( true );
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	glEnable( GL_DEPTH_TEST );
 
-	if ( shader_loadf( &shader, "res/shaders/2d.vert", "res/shaders/2d.frag" ) != 0 )
-		exit( 1 );
+	shader = shader_loadf( "res/shaders/2d.vert", "res/shaders/2d.frag" );
+    if ( shader.status != 0 )
+        exit( 1 );
 
-	shader_bind( shader );
+    shader_bind( shader );
 
 	vao = vao_create();
 	vao_bind( vao );
@@ -121,35 +121,26 @@ static int init( struct app *app )
 	return 0;
 }
 
-static int free( struct app *app )
+static int free( void )
 {
-	( void )app;
 	vbo_free( vbo );
 	vao_free( vao );
 	shader_free( shader );
 	return 0;
 }
 
-static int tick( struct app *app )
+static int tick( void )
 {
-	( void )app;
-
 	std::string s =
-        std::to_string( app->frame_rate ) + " | " +
-        std::to_string( ( int ) ceilf( app->frame_avg ) ) + " | " +
-        std::to_string( app->frame_delta ) + " | " +
-        std::to_string( app->frame_target ) + " | " +
-        std::to_string( app->frame_count );
+        std::to_string( app_fps() ) + " | ";
 
 	window_title_set( s.c_str() );
 
 	return 0;
 }
 
-static int update( struct app *app )
+static int update( void )
 {
-	( void ) app;
-
     vec3_t direction = vec3_zero();
     if ( input_key_press( KB_W ) )
     {
@@ -205,7 +196,7 @@ static int update( struct app *app )
     }
 
     direction = vec3_normalize( direction );
-    direction = vec3_scale( direction, 10.0f * app->frame_delta );
+    direction = vec3_scale( direction, 10.0f * app_handle()->frame_delta );
     camera.eye = vec3_add( camera.eye, direction );
     camera.aspect = window_aspect();
     camera.zoom += ( ( camera.zoom / 50.0f ) * input_mouse_scroll().y );
@@ -225,9 +216,8 @@ static int update( struct app *app )
 	return 0;
 }
 
-static int render( struct app *app )
+static int render( void )
 {
-	( void )app;
 	glClearColor( 1.f, 1.f, 1.f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 

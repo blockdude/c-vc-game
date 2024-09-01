@@ -1,11 +1,10 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <stdint.h>
-#include <stdbool.h>
+#include <util/types.h>
 
 struct app;
-typedef int ( *event_fn )( struct app *app );
+typedef int ( *event_fn )( void );
 
 struct app
 {
@@ -35,14 +34,15 @@ struct app
 extern "C" {
 #endif
 
-int  app_init( struct app *self, event_fn init, event_fn free, event_fn tick, event_fn update, event_fn render );
-void app_loop( struct app *self );
-void app_stop( struct app *self );
+int  app_init( event_fn init, event_fn free, event_fn tick, event_fn update, event_fn render );
+void app_loop( void );
+void app_stop( void );
 
-void app_target_fps_set( struct app *self, float target );
-void app_target_tps_set( struct app *self, float target );
-int  app_fps( struct app *self );
-int  app_tps( struct app *self );
+struct app *app_handle( void );
+void app_target_fps_set( float target );
+void app_target_tps_set( float target );
+int  app_fps( void );
+int  app_tps( void );
 
 #ifdef __cplusplus
 }

@@ -1,10 +1,17 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <util/types.h>
 #include "shader.h"
 #include "vao.h"
 #include "vbo.h"
+
+#include <util/types.h>
+
+enum mesh_status
+{
+	MESH_SUCCESS = 0,
+	MESH_ERROR   = 1
+};
 
 struct mesh
 {
@@ -41,16 +48,33 @@ struct mesh
 	size_t vt_offset;
 	size_t vn_offset;
 
+
+	/*
+	 * This will be the new mesh structure in the future
+	 */
+	const char *name;
+
+	float *vertices; /* vertex positions    (XYZ)  */
+	float *textmap;  /* texture coordinates (UV)   */
+	float *normals;  /* vertex normals      (XYZ)  */
+	float *tangents; /* vertex tangents     (XYZW) */
+	float *colors;   /* Vertex colors       (RGBA) */
+	int   *indices;  /* Vertex indices             */
+
 	// extent info
 	float  dia;
 	vec3_t center;
 	vec3_t max;
 	vec3_t min;
 
-	// raylib uses seperate vbo for each vertex type and I don't
-	// know why. Ill stick to one for now but may change my mind.
 	struct vao vao;
-	struct vbo vbo;
+	struct vbo *vbo;
+};
+
+struct model
+{
+	mat4_t transform;
+	struct mesh *meshes;
 };
 
 #ifdef __cplusplus
@@ -64,11 +88,11 @@ extern "C" {
 int  mesh_load( struct mesh *obj, const char *file );
 void mesh_free( struct mesh *obj );
 
-int  mesh_upload( struct mesh *obj, struct shader shader );
+int mesh_upload( struct mesh *obj, struct shader shader );
 
-int  mesh_cube( struct mesh *obj );
-int  mesh_square( struct mesh *obj );
-int  mesh_sphere( struct mesh *obj );
+int mesh_cube( struct mesh *obj );
+int mesh_square( struct mesh *obj );
+int mesh_sphere( struct mesh *obj );
 
 #ifdef __cplusplus
 }

@@ -22,14 +22,15 @@ enum shader_status
 struct shader
 {
 	GLuint handle;
+	int status;
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int  shader_loadf( struct shader *self, const char *vspath, const char *fspath );
-int  shader_load( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen );
+struct shader shader_loadf( const char *vspath, const char *fspath );
+struct shader shader_load( const char *vstext, const char *fstext );
 void shader_free( struct shader self );
 void shader_bind( struct shader self );
 

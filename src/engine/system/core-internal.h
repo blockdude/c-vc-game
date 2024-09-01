@@ -1,9 +1,10 @@
 #ifndef CORE_INTERNAL_H
 #define CORE_INTERNAL_H
 
+#include "app.h"
 #include "input.h"
+
 #include <util/types.h>
-#include <util/app.h>
 
 /*
  * Definition for core data structure to store the state of the

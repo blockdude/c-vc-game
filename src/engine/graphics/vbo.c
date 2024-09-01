@@ -7,6 +7,7 @@ struct vbo vbo_create( GLint type, bool dyn )
 		.dyn = dyn
 	};
 	glGenBuffers( 1, &self.handle );
+	glBindBuffer( self.type, self.handle );
 	return self;
 }
 

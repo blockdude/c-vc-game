@@ -4,6 +4,7 @@ struct vao vao_create( void )
 {
 	struct vao self;
 	glGenVertexArrays( 1, &self.handle );
+	glBindVertexArray( self.handle );
 	return self;
 }
 

@@ -164,31 +164,32 @@ static inline int shader_build_text( struct shader *self, const char *vstext, si
 	}
 	log_info( "Shader Program [ID:%d|VS:%d|FS:%d] successfully loaded", self->handle, vs_handle, fs_handle );
 
+	glUseProgram( self->handle );
 	return SHADER_SUCCESS;
 }
 
-int shader_load( struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen )
+struct shader shader_load( const char *vstext, const char *fstext )
 {
-	if ( self == NULL )
-		return SHADER_SUCCESS;
-
-	return shader_build_text( self, vstext, vslen, fstext, fslen, NULL, NULL );
+	struct shader result;
+	result.status = shader_build_text( &result, vstext, strlen( vstext ), fstext, strlen( fstext ), NULL, NULL );
+	return result;
 }
 
-int shader_loadf( struct shader *self, const char *vspath, const char *fspath )
+struct shader shader_loadf( const char *vspath, const char *fspath )
 {
-	if ( self == NULL )
-		return SHADER_SUCCESS;
-
+	struct shader result;
 	size_t vslen;
 	size_t fslen;
 	char *vstext = shader_load_text( vspath, &vslen );
 	char *fstext = shader_load_text( fspath, &fslen );
 
 	if ( !vstext || !fstext )
-		return SHADER_INVALID_FILE_PATH;
+	{
+		result.status = SHADER_INVALID_FILE_PATH;
+		return result;
+	}
 
-	int result = shader_build_text( self, vstext, vslen, fstext, fslen, vspath, fspath );
+	result.status = shader_build_text( &result, vstext, vslen, fstext, fslen, vspath, fspath );
 
 	free( vstext );
 	free( fstext );

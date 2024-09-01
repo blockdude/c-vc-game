@@ -5,17 +5,8 @@
 #include <util/math.h>
 #include <util/list.h>
 
-#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-static inline void mesh_init( struct mesh *obj )
-{
-	obj->vp = NULL;
-	obj->vt = NULL;
-	obj->vn = NULL;
-	obj->fv = NULL;
-}
 
 static inline void mesh_append_face_vertex( struct mesh *obj, const char *vert )
 {
@@ -153,24 +144,12 @@ static inline void mesh_set_min_max( struct mesh *obj )
 	obj->max = max;
 }
 
-static inline void mesh_compute_extent( struct mesh *obj )
+int mesh_load( struct mesh *obj, const char *file )
 {
-	mesh_set_min_max( obj );
-	obj->dia = vec3_dist( obj->min, obj->max );
-	obj->center = vec3_center( obj->min, obj->max );
-}
+	if ( obj == NULL || file == NULL )
+		return MESH_ERROR;
 
-static inline void mesh_compute_properties( struct mesh *obj )
-{
-	obj->fv_len			= list_size( obj->fv );
-	obj->vp_len			= list_size( obj->vp );
-	obj->vt_len			= list_size( obj->vt );
-	obj->vn_len			= list_size( obj->vn );
-
-	obj->fv_nbytes		= list_size( obj->fv ) * sizeof( *obj->fv );
-	obj->vp_nbytes		= list_size( obj->vp ) * sizeof( *obj->vp );
-	obj->vt_nbytes		= list_size( obj->vt ) * sizeof( *obj->vt );
-	obj->vn_nbytes		= list_size( obj->vn ) * sizeof( *obj->vn );
+	*obj = ( struct mesh ) { 0 };
 
 	obj->val_size		= sizeof( float );
 
@@ -184,30 +163,35 @@ static inline void mesh_compute_properties( struct mesh *obj )
 	obj->vp_offset		= ( 0 );
 	obj->vt_offset		= ( obj->vp_nval * obj->val_size );
 	obj->vn_offset		= ( ( obj->vp_nval + obj->vt_nval ) * obj->val_size );
-}
 
-int mesh_load( struct mesh *obj, const char *file )
-{
-	if ( obj == NULL || file == NULL )
-		return 1;
-
-	mesh_init( obj );
 	if ( mesh_load_mesh( obj, file ) != 0 )
 	{
 		mesh_free( obj );
-		return 2;
+		return MESH_ERROR;
 	}
 
-	mesh_compute_extent( obj );
-	mesh_compute_properties( obj );
+	mesh_set_min_max( obj );
+
+	obj->fv_len	   = list_size( obj->fv );
+	obj->vp_len	   = list_size( obj->vp );
+	obj->vt_len	   = list_size( obj->vt );
+	obj->vn_len	   = list_size( obj->vn );
+
+	obj->fv_nbytes = list_size( obj->fv ) * sizeof( *obj->fv );
+	obj->vp_nbytes = list_size( obj->vp ) * sizeof( *obj->vp );
+	obj->vt_nbytes = list_size( obj->vt ) * sizeof( *obj->vt );
+	obj->vn_nbytes = list_size( obj->vn ) * sizeof( *obj->vn );
+
+	obj->dia       = vec3_dist( obj->min, obj->max );
+	obj->center    = vec3_center( obj->min, obj->max );
 
 	if ( obj->fv_len == 0 )
 	{
 		mesh_free( obj );
-		return 3;
+		return MESH_ERROR;
 	}
 
-	return 0;
+	return MESH_SUCCESS;
 }
 
 void mesh_free( struct mesh *obj )
