@@ -38,6 +38,7 @@ int tick( void )
 	window_title_set( s.c_str() );
 
 	ship.Tick();
+	log_debug( "%f", vec3_len( ship.velocity ) );
 
 	return 0;
 }
@@ -45,25 +46,24 @@ int tick( void )
 int update( void )
 {
 	ship.Update();
-
 	if ( input_key_press( KB_W ) )
 	{
-		ship.velocity.y = 0.1f;
+		ship.direction.y += 1.0f;
 	}
 
 	if ( input_key_press( KB_S ) )
 	{
-		ship.velocity.y = -0.1f;
+		ship.direction.y -= 1.0f;
 	}
 
 	if ( input_key_press( KB_A ) )
 	{
-		ship.velocity.x = 0.1f;
+		ship.direction.x += 1.0f;
 	}
 
 	if ( input_key_press( KB_D ) )
 	{
-		ship.velocity.x = -0.1f;
+		ship.direction.x -= 1.0f;
 	}
 
 	return 0;
@@ -71,7 +71,7 @@ int update( void )
 
 int render( void )
 {
-	glClearColor( 1.f, 1.f, 1.f, 1.f );
+	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	ship.Draw();

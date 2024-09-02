@@ -6,13 +6,13 @@
 #include <graphics/gfx.h>
 
 static float mesh[] = {
-	-1.0f, -1.0f, 1.0f,   0.0f, 0.0f, 0.0f,
-	 1.0f, -1.0f, 1.0f,   0.0f, 0.0f, 0.0f,
-	 1.0f,  1.0f, 1.0f,   0.0f, 0.0f, 0.0f,
+	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
 
-	 1.0f,  1.0f, 1.0f,   0.0f, 0.0f, 0.0f,
-	-1.0f,  1.0f, 1.0f,   0.0f, 0.0f, 0.0f,
-	-1.0f, -1.0f, 1.0f,   0.0f, 0.0f, 0.0f
+	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	-1.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f
 };
 
 class Entity
@@ -20,6 +20,7 @@ class Entity
 public:
 	mat4_t transform;
 	vec3_t velocity;
+	vec3_t direction;
 	float rotation;
 	struct vao vao;
 	struct vbo vbo;
@@ -31,7 +32,8 @@ public:
 	void Init( void )
 	{
 		this->transform = mat4_scale( { 0.1f, 0.1f, 1.0f } );
-		this->velocity = { 0.0f, 0.0f, 0.0f };
+		this->velocity = { 0.0f, 0.0f };
+		this->direction = { 0.0f, 0.0f };
 		this->rotation = 0.0f;
 		this->shader = shader_loadf( "res/shaders/2d.vert", "res/shaders/2d.frag" );
 		this->vao = vao_create();
@@ -56,13 +58,16 @@ public:
 
 	void Tick( void )
 	{
+		direction = vec3_normalize( direction );
+		velocity = vec3_add( velocity, vec3_scale( direction, 0.02f ) );
 		transform = mat4_mul( mat4_translate( velocity ), transform );
+		velocity = vec3_sub( velocity, vec3_scale( velocity, 0.1f ) );
 		camera_update( &camera );
 	}
 
 	void Update( void )
 	{
-		this->velocity = { 0.0f, 0.0f, 0.0f };
+		this->direction = { 0.0f, 0.0f };
 	}
 
 	void Draw( void )
