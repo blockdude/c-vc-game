@@ -31,14 +31,14 @@ int free( void )
 
 int tick( void )
 {
+	ship.Tick();
+
 	std::string s =
         "fps: " + std::to_string( app_fps() ) + " | " +
-        "tps: " + std::to_string( app_tps() ) + " | ";
+        "tps: " + std::to_string( app_tps() ) + " | " +
+		"vel: " + std::to_string( vec2_len( ship.velocity ) ) + " | ";
 
 	window_title_set( s.c_str() );
-
-	ship.Tick();
-	log_debug( "%f", vec3_len( ship.velocity ) );
 
 	return 0;
 }

@@ -4,23 +4,30 @@
 #include <util/math.h>
 #include <util/camera.h>
 #include <graphics/gfx.h>
+#include <system/window.h>
 
 static float mesh[] = {
-	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
-	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
-	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 0.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 0.0f,  0.0f, 1.0f,   1.0f, 1.0f, 1.0f,
 
-	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
-	-1.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 0.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+
+	 0.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+
+	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
 	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f
 };
 
 class Entity
 {
 public:
-	mat4_t transform;
-	vec3_t velocity;
-	vec3_t direction;
+	float x;
+	float y;
+
+	vec2_t velocity;
+	vec2_t direction;
 	float rotation;
 	struct vao vao;
 	struct vbo vbo;
@@ -31,7 +38,6 @@ public:
 
 	void Init( void )
 	{
-		this->transform = mat4_scale( { 0.1f, 0.1f, 1.0f } );
 		this->velocity = { 0.0f, 0.0f };
 		this->direction = { 0.0f, 0.0f };
 		this->rotation = 0.0f;
@@ -58,10 +64,13 @@ public:
 
 	void Tick( void )
 	{
-		direction = vec3_normalize( direction );
-		velocity = vec3_add( velocity, vec3_scale( direction, 0.02f ) );
-		transform = mat4_mul( mat4_translate( velocity ), transform );
-		velocity = vec3_sub( velocity, vec3_scale( velocity, 0.1f ) );
+		direction = vec2_normalize( direction );
+		velocity = vec2_add( velocity, vec2_scale( direction, 0.002f ) );
+		velocity = vec2_sub( velocity, vec2_scale( velocity, 0.1f ) );
+		x += velocity.x;
+		y += velocity.y;
+
+		camera.aspect = window_aspect();
 		camera_update( &camera );
 	}
 
@@ -72,11 +81,15 @@ public:
 
 	void Draw( void )
 	{
+		mat4_t model = mat4_scale( { 0.1f, 0.1f, 1.0f } );
+		vec3_t pos   = { x, y, 0.0f };
+		model = mat4_mul( model, mat4_translate( pos ) );
+
 		shader_uniform_mat4( shader, "view_matrix", camera.view );
 		shader_uniform_mat4( shader, "proj_matrix", camera.proj );
-		shader_uniform_mat4( shader, "model_matrix", transform );
+		shader_uniform_mat4( shader, "model_matrix", model );
 
-		glDrawArrays( GL_TRIANGLES, 0, 6 );
+		glDrawArrays( GL_LINES, 0, 8 );
 	}
 };
 

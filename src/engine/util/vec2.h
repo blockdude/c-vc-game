@@ -28,7 +28,7 @@ static inline vec2_t vec2_one( void )
 
 static inline vec2_t vec2_add( vec2_t a, vec2_t b )
 {
-	vec2_t result = { a.x + b.x, a.y + a.y };
+	vec2_t result = { a.x + b.x, a.y + b.y };
 	return result;
 }
 
@@ -40,7 +40,7 @@ static inline vec2_t vec2_add_s( vec2_t v, float s )
 
 static inline vec2_t vec2_sub( vec2_t a, vec2_t b )
 {
-	vec2_t result = { a.x - b.x, a.y - a.y };
+	vec2_t result = { a.x - b.x, a.y - b.y };
 	return result;
 }
 
