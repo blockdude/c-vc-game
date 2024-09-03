@@ -4,13 +4,7 @@
 #include <system/app.h>
 #include <util/log.h>
 
-//#include "ex/raytracer.h"
-//#include "ex/gameoflife.h"
-//#include "ex/dragon.h"
-//#include "ex/headless.h"
-//#include "ex/cube.h"
-//#include "ex/terrain.h"
-#include "game.h"
+#include "Game.h"
 
 int main( int argc, char *argv[] )
 {

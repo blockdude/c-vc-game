@@ -1,4 +1,4 @@
-#include "game.h"
+#include "Game.h"
 
 #include <string>
 
@@ -10,7 +10,7 @@
 #include <system/window.h>
 #include <system/input.h>
 
-#include "ship.h"
+#include "Ship.h"
 
 Entity ship;
 
@@ -36,7 +36,9 @@ int tick( void )
 	std::string s =
         "fps: " + std::to_string( app_fps() ) + " | " +
         "tps: " + std::to_string( app_tps() ) + " | " +
-		"vel: " + std::to_string( vec2_len( ship.velocity ) ) + " | ";
+		"ups: " + std::to_string( ship.Speed() ) + " | " +
+		"rps: " + std::to_string( ship.position.x ) + " | " +
+		"rps: " + std::to_string( ship.position.y ) + " | ";
 
 	window_title_set( s.c_str() );
 
@@ -48,22 +50,32 @@ int update( void )
 	ship.Update();
 	if ( input_key_press( KB_W ) )
 	{
-		ship.direction.y += 1.0f;
+		ship.move.y += 1.0f;
 	}
 
 	if ( input_key_press( KB_S ) )
 	{
-		ship.direction.y -= 1.0f;
+		ship.move.y -= 1.0f;
 	}
 
 	if ( input_key_press( KB_A ) )
 	{
-		ship.direction.x += 1.0f;
+		ship.move.x += 1.0f;
 	}
 
 	if ( input_key_press( KB_D ) )
 	{
-		ship.direction.x -= 1.0f;
+		ship.move.x -= 1.0f;
+	}
+
+	if ( input_key_press( KB_E ) )
+	{
+		ship.rotate += 1.0f;
+	}
+
+	if ( input_key_press( KB_Q ) )
+	{
+		ship.rotate -= 1.0f;
 	}
 
 	return 0;

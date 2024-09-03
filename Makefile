@@ -93,15 +93,12 @@ LDLIBS	 =
 
 INCLUDE += -I$(SDL3_PATH)/include
 INCLUDE += -I$(GLAD_PATH)/include
-INCLUDE += -I$(CGLM_PATH)/include
 
 LDFLAGS += -L$(BLD_PATH)/bin/sdl3
 LDFLAGS += -L$(BLD_PATH)/bin/glad
-LDFLAGS += -L$(BLD_PATH)/bin/cglm
 
 LDLIBS  += -l:libSDL3.so
 LDLIBS  += -l:glad.o
-LDLIBS  += -l:libcglm.a
 LDLIBS  += -lm -ldl
 
 # =============================
@@ -195,44 +192,12 @@ CLEAN_LIBS += (rm -r $(GLAD_PATH)/obj 2> /dev/null || true);
 
 # =============================
 # -----------------------------
-# CGLM LIB
-# -----------------------------
-
-ifeq ($(UNAME),Windows)
-    CGLMEX = -G "MinGW Makefiles"
-endif
-
-define BLD_CGLM
-
-echo
-echo =====================
-echo ----BUILDING CGLM----
-echo =====================
-echo
-
-cd $(CGLM_PATH) && cmake . -DCGLM_STATIC=ON $(CGLMEX) && make
-mkdir -p $(BLD_PATH)/bin/cglm
-cp $(CGLM_PATH)/libcglm.a $(BLD_PATH)/bin/cglm
-
-endef
-
-DIRS       += $(BLD_PATH)/bin/cglm
-LIBS       += $(BLD_PATH)/bin/cglm/libcglm.a
-CLEAN_LIBS += (cd $(CGLM_PATH) && make clean);
-
-# =============================
-
-
-
-# =============================
-# -----------------------------
 # BUILD LIBS
 # -----------------------------
 
 $(LIBS) &:
 	@$(BLD_SDL3)
 	@$(BLD_GLAD)
-	@$(BLD_CGLM)
 
 # =============================
 
