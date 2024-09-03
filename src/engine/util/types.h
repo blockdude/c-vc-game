@@ -9,18 +9,18 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef struct point_s
+typedef struct point
 {
 	float x, y;
 } point_t;
 
-typedef struct line_s
+typedef struct line
 {
 	float x0, y0;
 	float x1, y1;
 } line_t;
 
-typedef struct rectangle_s
+typedef struct rectangle
 {
 	float x;
 	float y;
@@ -28,21 +28,21 @@ typedef struct rectangle_s
 	float h;
 } rectangle_t;
 
-typedef struct circle_s
+typedef struct circle
 {
 	float x;
 	float y;
 	float r;
 } circle_t;
 
-typedef struct triangle_s
+typedef struct triangle
 {
 	float x0, y0;
 	float x1, y1;
 	float x2, y2;
 } triangle_t;
 
-typedef struct color_s
+typedef struct color
 {
     float r;
     float g;
@@ -50,20 +50,20 @@ typedef struct color_s
     float a;
 } color_t;
 
-typedef struct vec2_s
+typedef struct vec2
 {
 	float x;
 	float y;
 } vec2_t;
 
-typedef struct vec3_s
+typedef struct vec3
 {
 	float x;
 	float y;
 	float z;
 } vec3_t;
 
-typedef struct vec4_s
+typedef struct vec4
 {
 	float x;
 	float y;
@@ -71,7 +71,13 @@ typedef struct vec4_s
 	float w;
 } vec4_t;
 
-typedef vec4_t quat_t;
+typedef struct quat
+{
+	float x;
+	float y;
+	float z;
+	float w;
+} quat_t;
 
 /*
  * Memory layout is row major.
@@ -83,7 +89,7 @@ typedef vec4_t quat_t;
  * When we convert it to an array it will look like:
  *	   { m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33 }
  */
-typedef struct mat4_s
+typedef struct mat4
 {
 	float m00, m01, m02, m03;
 	float m10, m11, m12, m13;
@@ -91,7 +97,7 @@ typedef struct mat4_s
 	float m30, m31, m32, m33;
 } mat4_t;
 
-typedef struct float16v_s
+typedef struct float16v
 {
 	float v[ 16 ];
 } float16v_t;
