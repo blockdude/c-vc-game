@@ -57,7 +57,7 @@ DEP_PATH  = $(BLD_PATH)/dep
 
 SDL3_PATH = $(LIB_PATH)/SDL3
 GLAD_PATH = $(LIB_PATH)/glad
-CGLM_PATH = $(LIB_PATH)/cglm
+RAYL_PATH = $(LIB_PATH)/raylib
 
 # =============================
 
@@ -145,10 +145,8 @@ echo ----BUILDING SDL3----
 echo =====================
 echo
 
-# BUILD SDL
 cd $(SDL3_PATH) && cmake -S . -B build && cmake --build build
 
-# COPY SDL TO BUILD LOCATION
 cp $(SDL3_PATH)/build/libSDL3.so $(BLD_PATH)/bin/sdl3
 cd $(BLD_PATH)/bin/sdl3 && ln -s libSDL3.so libSDL3.so.0
 
@@ -208,6 +206,7 @@ $(LIBS) &:
 # CANS
 # -----------------------------
 
+#(namespace, directory, file extension, output)
 define DEFVARS
 
 $1_SRC_PATH = $2
@@ -237,7 +236,7 @@ endef
 # VC ENGINE
 # -----------------------------
 
-$(eval $(call DEFVARS,ENGINE,src/engine,c,libVCE.so))
+$(eval $(call DEFVARS,ENGINE,src/framework,c,libVCE.so))
 
 $(ENGINE_TARGET): private LDFLAGS += -shared
 $(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
