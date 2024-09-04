@@ -7,7 +7,6 @@
  * https://github.com/eteran/c-vector.
  */
 
-#include "SDL3/SDL_mutex.h"
 #include <stdlib.h>
 
 /**

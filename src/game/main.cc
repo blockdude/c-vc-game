@@ -6,6 +6,8 @@
 
 #include "Game.h"
 
+#include <tinyobj_loader_c.h>
+
 int main( int argc, char *argv[] )
 {
 	std::string args;

@@ -8,24 +8,31 @@
 #include <system/window.h>
 
 static float mesh[] = {
-	 0.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
-	 0.0f,  0.0f, 1.0f,   1.0f, 1.0f, 1.0f,
-
-	 0.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 0.0f,  1.5f, 1.0f,   1.0f, 1.0f, 1.0f,
 	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
 
-	 0.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 0.0f,  1.5f, 1.0f,   1.0f, 1.0f, 1.0f,
 	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
 
 	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
-	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f
+	-1.0f, -1.0f, 1.0f,   1.0f, 1.0f, 1.0f,
+
+
+	 0.0f, -2.5f, 1.0f,   1.0f, 1.0f, 1.0f,
+	-0.4f, -1.4f, 1.0f,   1.0f, 1.0f, 1.0f,
+
+	-0.4f, -1.4f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 0.4f, -1.4f, 1.0f,   1.0f, 1.0f, 1.0f,
+
+	 0.0f, -2.5f, 1.0f,   1.0f, 1.0f, 1.0f,
+	 0.4f, -1.4f, 1.0f,   1.0f, 1.0f, 1.0f
 };
 
 class Entity
 {
 public:
 	vec2_t move;
-	float  rotate;
+	float rotate;
 
 	vec2_t position = { 0.0f };
 	vec2_t velocity = { 0.0f };
@@ -36,7 +43,7 @@ public:
 	float acceleration = 0.001f;
 	float angularAcceleration = 0.001f;
 
-	float drag = 0.01f;
+	float drag = 0.0000001f;
 	float dampening = 0.0f;
 
 private:
@@ -63,6 +70,7 @@ public:
 		return angle;
 	}
 
+	//hello
 	void Init( void )
 	{
 		this->shader = shader_loadf( "res/shaders/2d.vert", "res/shaders/2d.frag" );
@@ -70,7 +78,7 @@ public:
 		this->vbo = vbo_create( GL_ARRAY_BUFFER, false );
 
 		camera_init( &camera, ORTHOGRAPHIC );
-		camera.zoom  = 0.1f;
+		camera.zoom  = 0.025f;
 		camera.eye.x = 0.0f;
 		camera.eye.y = 0.0f;
 		camera.eye.z = 0.0f;
@@ -104,8 +112,6 @@ public:
 		position = vec2_add( position, velocity );
 
 		camera.aspect = window_aspect();
-		camera.eye.x = position.x;
-		camera.eye.y = position.y;
 		camera_update( &camera );
 	}
 
@@ -125,7 +131,7 @@ public:
 		shader_uniform_mat4( shader, "proj_matrix", camera.proj );
 		shader_uniform_mat4( shader, "model_matrix", model );
 
-		glDrawArrays( GL_LINES, 0, 8 );
+		glDrawArrays( GL_LINES, 0, vec2_len( move ) > 0.0f ? 12 : 6 );
 	}
 };
 

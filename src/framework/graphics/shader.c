@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <util/log.h>
 #include <util/math.h>
-#include <glad/glad.h>
 
 static inline char *shader_get_log( 
 		GLint handle,

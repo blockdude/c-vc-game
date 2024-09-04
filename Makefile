@@ -57,7 +57,8 @@ DEP_PATH  = $(BLD_PATH)/dep
 
 SDL3_PATH = $(LIB_PATH)/SDL3
 GLAD_PATH = $(LIB_PATH)/glad
-RAYL_PATH = $(LIB_PATH)/raylib
+STB_PATH  = $(LIB_PATH)/stb
+TOL_PATH  = $(LIB_PATH)/tol
 
 # =============================
 
@@ -89,17 +90,15 @@ CPPFLAGS = -DLOG_USE_COLOR
 CFLAGS	 = -std=c11
 CXXFLAGS = -std=c++17
 LDFLAGS	 =
-LDLIBS	 =
+LDLIBS	 = -lSDL3 -lglad -lm -ldl
 
 INCLUDE += -I$(SDL3_PATH)/include
 INCLUDE += -I$(GLAD_PATH)/include
+INCLUDE += -I$(STB_PATH)
+INCLUDE += -I$(TOL_PATH)
 
 LDFLAGS += -L$(BLD_PATH)/bin/sdl3
 LDFLAGS += -L$(BLD_PATH)/bin/glad
-
-LDLIBS  += -l:libSDL3.so
-LDLIBS  += -l:glad.o
-LDLIBS  += -lm -ldl
 
 # =============================
 
@@ -173,15 +172,18 @@ echo ----BUILDING GLAD----
 echo =====================
 echo
 
-cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/glad.o -c -fpic src/glad.c
+cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/gl.o -c -fpic src/gl.c
+cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/gles2.o -c -fpic src/gles2.c
+cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/vulkan.o -c -fpic src/vulkan.c
+cd $(GLAD_PATH) && mkdir -p obj && $(AR) rcs obj/libglad.a obj/gl.o obj/gles2.o obj/vulkan.o
 echo [100%] built target glad
 
-cp $(GLAD_PATH)/obj/glad.o $(BLD_PATH)/bin/glad
+cp $(GLAD_PATH)/obj/libglad.a $(BLD_PATH)/bin/glad
 
 endef
 
 DIRS	   += $(BLD_PATH)/bin/glad
-LIBS       += $(BLD_PATH)/bin/glad/glad.o
+LIBS       += $(BLD_PATH)/bin/glad/libglad.a
 CLEAN_LIBS += (rm -r $(GLAD_PATH)/obj 2> /dev/null || true);
 
 # =============================

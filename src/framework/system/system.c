@@ -6,7 +6,7 @@
 
 #include <util/log.h>
 #include <SDL3/SDL.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 /*
  * =============================
@@ -86,7 +86,7 @@ int system_init( void )
             goto window_setup_cleanup;
         }
 
-        int loaded = gladLoadGLLoader( ( GLADloadproc ) SDL_GL_GetProcAddress );
+        int loaded = gladLoadGL( ( GLADloadfunc ) SDL_GL_GetProcAddress );
         if ( loaded == 0 )
         {
             log_warn( "Failed to load opengl functions" );
