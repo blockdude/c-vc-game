@@ -10,16 +10,17 @@
 #include <system/window.h>
 #include <system/input.h>
 
-#include "SDL3/SDL_video.h"
 #include "Ship.h"
+
+#include <system/internal/core.h>
 
 Entity ship;
 
 int init( void )
 {
-	app_target_fps_set( 144 );
+	app_target_fps_set( 500 );
 	app_target_tps_set( 100 );
-	SDL_GL_SetSwapInterval( 0 );
+	window_toggle( WINDOW_VSYNC );
 
 	ship.Init();
 

@@ -2,12 +2,12 @@
   {
     "arguments": [
       "/usr/bin/clang++",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
       "-Isrc/game",
-      "-Isrc/framework",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DCGLM_USE_ANONYMOUS_STRUCT=0",
@@ -32,12 +32,12 @@
   {
     "arguments": [
       "/usr/bin/clang++",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
       "-Isrc/game",
-      "-Isrc/framework",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DCGLM_USE_ANONYMOUS_STRUCT=0",
@@ -62,11 +62,11 @@
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -81,21 +81,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/graphics/mesh.o",
-      "src/framework/graphics/mesh.c"
+      "bld/obj/lib/graphics/mesh.o",
+      "src/lib/graphics/mesh.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/graphics/mesh.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/graphics/mesh.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/graphics/mesh.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/graphics/mesh.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -110,21 +110,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/graphics/shader.o",
-      "src/framework/graphics/shader.c"
+      "bld/obj/lib/graphics/shader.o",
+      "src/lib/graphics/shader.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/graphics/shader.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/graphics/shader.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/graphics/shader.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/graphics/shader.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -139,21 +139,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/graphics/vao.o",
-      "src/framework/graphics/vao.c"
+      "bld/obj/lib/graphics/vao.o",
+      "src/lib/graphics/vao.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/graphics/vao.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/graphics/vao.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/graphics/vao.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/graphics/vao.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -168,21 +168,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/graphics/vbo.o",
-      "src/framework/graphics/vbo.c"
+      "bld/obj/lib/graphics/vbo.o",
+      "src/lib/graphics/vbo.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/graphics/vbo.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/graphics/vbo.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/graphics/vbo.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/graphics/vbo.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -197,21 +197,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/system/app.o",
-      "src/framework/system/app.c"
+      "bld/obj/lib/system/app.o",
+      "src/lib/system/app.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/system/app.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/system/app.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/system/app.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/system/app.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -226,21 +226,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/system/core.o",
-      "src/framework/system/core.c"
+      "bld/obj/lib/system/core.o",
+      "src/lib/system/core.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/system/core.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/system/core.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/system/core.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/system/core.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -255,21 +255,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/system/input.o",
-      "src/framework/system/input.c"
+      "bld/obj/lib/system/input.o",
+      "src/lib/system/input.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/system/input.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/system/input.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/system/input.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/system/input.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -284,21 +284,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/system/system.o",
-      "src/framework/system/system.c"
+      "bld/obj/lib/system/window.o",
+      "src/lib/system/window.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/system/system.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/system/system.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/system/window.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/system/window.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -313,21 +313,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/system/window.o",
-      "src/framework/system/window.c"
+      "bld/obj/lib/util/camera.o",
+      "src/lib/util/camera.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/system/window.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/system/window.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/util/camera.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/util/camera.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -342,21 +342,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/util/camera.o",
-      "src/framework/util/camera.c"
+      "bld/obj/lib/util/ecs.o",
+      "src/lib/util/ecs.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/util/camera.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/util/camera.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/util/ecs.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/util/ecs.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -371,21 +371,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/util/ecs.o",
-      "src/framework/util/ecs.c"
+      "bld/obj/lib/util/kdtree.o",
+      "src/lib/util/kdtree.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/util/ecs.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/util/ecs.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/util/kdtree.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/util/kdtree.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -400,21 +400,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/util/kdtree.o",
-      "src/framework/util/kdtree.c"
+      "bld/obj/lib/util/linkedlist.o",
+      "src/lib/util/linkedlist.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/util/kdtree.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/util/kdtree.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/util/linkedlist.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/util/linkedlist.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -429,21 +429,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/util/linkedlist.o",
-      "src/framework/util/linkedlist.c"
+      "bld/obj/lib/util/log.o",
+      "src/lib/util/log.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/util/linkedlist.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/util/linkedlist.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/util/log.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/util/log.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -458,21 +458,21 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/util/log.o",
-      "src/framework/util/log.c"
+      "bld/obj/lib/util/state.o",
+      "src/lib/util/state.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/util/log.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/util/log.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/util/state.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/util/state.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Isrc/framework",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-std=c11",
@@ -487,23 +487,23 @@
       "-fpic",
       "-c",
       "-o",
-      "bld/obj/framework/util/state.o",
-      "src/framework/util/state.c"
+      "bld/obj/lib/system/internal/sys.o",
+      "src/lib/system/internal/sys.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/src/framework/util/state.c",
-    "output": "/home/juliet/dev/vc-game/bld/obj/framework/util/state.o"
+    "file": "/home/juliet/dev/vc-game/src/lib/system/internal/sys.c",
+    "output": "/home/juliet/dev/vc-game/bld/obj/lib/system/internal/sys.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Itest",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/test",
       "-Isrc/game",
-      "-Isrc/framework",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DINSTANTIATE_MAIN",
@@ -519,22 +519,22 @@
       "-c",
       "-o",
       "bld/obj/test/test_all.o",
-      "test/test_all.c"
+      "src/test/test_all.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/test/test_all.c",
+    "file": "/home/juliet/dev/vc-game/src/test/test_all.c",
     "output": "/home/juliet/dev/vc-game/bld/obj/test/test_all.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Itest",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/test",
       "-Isrc/game",
-      "-Isrc/framework",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DINSTANTIATE_MAIN",
@@ -550,22 +550,22 @@
       "-c",
       "-o",
       "bld/obj/test/test_kdtree.o",
-      "test/test_kdtree.c"
+      "src/test/test_kdtree.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/test/test_kdtree.c",
+    "file": "/home/juliet/dev/vc-game/src/test/test_kdtree.c",
     "output": "/home/juliet/dev/vc-game/bld/obj/test/test_kdtree.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Itest",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/test",
       "-Isrc/game",
-      "-Isrc/framework",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DINSTANTIATE_MAIN",
@@ -581,22 +581,22 @@
       "-c",
       "-o",
       "bld/obj/test/test_list.o",
-      "test/test_list.c"
+      "src/test/test_list.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/test/test_list.c",
+    "file": "/home/juliet/dev/vc-game/src/test/test_list.c",
     "output": "/home/juliet/dev/vc-game/bld/obj/test/test_list.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Itest",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/test",
       "-Isrc/game",
-      "-Isrc/framework",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DINSTANTIATE_MAIN",
@@ -612,22 +612,22 @@
       "-c",
       "-o",
       "bld/obj/test/test_mesh.o",
-      "test/test_mesh.c"
+      "src/test/test_mesh.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/test/test_mesh.c",
+    "file": "/home/juliet/dev/vc-game/src/test/test_mesh.c",
     "output": "/home/juliet/dev/vc-game/bld/obj/test/test_mesh.o"
   },
   {
     "arguments": [
       "/usr/bin/clang",
-      "-Ilib/SDL3/include",
-      "-Ilib/glad/include",
-      "-Ilib/stb",
-      "-Ilib/tol",
-      "-Itest",
+      "-Isrc/ext/SDL/include",
+      "-Isrc/ext/glad/include",
+      "-Isrc/ext/stb",
+      "-Isrc/ext/tol",
+      "-Isrc/test",
       "-Isrc/game",
-      "-Isrc/framework",
+      "-Isrc/lib",
       "-DLOG_USE_COLOR",
       "-DDEBUG",
       "-DINSTANTIATE_MAIN",
@@ -643,10 +643,10 @@
       "-c",
       "-o",
       "bld/obj/test/test_util.o",
-      "test/test_util.c"
+      "src/test/test_util.c"
     ],
     "directory": "/home/juliet/dev/vc-game",
-    "file": "/home/juliet/dev/vc-game/test/test_util.c",
+    "file": "/home/juliet/dev/vc-game/src/test/test_util.c",
     "output": "/home/juliet/dev/vc-game/bld/obj/test/test_util.o"
   }
 ]

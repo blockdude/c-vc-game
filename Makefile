@@ -49,17 +49,16 @@ MAKEFLAGS = -j$(NPROC) --no-print-directory
 # -----------------------------
 
 BLD_PATH  = bld
-LIB_PATH  = lib
-SRC_PATH  = src
+LIB_PATH  = src/ext
 
 BIN_PATH  = $(BLD_PATH)/bin
 OBJ_PATH  = $(BLD_PATH)/obj
 DEP_PATH  = $(BLD_PATH)/dep
 
-SDL3_PATH = $(SRC_PATH)/SDL
-GLAD_PATH = $(SRC_PATH)/glad
-STB_PATH  = $(SRC_PATH)/stb
-TOL_PATH  = $(SRC_PATH)/tol
+SDL3_PATH = $(LIB_PATH)/SDL
+GLAD_PATH = $(LIB_PATH)/glad
+STB_PATH  = $(LIB_PATH)/stb
+TOL_PATH  = $(LIB_PATH)/tol
 
 # =============================
 
@@ -98,7 +97,7 @@ INCLUDE += -I$(GLAD_PATH)/include
 INCLUDE += -I$(STB_PATH)
 INCLUDE += -I$(TOL_PATH)
 
-LDFLAGS += -L$(BLD_PATH)/bin/sdl3
+LDFLAGS += -L$(BLD_PATH)/bin/SDL
 LDFLAGS += -L$(BLD_PATH)/bin/glad
 
 # =============================
@@ -137,7 +136,7 @@ PHONY += all
 # SDL LIB
 # -----------------------------
 
-define BLD_SDL3
+define BLD_SDL
 
 echo
 echo =====================
@@ -147,13 +146,13 @@ echo
 
 cd $(SDL3_PATH) && cmake -S . -B build && cmake --build build
 
-cp $(SDL3_PATH)/build/libSDL3.so $(BLD_PATH)/bin/sdl3
-cd $(BLD_PATH)/bin/sdl3 && ln -s libSDL3.so libSDL3.so.0
+cp $(SDL3_PATH)/build/libSDL3.so $(BLD_PATH)/bin/SDL
+cd $(BLD_PATH)/bin/SDL && ln -s libSDL3.so libSDL3.so.0
 
 endef
 
-DIRS       += $(BLD_PATH)/bin/sdl3
-LIBS       += $(BLD_PATH)/bin/sdl3/libSDL3.so
+DIRS       += $(BLD_PATH)/bin/SDL
+LIBS       += $(BLD_PATH)/bin/SDL/libSDL3.so
 CLEAN_LIBS += (cd $(SDL3_PATH) && cmake --build build --target clean);
 
 # =============================
@@ -197,7 +196,7 @@ CLEAN_LIBS += (rm -r $(GLAD_PATH)/obj 2> /dev/null || true);
 # -----------------------------
 
 $(LIBS) &:
-	@$(BLD_SDL3)
+	@$(BLD_SDL)
 	@$(BLD_GLAD)
 
 # =============================

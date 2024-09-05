@@ -83,7 +83,7 @@ public:
 		this->vbo = vbo_create( GL_ARRAY_BUFFER, false );
 
 		camera_init( &camera, ORTHOGRAPHIC );
-		camera.zoom  = 0.025f;
+		camera.zoom  = 0.02f;
 		camera.eye.x = 0.0f;
 		camera.eye.y = 0.0f;
 		camera.eye.z = 0.0f;
