@@ -1,34 +1,40 @@
 #include "input.h"
-#include "core-internal.h"
+#include "internal/core.h"
+#include "internal/sys.h"
+
+int input_poll( void )
+{
+    return sys_poll_events();
+}
 
 bool input_key_down( int key )
 {
-    return core.input.keyboard.state[ key ] & INPUT_DOWN;
+    return core.input.keyboard.state[ key ] & KEY_STATE_DOWN;
 }
 
 bool input_key_up( int key )
 {
-    return core.input.keyboard.state[ key ] & INPUT_UP;
+    return core.input.keyboard.state[ key ] & KEY_STATE_UP;
 }
 
 bool input_key_press( int key )
 {
-    return core.input.keyboard.state[ key ] & INPUT_PRESS;
+    return core.input.keyboard.state[ key ] & KEY_STATE_PRESS;
 }
 
 bool input_mouse_down( int button )
 {
-    return core.input.mouse.state[ button ] & INPUT_DOWN;
+    return core.input.mouse.state[ button ] & KEY_STATE_DOWN;
 }
 
 bool input_mouse_up( int button )
 {
-    return core.input.mouse.state[ button ] & INPUT_UP;
+    return core.input.mouse.state[ button ] & KEY_STATE_UP;
 }
 
 bool input_mouse_press( int button )
 {
-    return core.input.mouse.state[ button ] & INPUT_PRESS;
+    return core.input.mouse.state[ button ] & KEY_STATE_PRESS;
 }
 
 bool input_mouse_moved( void )

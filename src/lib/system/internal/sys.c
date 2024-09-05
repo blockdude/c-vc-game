@@ -1,8 +1,8 @@
-#include "system.h"
+#include "sys.h"
 #include "core.h"
-#include "core-internal.h"
-#include "window.h"
-#include "input.h"
+
+#include "../input.h"
+#include "../window.h"
 
 #include <util/log.h>
 #include <SDL3/SDL.h>
@@ -21,99 +21,15 @@ static struct
     SDL_GLContext context;
 } system = { 0 };
 
-int system_init( void )
+void sys_init( void )
 {
 	log_info( "SDL Version : %d.%d.%d",
 			SDL_VERSIONNUM_MAJOR( SDL_VERSION ),
 			SDL_VERSIONNUM_MINOR( SDL_VERSION ),
 			SDL_VERSIONNUM_MICRO( SDL_VERSION ) );
-
-    if ( ( core.flags & TIMER ) > 0 )
-    {
-        if ( SDL_Init( SDL_INIT_TIMER ) != 0 )
-        {
-            log_warn( "Unable to initialize SDL timer system: %s", SDL_GetError() );
-        }
-    }
-
-    if ( ( core.flags & AUDIO ) > 0 )
-    {
-        if ( SDL_Init( SDL_INIT_AUDIO ) != 0 )
-        {
-            log_warn( "Unable to initialize SDL audio system: %s", SDL_GetError() );
-        }
-    }
-
-    if ( ( core.flags & INPUT ) > 0 )
-    {
-        if ( SDL_Init( SDL_INIT_EVENTS ) != 0 )
-        {
-            log_warn( "Unable to initialize SDL event system: %s", SDL_GetError() );
-        }
-    }
-
-    if ( ( core.flags & WINDOW ) > 0 )
-    {
-        if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
-        {
-            log_warn( "Unable to initialize SDL video system: %s", SDL_GetError() );
-            goto window_setup_cleanup;
-        }
-
-        const SDL_WindowFlags flags =
-            SDL_WINDOW_RESIZABLE            |
-            SDL_WINDOW_HIGH_PIXEL_DENSITY   |
-            SDL_WINDOW_OPENGL;
-
-        SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
-        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
-        SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
-        SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-        SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
-
-        system.window = SDL_CreateWindow( core.window.title, core.window.w, core.window.h, flags );
-        if ( system.window == NULL )
-        {
-            log_warn( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
-            goto window_setup_cleanup;
-        }
-
-        system.context = SDL_GL_CreateContext( system.window );
-        if ( system.context == NULL )
-        {
-            log_warn( "Failed to initialize system. Unable to create OpenGL context: %s", SDL_GetError() );
-            goto window_setup_cleanup;
-        }
-
-        int loaded = gladLoadGL( ( GLADloadfunc ) SDL_GL_GetProcAddress );
-        if ( loaded == 0 )
-        {
-            log_warn( "Failed to load opengl functions" );
-            goto window_setup_cleanup;
-        }
-
-        log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
-        log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
-        log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
-        log_info( "SL Version  : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
-        goto window_setup_finish;
-
-window_setup_cleanup:
-        if ( system.context )
-            SDL_GL_DestroyContext( system.context );
-        if ( system.window )
-            SDL_DestroyWindow( system.window );
-        goto window_setup_exit;
-window_setup_finish:
-        core.window.initialized = true;
-window_setup_exit:;
-    }
-
-    return SYSTEM_SUCCESS;
 }
 
-int system_free( void )
+void sys_free( void )
 {
     if ( system.context )
     {
@@ -132,8 +48,27 @@ int system_free( void )
 
     system.window = NULL;
     system.context = NULL;
+}
 
-    return SYSTEM_SUCCESS;
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * AUDIO
+ * -----------------------------
+ */
+
+void sys_init_audio( void )
+{
+    if ( SDL_Init( SDL_INIT_AUDIO ) != 0 )
+    {
+        log_warn( "Unable to initialize SDL audio system: %s", SDL_GetError() );
+    }
 }
 
 /*
@@ -149,31 +84,88 @@ int system_free( void )
  * -----------------------------
  */
 
-void window_swap( void )
+void sys_init_window( void )
+{
+    if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
+    {
+        log_warn( "Unable to initialize SDL video system: %s", SDL_GetError() );
+        goto window_setup_cleanup;
+    }
+
+    const SDL_WindowFlags flags =
+        SDL_WINDOW_RESIZABLE          |
+        SDL_WINDOW_HIGH_PIXEL_DENSITY |
+        SDL_WINDOW_OPENGL;
+
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
+    SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
+    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
+
+    system.window = SDL_CreateWindow( core.window.title, core.window.w, core.window.h, flags );
+    if ( system.window == NULL )
+    {
+        log_warn( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
+        goto window_setup_cleanup;
+    }
+
+    system.context = SDL_GL_CreateContext( system.window );
+    if ( system.context == NULL )
+    {
+        log_warn( "Failed to initialize system. Unable to create OpenGL context: %s", SDL_GetError() );
+        goto window_setup_cleanup;
+    }
+
+    int loaded = gladLoadGL( ( GLADloadfunc ) SDL_GL_GetProcAddress );
+    if ( loaded == 0 )
+    {
+        log_warn( "Failed to load opengl functions" );
+        goto window_setup_cleanup;
+    }
+
+    log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
+    log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
+    log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
+    log_info( "SL Version  : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+    goto window_setup_finish;
+
+window_setup_cleanup:
+    if ( system.context )
+        SDL_GL_DestroyContext( system.context );
+    if ( system.window )
+        SDL_DestroyWindow( system.window );
+    goto window_setup_exit;
+window_setup_finish:
+    core.window.initialized = true;
+window_setup_exit:;
+}
+
+void sys_swap_screen_buffer( void )
 {
     SDL_GL_SwapWindow( system.window );
 }
 
-int window_title_set( const char *title )
+void sys_window_size_set( int w, int h )
+{
+    SDL_SetWindowSize( system.window, w, h );
+}
+
+void sys_window_title_set( const char *title )
 {
     SDL_SetWindowTitle( system.window, title );
-    return WINDOW_SUCCESS;
 }
 
-int window_relative_mouse( bool state )
+void sys_window_relative_mouse_set( bool state )
 {
-    core.window.relative_mouse = state;
     SDL_WarpMouseInWindow( system.window, core.window.w / 2.0f, core.window.h / 2.0f );
-    SDL_SetWindowRelativeMouseMode( system.window , state );
-    return WINDOW_SUCCESS;
+    SDL_SetWindowRelativeMouseMode( system.window, state );
 }
 
-int window_relative_mouse_toggle( void )
+void sys_window_vsync_set( bool state )
 {
-    core.window.relative_mouse = !core.window.relative_mouse;
-    SDL_WarpMouseInWindow( system.window , core.window.w / 2.0f, core.window.h / 2.0f );
-    SDL_SetWindowRelativeMouseMode( system.window , core.window.relative_mouse );
-    return WINDOW_SUCCESS;
+    SDL_GL_SetSwapInterval( state ? 1 : 0 );
 }
 
 /*
@@ -322,15 +314,23 @@ static const int button_map[] = {
     MB_BACK            // SDL_BUTTON_X2
 };
 
-int input_poll( void )
+void sys_init_input( void )
+{
+    if ( SDL_Init( SDL_INIT_EVENTS ) != 0 )
+    {
+        log_warn( "Unable to initialize SDL event system: %s", SDL_GetError() );
+    }
+}
+
+int sys_poll_events( void )
 {
     // reset keys
     for ( int i = 0; i < KB_COUNT; i++ )
-        core.input.keyboard.state[ i ] &= ~( INPUT_DOWN | INPUT_UP );
+        core.input.keyboard.state[ i ] &= ~( KEY_STATE_DOWN | KEY_STATE_UP );
 
     // reset mouse buttons
     for ( int i = 0; i < MB_COUNT; i++ )
-        core.input.mouse.state[ i ] &= ~( INPUT_DOWN | INPUT_UP );
+        core.input.mouse.state[ i ] &= ~( KEY_STATE_DOWN | KEY_STATE_UP );
 
     // reset mouse events
     core.input.mouse.moved = false;
@@ -363,25 +363,25 @@ int input_poll( void )
 
             case SDL_EVENT_KEY_DOWN:
 
-                core.input.keyboard.state[ key_map[ event.key.scancode ] ] = INPUT_DOWN | INPUT_PRESS;
+                core.input.keyboard.state[ key_map[ event.key.scancode ] ] = KEY_STATE_DOWN | KEY_STATE_PRESS;
 
                 break;
 
             case SDL_EVENT_KEY_UP:
 
-                core.input.keyboard.state[ key_map[ event.key.scancode ] ] = INPUT_UP;
+                core.input.keyboard.state[ key_map[ event.key.scancode ] ] = KEY_STATE_UP;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-                core.input.mouse.state[ button_map[ event.button.button ] ] = INPUT_DOWN | INPUT_PRESS;
+                core.input.mouse.state[ button_map[ event.button.button ] ] = KEY_STATE_DOWN | KEY_STATE_PRESS;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
 
-                core.input.mouse.state[ button_map[ event.button.button ] ] = INPUT_UP;
+                core.input.mouse.state[ button_map[ event.button.button ] ] = KEY_STATE_UP;
 
                 break;
 
@@ -420,14 +420,24 @@ int input_poll( void )
  * -----------------------------
  */
 
-uint64_t time_now( void )
+void sys_init_timer( void )
 {
-    return SDL_GetTicks();
+    if ( SDL_Init( SDL_INIT_TIMER ) != 0 )
+    {
+        log_warn( "Unable to initialize SDL timer system: %s", SDL_GetError() );
+    }
 }
 
-void time_wait( unsigned int t )
+float sys_ticks( void )
 {
-    SDL_Delay( t );
+    Uint64 ns = SDL_GetTicksNS();
+    return ( float ) ns / 1000000000.0f;
+}
+
+void sys_sleep( float s )
+{
+    Uint64 ns = s * 1000000000.0f;
+    SDL_DelayNS( ns );
 }
 
 /*

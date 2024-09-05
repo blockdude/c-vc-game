@@ -1,8 +1,10 @@
 #include "mesh.h"
 
+#include <math/math.h>
+#include <math/vector.h>
+
 #include <util/log.h>
 #include <util/types.h>
-#include <util/math.h>
 #include <util/list.h>
 
 #include <string.h>

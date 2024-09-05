@@ -1,11 +1,10 @@
 #ifndef MAT4_H
 #define MAT4_H
 
-#include <math.h>
-#include "types.h"
-#include "util.h"
-#include "vec3.h"
+#include <util/types.h>
+#include "math.h"
 #include "quat.h"
+#include "vector.h"
 
 /*
  * This is a fork of the raymath v1.5 library.

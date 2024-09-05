@@ -1,5 +1,5 @@
 #include "utest.h"
-#include <util/util.h>
+#include <math/math.h>
 
 UTEST( util, clamp )
 {

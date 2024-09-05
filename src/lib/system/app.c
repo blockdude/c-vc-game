@@ -1,8 +1,11 @@
 #include "app.h"
-#include "core-internal.h"
+#include "internal/core.h"
 #include <util/log.h>
+
 #include <system/input.h>
 #include <system/time.h>
+
+#include <assert.h>
 
 int app_init( event_fn init, event_fn free, event_fn tick, event_fn update, event_fn render )
 {
@@ -22,7 +25,7 @@ int app_init( event_fn init, event_fn free, event_fn tick, event_fn update, even
         .frame_rate   = 0,
         .frame_count  = 0,
 
-        .tick_delta   = 0,
+        .tick_delta   = TIMESCALE / 30.0f,
         .tick_target  = TIMESCALE / 30.0f,
         .tick_avg     = 0.0f,
         .tick_rate    = 0,
@@ -41,47 +44,21 @@ void app_loop( void )
     struct app *self = &core.app.state;
     self->running = true;
 
-    uint64_t frame_prev  = time_now();
-    uint64_t frame_timer = frame_prev;
-    uint64_t frame_last  = 0;
+    float frame_curr  = time_now();
+    float frame_prev  = time_now();
+    float frame_timer = frame_prev;
+    float frame_last  = 0;
 
-    uint64_t tick_last  = 0;
-    float    tick_time  = 0;
+    float tick_last  = 0;
+    float tick_time  = 0;
 
-    uint64_t elapsed_time = 0;
+    float elapsed = 0;
 
     PROC_EVENT( init );
 
 	// begin main loop
     while ( self->running )
     {
-        // get frame timing
-        uint64_t frame_start = time_now();
-        uint64_t delta_time = frame_start - frame_prev;
-
-        frame_prev    = frame_start;
-        elapsed_time += delta_time;
-        tick_time    += delta_time;
-
-        self->frame_delta = delta_time / TIMESCALE;
-        self->frame_avg   = TIMESCALE * ( ( float ) self->frame_count / elapsed_time );
-        self->tick_avg    = TIMESCALE * ( ( float ) self->tick_count  / elapsed_time );
-
-        // update fps & tps every second
-        if ( frame_start - frame_timer >= TIMESCALE )
-        {
-            // store rate per second
-            self->frame_rate = self->frame_count - frame_last;
-            self->tick_rate = self->tick_count - tick_last;
-
-            // store this frame/tick
-            tick_last  = self->tick_count;
-            frame_last = self->frame_count;
-
-            // reset timer
-            frame_timer = frame_start;
-        }
-
         // poll/handle events
         if ( input_poll() == INPUT_QUIT )
             goto exit;
@@ -98,11 +75,38 @@ void app_loop( void )
         PROC_EVENT( render );
         self->frame_count++;
 
+        // get frame timing
+        frame_curr = time_now();
+        float delta_time  = frame_curr - frame_prev;
+
+        frame_prev  = frame_curr;
+        elapsed    += delta_time;
+        tick_time  += delta_time;
+
+        self->frame_delta = delta_time;
+        self->frame_avg   = TIMESCALE * ( ( float ) self->frame_count / elapsed );
+        self->tick_avg    = TIMESCALE * ( ( float ) self->tick_count  / elapsed );
+
+        // update fps & tps every second
+        if ( frame_curr - frame_timer >= TIMESCALE )
+        {
+            // store rate per second
+            self->frame_rate = self->frame_count - frame_last;
+            self->tick_rate  = self->tick_count  - tick_last;
+
+            // store this frame/tick
+            tick_last  = self->tick_count;
+            frame_last = self->frame_count;
+
+            // reset timer
+            frame_timer = frame_curr;
+        }
+
         // apply fps cap
-        int frame_time = frame_start - time_now();
+        float frame_time = frame_curr - time_now();
         if ( frame_time < self->frame_target )
         {
-            time_wait( self->frame_target - frame_time );
+            time_sleep( self->frame_target - frame_time );
         }
     }
 
@@ -128,6 +132,7 @@ void app_target_fps_set( float target )
 void app_target_tps_set( float target )
 {
     core.app.state.tick_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
+    core.app.state.tick_delta  = core.app.state.tick_target;
 }
 
 int app_fps( void )

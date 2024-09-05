@@ -31,3 +31,5 @@ Game.
     directly.
 
 * Fix frame rate inconsistencies.
+
+* Move everything from lib to src.

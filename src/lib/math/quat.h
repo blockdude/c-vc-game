@@ -1,8 +1,8 @@
 #ifndef QUAT_H
 #define QUAT_H
 
-#include <math.h>
-#include "types.h"
+#include <util/types.h>
+#include "math.h"
 
 /*
  * This is a fork of the raymath v1.5 library.

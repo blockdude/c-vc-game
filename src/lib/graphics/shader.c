@@ -1,10 +1,14 @@
 #include "shader.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
 #include <util/log.h>
-#include <util/math.h>
+#include <math/math.h>
+#include <math/vector.h>
+#include <math/matrix.h>
 
 static inline char *shader_get_log( 
 		GLint handle,

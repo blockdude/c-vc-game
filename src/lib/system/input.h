@@ -103,15 +103,15 @@ enum input_button
 
 enum input_state
 {
-    INPUT_DOWN         = 0x01,
-    INPUT_UP           = 0x02,
-    INPUT_PRESS        = 0x04,
-    INPUT_REPEAT       = 0x08,
+    KEY_STATE_DOWN         = 0x01,
+    KEY_STATE_UP           = 0x02,
+    KEY_STATE_PRESS        = 0x04,
+    KEY_STATE_REPEAT       = 0x08,
 
-    INPUT_PREV_DOWN    = 0x10,
-    INPUT_PREV_UP      = 0x20,
-    INPUT_PREV_PRESS   = 0x40,
-    INPUT_PREV_REPEAT  = 0x80
+    KEY_STATE_PREV_DOWN    = 0x10,
+    KEY_STATE_PREV_UP      = 0x20,
+    KEY_STATE_PREV_PRESS   = 0x40,
+    KEY_STATE_PREV_REPEAT  = 0x80
 };
 
 #ifdef __cplusplus

@@ -1,5 +1,7 @@
 #include "camera.h"
-#include <util/math.h>
+#include <math/math.h>
+#include <math/vector.h>
+#include <math/matrix.h>
 
 void camera_init( struct camera *self, int type )
 {

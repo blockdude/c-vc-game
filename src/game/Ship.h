@@ -1,10 +1,15 @@
 #ifndef SHIP_H
 #define SHIP_H
 
-#include <util/math.h>
+#include <math/math.h>
+#include <math/vector.h>
+#include <math/matrix.h>
+
 #include <util/camera.h>
 #include <util/log.h>
+
 #include <graphics/gfx.h>
+
 #include <system/window.h>
 
 static float mesh[] = {

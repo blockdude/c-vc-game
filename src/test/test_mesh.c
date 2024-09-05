@@ -1,6 +1,6 @@
 #include "utest.h"
 #include <graphics/mesh.h>
-#include <util/math.h>
+#include <math/math.h>
 
 struct meshload
 {

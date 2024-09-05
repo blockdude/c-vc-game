@@ -18,7 +18,7 @@ int main( int argc, char *argv[] )
 
 	core_init( WINDOW | AUDIO | INPUT | TIMER );
 	app_init( init, free, tick, update, render );
-	app_loop( );
+	app_loop();
 	core_free();
 
 	return 0;

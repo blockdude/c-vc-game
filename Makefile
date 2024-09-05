@@ -50,15 +50,16 @@ MAKEFLAGS = -j$(NPROC) --no-print-directory
 
 BLD_PATH  = bld
 LIB_PATH  = lib
+SRC_PATH  = src
 
 BIN_PATH  = $(BLD_PATH)/bin
 OBJ_PATH  = $(BLD_PATH)/obj
 DEP_PATH  = $(BLD_PATH)/dep
 
-SDL3_PATH = $(LIB_PATH)/SDL3
-GLAD_PATH = $(LIB_PATH)/glad
-STB_PATH  = $(LIB_PATH)/stb
-TOL_PATH  = $(LIB_PATH)/tol
+SDL3_PATH = $(SRC_PATH)/SDL
+GLAD_PATH = $(SRC_PATH)/glad
+STB_PATH  = $(SRC_PATH)/stb
+TOL_PATH  = $(SRC_PATH)/tol
 
 # =============================
 
@@ -238,7 +239,7 @@ endef
 # VC ENGINE
 # -----------------------------
 
-$(eval $(call DEFVARS,ENGINE,src/framework,c,libVCF.so))
+$(eval $(call DEFVARS,ENGINE,src/lib,c,libVCF.so))
 
 $(ENGINE_TARGET): private LDFLAGS += -shared
 $(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
@@ -284,7 +285,7 @@ $(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(GAME_SRC_EXT)
 # UNIT TESTS
 # -----------------------------
 
-$(eval $(call DEFVARS,TEST,test,c,$$(TEST_SRC:$$(TEST_SRC_PATH)/%.c=%)))
+$(eval $(call DEFVARS,TEST,src/test,c,$$(TEST_SRC:$$(TEST_SRC_PATH)/%.c=%)))
 
 $(TEST_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH) -L$(GAME_BIN_PATH)
 $(TEST_TARGET): private LDLIBS  += -lVCF -l:main.so
