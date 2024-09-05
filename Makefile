@@ -238,7 +238,7 @@ endef
 # VC ENGINE
 # -----------------------------
 
-$(eval $(call DEFVARS,ENGINE,src/framework,c,libVCE.so))
+$(eval $(call DEFVARS,ENGINE,src/framework,c,libVCF.so))
 
 $(ENGINE_TARGET): private LDFLAGS += -shared
 $(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
@@ -261,12 +261,12 @@ $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)
 $(eval $(call DEFVARS,GAME,src/game,cc,main))
 
 $(GAME_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH)
-$(GAME_TARGET): private LDLIBS  += -lstdc++ -l:libVCE.so
+$(GAME_TARGET): private LDLIBS  += -lstdc++ -lVCF
 $(GAME_TARGET): $(GAME_OBJ) | $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(GAME_TARGET).so: private LDFLAGS += -L$(ENGINE_BIN_PATH)
-$(GAME_TARGET).so: private LDLIBS  += -lstdc++ -l:libVCE.so
+$(GAME_TARGET).so: private LDLIBS  += -lstdc++ -lVCF
 $(GAME_TARGET).so: $(GAME_OBJ) | $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -shared -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
@@ -287,7 +287,7 @@ $(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(GAME_SRC_EXT)
 $(eval $(call DEFVARS,TEST,test,c,$$(TEST_SRC:$$(TEST_SRC_PATH)/%.c=%)))
 
 $(TEST_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH) -L$(GAME_BIN_PATH)
-$(TEST_TARGET): private LDLIBS  += -l:libVCE.so -l:main.so
+$(TEST_TARGET): private LDLIBS  += -lVCF -l:main.so
 $(TEST_TARGET): $(TEST_BIN_PATH)/%: $(TEST_OBJ_PATH)/%.o | $(GAME_TARGET).so $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $< $(LDFLAGS) $(LDLIBS)
 
