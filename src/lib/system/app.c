@@ -39,83 +39,76 @@ int app_init( event_fn init, event_fn free, event_fn tick, event_fn update, even
 
 void app_loop( void )
 {
-#define PROC_EVENT( _event ) if ( self->_event != NULL ) { self->_event(); }
+#define PROC_EVENT( _event ) if ( core.app.state._event != NULL ) { core.app.state._event(); }
 
-    struct app *self = &core.app.state;
-    self->running = true;
+    core.timestep.running = true;
 
     PROC_EVENT( init );
 
-    float frame_curr  = time_ticks();
-    float frame_prev  = frame_curr;
-    float frame_time  = 0.0f;
+    core.timestep.current  = time_ticks();
+    core.timestep.previous = core.timestep.current;
 
-    float tick_time   = 0.0f;
+    core.timestep.f_delta  = 0.0f;
+    core.timestep.f_last   = 0;
 
-    float elapsed     = 0.0f;
+    core.timestep.t_delta  = 0.0f;
+    core.timestep.t_last   = 0;
 
-    float timer       = 1.0f;
-
-    uint64_t frame_last  = 0;
-    uint64_t tick_last   = 0;
+    core.timestep.elapsed  = 0.0f;
+    core.timestep.timer    = 1.0f;
 
 	// begin main loop
-    while ( self->running )
+    while ( core.timestep.running )
     {
+        core.timestep.elapsed += core.timestep.f_delta;
+        core.timestep.t_delta += core.timestep.f_delta;
+        core.timestep.timer   -= core.timestep.f_delta;
+
         // poll/handle events
         if ( input_poll() == INPUT_QUIT )
             goto exit;
 
         // maintain fixed time step for each tick
-        while ( tick_time >= self->tick_target )
+        while ( core.timestep.t_delta >= core.timestep.t_target )
         {
             PROC_EVENT( tick );
-            self->tick_count++;
-            tick_time -= self->tick_target;
+            core.timestep.t_count++;
+            core.timestep.t_delta -= core.timestep.t_target;
         }
 
         PROC_EVENT( update );
         PROC_EVENT( render );
 
-        frame_curr = time_ticks();
-        frame_time = frame_curr - frame_prev;
-        frame_prev = frame_curr;
+        core.timestep.current  = time_ticks();
+        core.timestep.f_delta  = core.timestep.current - core.timestep.previous;
+        core.timestep.previous = core.timestep.current;
 
-        self->frame_delta = frame_time;
-        self->frame_avg   = TIMESCALE * ( ( float ) self->frame_count / elapsed );
-        self->tick_avg    = TIMESCALE * ( ( float ) self->tick_count  / elapsed );
+        core.timestep.f_avg = TIMESCALE * ( core.timestep.f_count / core.timestep.elapsed );
+        core.timestep.t_avg = TIMESCALE * ( core.timestep.t_count / core.timestep.elapsed );
 
         // update fps & tps every second
-        if ( timer <= 0.0f )
+        if ( core.timestep.timer <= 0.0f )
         {
-            // store rate per second
-            self->frame_rate = self->frame_count - frame_last;
-            self->tick_rate  = self->tick_count  - tick_last;
-
-            // store this frame/tick
-            tick_last  = self->tick_count;
-            frame_last = self->frame_count;
-
-            // reset timer
-            timer = 1.0f;
+            core.timestep.f_rate = core.timestep.f_count - core.timestep.f_last;
+            core.timestep.t_rate = core.timestep.t_count - core.timestep.t_last;
+            core.timestep.f_last = core.timestep.f_count;
+            core.timestep.t_last = core.timestep.t_count;
+            core.timestep.timer = 1.0f;
         }
 
         // apply fps cap
-        if ( frame_time < self->frame_target )
+        if ( core.timestep.f_delta < core.timestep.f_target )
         {
-            time_sleep( self->frame_target - frame_time );
+            time_sleep( core.timestep.f_target - core.timestep.f_delta );
 
-            frame_curr = time_ticks();
-            float wait = frame_curr - frame_prev;
-            frame_prev = frame_curr;
+            core.timestep.current = time_ticks();
+            float wait = core.timestep.current - core.timestep.previous;
+            core.timestep.previous = core.timestep.current;
 
-            self->frame_delta += wait;
+            core.timestep.f_delta += wait;
         }
 
-        elapsed   += self->frame_delta;
-        tick_time += self->frame_delta;
-        timer     -= self->frame_delta;
-        self->frame_count++;
+        core.timestep.f_count++;
     }
 
 exit:
@@ -125,7 +118,7 @@ exit:
 
 void app_stop( void )
 {
-    core.app.state.running = false;
+    core.timestep.running = false;
 }
 
 struct app *app_handle( void )
@@ -135,20 +128,20 @@ struct app *app_handle( void )
 
 void app_target_fps_set( float target )
 {
-    core.app.state.frame_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
+    core.timestep.f_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
 }
 
 void app_target_tps_set( float target )
 {
-    core.app.state.tick_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
+    core.timestep.t_target = target <= 0.0f ? -1.0f : TIMESCALE / target;
 }
 
 int app_fps( void )
 {
-    return core.app.state.frame_rate;
+    return core.timestep.f_rate;
 }
 
 int app_tps( void )
 {
-    return core.app.state.tick_rate;
+    return core.timestep.t_rate;
 }

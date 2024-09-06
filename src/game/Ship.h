@@ -9,7 +9,6 @@
 #include <util/log.h>
 
 #include <graphics/gfx.h>
-
 #include <system/window.h>
 
 static float mesh[] = {

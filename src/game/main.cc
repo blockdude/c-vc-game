@@ -6,6 +6,8 @@
 
 #include "Game.h"
 
+GameManager game;
+
 int main( int argc, char *argv[] )
 {
 	std::string args;
@@ -15,8 +17,7 @@ int main( int argc, char *argv[] )
 	log_info( "Arguments: %s", args.c_str() );
 
 	sys_init( WINDOW | AUDIO | INPUT | TIMER );
-	app_init( init, free, tick, update, render );
-	app_loop();
+	game.Run();
 	sys_free();
 
 	return 0;

@@ -14,23 +14,24 @@ struct core
 	{
 		bool         	running;
 
+		int          	f_rate;
+		float        	f_avg;
 		float        	f_delta;
 		float        	f_target;
-		float        	f_avg;
-		int          	f_rate;
 		uint64_t     	f_count;
 
+		int          	t_rate;
+		float        	t_avg;
 		float        	t_delta;
 		float        	t_target;
-		float        	t_avg;
-		int          	t_rate;
 		uint64_t     	t_count;
 
-		double          elapsed;
+		// capture the frame rate & tick rate of the last second
 		float           timer;
 		uint64_t        f_last;
 		uint64_t        t_last;
 
+		double          elapsed;
 		double          current;
 		double          previous;
 	} timestep;
