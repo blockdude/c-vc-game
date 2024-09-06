@@ -118,19 +118,56 @@ enum input_state
 extern "C" {
 #endif
 
-int input_poll( void );
+// poll all events
+int    input_poll( void );
 
-int  input_key( int key );
-int  input_button( int key );
+/*
+ * Check input state of a key.
+ * Returns true if any state is true.
+ */
+bool   input_key( int key, unsigned int sflags );
 
-bool input_key_down( int key );
-bool input_key_up( int key );
-bool input_key_press( int key );
+/*
+ * Returns true if key is held down.
+ */
+bool   input_key_press( int key );
 
-bool input_mouse_down( int button );
-bool input_mouse_up( int button );
-bool input_mouse_press( int button );
-bool input_mouse_moved( void );
+/*
+ * Returns true if key is pressed.
+ * Lasts one frame.
+ */
+bool   input_key_down( int key );
+
+/*
+ * Returns true if key is released.
+ * Lasts one frame.
+ */
+bool   input_key_up( int key );
+
+/*
+ * Check input state of a key.
+ * Returns true if any state is true.
+ */
+bool   input_button( int key, unsigned int sflags );
+
+/*
+ * Returns true if key is held down.
+ */
+bool   input_button_press( int button );
+
+/*
+ * Returns true if key is pressed.
+ * Lasts one frame.
+ */
+bool   input_button_down( int button );
+
+/*
+ * Returns true if key is released.
+ * Lasts one frame.
+ */
+bool   input_button_up( int button );
+
+bool   input_mouse_moved( void );
 vec2_t input_mouse_pos( void );
 vec2_t input_mouse_delta( void );
 vec2_t input_mouse_scroll( void );

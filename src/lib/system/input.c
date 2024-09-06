@@ -222,6 +222,16 @@ int input_poll( void )
     return result;
 }
 
+bool input_key( int key, unsigned int sflags )
+{
+    return ( core.input.k_state[ key ] & sflags ) > 0;
+}
+
+bool input_button( int key, unsigned int sflags )
+{
+    return ( core.input.m_state[ key ] & sflags ) > 0;
+}
+
 bool input_key_down( int key )
 {
     return core.input.k_state[ key ] & S_DOWN;

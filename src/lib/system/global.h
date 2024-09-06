@@ -68,7 +68,6 @@ struct core
 	} app;
 };
 
-// core.c
 extern struct core core;
 
 #endif
