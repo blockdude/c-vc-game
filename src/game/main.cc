@@ -1,7 +1,6 @@
 #include <string>
 
 #include <system/system.h>
-#include <system/app.h>
 #include <util/log.h>
 
 #include "Game.h"

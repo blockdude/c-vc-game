@@ -73,7 +73,7 @@ public:
 		std::string s =
 			"fps: " + std::to_string( FPS() ) + " | "
 			"fps: " + std::to_string( TPS() ) + " | "
-			"fps: " + std::to_string( core.timestep.t_delta ) + " | ";
+			"fps: " + std::to_string( __loop.t_delta ) + " | ";
 
 		window_title_set( s.c_str() );
 	}

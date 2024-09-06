@@ -15,8 +15,7 @@ struct core core = {
 
     .input              = { 0 },
     .timer              = { 0 },
-    .audio              = { 0 },
-    .app                = { 0 }
+    .audio              = { 0 }
 };
 
 /*

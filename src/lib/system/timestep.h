@@ -1,103 +1,155 @@
 #ifndef TIMESTEP_H
 #define TIMESTEP_H
 
+/*
+ * There is no global state and is ment to only help quickly
+ * create a game loop.
+ *
+ * Calling macros such as - FPS() - from other translation units
+ * will not do much.
+ *
+ * TODO: Allow the loop to edit a global struct if a macro is
+ * defined?
+ *
+ * Note: GETTIME and DELAY must be in seconds.
+ * Note: POLLEVENTS must return an int where 0 is success.
+ */
+
 #include <util/types.h>
-#include <util/log.h>
 
-#include "time.h"
-#include "input.h"
-#include "global.h"
+struct timestep
+{
+    bool			quit;
 
-#define FPS()        ( core.timestep.f_rate )
-#define TPS()        ( core.timestep.t_rate )
-#define SETFPS( _t ) ( core.timestep.f_target = ( _t ) <= 0.0f ? -1.0f : TIMESCALE / ( _t ) )
-#define SETTPS( _t ) ( core.timestep.t_target = ( _t ) <= 0.0f ? -1.0f : TIMESCALE / ( _t ) )
-#define STOPPING()   ( core.timestep.quit )
-#define STOPLOOP()   ( core.timestep.quit = true )
+    int          	f_rate;
+    float        	f_avg;
+    float        	f_delta;
+    float        	f_target;
+    uint64_t     	f_count;
+
+    int          	t_rate;
+    float        	t_avg;
+    float        	t_delta;
+    float        	t_target;
+    uint64_t     	t_count;
+
+    // capture the frame rate & tick rate of the last second
+    float           timer;
+    uint64_t        f_last;
+    uint64_t        t_last;
+
+    double          elapsed;
+    double          current;
+    double          previous;
+};
+
+static struct timestep __loop;
+
+#ifndef GETTIME
+#include <system/time.h>
+#define GETTIME() time_ticks()
+#endif
+
+#ifndef DELAY 
+#include <system/time.h>
+#define DELAY( _s ) time_sleep( _s )
+#endif
+
+#ifndef POLLEVENTS
+#include <system/input.h>
+#define POLLEVENTS() input_poll()
+#endif
+
+#define FPS()        ( __loop.f_rate )
+#define TPS()        ( __loop.t_rate )
+#define SETFPS( _t ) ( __loop.f_target = ( _t ) <= 0.0f ? -1.0f : 1.0f / ( _t ) )
+#define SETTPS( _t ) ( __loop.t_target = ( _t ) <= 0.0f ? -1.0f : 1.0f / ( _t ) )
+#define STOPPING()   ( __loop.quit )
+#define STOPLOOP()   ( __loop.quit = true )
 
 #define LOOPWHILE( __c ) \
-    for ( __loop_init(); ( __c ) && __loop_poll(); __loop_update() )
+    for ( _loop_init(); ( __c ) && _loop_poll(); _loop_update() )
 
 #define LOOP() \
     LOOPWHILE( !STOPPING() )
 
 #define TICK() \
-    for ( __tick_init(); __tick_proc(); __tick_update() )
+    for ( _tick_init(); _tick_proc(); _tick_update() )
 
-static void __tick_init( void )
+static inline void _tick_init( void )
 {
-    core.timestep.t_delta += core.timestep.f_delta;
+    __loop.t_delta += __loop.f_delta;
 }
 
-static bool __tick_proc( void )
+static inline bool _tick_proc( void )
 {
-    return core.timestep.t_delta >= core.timestep.t_target;
+    return __loop.t_delta >= __loop.t_target;
 }
 
-static void __tick_update( void )
+static inline void _tick_update( void )
 {
-    core.timestep.t_count += 1;
-    core.timestep.t_delta -= core.timestep.t_target;
+    __loop.t_count += 1;
+    __loop.t_delta -= __loop.t_target;
 }
 
-static bool __loop_poll( void )
+static inline bool _loop_poll( void )
 {
-    if ( input_poll() == INPUT_QUIT )
+    if ( POLLEVENTS() != 0 )
         return false;
     return true;
 }
 
-static void __loop_init( void )
+static inline void _loop_init( void )
 {
-    core.timestep.quit     = false;
+    __loop.quit     = false;
 
-    core.timestep.current  = time_ticks();
-    core.timestep.previous = core.timestep.current;
+    __loop.current  = GETTIME();
+    __loop.previous = __loop.current;
 
-    core.timestep.f_delta  = 0.0f;
-    core.timestep.f_last   = 0;
+    __loop.f_delta  = 0.0f;
+    __loop.f_last   = 0;
 
-    core.timestep.t_delta  = 0.0f;
-    core.timestep.t_last   = 0;
+    __loop.t_delta  = 0.0f;
+    __loop.t_last   = 0;
 
-    core.timestep.elapsed  = 0.0f;
-    core.timestep.timer    = 1.0f;
+    __loop.elapsed  = 0.0f;
+    __loop.timer    = 1.0f;
 }
 
-static void __loop_update( void )
+static inline void _loop_update( void )
 {
-    core.timestep.current  = time_ticks();
-    core.timestep.f_delta  = core.timestep.current - core.timestep.previous;
-    core.timestep.previous = core.timestep.current;
+    __loop.current  = GETTIME();
+    __loop.f_delta  = __loop.current - __loop.previous;
+    __loop.previous = __loop.current;
 
-    core.timestep.f_avg = TIMESCALE * ( core.timestep.f_count / core.timestep.elapsed );
-    core.timestep.t_avg = TIMESCALE * ( core.timestep.t_count / core.timestep.elapsed );
+    __loop.f_avg = __loop.f_count / __loop.elapsed;
+    __loop.t_avg = __loop.t_count / __loop.elapsed;
 
     // update fps & tps every second
-    if ( core.timestep.timer <= 0.0f )
+    if ( __loop.timer <= 0.0f )
     {
-        core.timestep.f_rate = core.timestep.f_count - core.timestep.f_last;
-        core.timestep.t_rate = core.timestep.t_count - core.timestep.t_last;
-        core.timestep.f_last = core.timestep.f_count;
-        core.timestep.t_last = core.timestep.t_count;
-        core.timestep.timer = 1.0f;
+        __loop.f_rate = __loop.f_count - __loop.f_last;
+        __loop.t_rate = __loop.t_count - __loop.t_last;
+        __loop.f_last = __loop.f_count;
+        __loop.t_last = __loop.t_count;
+        __loop.timer = 1.0f;
     }
 
     // apply fps cap
-    if ( core.timestep.f_delta < core.timestep.f_target )
+    if ( __loop.f_delta < __loop.f_target )
     {
-        time_sleep( core.timestep.f_target - core.timestep.f_delta );
+        DELAY( __loop.f_target - __loop.f_delta );
 
-        core.timestep.current = time_ticks();
-        float wait = core.timestep.current - core.timestep.previous;
-        core.timestep.previous = core.timestep.current;
+        __loop.current = GETTIME();
+        float wait = __loop.current - __loop.previous;
+        __loop.previous = __loop.current;
 
-        core.timestep.f_delta += wait;
+        __loop.f_delta += wait;
     }
 
-    core.timestep.elapsed += core.timestep.f_delta;
-    core.timestep.timer   -= core.timestep.f_delta;
-    core.timestep.f_count += 1;
+    __loop.elapsed += __loop.f_delta;
+    __loop.timer   -= __loop.f_delta;
+    __loop.f_count += 1;
 }
 
 #endif
