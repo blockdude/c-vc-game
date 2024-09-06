@@ -21,7 +21,7 @@ class GameManager
 public:
 	void Init( void )
 	{
-		SETFPS( 0 );
+		SETFPS( 144 );
 		SETTPS( 100 );
 		window_set( WINDOW_VSYNC | WINDOW_RELATIVE_MOUSE, true );
 		ship.Init();
@@ -38,7 +38,8 @@ public:
 		std::string s =
 			"fps: " + std::to_string( FPS() ) + " | "
 			"fps: " + std::to_string( TPS() ) + " | "
-			"fps: " + std::to_string( __loop->t_delta ) + " | ";
+			"fps: " + std::to_string( __loop->t_delta ) + " | "
+			"fps: " + std::to_string( __loop->f_delta ) + " | ";
 
 		window_title_set( s.c_str() );
 	}
@@ -74,6 +75,11 @@ public:
 		if ( input_key_press( K_Q ) )
 		{
 			ship.rotate -= 1.0f;
+		}
+
+		if ( input_key_down( K_R ) )
+		{
+			ship.Reset();
 		}
 	}
 

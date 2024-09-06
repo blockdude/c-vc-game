@@ -99,6 +99,21 @@ public:
 		vao_attr( vao, vbo, color_idx   , 3, GL_FLOAT, sizeof( float ) * 6, sizeof( float ) * 3 );
 	}
 
+	void Reset( void )
+	{
+		position = { 0.0f };
+		velocity = { 0.0f };
+
+		angle = 0.0f;
+		angularVelocity = 0.0f;
+
+		acceleration = 0.001f;
+		angularAcceleration = 0.001f;
+
+		drag = 0.0000001f;
+		dampening = 0.0f;
+	}
+
 	void Tick( void )
 	{
 		rotate = CLAMP( rotate, -1.0f, 1.0f );
