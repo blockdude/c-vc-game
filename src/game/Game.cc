@@ -18,9 +18,9 @@ Entity ship;
 
 int init( void )
 {
-	app_target_fps_set( 500 );
+	app_target_fps_set( 144 );
 	app_target_tps_set( 100 );
-	window_toggle( WINDOW_VSYNC );
+	window_set( WINDOW_VSYNC, false );
 
 	ship.Init();
 
@@ -39,9 +39,7 @@ int tick( void )
 	std::string s =
         "fps: " + std::to_string( app_fps() ) + " | " +
         "tps: " + std::to_string( app_tps() ) + " | " +
-		"ups: " + std::to_string( ship.Speed() ) + " | " +
-		"rps: " + std::to_string( ship.position.x ) + " | " +
-		"rps: " + std::to_string( ship.position.y ) + " | ";
+        "dt : " + std::to_string( core.app.state.frame_delta ) + " | ";
 
 	window_title_set( s.c_str() );
 

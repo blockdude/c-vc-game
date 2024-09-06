@@ -14,17 +14,25 @@ struct core
 	{
 		bool         	running;
 
-		float        	frame_delta;
-		float        	frame_target;
-		float        	frame_avg;
-		int          	frame_rate;
-		uint64_t     	frame_count;
+		float        	f_delta;
+		float        	f_target;
+		float        	f_avg;
+		int          	f_rate;
+		uint64_t     	f_count;
 
-		float        	tick_delta;
-		float        	tick_target;
-		float        	tick_avg;
-		int          	tick_rate;
-		uint64_t     	tick_count;
+		float        	t_delta;
+		float        	t_target;
+		float        	t_avg;
+		int          	t_rate;
+		uint64_t     	t_count;
+
+		double          elapsed;
+		float           timer;
+		uint64_t        f_last;
+		uint64_t        t_last;
+
+		double          current;
+		double          previous;
 	} timestep;
 
 	struct

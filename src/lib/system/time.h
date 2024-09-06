@@ -8,8 +8,8 @@
 extern "C" {
 #endif
 
-float time_ticks( void );
-void  time_sleep( float s );
+double time_ticks( void );
+void   time_sleep( double s );
 
 #ifdef __cplusplus
 }

@@ -153,7 +153,7 @@ endef
 
 DIRS       += $(BLD_PATH)/bin/SDL
 LIBS       += $(BLD_PATH)/bin/SDL/libSDL3.so
-CLEAN_LIBS += (cd $(SDL3_PATH) && cmake --build build --target clean);
+CLEAN_LIBS += (rm -r $(SDL3_PATH)/build 2> /dev/null || true);
 
 # =============================
 
@@ -172,13 +172,13 @@ echo ----BUILDING GLAD----
 echo =====================
 echo
 
-cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/gl.o -c -fpic src/gl.c
-cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/gles2.o -c -fpic src/gles2.c
-cd $(GLAD_PATH) && mkdir -p obj && $(CC) -Iinclude -o obj/vulkan.o -c -fpic src/vulkan.c
-cd $(GLAD_PATH) && mkdir -p obj && $(AR) rcs obj/libglad.a obj/gl.o obj/gles2.o obj/vulkan.o
+cd $(GLAD_PATH) && mkdir -p build && $(CC) -Iinclude -o build/gl.o -c -fpic src/gl.c
+cd $(GLAD_PATH) && mkdir -p build && $(CC) -Iinclude -o build/gles2.o -c -fpic src/gles2.c
+cd $(GLAD_PATH) && mkdir -p build && $(CC) -Iinclude -o build/vulkan.o -c -fpic src/vulkan.c
+cd $(GLAD_PATH) && mkdir -p build && $(AR) rcs build/libglad.a build/gl.o build/gles2.o build/vulkan.o
 echo [100%] built target glad
 
-cp $(GLAD_PATH)/obj/libglad.a $(BLD_PATH)/bin/glad
+cp $(GLAD_PATH)/build/libglad.a $(BLD_PATH)/bin/glad
 
 endef
 

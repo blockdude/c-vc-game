@@ -1,14 +1,14 @@
 #include "time.h"
 #include <SDL3/SDL.h>
 
-float time_ticks( void )
+double time_ticks( void )
 {
-    Uint64 ns = SDL_GetTicksNS();
-    return ( float ) ns / 1000000000.0f;
+    Uint64 t = SDL_GetTicksNS();
+    return ( float ) t / 1000000000.0;
 }
 
-void  time_sleep( float s )
+void time_sleep( double s )
 {
-    Uint64 ns = s * 1000000000.0f;
-    SDL_DelayNS( ns );
+    Uint64 t = s * 1000000000.0;
+    SDL_DelayNS( t );
 }
