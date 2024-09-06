@@ -2,6 +2,8 @@
 #define TIMESTEP_H
 
 /*
+ * This only works locally not globally.
+ *
  * There is no global state and is ment to only help quickly
  * create a game loop.
  *

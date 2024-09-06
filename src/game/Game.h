@@ -23,7 +23,7 @@ public:
 	{
 		SETFPS( 0 );
 		SETTPS( 100 );
-		window_set( WINDOW_VSYNC, false );
+		window_set( WINDOW_VSYNC | WINDOW_RELATIVE_MOUSE, true );
 		ship.Init();
 	}
 
