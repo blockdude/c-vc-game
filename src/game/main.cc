@@ -1,12 +1,10 @@
 #include <string>
 
-#include <system/core.h>
+#include <system/system.h>
 #include <system/app.h>
 #include <util/log.h>
 
 #include "Game.h"
-
-#include <tinyobj_loader_c.h>
 
 int main( int argc, char *argv[] )
 {
@@ -16,10 +14,10 @@ int main( int argc, char *argv[] )
 
 	log_info( "Arguments: %s", args.c_str() );
 
-	core_init( WINDOW | AUDIO | INPUT | TIMER );
+	sys_init( WINDOW | AUDIO | INPUT | TIMER );
 	app_init( init, free, tick, update, render );
 	app_loop();
-	core_free();
+	sys_free();
 
 	return 0;
 }

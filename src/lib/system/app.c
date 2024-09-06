@@ -1,5 +1,5 @@
 #include "app.h"
-#include "internal/core.h"
+#include "global.h"
 #include <util/log.h>
 
 #include <system/input.h>
@@ -44,8 +44,8 @@ void app_loop( void )
     struct app *self = &core.app.state;
     self->running = true;
 
-    float frame_curr  = time_now();
-    float frame_prev  = time_now();
+    float frame_curr  = time_ticks();
+    float frame_prev  = time_ticks();
     float frame_timer = frame_prev;
     float frame_last  = 0;
 
@@ -76,7 +76,7 @@ void app_loop( void )
         self->frame_count++;
 
         // get frame timing
-        frame_curr = time_now();
+        frame_curr = time_ticks();
         float delta_time  = frame_curr - frame_prev;
 
         frame_prev  = frame_curr;
@@ -103,7 +103,7 @@ void app_loop( void )
         }
 
         // apply fps cap
-        float frame_time = frame_curr - time_now();
+        float frame_time = frame_curr - time_ticks();
         if ( frame_time < self->frame_target )
         {
             time_sleep( self->frame_target - frame_time );

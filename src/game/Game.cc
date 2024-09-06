@@ -12,7 +12,7 @@
 
 #include "Ship.h"
 
-#include <system/internal/core.h>
+#include <system/global.h>
 
 Entity ship;
 
@@ -51,32 +51,32 @@ int tick( void )
 int update( void )
 {
 	ship.Update();
-	if ( input_key_press( KB_W ) )
+	if ( input_key_press( K_W ) )
 	{
 		ship.move.y += 1.0f;
 	}
 
-	if ( input_key_press( KB_S ) )
+	if ( input_key_press( K_S ) )
 	{
 		ship.move.y -= 1.0f;
 	}
 
-	if ( input_key_press( KB_A ) )
+	if ( input_key_press( K_A ) )
 	{
 		ship.move.x += 1.0f;
 	}
 
-	if ( input_key_press( KB_D ) )
+	if ( input_key_press( K_D ) )
 	{
 		ship.move.x -= 1.0f;
 	}
 
-	if ( input_key_press( KB_E ) )
+	if ( input_key_press( K_E ) )
 	{
 		ship.rotate += 1.0f;
 	}
 
-	if ( input_key_press( KB_Q ) )
+	if ( input_key_press( K_Q ) )
 	{
 		ship.rotate -= 1.0f;
 	}

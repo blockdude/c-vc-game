@@ -13,105 +13,105 @@ enum input_status
 // keyboard button input
 enum input_key
 {
-    KB_FIRST      = 0,
+    K_FIRST      = 0,
 
-    KB_NONE       = 0,
+    K_NONE       = 0,
 
-    KB_A          = 4,
-    KB_B          = 5,
-    KB_C          = 6,
-    KB_D          = 7,
-    KB_E          = 8,
-    KB_F          = 9,
-    KB_G          = 10,
-    KB_H          = 11,
-    KB_I          = 12,
-    KB_J          = 13,
-    KB_K          = 14,
-    KB_L          = 15,
-    KB_M          = 16,
-    KB_N          = 17,
-    KB_O          = 18,
-    KB_P          = 19,
-    KB_Q          = 20,
-    KB_R          = 21,
-    KB_S          = 22,
-    KB_T          = 23,
-    KB_U          = 24,
-    KB_V          = 25,
-    KB_W          = 26,
-    KB_X          = 27,
-    KB_Y          = 28,
-    KB_Z          = 29,
+    K_A          = 4,
+    K_B          = 5,
+    K_C          = 6,
+    K_D          = 7,
+    K_E          = 8,
+    K_F          = 9,
+    K_G          = 10,
+    K_H          = 11,
+    K_I          = 12,
+    K_J          = 13,
+    K_K          = 14,
+    K_L          = 15,
+    K_M          = 16,
+    K_N          = 17,
+    K_O          = 18,
+    K_P          = 19,
+    K_Q          = 20,
+    K_R          = 21,
+    K_S          = 22,
+    K_T          = 23,
+    K_U          = 24,
+    K_V          = 25,
+    K_W          = 26,
+    K_X          = 27,
+    K_Y          = 28,
+    K_Z          = 29,
 
-    KB_0          = 30,
-    KB_1          = 31,
-    KB_2          = 32,
-    KB_3          = 33,
-    KB_4          = 34,
-    KB_5          = 35,
-    KB_6          = 36,
-    KB_7          = 37,
-    KB_8          = 38,
-    KB_9          = 39,
+    K_0          = 30,
+    K_1          = 31,
+    K_2          = 32,
+    K_3          = 33,
+    K_4          = 34,
+    K_5          = 35,
+    K_6          = 36,
+    K_7          = 37,
+    K_8          = 38,
+    K_9          = 39,
 
-    KB_RETURN     = 40,
-    KB_ESCAPE     = 41,
-    KB_BACKSPACE  = 42,
-    KB_TAB        = 43,
-    KB_SPACE      = 44,
+    K_RETURN     = 40,
+    K_ESCAPE     = 41,
+    K_BACKSPACE  = 42,
+    K_TAB        = 43,
+    K_SPACE      = 44,
 
-    KB_MINUS      = 45,
-    KB_EQUAL      = 46,
-    KB_LBRACKET   = 47,
-    KB_RBRACKET   = 48,
-    KB_BACKSLASH  = 49,
+    K_MINUS      = 45,
+    K_EQUAL      = 46,
+    K_LBRACKET   = 47,
+    K_RBRACKET   = 48,
+    K_BACKSLASH  = 49,
 
-    KB_RIGHT      = 79,
-    KB_LEFT       = 80,
-    KB_DOWN       = 81,
-    KB_UP         = 82,
+    K_RIGHT      = 79,
+    K_LEFT       = 80,
+    K_DOWN       = 81,
+    K_UP         = 82,
     
-    KB_LCTRL      = 224,
-    KB_LSHIFT     = 225,
-    KB_LALT       = 226,
-    KB_LMETA      = 227,
+    K_LCTRL      = 224,
+    K_LSHIFT     = 225,
+    K_LALT       = 226,
+    K_LMETA      = 227,
 
-    KB_RCTRL      = 228,
-    KB_RSHIFT     = 229,
-    KB_RALT       = 230,
-    KB_RMETA      = 231,
+    K_RCTRL      = 228,
+    K_RSHIFT     = 229,
+    K_RALT       = 230,
+    K_RMETA      = 231,
 
-    KB_COUNT,
-    KB_LAST       = KB_RSHIFT
+    K_COUNT,
+    K_LAST       = K_RSHIFT
 };
 
 // mouse button input
 enum input_button
 {
-    MB_FIRST      = 0,
+    B_FIRST      = 0,
 
-    MB_LEFT       = 0,
-    MB_RIGHT      = 1,
-    MB_MIDDLE     = 2,
-    MB_FORWARD    = 3,
-    MB_BACK       = 4,
+    B_LEFT       = 0,
+    B_RIGHT      = 1,
+    B_MIDDLE     = 2,
+    B_FORWARD    = 3,
+    B_BACK       = 4,
 
-    MB_COUNT,
-    MB_LAST       = MB_COUNT - 1
+    B_COUNT,
+    B_LAST       = B_COUNT - 1
 };
 
 enum input_state
 {
-    KEY_STATE_DOWN         = 0x01,
-    KEY_STATE_UP           = 0x02,
-    KEY_STATE_PRESS        = 0x04,
-    KEY_STATE_REPEAT       = 0x08,
+    S_DOWN       = 0x01,
+    S_UP         = 0x02,
+    S_PRESS      = 0x04,
+    S_REPEAT     = 0x08,
 
-    KEY_STATE_PREV_DOWN    = 0x10,
-    KEY_STATE_PREV_UP      = 0x20,
-    KEY_STATE_PREV_PRESS   = 0x40,
-    KEY_STATE_PREV_REPEAT  = 0x80
+    P_DOWN       = 0x10,
+    P_UP         = 0x20,
+    P_PRESS      = 0x40,
+    P_REPEAT     = 0x80
 };
 
 #ifdef __cplusplus
@@ -119,6 +119,9 @@ extern "C" {
 #endif
 
 int input_poll( void );
+
+int  input_key( int key );
+int  input_button( int key );
 
 bool input_key_down( int key );
 bool input_key_up( int key );

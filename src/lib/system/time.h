@@ -1,9 +1,6 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include "internal/sys.h"
-#include <util/types.h>
-
 // units per second.
 #define TIMESCALE 1.0f
 
@@ -11,15 +8,8 @@
 extern "C" {
 #endif
 
-float time_now( void )
-{
-    return sys_ticks();
-}
-
-void  time_sleep( float s )
-{
-    sys_sleep( s );
-}
+float time_ticks( void );
+void  time_sleep( float s );
 
 #ifdef __cplusplus
 }

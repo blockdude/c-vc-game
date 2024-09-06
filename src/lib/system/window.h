@@ -20,12 +20,10 @@ extern "C" {
 #endif
 
 void   window_swap( void );
-
 void   window_size_set( int w, int h );
 void   window_title_set( const char *title );
 void   window_set( unsigned int flags, bool state );
 void   window_toggle( unsigned int flags );
-
 void   window_size( int *w, int *h );
 
 // get sdl handle
