@@ -7,11 +7,12 @@
 
 #include <graphics/gfx.h>
 
-#include <system/timestep.h>
 #include <system/window.h>
 #include <system/input.h>
 
 #include "Ship.h"
+
+#include <system/timestep.h>
 
 static Entity ship;
 
@@ -20,10 +21,9 @@ class GameManager
 public:
 	void Init( void )
 	{
-		SETFPS( 144 );
+		SETFPS( 0 );
 		SETTPS( 100 );
 		window_set( WINDOW_VSYNC, false );
-
 		ship.Init();
 	}
 
@@ -35,6 +35,12 @@ public:
 	{
 		ship.Tick();
 
+		std::string s =
+			"fps: " + std::to_string( FPS() ) + " | "
+			"fps: " + std::to_string( TPS() ) + " | "
+			"fps: " + std::to_string( __loop->t_delta ) + " | ";
+
+		window_title_set( s.c_str() );
 	}
 
 	void Update( void )
@@ -69,13 +75,6 @@ public:
 		{
 			ship.rotate -= 1.0f;
 		}
-
-		std::string s =
-			"fps: " + std::to_string( FPS() ) + " | "
-			"fps: " + std::to_string( TPS() ) + " | "
-			"fps: " + std::to_string( __loop.t_delta ) + " | ";
-
-		window_title_set( s.c_str() );
 	}
 
 	void Render( void )
