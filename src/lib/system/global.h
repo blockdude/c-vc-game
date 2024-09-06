@@ -4,6 +4,7 @@
 #include "app.h"
 #include "input.h"
 
+#include <stdbool.h>
 #include <util/types.h>
 
 struct core
@@ -13,6 +14,7 @@ struct core
 	struct
 	{
 		bool         	running;
+		bool			quit;
 
 		int          	f_rate;
 		float        	f_avg;

@@ -35,13 +35,6 @@ public:
 	{
 		ship.Tick();
 
-		std::string s =
-			"fps: " + std::to_string( FPS() ) + " | " +
-			"tps: " + std::to_string( TPS() ) + " | " +
-			"dt : " + std::to_string( core.timestep.t_delta ) + " | " +
-			"dt : " + std::to_string( core.timestep.f_delta ) + " | ";
-
-		window_title_set( s.c_str() );
 	}
 
 	void Update( void )
@@ -76,6 +69,13 @@ public:
 		{
 			ship.rotate -= 1.0f;
 		}
+
+		std::string s =
+			"fps: " + std::to_string( FPS() ) + " | "
+			"fps: " + std::to_string( TPS() ) + " | "
+			"fps: " + std::to_string( core.timestep.t_delta ) + " | ";
+
+		window_title_set( s.c_str() );
 	}
 
 	void Render( void )
@@ -92,19 +92,16 @@ public:
 	{
 		Init();
 
-		STARTLOOP();
-		STARTTICK();
+		LOOP()
+		{
+			TICK()
+			{
+				Tick();
+			}
 
-		Tick();
-
-		ENDTICK();
-		STARTUPDATE();
-
-		Update();
-		Render();
-
-		ENDUPDATE();
-		ENDLOOP();
+			Update();
+			Render();
+		}
 
 		Free();
 	}

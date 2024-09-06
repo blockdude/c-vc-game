@@ -60,15 +60,12 @@ void app_loop( void )
 	// begin main loop
     while ( core.timestep.running )
     {
-        core.timestep.elapsed += core.timestep.f_delta;
-        core.timestep.t_delta += core.timestep.f_delta;
-        core.timestep.timer   -= core.timestep.f_delta;
-
         // poll/handle events
         if ( input_poll() == INPUT_QUIT )
-            goto exit;
+            break;
 
         // maintain fixed time step for each tick
+        core.timestep.t_delta += core.timestep.f_delta;
         while ( core.timestep.t_delta >= core.timestep.t_target )
         {
             PROC_EVENT( tick );
@@ -108,10 +105,11 @@ void app_loop( void )
             core.timestep.f_delta += wait;
         }
 
+        core.timestep.elapsed += core.timestep.f_delta;
+        core.timestep.timer -= core.timestep.f_delta;
         core.timestep.f_count++;
     }
 
-exit:
     PROC_EVENT( free );
 }
 
