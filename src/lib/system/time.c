@@ -7,7 +7,7 @@ double time_ticks( void )
     return ( float ) t / 1000000000.0;
 }
 
-void time_sleep( double s )
+void time_delay( double s )
 {
     Uint64 t = s * 1000000000.0;
     SDL_DelayNS( t );

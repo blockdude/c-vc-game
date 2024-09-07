@@ -9,8 +9,8 @@ struct core core = {
     .window.initialized = false,
     .window.flags       = 0,
     .window.title       = "",
-    .window.width       = 700,
-    .window.height      = 700,
+    .window.width       = 900,
+    .window.height      = 900,
     .window.aspect      = 1.0f,
 
     .input              = { 0 },
@@ -220,8 +220,15 @@ void sys_window_init( void )
     goto finalize;
 
 cleanup:
-    if ( system.context ) { SDL_GL_DestroyContext( system.context ); }
-    if ( system.window )  { SDL_DestroyWindow( system.window );      }
+    if ( system.context )
+        SDL_GL_DestroyContext( system.context );
+
+    if ( system.window )
+        SDL_DestroyWindow( system.window );
+
+    system.window = NULL;
+    system.context = NULL;
+
     goto exit;
 
 finalize:

@@ -59,7 +59,7 @@ extern struct timestep *__loop;
 
 #ifndef DELAY 
 #include <system/time.h>
-#define DELAY( _s ) time_sleep( _s )
+#define DELAY( __s ) time_delay( __s )
 #endif
 
 #ifndef POLLEVENTS
@@ -67,12 +67,12 @@ extern struct timestep *__loop;
 #define POLLEVENTS() input_poll()
 #endif
 
-#define FPS()        ( __loop->f_rate )
-#define TPS()        ( __loop->t_rate )
-#define SETFPS( _t ) ( __loop->f_target = ( _t ) <= 0.0f ? -1.0f : 1.0f / ( _t ) )
-#define SETTPS( _t ) ( __loop->t_target = ( _t ) <= 0.0f ? -1.0f : 1.0f / ( _t ) )
-#define STOPPING()   ( __loop->quit )
-#define STOPLOOP()   ( __loop->quit = true )
+#define FPS()         ( __loop->f_rate )
+#define TPS()         ( __loop->t_rate )
+#define SETFPS( __t ) ( __loop->f_target = ( __t ) <= 0.0f ? -1.0f : 1.0f / ( __t ) )
+#define SETTPS( __t ) ( __loop->t_target = ( __t ) <= 0.0f ? -1.0f : 1.0f / ( __t ) )
+#define STOPPING()    ( __loop->quit )
+#define STOPLOOP()    ( __loop->quit = true )
 
 #define LOOPWHILE( __c ) \
     for ( _loop_init(); ( __c ) && _loop_poll(); _loop_update() )
@@ -90,7 +90,9 @@ static inline void _tick_init( void )
 
 static inline bool _tick_proc( void )
 {
-    return __loop->t_delta >= __loop->t_target;
+    return
+        ( __loop->t_target != -1.0f ) &&
+        ( __loop->t_target <= __loop->t_delta );
 }
 
 static inline void _tick_update( void )
@@ -101,26 +103,30 @@ static inline void _tick_update( void )
 
 static inline bool _loop_poll( void )
 {
-    if ( POLLEVENTS() != 0 )
-        return false;
-    return true;
+    return POLLEVENTS() == 0;
 }
 
 static inline void _loop_init( void )
 {
     __loop->quit     = false;
 
-    __loop->current  = GETTIME();
-    __loop->previous = __loop->current;
+    __loop->f_rate   = 0;
+    __loop->f_avg    = 0;
+    __loop->f_delta  = 0;
+    __loop->f_count  = 0;
 
-    __loop->f_delta  = 0.0f;
+    __loop->t_rate   = 0;
+    __loop->t_avg    = 0;
+    __loop->t_delta  = 0;
+    __loop->t_count  = 0;
+
+    __loop->timer    = 1.0f;
     __loop->f_last   = 0;
-
-    __loop->t_delta  = 0.0f;
     __loop->t_last   = 0;
 
-    __loop->elapsed  = 0.0f;
-    __loop->timer    = 1.0f;
+    __loop->elapsed  = 0;
+    __loop->current  = GETTIME();
+    __loop->previous = __loop->current;
 }
 
 static inline void _loop_update( void )
@@ -139,7 +145,7 @@ static inline void _loop_update( void )
         __loop->t_rate = __loop->t_count - __loop->t_last;
         __loop->f_last = __loop->f_count;
         __loop->t_last = __loop->t_count;
-        __loop->timer = 1.0f;
+        __loop->timer  = 1.0f;
     }
 
     // apply fps cap
@@ -147,11 +153,9 @@ static inline void _loop_update( void )
     {
         DELAY( __loop->f_target - __loop->f_delta );
 
-        __loop->current = GETTIME();
-        float wait = __loop->current - __loop->previous;
+        __loop->current  = GETTIME();
+        __loop->f_delta += __loop->current - __loop->previous;
         __loop->previous = __loop->current;
-
-        __loop->f_delta += wait;
     }
 
     __loop->elapsed += __loop->f_delta;

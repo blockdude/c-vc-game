@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 double time_ticks( void );
-void   time_sleep( double s );
+void   time_delay( double s );
 
 #ifdef __cplusplus
 }
