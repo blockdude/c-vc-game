@@ -8,7 +8,9 @@
 #include <util/camera.h>
 #include <util/log.h>
 
-#include <graphics/gfx.h>
+#include <graphics/shader.h>
+#include <graphics/vao.h>
+#include <graphics/vbo.h>
 #include <system/window.h>
 
 static float mesh[] = {

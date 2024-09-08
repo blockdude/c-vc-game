@@ -2,6 +2,7 @@
 #include "graphics/shader.h"
 #include "graphics/vao.h"
 #include "graphics/vbo.h"
+#include "math/color.h"
 #include "math/math.h"
 #include "math/matrix.h"
 #include "math/quat.h"
