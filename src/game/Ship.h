@@ -39,9 +39,9 @@ public:
 	float rotate;
 
 	vec2_t position = { 0.0f };
-	vec2_t velocity = { 0.0f };
-
 	float angle = 0.0f;
+
+	vec2_t velocity = { 0.0f };
 	float angularVelocity = 0.0f;
 
 	float acceleration = 0.001f;
@@ -131,6 +131,8 @@ public:
 		position = vec2_add( position, velocity );
 
 		camera.aspect = window_aspect();
+		camera.eye.x = position.x;
+		camera.eye.y = position.y;
 		camera_update( &camera );
 	}
 

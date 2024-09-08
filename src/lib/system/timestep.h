@@ -2,17 +2,6 @@
 #define TIMESTEP_H
 
 /*
- * This only works locally not globally.
- *
- * There is no global state and is ment to only help quickly
- * create a game loop.
- *
- * Calling macros such as - FPS() - from other translation units
- * will not do much.
- *
- * TODO: Allow the loop to edit a global struct if a macro is
- * defined?
- *
  * Note: GETTIME and DELAY must be in seconds.
  * Note: POLLEVENTS must return an int where 0 is success.
  */
@@ -45,12 +34,8 @@ struct timestep
     double          previous;
 };
 
-#ifndef EXTERNAL_LOOP_DATA
-static struct timestep __loop_local;
-static struct timestep *__loop = &__loop_local;
-#else
+// defined in system.c
 extern struct timestep *__loop;
-#endif
 
 #ifndef GETTIME
 #include <system/time.h>
@@ -69,6 +54,10 @@ extern struct timestep *__loop;
 
 #define FPS()         ( __loop->f_rate )
 #define TPS()         ( __loop->t_rate )
+#define AVGFPS()      ( __loop->f_avg )
+#define AVGTPS()      ( __loop->t_avg )
+#define FDELTA()      ( __loop->f_delta )
+#define TDELTA()      ( __loop->t_delta )
 #define SETFPS( __t ) ( __loop->f_target = ( __t ) <= 0.0f ? -1.0f : 1.0f / ( __t ) )
 #define SETTPS( __t ) ( __loop->t_target = ( __t ) <= 0.0f ? -1.0f : 1.0f / ( __t ) )
 #define STOPPING()    ( __loop->quit )
@@ -91,7 +80,7 @@ static inline void _tick_init( void )
 static inline bool _tick_proc( void )
 {
     return
-        ( __loop->t_target != -1.0f ) &&
+        ( __loop->t_target > 0.0f ) &&
         ( __loop->t_target <= __loop->t_delta );
 }
 

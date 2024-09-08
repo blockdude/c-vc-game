@@ -96,24 +96,24 @@ static inline mat4_t mat4_invert( mat4_t m )
     float b11 = a22 * a33 - a23 * a32;
 
     // Calculate the invert determinant (inlined to avoid double-caching)
-    float idet = 1.0f/(b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+    float idet = 1.0f / ( b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06 );
 
-    result.m00 = (  a11 * b11 - a12 * b10 + a13 * b09) * idet;
-    result.m10 = ( -a01 * b11 + a02 * b10 - a03 * b09) * idet;
-    result.m20 = (  a31 * b05 - a32 * b04 + a33 * b03) * idet;
-    result.m30 = ( -a21 * b05 + a22 * b04 - a23 * b03) * idet;
-    result.m01 = ( -a10 * b11 + a12 * b08 - a13 * b07) * idet;
-    result.m11 = (  a00 * b11 - a02 * b08 + a03 * b07) * idet;
-    result.m21 = ( -a30 * b05 + a32 * b02 - a33 * b01) * idet;
-    result.m31 = (  a20 * b05 - a22 * b02 + a23 * b01) * idet;
-    result.m02 = (  a10 * b10 - a11 * b08 + a13 * b06) * idet;
-    result.m12 = ( -a00 * b10 + a01 * b08 - a03 * b06) * idet;
-    result.m22 = (  a30 * b04 - a31 * b02 + a33 * b00) * idet;
-    result.m32 = ( -a20 * b04 + a21 * b02 - a23 * b00) * idet;
-    result.m03 = ( -a10 * b09 + a11 * b07 - a12 * b06) * idet;
-    result.m13 = (  a00 * b09 - a01 * b07 + a02 * b06) * idet;
-    result.m23 = ( -a30 * b03 + a31 * b01 - a32 * b00) * idet;
-    result.m33 = (  a20 * b03 - a21 * b01 + a22 * b00) * idet;
+    result.m00 = (  a11 * b11 - a12 * b10 + a13 * b09 ) * idet;
+    result.m10 = ( -a01 * b11 + a02 * b10 - a03 * b09 ) * idet;
+    result.m20 = (  a31 * b05 - a32 * b04 + a33 * b03 ) * idet;
+    result.m30 = ( -a21 * b05 + a22 * b04 - a23 * b03 ) * idet;
+    result.m01 = ( -a10 * b11 + a12 * b08 - a13 * b07 ) * idet;
+    result.m11 = (  a00 * b11 - a02 * b08 + a03 * b07 ) * idet;
+    result.m21 = ( -a30 * b05 + a32 * b02 - a33 * b01 ) * idet;
+    result.m31 = (  a20 * b05 - a22 * b02 + a23 * b01 ) * idet;
+    result.m02 = (  a10 * b10 - a11 * b08 + a13 * b06 ) * idet;
+    result.m12 = ( -a00 * b10 + a01 * b08 - a03 * b06 ) * idet;
+    result.m22 = (  a30 * b04 - a31 * b02 + a33 * b00 ) * idet;
+    result.m32 = ( -a20 * b04 + a21 * b02 - a23 * b00 ) * idet;
+    result.m03 = ( -a10 * b09 + a11 * b07 - a12 * b06 ) * idet;
+    result.m13 = (  a00 * b09 - a01 * b07 + a02 * b06 ) * idet;
+    result.m23 = ( -a30 * b03 + a31 * b01 - a32 * b00 ) * idet;
+    result.m33 = (  a20 * b03 - a21 * b01 + a22 * b00 ) * idet;
 
     return result;
 }
@@ -299,8 +299,8 @@ static inline mat4_t mat4_rotate_y( float angle )
         0.0f, 0.0f, 0.0f, 1.0f
 	}; // MatrixIdentity()
 
-    float cos = cosf(angle);
-    float sin = sinf(angle);
+    float cos = cosf( angle );
+    float sin = sinf( angle );
 
     result.m00 =  cos;
     result.m20 = -sin;
@@ -321,8 +321,8 @@ static inline mat4_t mat4_rotate_z( float angle )
 		0.0f, 0.0f, 0.0f, 1.0f
 	}; // MatrixIdentity()
 
-    float cos = cosf(angle);
-    float sin = sinf(angle);
+    float cos = cosf( angle );
+    float sin = sinf( angle );
 
     result.m00 =  cos;
     result.m10 =  sin;

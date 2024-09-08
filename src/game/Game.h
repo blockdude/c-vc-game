@@ -1,115 +1,16 @@
-#ifndef GM_H
-#define GM_H
+#ifndef GAME_H
+#define GAME_H
 
-#include <string>
-
-#include <util/log.h>
-
-#include <graphics/gfx.h>
-
-#include <system/window.h>
-#include <system/input.h>
-
-#include "Ship.h"
-
-#include <system/timestep.h>
-
-static Entity ship;
-
-class GameManager
+class Game
 {
 public:
-	void Init( void )
-	{
-		SETFPS( 144 );
-		SETTPS( 100 );
-		window_set( WINDOW_VSYNC | WINDOW_RELATIVE_MOUSE, true );
-		ship.Init();
-	}
-
-	void Free( void )
-	{
-	}
-
-	void Tick( void )
-	{
-		ship.Tick();
-
-		std::string s =
-			"fps: " + std::to_string( FPS() ) + " | "
-			"fps: " + std::to_string( TPS() ) + " | "
-			"fps: " + std::to_string( __loop->t_delta ) + " | "
-			"fps: " + std::to_string( __loop->f_delta ) + " | ";
-
-		window_title_set( s.c_str() );
-	}
-
-	void Update( void )
-	{
-		ship.Update();
-		if ( input_key_press( K_W ) )
-		{
-			ship.move.y += 1.0f;
-		}
-
-		if ( input_key_press( K_S ) )
-		{
-			ship.move.y -= 1.0f;
-		}
-
-		if ( input_key_press( K_A ) )
-		{
-			ship.move.x += 1.0f;
-		}
-
-		if ( input_key_press( K_D ) )
-		{
-			ship.move.x -= 1.0f;
-		}
-
-		if ( input_key_press( K_E ) )
-		{
-			ship.rotate += 1.0f;
-		}
-
-		if ( input_key_press( K_Q ) )
-		{
-			ship.rotate -= 1.0f;
-		}
-
-		if ( input_key_down( K_R ) )
-		{
-			ship.Reset();
-		}
-	}
-
-	void Render( void )
-	{
-		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-		ship.Draw();
-
-		window_swap();
-	}
-
-	void Run( void )
-	{
-		Init();
-
-		LOOP()
-		{
-			TICK()
-			{
-				Tick();
-			}
-
-			Update();
-			Render();
-		}
-
-		Free();
-	}
+	void Init( void );
+	void Free( void );
+	void Tick( void );
+	void Update( void );
+	void Render( void );
 };
+
+extern Game *game;
 
 #endif

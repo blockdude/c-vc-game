@@ -1,14 +1,22 @@
 #include "system.h"
 #include "global.h"
+#include "timestep.h"
 
 #include <util/log.h>
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
 
+/*
+ * =============================
+ * -----------------------------
+ * GLOBAL
+ * -----------------------------
+ */
+
 struct core core = {
     .window.initialized = false,
     .window.flags       = 0,
-    .window.title       = "",
+    .window.title       = "Application",
     .window.width       = 900,
     .window.height      = 900,
     .window.aspect      = 1.0f,
@@ -17,6 +25,28 @@ struct core core = {
     .timer              = { 0 },
     .audio              = { 0 }
 };
+
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * TIMESTEP
+ * -----------------------------
+ */
+
+struct timestep __loop_local;
+struct timestep *__loop = &__loop_local;
+
+/*
+ * =============================
+ */
+
+
 
 /*
  * =============================
