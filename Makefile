@@ -13,7 +13,10 @@ NPROC := $(shell nproc)
 endif
 
 RUN_CMD_MKDIR  = @echo "  MKDIR " $@;
+RUN_CMD_TOUCH  = @echo "  TOUCH " $@;
 RUN_CMD_RM     = @echo "  RM    " $@;
+RUN_CMD_CP     = @echo "  CP    " $@;
+RUN_CMD_MV     = @echo "  MV    " $@;
 
 RUN_CMD_AR     = @echo "  AR    " $@;
 RUN_CMD_CC     = @echo "  CC    " $@;
@@ -97,8 +100,8 @@ INCLUDE += -I$(GLAD_PATH)/include
 INCLUDE += -I$(STB_PATH)
 INCLUDE += -I$(TOL_PATH)
 
-LDFLAGS += -L$(BLD_PATH)/bin/SDL
-LDFLAGS += -L$(BLD_PATH)/bin/glad
+LDFLAGS += -L$(BIN_PATH)/SDL
+LDFLAGS += -L$(BIN_PATH)/glad
 
 # =============================
 
@@ -144,15 +147,21 @@ echo ----BUILDING SDL3----
 echo =====================
 echo
 
-cd $(SDL3_PATH) && cmake -S . -B build && cmake --build build
+cd $(SDL3_PATH) && cmake -S . -DSDL_STATIC=ON -B build && cmake --build build
 
-cp $(SDL3_PATH)/build/libSDL3.so $(BLD_PATH)/bin/SDL
-cd $(BLD_PATH)/bin/SDL && ln -s libSDL3.so libSDL3.so.0
+cp $(SDL3_PATH)/build/libSDL3.so $(BIN_PATH)/SDL
+cd $(BIN_PATH)/SDL && ln -s libSDL3.so libSDL3.so.0
+
+echo
+echo =====================
+echo ----SDL3 FINISHED----
+echo =====================
+echo
 
 endef
 
-DIRS       += $(BLD_PATH)/bin/SDL
-LIBS       += $(BLD_PATH)/bin/SDL/libSDL3.so
+DIRS       += $(BIN_PATH)/SDL
+LIBS       += $(BIN_PATH)/SDL/libSDL3.so
 CLEAN_LIBS += (rm -r $(SDL3_PATH)/build 2> /dev/null || true);
 
 # =============================
@@ -172,18 +181,21 @@ echo ----BUILDING GLAD----
 echo =====================
 echo
 
-cd $(GLAD_PATH) && mkdir -p build && $(CC) -Iinclude -o build/gl.o -c -fpic src/gl.c
-cd $(GLAD_PATH) && mkdir -p build && $(CC) -Iinclude -o build/gles2.o -c -fpic src/gles2.c
-cd $(GLAD_PATH) && mkdir -p build && $(CC) -Iinclude -o build/vulkan.o -c -fpic src/vulkan.c
-cd $(GLAD_PATH) && mkdir -p build && $(AR) rcs build/libglad.a build/gl.o build/gles2.o build/vulkan.o
-echo [100%] built target glad
+echo "  CC    " $(OBJ_PATH)/glad/gl.o 		&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gl.o     -c -fpic $(GLAD_PATH)/src/gl.c
+echo "  CC    " $(OBJ_PATH)/glad/gles.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gles2.o  -c -fpic $(GLAD_PATH)/src/gles2.c
+echo "  CC    " $(OBJ_PATH)/glad/vulkan.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/vulkan.o -c -fpic $(GLAD_PATH)/src/vulkan.c
+echo "  AR    " $(BIN_PATH)/glad/libglad.a 	&& $(AR) rcs $(BIN_PATH)/glad/libglad.a $(OBJ_PATH)/glad/gl.o $(OBJ_PATH)/glad/gles2.o $(OBJ_PATH)/glad/vulkan.o
 
-cp $(GLAD_PATH)/build/libglad.a $(BLD_PATH)/bin/glad
+echo
+echo =====================
+echo ----GLAD FINISHED----
+echo =====================
+echo
 
 endef
 
-DIRS	   += $(BLD_PATH)/bin/glad
-LIBS       += $(BLD_PATH)/bin/glad/libglad.a
+DIRS	   += $(BIN_PATH)/glad $(OBJ_PATH)/glad
+LIBS       += $(BIN_PATH)/glad/libglad.a
 CLEAN_LIBS += (rm -r $(GLAD_PATH)/obj 2> /dev/null || true);
 
 # =============================
@@ -316,15 +328,18 @@ build: debug
 debug: CPPFLAGS += -DDEBUG
 debug: CFLAGS   += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic -Wno-missing-field-initializers
 debug: CXXFLAGS += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic -Wno-missing-field-initializers
-debug: $(GAME_TARGET) $(TEST_TARGET)
+debug: $(GAME_TARGET)
 
 release: CPPFLAGS += -DRELEASE
 release: CFLAGS   += -O3 -Wall
 release: CXXFLAGS += -O3 -Wall
 release: $(GAME_TARGET)
 
-test: debug
-	@./scripts/run.sh "$(TEST_BIN_PATH)/test_all --enable-mixed-units"
+test: CPPFLAGS += -DDEBUG
+test: CFLAGS   += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic -Wno-missing-field-initializers
+test: CXXFLAGS += -g -Wall -Wextra -Wshadow -ggdb3 -pedantic -fpic -Wno-missing-field-initializers
+test: $(TEST_TARGET)
+	@./scripts/run.sh "$(TEST_BIN_PATH)/test-all --enable-mixed-units"
 
 TEST = $(TEST_SRC:$(TEST_SRC_PATH)/%.c=%)
 $(TEST): debug

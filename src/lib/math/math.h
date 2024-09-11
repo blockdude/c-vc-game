@@ -24,21 +24,8 @@
 #define DEGTORAD( x ) ( ( x ) * ( PI / 180.0f ) )
 #define RADTODEG( x ) ( ( x ) * ( 180.0f / PI ) )
 
-/*
- * linear interpolation
- */
-static inline float llerp( float a, float b, float t )
-{
-	return a + t * ( b - a );
-}
-
-/*
- * normalize input between 0 and 1
- */
-static inline float normalize( float x, float min, float max )
-{
-	return ( x - min ) / ( max - min );
-}
+#define LERP( a, b, t ) ( ( a ) + ( t ) * ( ( b ) - ( a ) ) )
+#define NORMALIZE( x, min, max ) ( ( ( x ) - ( min ) ) / ( ( max ) - ( min ) ) )
 
 /*
  * check if two floats are equal within an epsilon value

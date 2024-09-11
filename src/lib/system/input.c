@@ -4,7 +4,7 @@
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
 
-static const int key_map[ SDL_NUM_SCANCODES ] = {
+static const int keymap[ SDL_NUM_SCANCODES ] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
 
     0, 0, 0,
@@ -128,7 +128,7 @@ static const int key_map[ SDL_NUM_SCANCODES ] = {
     K_RMETA,          // SDL_SCANCODE_RGUI
 };
 
-static const int button_map[] = {
+static const int btnmap[] = {
     0,
     B_LEFT,           // SDL_BUTTON_LEFT
     B_MIDDLE,         // SDL_BUTTON_MIDDLE
@@ -178,25 +178,25 @@ int input_poll( void )
 
             case SDL_EVENT_KEY_DOWN:
 
-                core.input.k_state[ key_map[ event.key.scancode ] ] = S_DOWN | S_PRESS;
+                core.input.k_state[ keymap[ event.key.scancode ] ] = S_DOWN | S_PRESS;
 
                 break;
 
             case SDL_EVENT_KEY_UP:
 
-                core.input.k_state[ key_map[ event.key.scancode ] ] = S_UP;
+                core.input.k_state[ keymap[ event.key.scancode ] ] = S_UP;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-                core.input.m_state[ button_map[ event.button.button ] ] = S_DOWN | S_PRESS;
+                core.input.m_state[ btnmap[ event.button.button ] ] = S_DOWN | S_PRESS;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
 
-                core.input.m_state[ button_map[ event.button.button ] ] = S_UP;
+                core.input.m_state[ btnmap[ event.button.button ] ] = S_UP;
 
                 break;
 
@@ -227,7 +227,7 @@ bool input_key( int key, unsigned int sflags )
     return ( core.input.k_state[ key ] & sflags ) > 0;
 }
 
-bool input_button( int key, unsigned int sflags )
+bool input_btn( int key, unsigned int sflags )
 {
     return ( core.input.m_state[ key ] & sflags ) > 0;
 }
@@ -247,17 +247,17 @@ bool input_key_press( int key )
     return core.input.k_state[ key ] & S_PRESS;
 }
 
-bool input_mouse_down( int button )
+bool input_btn_down( int button )
 {
     return core.input.m_state[ button ] & S_DOWN;
 }
 
-bool input_mouse_up( int button )
+bool input_btn_up( int button )
 {
     return core.input.m_state[ button ] & S_UP;
 }
 
-bool input_mouse_press( int button )
+bool input_btn_press( int button )
 {
     return core.input.m_state[ button ] & S_PRESS;
 }

@@ -51,7 +51,7 @@ public:
 	void    Init( void );
 	void	Free( void );
 	void	Tick( void );
-	void    Update( void );
+	void    Step( void );
 	void    Draw( void );
 };
 

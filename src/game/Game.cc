@@ -27,7 +27,7 @@ void Game::Tick( void )
 	ship.Tick();
 }
 
-void Game::Update( void )
+void Game::Step( void )
 {
 	std::string s =
 		"fps: " + std::to_string( FPS() ) + " | "
@@ -74,7 +74,7 @@ void Game::Update( void )
 	}
 }
 
-void Game::Render( void )
+void Game::Draw( void )
 {
 	ship.Draw();
 	planet.Draw();

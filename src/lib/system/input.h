@@ -87,7 +87,7 @@ enum input_key
 };
 
 // mouse button input
-enum input_button
+enum input_btn
 {
     B_FIRST      = 0,
 
@@ -99,6 +99,14 @@ enum input_button
 
     B_COUNT,
     B_LAST       = B_COUNT - 1
+};
+
+struct keystate
+{
+    bool down;
+    bool released;
+    bool pressed;
+    bool repeat;
 };
 
 enum input_state
@@ -148,28 +156,47 @@ bool   input_key_up( int key );
  * Check input state of a key.
  * Returns true if any state is true.
  */
-bool   input_button( int key, unsigned int sflags );
+bool   input_btn( int key, unsigned int sflags );
 
 /*
  * Returns true if key is held down.
  */
-bool   input_button_press( int button );
+bool   input_btn_press( int button );
 
 /*
  * Returns true if key is pressed.
  * Lasts one frame.
  */
-bool   input_button_down( int button );
+bool   input_btn_down( int button );
 
 /*
  * Returns true if key is released.
  * Lasts one frame.
  */
-bool   input_button_up( int button );
+bool   input_btn_up( int button );
 
+/*
+ * Returns true if the mouse was moved.
+ * Lasts one frame.
+ */
 bool   input_mouse_moved( void );
+
+/*
+ * Returns a 2d vector of the current mouse position relative to
+ * the screen.
+ */
 vec2_t input_mouse_pos( void );
+
+/*
+ * Returns the amount the mouse has moved between the current
+ * frame and the previous frame.
+ */
 vec2_t input_mouse_delta( void );
+
+/*
+ * Returns the amount the mouse wheel has been scrolled between
+ * the current frame and the previous frame.
+ */
 vec2_t input_mouse_scroll( void );
 
 #ifdef __cplusplus

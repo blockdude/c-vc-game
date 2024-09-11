@@ -28,9 +28,6 @@ struct core
 		float        	aspect;
 		unsigned int 	width;
 		unsigned int 	height;
-
-		void *			handle;
-		void *			context;
 	} window;
 
 	struct
