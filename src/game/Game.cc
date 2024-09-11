@@ -38,37 +38,37 @@ void Game::Step( void )
 	window_title_set( s.c_str() );
 
 	ship.Update();
-	if ( input_key_press( K_W ) )
+	if ( input_keystate( K_W ).pressed )
 	{
 		ship.move.y += 1.0f;
 	}
 
-	if ( input_key_press( K_S ) )
+	if ( input_keystate( K_S ).pressed )
 	{
 		ship.move.y -= 1.0f;
 	}
 
-	if ( input_key_press( K_A ) )
+	if ( input_keystate( K_A ).pressed )
 	{
 		ship.move.x += 1.0f;
 	}
 
-	if ( input_key_press( K_D ) )
+	if ( input_keystate( K_D ).pressed )
 	{
 		ship.move.x -= 1.0f;
 	}
 
-	if ( input_key_press( K_E ) )
+	if ( input_keystate( K_E ).pressed )
 	{
 		ship.rotate += 1.0f;
 	}
 
-	if ( input_key_press( K_Q ) )
+	if ( input_keystate( K_Q ).pressed )
 	{
 		ship.rotate -= 1.0f;
 	}
 
-	if ( input_key_down( K_R ) )
+	if ( input_keystate( K_R ).just_pressed )
 	{
 		ship.Reset();
 	}

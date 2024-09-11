@@ -141,11 +141,17 @@ int input_poll( void )
 {
     // reset keys
     for ( int i = 0; i < K_COUNT; i++ )
-        core.input.k_state[ i ] &= ~( S_DOWN | S_UP );
+    {
+        core.input.k_state[ i ].just_pressed = false;
+        core.input.k_state[ i ].released = false;
+    }
 
     // reset mouse buttons
     for ( int i = 0; i < B_COUNT; i++ )
-        core.input.m_state[ i ] &= ~( S_DOWN | S_UP );
+    {
+        core.input.m_state[ i ].just_pressed = false;
+        core.input.m_state[ i ].released = false;
+    }
 
     // reset mouse events
     core.input.m_moved       = false;
@@ -178,25 +184,29 @@ int input_poll( void )
 
             case SDL_EVENT_KEY_DOWN:
 
-                core.input.k_state[ keymap[ event.key.scancode ] ] = S_DOWN | S_PRESS;
+                core.input.k_state[ keymap[ event.key.scancode ] ].just_pressed = true;
+                core.input.k_state[ keymap[ event.key.scancode ] ].pressed = true;
 
                 break;
 
             case SDL_EVENT_KEY_UP:
 
-                core.input.k_state[ keymap[ event.key.scancode ] ] = S_UP;
+                core.input.k_state[ keymap[ event.key.scancode ] ].pressed = false;
+                core.input.k_state[ keymap[ event.key.scancode ] ].released = true;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-                core.input.m_state[ btnmap[ event.button.button ] ] = S_DOWN | S_PRESS;
+                core.input.m_state[ btnmap[ event.button.button ] ].just_pressed = true;
+                core.input.m_state[ btnmap[ event.button.button ] ].pressed = true;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
 
-                core.input.m_state[ btnmap[ event.button.button ] ] = S_UP;
+                core.input.m_state[ btnmap[ event.button.button ] ].pressed = false;
+                core.input.m_state[ btnmap[ event.button.button ] ].released = true;
 
                 break;
 
@@ -222,44 +232,14 @@ int input_poll( void )
     return result;
 }
 
-bool input_key( int key, unsigned int sflags )
+struct keystate input_keystate( int key )
 {
-    return ( core.input.k_state[ key ] & sflags ) > 0;
+    return core.input.k_state[ key ];
 }
 
-bool input_btn( int key, unsigned int sflags )
+struct keystate input_btnstate( int btn )
 {
-    return ( core.input.m_state[ key ] & sflags ) > 0;
-}
-
-bool input_key_down( int key )
-{
-    return core.input.k_state[ key ] & S_DOWN;
-}
-
-bool input_key_up( int key )
-{
-    return core.input.k_state[ key ] & S_UP;
-}
-
-bool input_key_press( int key )
-{
-    return core.input.k_state[ key ] & S_PRESS;
-}
-
-bool input_btn_down( int button )
-{
-    return core.input.m_state[ button ] & S_DOWN;
-}
-
-bool input_btn_up( int button )
-{
-    return core.input.m_state[ button ] & S_UP;
-}
-
-bool input_btn_press( int button )
-{
-    return core.input.m_state[ button ] & S_PRESS;
+    return core.input.m_state[ btn ];
 }
 
 bool input_mouse_moved( void )

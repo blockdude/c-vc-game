@@ -33,8 +33,8 @@ struct core
 	struct
 	{
 		bool         	initialized;
-		int          	k_state[ K_COUNT ];
-		int          	m_state[ B_COUNT ];
+		struct keystate k_state[ K_COUNT ];
+		struct keystate m_state[ B_COUNT ];
 		bool         	m_moved;
 		vec2_t       	m_wheel;
 		vec2_t       	m_pos_rel;

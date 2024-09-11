@@ -10,7 +10,6 @@ enum input_status
     INPUT_QUIT    =  1
 };
 
-// keyboard button input
 enum input_key
 {
     K_FIRST      = 0,
@@ -86,7 +85,6 @@ enum input_key
     K_LAST       = K_RSHIFT
 };
 
-// mouse button input
 enum input_btn
 {
     B_FIRST      = 0,
@@ -103,23 +101,14 @@ enum input_btn
 
 struct keystate
 {
-    bool down;
-    bool released;
-    bool pressed;
-    bool repeat;
-};
-
-enum input_state
-{
-    S_DOWN       = 0x01,
-    S_UP         = 0x02,
-    S_PRESS      = 0x04,
-    S_REPEAT     = 0x08,
-
-    P_DOWN       = 0x10,
-    P_UP         = 0x20,
-    P_PRESS      = 0x40,
-    P_REPEAT     = 0x80
+    // Key was pressed this frame
+    bool just_pressed : 1;
+    // Key was released this frame
+    bool released     : 1;
+    // Key is being pressed down
+    bool pressed      : 1;
+    // Key was double pressed within a certain time period
+    bool repeated     : 1;
 };
 
 #ifdef __cplusplus
@@ -127,59 +116,23 @@ extern "C" {
 #endif
 
 // poll all events
-int    input_poll( void );
+int input_poll( void );
 
 /*
- * Check input state of a key.
- * Returns true if any state is true.
+ * Returns the keystate of given key
  */
-bool   input_key( int key, unsigned int sflags );
+struct keystate input_keystate( int key );
 
 /*
- * Returns true if key is held down.
+ * Returns the keystate of given button
  */
-bool   input_key_press( int key );
-
-/*
- * Returns true if key is pressed.
- * Lasts one frame.
- */
-bool   input_key_down( int key );
-
-/*
- * Returns true if key is released.
- * Lasts one frame.
- */
-bool   input_key_up( int key );
-
-/*
- * Check input state of a key.
- * Returns true if any state is true.
- */
-bool   input_btn( int key, unsigned int sflags );
-
-/*
- * Returns true if key is held down.
- */
-bool   input_btn_press( int button );
-
-/*
- * Returns true if key is pressed.
- * Lasts one frame.
- */
-bool   input_btn_down( int button );
-
-/*
- * Returns true if key is released.
- * Lasts one frame.
- */
-bool   input_btn_up( int button );
+struct keystate input_btnstate( int btn );
 
 /*
  * Returns true if the mouse was moved.
  * Lasts one frame.
  */
-bool   input_mouse_moved( void );
+bool input_mouse_moved( void );
 
 /*
  * Returns a 2d vector of the current mouse position relative to
