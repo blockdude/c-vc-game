@@ -58,58 +58,58 @@ static const int key_map[ SDL_NUM_SCANCODES ] = {
     K_RBRACKET,       // SDL_SCANCODE_RIGHTBRACKET
     K_BACKSLASH,      // SDL_SCANCODE_BACKSLASH
 
-    0,                 // SDL_SCANCODE_NONUSHASH
-    0,                 // SDL_SCANCODE_SEMICOLON
-    0,                 // SDL_SCANCODE_APOSTROPHE
-    0,                 // SDL_SCANCODE_GRAVE
-    0,                 // SDL_SCANCODE_COMMA
-    0,                 // SDL_SCANCODE_PERIOD
-    0,                 // SDL_SCANCODE_SLASH
-    0,                 // SDL_SCANCODE_CAPSLOCK
-    0,                 // SDL_SCANCODE_F1
-    0,                 // SDL_SCANCODE_F2
-    0,                 // SDL_SCANCODE_F3
-    0,                 // SDL_SCANCODE_F4
-    0,                 // SDL_SCANCODE_F5
-    0,                 // SDL_SCANCODE_F6
-    0,                 // SDL_SCANCODE_F7
-    0,                 // SDL_SCANCODE_F8
-    0,                 // SDL_SCANCODE_F9
-    0,                 // SDL_SCANCODE_F10
-    0,                 // SDL_SCANCODE_F11
-    0,                 // SDL_SCANCODE_F12
-    0,                 // SDL_SCANCODE_PRINTSCREEN
-    0,                 // SDL_SCANCODE_SCROLLLOCK
-    0,                 // SDL_SCANCODE_PAUSE
-    0,                 // SDL_SCANCODE_INSERT
-    0,                 // SDL_SCANCODE_HOME
-    0,                 // SDL_SCANCODE_PAGEUP
-    0,                 // SDL_SCANCODE_DELETE
-    0,                 // SDL_SCANCODE_END
-    0,                 // SDL_SCANCODE_PAGEDOWN
+    0,                // SDL_SCANCODE_NONUSHASH
+    0,                // SDL_SCANCODE_SEMICOLON
+    0,                // SDL_SCANCODE_APOSTROPHE
+    0,                // SDL_SCANCODE_GRAVE
+    0,                // SDL_SCANCODE_COMMA
+    0,                // SDL_SCANCODE_PERIOD
+    0,                // SDL_SCANCODE_SLASH
+    0,                // SDL_SCANCODE_CAPSLOCK
+    0,                // SDL_SCANCODE_F1
+    0,                // SDL_SCANCODE_F2
+    0,                // SDL_SCANCODE_F3
+    0,                // SDL_SCANCODE_F4
+    0,                // SDL_SCANCODE_F5
+    0,                // SDL_SCANCODE_F6
+    0,                // SDL_SCANCODE_F7
+    0,                // SDL_SCANCODE_F8
+    0,                // SDL_SCANCODE_F9
+    0,                // SDL_SCANCODE_F10
+    0,                // SDL_SCANCODE_F11
+    0,                // SDL_SCANCODE_F12
+    0,                // SDL_SCANCODE_PRINTSCREEN
+    0,                // SDL_SCANCODE_SCROLLLOCK
+    0,                // SDL_SCANCODE_PAUSE
+    0,                // SDL_SCANCODE_INSERT
+    0,                // SDL_SCANCODE_HOME
+    0,                // SDL_SCANCODE_PAGEUP
+    0,                // SDL_SCANCODE_DELETE
+    0,                // SDL_SCANCODE_END
+    0,                // SDL_SCANCODE_PAGEDOWN
 
     K_RIGHT,          // SDL_SCANCODE_RIGHT
     K_LEFT,           // SDL_SCANCODE_LEFT
     K_DOWN,           // SDL_SCANCODE_DOWN
     K_UP,             // SDL_SCANCODE_UP
 
-    0,                 // SDL_SCANCODE_NUMLOCKCLEAR
-    0,                 // SDL_SCANCODE_KP_DIVIDE
-    0,                 // SDL_SCANCODE_KP_MULTIPLY
-    0,                 // SDL_SCANCODE_KP_MINUS
-    0,                 // SDL_SCANCODE_KP_PLUS
-    0,                 // SDL_SCANCODE_KP_ENTER
-    0,                 // SDL_SCANCODE_KP_1
-    0,                 // SDL_SCANCODE_KP_2
-    0,                 // SDL_SCANCODE_KP_3
-    0,                 // SDL_SCANCODE_KP_4
-    0,                 // SDL_SCANCODE_KP_5
-    0,                 // SDL_SCANCODE_KP_6
-    0,                 // SDL_SCANCODE_KP_7
-    0,                 // SDL_SCANCODE_KP_8
-    0,                 // SDL_SCANCODE_KP_9
-    0,                 // SDL_SCANCODE_KP_0
-    0,                 // SDL_SCANCODE_KP_PERIOD
+    0,                // SDL_SCANCODE_NUMLOCKCLEAR
+    0,                // SDL_SCANCODE_KP_DIVIDE
+    0,                // SDL_SCANCODE_KP_MULTIPLY
+    0,                // SDL_SCANCODE_KP_MINUS
+    0,                // SDL_SCANCODE_KP_PLUS
+    0,                // SDL_SCANCODE_KP_ENTER
+    0,                // SDL_SCANCODE_KP_1
+    0,                // SDL_SCANCODE_KP_2
+    0,                // SDL_SCANCODE_KP_3
+    0,                // SDL_SCANCODE_KP_4
+    0,                // SDL_SCANCODE_KP_5
+    0,                // SDL_SCANCODE_KP_6
+    0,                // SDL_SCANCODE_KP_7
+    0,                // SDL_SCANCODE_KP_8
+    0,                // SDL_SCANCODE_KP_9
+    0,                // SDL_SCANCODE_KP_0
+    0,                // SDL_SCANCODE_KP_PERIOD
 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
