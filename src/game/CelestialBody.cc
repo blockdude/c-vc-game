@@ -1,6 +1,6 @@
 #include "CelestialBody.h"
 #include <cstring>
-#include <lib.h>
+#include <common.h>
 
 static float mesh[] = {
 	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, 1.0f,

@@ -52,7 +52,7 @@ MAKEFLAGS = -j$(NPROC) --no-print-directory
 # -----------------------------
 
 BLD_PATH  = bld
-LIB_PATH  = src/ext
+LIB_PATH  = src/extern
 
 BIN_PATH  = $(BLD_PATH)/bin
 OBJ_PATH  = $(BLD_PATH)/obj
@@ -181,9 +181,9 @@ echo ----BUILDING GLAD----
 echo =====================
 echo
 
-echo "  CC    " $(OBJ_PATH)/glad/gl.o 		&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gl.o     -c -fpic $(GLAD_PATH)/src/gl.c
-echo "  CC    " $(OBJ_PATH)/glad/gles.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gles2.o  -c -fpic $(GLAD_PATH)/src/gles2.c
-echo "  CC    " $(OBJ_PATH)/glad/vulkan.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/vulkan.o -c -fpic $(GLAD_PATH)/src/vulkan.c
+echo "  CC    " $(OBJ_PATH)/glad/gl.o 		&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gl.o     -c $(GLAD_PATH)/src/gl.c
+echo "  CC    " $(OBJ_PATH)/glad/gles.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gles2.o  -c $(GLAD_PATH)/src/gles2.c
+echo "  CC    " $(OBJ_PATH)/glad/vulkan.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/vulkan.o -c $(GLAD_PATH)/src/vulkan.c
 echo "  AR    " $(BIN_PATH)/glad/libglad.a 	&& $(AR) rcs $(BIN_PATH)/glad/libglad.a $(OBJ_PATH)/glad/gl.o $(OBJ_PATH)/glad/gles2.o $(OBJ_PATH)/glad/vulkan.o
 
 echo
@@ -250,14 +250,12 @@ endef
 # VC ENGINE
 # -----------------------------
 
-$(eval $(call DEFVARS,ENGINE,src/lib,c,libVCF.so))
+$(eval $(call DEFVARS,ENGINE,src/common,c,libVC.a))
 
-$(ENGINE_TARGET): private LDFLAGS += -shared
 $(ENGINE_TARGET): $(ENGINE_OBJ) $(LIBS)
-	$(RUN_CMD_LTLINK) $(LD) -o $@ $(ENGINE_OBJ) $(LDFLAGS) $(LDLIBS)
+	$(RUN_CMD_AR) $(AR) rcs $@ $(ENGINE_OBJ)
 
 $(ENGINE_OBJ): private INCLUDE  += -I$(ENGINE_SRC_PATH)
-$(ENGINE_OBJ): private CFLAGS += -fpic
 $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)
 	$(RUN_CMD_CC) $(CC) $(INCLUDE) $(CPPFLAGS) $(CFLAGS) -MMD -MP -MF $(<:$(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)=$(ENGINE_DEP_PATH)/%.d) -MT $@ -o $@ -c $<
 
@@ -273,13 +271,13 @@ $(ENGINE_OBJ): $(ENGINE_OBJ_PATH)/%.o: $(ENGINE_SRC_PATH)/%.$(ENGINE_SRC_EXT)
 $(eval $(call DEFVARS,GAME,src/game,cc,main))
 
 $(GAME_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH)
-$(GAME_TARGET): private LDLIBS  += -lstdc++ -lVCF
-$(GAME_TARGET): $(GAME_OBJ) | $(ENGINE_TARGET)
+$(GAME_TARGET): private LDLIBS  += -lstdc++ -lVC
+$(GAME_TARGET): $(GAME_OBJ) $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(GAME_TARGET).so: private LDFLAGS += -L$(ENGINE_BIN_PATH)
-$(GAME_TARGET).so: private LDLIBS  += -lstdc++ -lVCF
-$(GAME_TARGET).so: $(GAME_OBJ) | $(ENGINE_TARGET)
+$(GAME_TARGET).so: private LDLIBS  += -lstdc++ -lVC
+$(GAME_TARGET).so: $(GAME_OBJ) $(ENGINE_TARGET)
 	$(RUN_CMD_LTLINK) $(LD) -shared -o $@ $(GAME_OBJ) $(LDFLAGS) $(LDLIBS)
 
 $(GAME_OBJ): private INCLUDE  += -I$(GAME_SRC_PATH) -I$(ENGINE_SRC_PATH)
@@ -299,8 +297,8 @@ $(GAME_OBJ): $(GAME_OBJ_PATH)/%.o: $(GAME_SRC_PATH)/%.$(GAME_SRC_EXT)
 $(eval $(call DEFVARS,TEST,src/test,c,$$(TEST_SRC:$$(TEST_SRC_PATH)/%.c=%)))
 
 $(TEST_TARGET): private LDFLAGS += -L$(ENGINE_BIN_PATH) -L$(GAME_BIN_PATH)
-$(TEST_TARGET): private LDLIBS  += -lVCF -l:main.so
-$(TEST_TARGET): $(TEST_BIN_PATH)/%: $(TEST_OBJ_PATH)/%.o | $(GAME_TARGET).so $(ENGINE_TARGET)
+$(TEST_TARGET): private LDLIBS  += -lVC -l:main.so
+$(TEST_TARGET): $(TEST_BIN_PATH)/%: $(TEST_OBJ_PATH)/%.o $(ENGINE_TARGET) | $(GAME_TARGET).so
 	$(RUN_CMD_LTLINK) $(LD) -o $@ $< $(LDFLAGS) $(LDLIBS)
 
 $(TEST_OBJ): private INCLUDE  += -I$(TEST_SRC_PATH) -I$(GAME_SRC_PATH) -I$(ENGINE_SRC_PATH)

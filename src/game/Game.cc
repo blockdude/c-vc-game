@@ -1,7 +1,7 @@
 #include "Game.h"
 
 #include <string>
-#include <lib.h>
+#include <common.h>
 
 #include "Ship.h"
 #include "CelestialBody.h"

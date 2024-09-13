@@ -1,5 +1,5 @@
 #include <string>
-#include <lib.h>
+#include <common.h>
 #include "Game.h"
 
 int main( int argc, char *argv[] )
