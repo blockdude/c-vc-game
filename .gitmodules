@@ -1,5 +1,5 @@
 [submodule "SDL"]
-	path = src/extern/SDL
+	path = src/extern/sdl
 	url = https://github.com/libsdl-org/SDL.git
 	ignore = untracked
 [submodule "stb"]

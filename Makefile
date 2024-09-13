@@ -58,8 +58,8 @@ BIN_PATH  = $(BLD_PATH)/bin
 OBJ_PATH  = $(BLD_PATH)/obj
 DEP_PATH  = $(BLD_PATH)/dep
 
-SDL3_PATH = $(LIB_PATH)/SDL
 GLAD_PATH = $(LIB_PATH)/glad
+SDL3_PATH = $(LIB_PATH)/sdl
 STB_PATH  = $(LIB_PATH)/stb
 TOL_PATH  = $(LIB_PATH)/tol
 
@@ -100,7 +100,7 @@ INCLUDE += -I$(GLAD_PATH)/include
 INCLUDE += -I$(STB_PATH)
 INCLUDE += -I$(TOL_PATH)
 
-LDFLAGS += -L$(BIN_PATH)/SDL
+LDFLAGS += -L$(BIN_PATH)/sdl
 LDFLAGS += -L$(BIN_PATH)/glad
 
 # =============================
@@ -149,8 +149,8 @@ echo
 
 cd $(SDL3_PATH) && cmake -S . -DSDL_STATIC=ON -B build && cmake --build build
 
-cp $(SDL3_PATH)/build/libSDL3.so $(BIN_PATH)/SDL
-cd $(BIN_PATH)/SDL && ln -s libSDL3.so libSDL3.so.0
+cp $(SDL3_PATH)/build/libSDL3.so $(BIN_PATH)/sdl
+cd $(BIN_PATH)/sdl && ln -s libSDL3.so libSDL3.so.0
 
 echo
 echo =====================
@@ -160,8 +160,8 @@ echo
 
 endef
 
-DIRS       += $(BIN_PATH)/SDL
-LIBS       += $(BIN_PATH)/SDL/libSDL3.so
+DIRS       += $(BIN_PATH)/sdl
+LIBS       += $(BIN_PATH)/sdl/libSDL3.so
 CLEAN_LIBS += (rm -r $(SDL3_PATH)/build 2> /dev/null || true);
 
 # =============================

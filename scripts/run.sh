@@ -1,3 +1,3 @@
 #!/bin/sh
-export LD_LIBRARY_PATH=bld/bin/SDL:bld/bin/lib:bld/bin/game:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=bld/bin/sdl:bld/bin/lib:bld/bin/game:$LD_LIBRARY_PATH
 mangohud --dlsym $1
