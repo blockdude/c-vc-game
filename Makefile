@@ -181,9 +181,9 @@ echo ----BUILDING GLAD----
 echo =====================
 echo
 
-echo "  CC    " $(OBJ_PATH)/glad/gl.o 		&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gl.o     -c $(GLAD_PATH)/src/gl.c
-echo "  CC    " $(OBJ_PATH)/glad/gles.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/gles2.o  -c $(GLAD_PATH)/src/gles2.c
-echo "  CC    " $(OBJ_PATH)/glad/vulkan.o 	&& $(CC) -I$(GLAD_PATH)/include -o $(OBJ_PATH)/glad/vulkan.o -c $(GLAD_PATH)/src/vulkan.c
+echo "  CC    " $(OBJ_PATH)/glad/gl.o 		&& $(CC) -I$(GLAD_PATH)/include $(CFLAGS) -o $(OBJ_PATH)/glad/gl.o     -c $(GLAD_PATH)/src/gl.c
+echo "  CC    " $(OBJ_PATH)/glad/gles.o 	&& $(CC) -I$(GLAD_PATH)/include $(CFLAGS) -o $(OBJ_PATH)/glad/gles2.o  -c $(GLAD_PATH)/src/gles2.c
+echo "  CC    " $(OBJ_PATH)/glad/vulkan.o 	&& $(CC) -I$(GLAD_PATH)/include $(CFLAGS) -o $(OBJ_PATH)/glad/vulkan.o -c $(GLAD_PATH)/src/vulkan.c
 echo "  AR    " $(BIN_PATH)/glad/libglad.a 	&& $(AR) rcs $(BIN_PATH)/glad/libglad.a $(OBJ_PATH)/glad/gl.o $(OBJ_PATH)/glad/gles2.o $(OBJ_PATH)/glad/vulkan.o
 
 echo
