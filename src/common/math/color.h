@@ -3,7 +3,7 @@
 
 #include <util/types.h>
 
-static inline color_mix( color_t a, color_t b, float r )
+static inline color_t color_mix( color_t a, color_t b, float r )
 {
 }
 
