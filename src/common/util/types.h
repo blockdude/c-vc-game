@@ -50,6 +50,9 @@ typedef struct color
     float a;
 } color_t;
 
+static color_t BLACK = { 0.0f, 0.0f, 0.0f, 1.0f };
+static color_t WHITE = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 typedef struct vec2
 {
 	float x;

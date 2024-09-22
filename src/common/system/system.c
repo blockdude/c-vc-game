@@ -55,11 +55,11 @@ struct timestep *__loop = &__loop_local;
  * -----------------------------
  */
 
-struct system
+struct platform
 {
     SDL_Window *window;
     SDL_GLContext context;
-} system = { 0 };
+} platform = { 0 };
 
 void sys_init( unsigned int flags )
 {
@@ -93,23 +93,23 @@ void sys_init( unsigned int flags )
 
 void sys_free( void )
 {
-    if ( system.context )
+    if ( platform.context )
     {
-        SDL_GL_DestroyContext( system.context );
+        SDL_GL_DestroyContext( platform.context );
         log_info( "Destroyed OpenGL context" );
     }
 
-    if ( system.window )
+    if ( platform.window )
     {
-        SDL_DestroyWindow( system.window );
+        SDL_DestroyWindow( platform.window );
         log_info( "Destroyed SDL window" );
     }
 
     SDL_Quit();
     log_info( "Cleaned up SDL subsystems" );
 
-    system.window = NULL;
-    system.context = NULL;
+    platform.window = NULL;
+    platform.context = NULL;
 
     core.window.initialized = false;
     core.input.initialized  = false;
@@ -222,15 +222,15 @@ void sys_window_init( void )
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
 
-    system.window = SDL_CreateWindow( core.window.title, core.window.width, core.window.height, flags );
-    if ( system.window == NULL )
+    platform.window = SDL_CreateWindow( core.window.title, core.window.width, core.window.height, flags );
+    if ( platform.window == NULL )
     {
         log_warn( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
         goto cleanup;
     }
 
-    system.context = SDL_GL_CreateContext( system.window );
-    if ( system.context == NULL )
+    platform.context = SDL_GL_CreateContext( platform.window );
+    if ( platform.context == NULL )
     {
         log_warn( "Failed to initialize system. Unable to create OpenGL context: %s", SDL_GetError() );
         goto cleanup;
@@ -250,14 +250,14 @@ void sys_window_init( void )
     goto finalize;
 
 cleanup:
-    if ( system.context )
-        SDL_GL_DestroyContext( system.context );
+    if ( platform.context )
+        SDL_GL_DestroyContext( platform.context );
 
-    if ( system.window )
-        SDL_DestroyWindow( system.window );
+    if ( platform.window )
+        SDL_DestroyWindow( platform.window );
 
-    system.window = NULL;
-    system.context = NULL;
+    platform.window = NULL;
+    platform.context = NULL;
 
     goto exit;
 
@@ -269,7 +269,7 @@ exit:;
 
 void *sys_window_handle( void )
 {
-    return system.window;
+    return platform.window;
 }
 
 /*

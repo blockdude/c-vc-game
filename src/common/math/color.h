@@ -4,14 +4,14 @@
 #include <util/types.h>
 #include "math.h"
 
-static inline color_t color_mix( color_t a, color_t b, float r )
+static inline color_t color_mix( color_t a, color_t b, float ratio )
 {
     color_t result = { 0 };
 
-    result.r = a.r * r + b.r * ( 1.0f - r );
-    result.g = a.g * r + b.g * ( 1.0f - r );
-    result.b = a.b * r + b.b * ( 1.0f - r );
-    result.a = a.a * r + b.a * ( 1.0f - r );
+    result.r = a.r * ratio + b.r * ( 1.0f - ratio );
+    result.g = a.g * ratio + b.g * ( 1.0f - ratio );
+    result.b = a.b * ratio + b.b * ( 1.0f - ratio );
+    result.a = a.a * ratio + b.a * ( 1.0f - ratio );
 
     return result;
 }
