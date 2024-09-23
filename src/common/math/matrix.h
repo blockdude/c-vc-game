@@ -16,7 +16,7 @@
 // Module Functions Definition - Matrix math
 //----------------------------------------------------------------------------------
 
-#define mat4_to_float( m ) ( mat4_to_floatv( m ).v )
+#define mat4_to_float( m ) ( mat4_to_f16v( m ).v )
 
 // Compute matrix determinant
 static inline float mat4_det( mat4_t m )
@@ -559,9 +559,9 @@ static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
 }
 
 // Get float array of matrix data
-static inline float16v_t mat4_to_floatv( mat4_t m )
+static inline f16v_t mat4_to_f16v( mat4_t m )
 {
-    float16v_t result = { 0 };
+    f16v_t result = { 0 };
 
     result.v[  0 ] = m.m00;
     result.v[  1 ] = m.m10;
