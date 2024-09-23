@@ -3,11 +3,15 @@
 #include <graphics/vao.h>
 #include <graphics/vbo.h>
 #include <graphics/shader.h>
+#include <system/window.h>
 #include <util/camera.h>
 #include <math/math.h>
+#include <math/matrix.h>
+#include <math/vector.h>
 
 #define BUFFERSIZE 2048
 
+static int vertexCount;
 static struct vao vao;
 static struct vbo vbo;
 static struct shader shader;
@@ -16,6 +20,7 @@ static color_t color;
 
 void RendererInit( void )
 {
+	vertexCount = 0;
 	color = WHITE;
 	shader = shader_loadf( "res/shaders/2d.vert", "res/shaders/2d.frag" );
 
@@ -50,4 +55,18 @@ void RendererClear( void )
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	// todo: clear vbo
+}
+
+void RendererDraw( void )
+{
+	//mat4_t model = mat4_identity();
+	//model = mat4_mul( model, mat4_rotate_z( angle ) );
+	//model = mat4_mul( model, mat4_translate( { position.x, position.y, 0.0f } ) );
+
+	//shader_uniform_mat4( shader, "view_matrix", camera.view );
+	//shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+	//shader_uniform_mat4( shader, "model_matrix", model );
+
+	//glDrawArrays( GL_LINES, 0, vec2_len( move ) > 0.0f ? 12 : 6 );
+	window_swap();
 }
