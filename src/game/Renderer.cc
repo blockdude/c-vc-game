@@ -8,10 +8,13 @@
 #include <math/math.h>
 #include <math/matrix.h>
 #include <math/vector.h>
+#include <util/log.h>
 
-#define BUFFERSIZE 2048
+#define BUFFERSIZE 4096
 
 static int vertexCount;
+static float vertexBuffer[ BUFFERSIZE ];
+
 static struct vao vao;
 static struct vbo vbo;
 static struct shader shader;
@@ -21,12 +24,11 @@ static color_t color;
 void RendererInit( void )
 {
 	vertexCount = 0;
-	color = WHITE;
 	shader = shader_loadf( "res/shaders/2d.vert", "res/shaders/2d.frag" );
 
 	vao = vao_create();
 	vbo = vbo_create( GL_ARRAY_BUFFER, true );
-	vbo_buff( vbo, NULL, BUFFERSIZE );
+	vbo_buff( vbo, NULL, sizeof( vertexBuffer ) );
 
 	int position_idx = glGetAttribLocation( shader.handle, "position" );
 	int color_idx    = glGetAttribLocation( shader.handle, "color" );
@@ -42,6 +44,11 @@ void RendererInit( void )
 	camera.pitch = DEGTORAD( 0 );
 	camera.yaw   = DEGTORAD( 0 );
 	camera_update( &camera );
+
+	mat4_t model = mat4_identity();
+	shader_uniform_mat4( shader, "view_matrix", camera.view );
+	shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+	shader_uniform_mat4( shader, "model_matrix", model );
 }
 
 void RendererColor( color_t c )
@@ -53,20 +60,39 @@ void RendererClear( void )
 {
 	glClearColor( color.r, color.g, color.b, color.a );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	
-	// todo: clear vbo
+	vertexCount = 0;
 }
 
 void RendererDraw( void )
 {
-	//mat4_t model = mat4_identity();
-	//model = mat4_mul( model, mat4_rotate_z( angle ) );
-	//model = mat4_mul( model, mat4_translate( { position.x, position.y, 0.0f } ) );
-
-	//shader_uniform_mat4( shader, "view_matrix", camera.view );
-	//shader_uniform_mat4( shader, "proj_matrix", camera.proj );
-	//shader_uniform_mat4( shader, "model_matrix", model );
-
-	//glDrawArrays( GL_LINES, 0, vec2_len( move ) > 0.0f ? 12 : 6 );
+	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( vertexBuffer ), vertexBuffer );
+	glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 	window_swap();
+}
+
+void DrawTriangle( triangle_t tri )
+{
+	vertexBuffer[ vertexCount++ ] = tri.x0;
+	vertexBuffer[ vertexCount++ ] = tri.y0;
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+	vertexBuffer[ vertexCount++ ] = tri.x1;
+	vertexBuffer[ vertexCount++ ] = tri.y1;
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+	vertexBuffer[ vertexCount++ ] = tri.x2;
+	vertexBuffer[ vertexCount++ ] = tri.y2;
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
 }

@@ -1,6 +1,7 @@
 #include <string>
 #include <common.h>
 #include "Game.h"
+#include "Renderer.h"
 
 int main( int argc, char *argv[] )
 {
@@ -10,11 +11,13 @@ int main( int argc, char *argv[] )
 
 	log_info( "Arguments: %s", args.c_str() );
 
-	SETFPS( 144 );
+	SETFPS( 0 );
 	SETTPS( 100 );
-	window_set( WINDOW_VSYNC | WINDOW_RELATIVE_MOUSE, true );
 
 	sys_init( WINDOW | AUDIO | INPUT | TIMER );
+	window_set( WINDOW_VSYNC | WINDOW_RELATIVE_MOUSE, false );
+
+	RendererInit();
 	game->Init();
 
 	LOOP()
@@ -25,10 +28,17 @@ int main( int argc, char *argv[] )
 		}
 
 		game->Step();
-		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		game->Draw();
-		window_swap();
+
+		RendererColor( BLACK );
+		RendererClear();
+		RendererColor( WHITE );
+		DrawTriangle({
+			 1.0f,  1.0f,
+			 1.0f, -1.0f,
+			-1.0f,  1.0f
+		});
+
+		RendererDraw();
 	}
 
 	game->Free();
