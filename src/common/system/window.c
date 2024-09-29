@@ -34,14 +34,14 @@ void window_title_set( const char *title )
 
 void window_set( unsigned int flags, bool state )
 {
-    SDL_Window *handle = sys_window_handle();
-
     core.window.flags = state ?
         core.window.flags | flags :
         core.window.flags & ~flags;
 
     if ( !core.window.initialized )
         return;
+
+    SDL_Window *handle = sys_window_handle();
 
     if ( HASFLAG( flags, WINDOW_RELATIVE_MOUSE ) )
     {

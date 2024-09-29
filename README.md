@@ -4,14 +4,6 @@ Date Created: 2-17-22
 Game.
 
 ## TODO
-* Fix structure for app to be more clear?
-    - Should there only be one global app?
-    - Should app manage states or should the programmer?
-    - Rename to engine or program?
-    - Should the event functions include passing a pointer of the
-        app or should it just be void?
-    - I kind of want to do something similar to http://gamedevgeek.com/tutorials/managing-game-states-in-c/
-
 * Finish implimenting util data structures ( not important )
     - state machine
     - linkedlist
@@ -30,6 +22,9 @@ Game.
     have uploaded it to the gpu so you don't have to call glDraw
     directly.
 
-* Fix frame rate inconsistencies.
+* Renderer
+    - Draw function for ship and space bodies
 
-* Move everything from lib to src.
+* Test the new camera functions and see if they work
+
+* Make a minecraft clone?
