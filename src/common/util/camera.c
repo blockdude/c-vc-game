@@ -7,14 +7,12 @@ void camera_init( struct camera *self, int type )
 {
 	*self = ( struct camera ) { 0 };
 
-	self->type = type;
-
-	self->fov = PI / 4.0f;
-	self->aspect = 1.0f;
-	self->near = 0.01f;
-	self->far = 1000.0f;
-
-	self->zoom = 1.0f;
+	self->type   = type;
+	self->eye    = ( vec3_t ) { 0 };
+	self->target = ( vec3_t ) { 0.0f, 0.0f, 1.0f };
+	self->up     = ( vec3_t ) { 0.0f, 1.0f, 0.0f };
+	self->fov    = PI / 4.0f;
+	self->zoom   = 1.0f;
 
 	camera_update( self );
 }
@@ -34,16 +32,26 @@ void camera_update( struct camera *self )
 	direction    = vec3_normalize( direction );
 	self->target = vec3_add( self->eye, direction );
 	self->up     = ( vec3_t ) { 0.0f, 1.0f, 0.0f };
-	self->view   = mat4_lookat( self->eye, self->target, self->up );
+}
 
+mat4_t camera_view( struct camera *self )
+{
+	return mat4_lookat( self->eye, self->target, self->up );
+}
+
+mat4_t camera_proj_custom( struct camera *self, float aspect, float near, float far )
+{
 	if ( self->type == ORTHOGRAPHIC )
 	{
 		float top = 1.0f / self->zoom;
-		float right = top * self->aspect;
-		self->proj = mat4_ortho( -right, right, -top, top, self->near, self->far );
+		float right = top * aspect;
+		return mat4_ortho( -right, right, -top, top, near, far );
 	}
-	else
+
+	else if ( self->type == PERSPECTIVE )
 	{
-		self->proj = mat4_perspective( self->fov, self->aspect, self->near, self->far );
+		return mat4_perspective( self->fov, aspect, near, far );
 	}
+
+	return mat4_identity();
 }

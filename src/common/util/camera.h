@@ -6,7 +6,7 @@
 enum camera_type
 {
 	PERSPECTIVE,
-	ORTHOGRAPHIC,
+	ORTHOGRAPHIC
 };
 
 struct camera
@@ -14,35 +14,16 @@ struct camera
 	// projection type
 	int type;
 
-	mat4_t view;
-
-	/*
-	 * The projection matrix should be obtained by an external
-	 * function because it never changes unless the aspect ratio
-	 * changes or the fov changes so it is not great to have it
-	 * updated every frame. I will keep it till I figure out what
-	 * to do.
-	 */
-	mat4_t proj;
-
 	vec3_t eye;		/* camera position */
 	vec3_t target;	/* lookat position */
 	vec3_t up;		/* camera tilt     */
 
+	// I want to get rid of these in favor of functions
 	float pitch;
 	float yaw;
 	float roll;
-
-	float aspect;
-
-	/*
-	 * FYI: the z in znear and zfar mean the z axis which is the
-	 * depth axis. This should have been obvious but im stupid.
-	 */
-	float near;
-	float far;
 	
-	// perspective
+	// perspective - controls the Y field of view
 	float fov;
 
 	// orthographic - controls the size of the near and far clipping planes
@@ -53,8 +34,27 @@ struct camera
 extern "C" {
 #endif
 
-void camera_init( struct camera *self, int type );
-void camera_update( struct camera *self );
+void camera_init( struct camera *camera, int type );
+void camera_update( struct camera *camera );
+
+void camera_forward( struct camera *camera, float dist );
+void camera_up( struct camera *camera, float dist );
+void camera_right( struct camera *camera, float dist );
+
+void camera_pitch( struct camera *camera, float angle );
+void camera_yaw( struct camera *camera, float angle );
+void camera_roll( struct camera *camera, float angle );
+
+/*
+ * Calculate the proction matrix of the camera
+ */
+mat4_t camera_proj_custom( struct camera *camera, float aspect, float near, float far );
+#define camera_proj( _cam, _aspect ) camera_proj_custom( _cam, _aspect, 0.01f, 1000.0f )
+
+/*
+ * Calculate the view matrix of the camera
+ */
+mat4_t camera_view( struct camera *camera );
 
 #ifdef __cplusplus
 }

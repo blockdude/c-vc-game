@@ -132,7 +132,6 @@ public:
 		velocity = vec2_sub( velocity, vec2_scale( velocity, drag ) );
 		position = vec2_add( position, velocity );
 
-		camera.aspect = window_aspect();
 		camera.eye.x = position.x;
 		camera.eye.y = position.y;
 		camera_update( &camera );
@@ -150,8 +149,8 @@ public:
 		model = mat4_mul( model, mat4_rotate_z( angle ) );
 		model = mat4_mul( model, mat4_translate( { position.x, position.y, 0.0f } ) );
 
-		shader_uniform_mat4( shader, "view_matrix", camera.view );
-		shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+		shader_uniform_mat4( shader, "view_matrix", camera_view( &camera ) );
+		shader_uniform_mat4( shader, "proj_matrix", camera_proj( &camera, window_aspect() ) );
 		shader_uniform_mat4( shader, "model_matrix", model );
 
 		glDrawArrays( GL_LINES, 0, vec2_len( move ) > 0.0f ? 12 : 6 );

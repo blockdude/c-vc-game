@@ -1,14 +1,14 @@
-#include <Renderer.h>
+#include "Renderer.h"
 
 #include <graphics/vao.h>
 #include <graphics/vbo.h>
 #include <graphics/shader.h>
 #include <system/window.h>
 #include <util/camera.h>
+#include <util/log.h>
 #include <math/math.h>
 #include <math/matrix.h>
 #include <math/vector.h>
-#include <util/log.h>
 
 #define BUFFERSIZE 4096
 
@@ -46,8 +46,8 @@ void RendererInit( void )
 	camera_update( &camera );
 
 	mat4_t model = mat4_identity();
-	shader_uniform_mat4( shader, "view_matrix", camera.view );
-	shader_uniform_mat4( shader, "proj_matrix", camera.proj );
+	shader_uniform_mat4( shader, "view_matrix", camera_view( &camera ) );
+	shader_uniform_mat4( shader, "proj_matrix", camera_proj( &camera, window_aspect() ) );
 	shader_uniform_mat4( shader, "model_matrix", model );
 }
 
