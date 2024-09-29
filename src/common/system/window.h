@@ -23,19 +23,43 @@ enum window_flags
 extern "C" {
 #endif
 
-void   window_swap( void );
-void   window_size_set( int w, int h );
-void   window_title_set( const char *title );
-void   window_set( unsigned int flags, bool state );
-void   window_toggle( unsigned int flags );
-void   window_size( int *w, int *h );
+void			window_swap_buf( void );
+
+void   			window_size_set( int w, int h );
+void   			window_size( int *w, int *h );
+
+void			window_title_set( const char *title );
+const char *	window_title( void );
+
+void			window_flags_set( unsigned int flags, bool state );
+unsigned int	window_flags( void );
 
 // get sdl handle
-void * window_handle( void );
-float  window_aspect( void );
+void *			window_handle( void );
+float  			window_aspect( void );
 
 #ifdef __cplusplus
 }
 #endif
+
+static inline void window_flags_toggle( unsigned int flags )
+{
+	unsigned int z = window_flags();
+    unsigned int x = ~z & flags;
+    unsigned int y =  z & flags;
+
+    window_flags_set( x, true );
+    window_flags_set( y, false );
+}
+
+static inline void window_flags_enable( unsigned int flags )
+{
+	window_flags_set( flags, true );
+}
+
+static inline void window_flags_disable( unsigned int flags )
+{
+	window_flags_set( flags, false );
+}
 
 #endif

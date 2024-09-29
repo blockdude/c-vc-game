@@ -67,7 +67,7 @@ void RendererDraw( void )
 {
 	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( vertexBuffer ), vertexBuffer );
 	glDrawArrays( GL_TRIANGLES, 0, vertexCount );
-	window_swap();
+	window_swap_buf();
 }
 
 void DrawTriangle( triangle_t tri )

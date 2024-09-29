@@ -14,7 +14,7 @@ int main( int argc, char *argv[] )
 	SETFPS( 0 );
 	SETTPS( 100 );
 
-	window_toggle( WINDOW_RELATIVE_MOUSE | WINDOW_RESIZABLE | WINDOW_HIGHDPI );
+	window_flags_enable( WINDOW_RELATIVE_MOUSE | WINDOW_RESIZABLE | WINDOW_HIGHDPI );
 	sys_init( WINDOW | AUDIO | INPUT | TIMER );
 
 	RendererInit();

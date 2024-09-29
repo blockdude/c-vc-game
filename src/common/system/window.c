@@ -5,7 +5,7 @@
 #include <util/log.h>
 #include <SDL3/SDL.h>
 
-void window_swap( void )
+void window_swap_buf( void )
 {
     SDL_Window *handle = sys_window_handle();
     SDL_GL_SwapWindow( handle );
@@ -32,7 +32,7 @@ void window_title_set( const char *title )
     core.window.title = title;
 }
 
-void window_set( unsigned int flags, bool state )
+void window_flags_set( unsigned int flags, bool state )
 {
     core.window.flags = state ?
         core.window.flags | flags :
@@ -65,13 +65,9 @@ void window_set( unsigned int flags, bool state )
     }
 }
 
-void window_toggle( unsigned int flags )
+unsigned int window_flags( void )
 {
-    unsigned int enableflags  = ~core.window.flags & flags;
-    unsigned int disableflags =  core.window.flags & flags;
-
-    window_set( enableflags, true );
-    window_set( disableflags, false );
+    return core.window.flags;
 }
 
 float window_aspect( void )
