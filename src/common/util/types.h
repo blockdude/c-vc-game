@@ -2,12 +2,21 @@
 #define TYPES_H
 
 /*
- * Type definitions for standard types and math types
+ * =============================
+ * -----------------------------
+ * STANDARD TYPES
+ * -----------------------------
  */
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+
+/*
+ * =============================
+ */
+
+
 
 /*
  * =============================

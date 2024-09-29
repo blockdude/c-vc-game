@@ -38,9 +38,9 @@ void RendererInit( void )
 
 	camera_init( &camera, ORTHOGRAPHIC );
 	camera.zoom = 0.02f;
-	camera.eye.x = 0.0f;
-	camera.eye.y = 0.0f;
-	camera.eye.z = 0.0f;
+	camera.eye    = { 0.0f, 0.0f,  1.0f };
+	camera.target = { 0.0f, 0.0f, -1.0f };
+	camera.up     = { 0.0f, 1.0f,  0.0f };
 	camera.pitch = DEGTORAD( 0 );
 	camera.yaw   = DEGTORAD( 0 );
 	camera_update( &camera );
@@ -74,7 +74,7 @@ void DrawTriangle( triangle_t tri )
 {
 	vertexBuffer[ vertexCount++ ] = tri.x0;
 	vertexBuffer[ vertexCount++ ] = tri.y0;
-	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
 
 	vertexBuffer[ vertexCount++ ] = color.r;
 	vertexBuffer[ vertexCount++ ] = color.g;
@@ -82,7 +82,7 @@ void DrawTriangle( triangle_t tri )
 
 	vertexBuffer[ vertexCount++ ] = tri.x1;
 	vertexBuffer[ vertexCount++ ] = tri.y1;
-	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
 
 	vertexBuffer[ vertexCount++ ] = color.r;
 	vertexBuffer[ vertexCount++ ] = color.g;
@@ -90,7 +90,7 @@ void DrawTriangle( triangle_t tri )
 
 	vertexBuffer[ vertexCount++ ] = tri.x2;
 	vertexBuffer[ vertexCount++ ] = tri.y2;
-	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
 
 	vertexBuffer[ vertexCount++ ] = color.r;
 	vertexBuffer[ vertexCount++ ] = color.g;

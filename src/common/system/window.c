@@ -2,6 +2,7 @@
 #include "global.h"
 #include "system.h"
 
+#include <util/log.h>
 #include <SDL3/SDL.h>
 
 void window_swap( void )
@@ -39,25 +40,38 @@ void window_set( unsigned int flags, bool state )
         core.window.flags | flags :
         core.window.flags & ~flags;
 
-    if ( ( flags & WINDOW_RELATIVE_MOUSE ) > 0 )
+    if ( !core.window.initialized )
+        return;
+
+    if ( HASFLAG( flags, WINDOW_RELATIVE_MOUSE ) )
     {
         SDL_WarpMouseInWindow( handle, core.window.width / 2.0f, core.window.height / 2.0f );
         SDL_SetWindowRelativeMouseMode( handle, state );
     }
 
-    if ( ( flags & WINDOW_VSYNC ) > 0 )
+    if ( HASFLAG( flags, WINDOW_VSYNC ) )
     {
         SDL_GL_SetSwapInterval( state ? 1 : 0 );
+    }
+
+    if ( HASFLAG( flags, WINDOW_FULLSCREEN ) )
+    {
+        SDL_SetWindowFullscreen( handle, state );
+    }
+
+    if ( HASFLAG( flags, WINDOW_HIGHDPI ) )
+    {
+        log_warn( "Unable to set WINDOW_HIGHDPI: Unsupported feature in SDL." );
     }
 }
 
 void window_toggle( unsigned int flags )
 {
-    unsigned int ef = ~core.window.flags & flags;
-    unsigned int df =  core.window.flags & flags;
+    unsigned int enableflags  = ~core.window.flags & flags;
+    unsigned int disableflags =  core.window.flags & flags;
 
-    window_set( ef, true );
-    window_set( df, false );
+    window_set( enableflags, true );
+    window_set( disableflags, false );
 }
 
 float window_aspect( void )

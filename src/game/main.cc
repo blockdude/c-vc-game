@@ -14,8 +14,8 @@ int main( int argc, char *argv[] )
 	SETFPS( 0 );
 	SETTPS( 100 );
 
+	window_toggle( WINDOW_RELATIVE_MOUSE | WINDOW_RESIZABLE | WINDOW_HIGHDPI );
 	sys_init( WINDOW | AUDIO | INPUT | TIMER );
-	window_set( WINDOW_VSYNC | WINDOW_RELATIVE_MOUSE, false );
 
 	RendererInit();
 	game->Init();

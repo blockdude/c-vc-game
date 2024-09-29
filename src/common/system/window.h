@@ -2,6 +2,7 @@
 #define WINDOW_H
 
 #include <util/types.h>
+#include <util/util.h>
 
 enum window_status
 {
@@ -11,8 +12,11 @@ enum window_status
 
 enum window_flags
 {
-	WINDOW_RELATIVE_MOUSE = 0x01,
-	WINDOW_VSYNC          = 0x02
+	WINDOW_RELATIVE_MOUSE = BITFLAG( 0 ),
+	WINDOW_VSYNC          = BITFLAG( 1 ),
+	WINDOW_FULLSCREEN	  = BITFLAG( 2 ),
+	WINDOW_RESIZABLE	  = BITFLAG( 3 ),
+	WINDOW_HIGHDPI        = BITFLAG( 4 )
 };
 
 #ifdef __cplusplus

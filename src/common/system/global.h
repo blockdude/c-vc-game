@@ -2,8 +2,6 @@
 #define CORE_INTERNAL_H
 
 #include "input.h"
-
-#include <stdbool.h>
 #include <util/types.h>
 
 struct core

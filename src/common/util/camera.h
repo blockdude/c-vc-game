@@ -37,6 +37,8 @@ extern "C" {
 void camera_init( struct camera *camera, int type );
 void camera_update( struct camera *camera );
 
+void camera_move( struct camera *camera, vec3_t direction, float dist );
+
 void camera_forward( struct camera *camera, float dist );
 void camera_up( struct camera *camera, float dist );
 void camera_right( struct camera *camera, float dist );

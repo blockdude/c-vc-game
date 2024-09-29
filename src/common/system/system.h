@@ -6,18 +6,18 @@
  */
 
 #include <util/types.h>
+#include <util/util.h>
 
 enum system_flags
 {
-	WINDOW = 0x01,
+	WINDOW = BITFLAG( 0 ),
 
 	/*
 	 * Input events are limited if the window is not also initialized.
 	 */
-	INPUT  = 0x02,
-
-	AUDIO  = 0x04,
-	TIMER  = 0x08
+	INPUT  = BITFLAG( 1 ),
+	AUDIO  = BITFLAG( 2 ),
+	TIMER  = BITFLAG( 3 )
 };
 
 #ifdef __cplusplus
