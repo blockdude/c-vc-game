@@ -37,7 +37,7 @@ void RendererInit( void )
 	vao_attr( vao, vbo, color_idx   , 3, GL_FLOAT, sizeof( float ) * 6, sizeof( float ) * 3 );
 
 	camera_init( &camera, ORTHOGRAPHIC );
-	camera.zoom = 0.02f;
+	camera.zoom   = 0.05f;
 	camera.eye    = { 0.0f, 0.0f,  1.0f };
 	camera.target = { 0.0f, 0.0f, -1.0f };
 	camera.up     = { 0.0f, 1.0f,  0.0f };
@@ -92,6 +92,75 @@ void DrawTriangle( triangle_t tri, float rot )
 	vertexBuffer[ vertexCount++ ] = color.b;
 
 	mat4_t model = mat4_rotate_z( rot );
+	shader_uniform_mat4( shader, "model_matrix", model );
+
+	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( float ) * vertexCount, vertexBuffer );
+	glDrawArrays( GL_TRIANGLES, 0, vertexCount );
+	vertexCount = 0;
+}
+
+void DrawRectangle( rectangle_t rect, float rot )
+{
+	vertexBuffer[ vertexCount++ ] = -1.0f;
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+	vertexBuffer[ vertexCount++ ] = -1.0f;
+	vertexBuffer[ vertexCount++ ] = -1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+
+
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+	vertexBuffer[ vertexCount++ ] = 1.0f;
+	vertexBuffer[ vertexCount++ ] = -1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+	vertexBuffer[ vertexCount++ ] = -1.0f;
+	vertexBuffer[ vertexCount++ ] = -1.0f;
+	vertexBuffer[ vertexCount++ ] = 0.0f;
+
+	vertexBuffer[ vertexCount++ ] = color.r;
+	vertexBuffer[ vertexCount++ ] = color.g;
+	vertexBuffer[ vertexCount++ ] = color.b;
+
+	mat4_t t = mat4_translate( { rect.x, rect.y, 0.0f } );
+	mat4_t r = mat4_rotate_z( rot );
+	mat4_t s = mat4_scale( { rect.w, rect.h, 0.0f } );
+
+	// S * R * T
+	mat4_t model = mat4_identity();
+	model = mat4_mul( t, model );
+	model = mat4_mul( r, model );
+	model = mat4_mul( s, model );
+
 	shader_uniform_mat4( shader, "model_matrix", model );
 
 	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( float ) * vertexCount, vertexBuffer );
