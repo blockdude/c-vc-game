@@ -17,11 +17,6 @@ struct camera
 	vec3_t eye;		/* camera position */
 	vec3_t target;	/* lookat position */
 	vec3_t up;		/* camera tilt     */
-
-	// I want to get rid of these in favor of functions
-	float pitch;
-	float yaw;
-	float roll;
 	
 	// perspective - controls the Y field of view
 	float fov;

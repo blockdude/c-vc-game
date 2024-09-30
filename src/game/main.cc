@@ -33,10 +33,10 @@ int main( int argc, char *argv[] )
 		RendererClear();
 		RendererColor( WHITE );
 		DrawTriangle({
-			 1.0f,  1.0f,
-			 1.0f, -1.0f,
-			-1.0f,  1.0f
-		});
+			 5.0f,  5.0f,
+			 5.0f, -5.0f,
+			-5.0f,  5.0f
+		}, DEGTORAD( TICKS() ) );
 
 		RendererDraw();
 	}

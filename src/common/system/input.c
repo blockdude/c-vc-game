@@ -1,6 +1,7 @@
 #include "input.h"
 #include "global.h"
 
+#include <util/log.h>
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
 
@@ -160,16 +161,21 @@ int input_poll( void )
     core.input.m_pos_delta.x = 0;
     core.input.m_pos_delta.y = 0;
 
-    int result = INPUT_SUCCESS;
-
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
     {
+        // note: SDL_EVENT_QUIT does not provide a windowID
+        if ( event.type == SDL_EVENT_QUIT )
+            return INPUT_QUIT;
+
+        if ( core.window.id != event.window.windowID )
+            continue;
+
         switch ( event.type )
         {
-            case SDL_EVENT_QUIT:
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 
-                result = INPUT_QUIT;
+                return INPUT_QUIT;
 
                 break;
 
@@ -229,7 +235,7 @@ int input_poll( void )
         }
     }
 
-    return result;
+    return INPUT_SUCCESS;
 }
 
 struct keystate input_keystate( int key )

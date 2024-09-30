@@ -88,8 +88,6 @@ public:
 		camera.eye.x = 0.0f;
 		camera.eye.y = 0.0f;
 		camera.eye.z = 0.0f;
-		camera.pitch = DEGTORAD( 0 );
-		camera.yaw   = DEGTORAD( 0 );
 		camera_update( &camera );
 
 		vbo_buff( vbo, ( void * ) mesh, sizeof( mesh ) );

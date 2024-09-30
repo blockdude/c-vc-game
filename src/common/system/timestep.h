@@ -2,8 +2,8 @@
 #define TIMESTEP_H
 
 /*
- * Note: GETTIME and DELAY must be in seconds.
- * Note: POLLEVENTS must return an int where 0 is success.
+ * Note: _GETTIME and _DELAY must be in seconds.
+ * Note: _POLLEVENTS must return an int where 0 is success.
  */
 
 #include <util/types.h>
@@ -37,23 +37,25 @@ struct timestep
 // defined in system.c
 extern struct timestep *__loop;
 
-#ifndef GETTIME
+#ifndef _GETTIME
 #include <system/time.h>
-#define GETTIME() time_ticks()
+#define _GETTIME() time_ticks()
 #endif
 
-#ifndef DELAY 
+#ifndef _DELAY 
 #include <system/time.h>
-#define DELAY( __s ) time_delay( __s )
+#define _DELAY( __s ) time_delay( __s )
 #endif
 
-#ifndef POLLEVENTS
+#ifndef _POLLEVENTS
 #include <system/input.h>
-#define POLLEVENTS() input_poll()
+#define _POLLEVENTS() input_poll()
 #endif
 
 #define FPS()         ( __loop->f_rate )
 #define TPS()         ( __loop->t_rate )
+#define FRAMES()      ( __loop->f_count )
+#define TICKS()       ( __loop->t_count )
 #define AVGFPS()      ( __loop->f_avg )
 #define AVGTPS()      ( __loop->t_avg )
 #define FDELTA()      ( __loop->f_delta )
@@ -92,7 +94,7 @@ static inline void _tick_update( void )
 
 static inline bool _loop_poll( void )
 {
-    return POLLEVENTS() == 0;
+    return _POLLEVENTS() == 0;
 }
 
 static inline void _loop_init( void )
@@ -114,13 +116,13 @@ static inline void _loop_init( void )
     __loop->t_last   = 0;
 
     __loop->elapsed  = 0;
-    __loop->current  = GETTIME();
+    __loop->current  = _GETTIME();
     __loop->previous = __loop->current;
 }
 
 static inline void _loop_update( void )
 {
-    __loop->current  = GETTIME();
+    __loop->current  = _GETTIME();
     __loop->f_delta  = __loop->current - __loop->previous;
     __loop->previous = __loop->current;
 
@@ -140,9 +142,9 @@ static inline void _loop_update( void )
     // apply fps cap
     if ( __loop->f_delta < __loop->f_target )
     {
-        DELAY( __loop->f_target - __loop->f_delta );
+        _DELAY( __loop->f_target - __loop->f_delta );
 
-        __loop->current  = GETTIME();
+        __loop->current  = _GETTIME();
         __loop->f_delta += __loop->current - __loop->previous;
         __loop->previous = __loop->current;
     }

@@ -21,6 +21,7 @@ struct core
 	struct
 	{
 		bool         	initialized;
+		unsigned int	id;
 		unsigned int 	flags;
 		const char * 	title;
 		float        	aspect;

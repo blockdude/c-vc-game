@@ -8,6 +8,6 @@ void RendererDraw( void );
 void RendererClear( void );
 void RendererColor( color_t c );
 void DrawRectangle( rectangle_t rect );
-void DrawTriangle( triangle_t tri );
+void DrawTriangle( triangle_t tri, float rot );
 
 #endif

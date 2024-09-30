@@ -41,8 +41,6 @@ void RendererInit( void )
 	camera.eye    = { 0.0f, 0.0f,  1.0f };
 	camera.target = { 0.0f, 0.0f, -1.0f };
 	camera.up     = { 0.0f, 1.0f,  0.0f };
-	camera.pitch = DEGTORAD( 0 );
-	camera.yaw   = DEGTORAD( 0 );
 	camera_update( &camera );
 
 	mat4_t model = mat4_identity();
@@ -60,17 +58,14 @@ void RendererClear( void )
 {
 	glClearColor( color.r, color.g, color.b, color.a );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	vertexCount = 0;
 }
 
 void RendererDraw( void )
 {
-	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( vertexBuffer ), vertexBuffer );
-	glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 	window_swap_buf();
 }
 
-void DrawTriangle( triangle_t tri )
+void DrawTriangle( triangle_t tri, float rot )
 {
 	vertexBuffer[ vertexCount++ ] = tri.x0;
 	vertexBuffer[ vertexCount++ ] = tri.y0;
@@ -95,4 +90,11 @@ void DrawTriangle( triangle_t tri )
 	vertexBuffer[ vertexCount++ ] = color.r;
 	vertexBuffer[ vertexCount++ ] = color.g;
 	vertexBuffer[ vertexCount++ ] = color.b;
+
+	mat4_t model = mat4_rotate_z( rot );
+	shader_uniform_mat4( shader, "model_matrix", model );
+
+	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( float ) * vertexCount, vertexBuffer );
+	glDrawArrays( GL_TRIANGLES, 0, vertexCount );
+	vertexCount = 0;
 }

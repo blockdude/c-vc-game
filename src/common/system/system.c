@@ -263,12 +263,14 @@ void sys_window_init( void )
     }
 
     SDL_GL_SetSwapInterval( HASFLAG( core.window.flags, WINDOW_VSYNC ) ? 1 : 0 );
+    core.window.id = SDL_GetWindowID( platform.window );
+    core.window.initialized = true;
 
+    log_info( "Window ID   : %u", core.window.id );
     log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
     log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
     log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
     log_info( "SL Version  : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
-    core.window.initialized = true;
     return;
 
 cleanup:
