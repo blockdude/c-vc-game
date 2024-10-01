@@ -14,7 +14,7 @@ class Player : public SpaceObject
 public:
 	vec2_t move;
 	float rotate;
-	float acceleration = 0.001f;
+	float force = 0.001f;
 
 	void Reset( void )
 	{
@@ -27,6 +27,8 @@ public:
 	void Tick( void )
 	{
 		SpaceObject::Tick();
+		float acceleration = force / mass;
+
 		rotate = CLAMP( rotate, -1.0f, 1.0f );
 		angularVelocity += rotate * acceleration;
 

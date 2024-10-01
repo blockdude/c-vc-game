@@ -8,7 +8,7 @@ SpaceObject::SpaceObject( void )
 	this->angle				= 0.0f;
 	this->velocity			= { 0 };
 	this->angularVelocity	= 0.0f;
-	this->mass				= 0.0f;
+	this->mass				= 1.0f;
 	this->body				= {};
 }
 
@@ -17,9 +17,26 @@ void SpaceObject::Init( void )
 	this->body.Get(  0,  0 ) = GRASS;
 	this->body.Get(  0,  1 ) = GRASS;
 	this->body.Get(  1,  0 ) = GRASS;
+
+	this->body.Get(  0,  2 ) = GRASS;
+	this->body.Get(  2,  0 ) = GRASS;
+
+	this->body.Get(  0,  3 ) = GRASS;
+	this->body.Get(  3,  0 ) = GRASS;
+
+	this->body.Get(  0,  4 ) = GRASS;
+	this->body.Get(  4,  0 ) = GRASS;
+
 	this->body.Get( -1,  0 ) = GRASS;
 	this->body.Get( -1, -1 ) = GRASS;
 	this->body.Get(  1, -1 ) = GRASS;
+
+	for ( int x = 0; x < MAXBODYSIZE; x++ )
+		for ( int y = 0; y < MAXBODYSIZE; y++ )
+			if ( body.blocks[ x ][ y ] )
+				mass += 1.0f;
+	
+	log_debug( "Object Mass: %.2f", mass );
 }
 
 void SpaceObject::Tick( void )
