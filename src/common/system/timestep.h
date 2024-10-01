@@ -39,7 +39,7 @@ extern struct timestep *__loop;
 
 #ifndef _GETTIME
 #include <system/time.h>
-#define _GETTIME() time_ticks()
+#define _GETTIME() time_elapsed()
 #endif
 
 #ifndef _DELAY 

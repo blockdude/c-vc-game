@@ -1,20 +1,33 @@
-#ifndef CELESTIALBODY_H
-#define CELESTIALBODY_H
+#ifndef SPACEOBJECT_H
+#define SPACEOBJECT_H
 
 #include <util/types.h>
 
-#define MAXBODYSIZE 15
+#define MAXBODYSIZE 99
 
-class CelestialBody
+class SpaceObject
 {
+public:
+	static constexpr float drag = 0.0000001f;
+
+	enum BlockType
+	{
+		NONE,
+		GRASS,
+		DIRT,
+		WATER,
+		LAVA,
+		STONE
+	};
+
 	class Body
 	{
 	public:
 		int	blocks[ MAXBODYSIZE ][ MAXBODYSIZE ];
 		int& Get( int x, int y )
 		{
-			const int xCenter = ( MAXBODYSIZE + 1 ) / 2;
-			const int yCenter = ( MAXBODYSIZE + 1 ) / 2;
+			const int xCenter = ( MAXBODYSIZE ) / 2;
+			const int yCenter = ( MAXBODYSIZE ) / 2;
 
 			int xOut = xCenter + x;
 			int yOut = yCenter + y;
@@ -29,17 +42,6 @@ class CelestialBody
 		}
 	};
 
-public:
-	enum BlockType
-	{
-		NONE,
-		GRASS,
-		DIRT,
-		WATER,
-		LAVA,
-		STONE
-	};
-
 	vec2_t	position;
 	float	angle;
 	vec2_t	velocity;
@@ -47,7 +49,7 @@ public:
 	float	mass;
 	Body	body;
 
-			CelestialBody( void );
+			SpaceObject( void );
 	void    Init( void );
 	void	Free( void );
 	void	Tick( void );

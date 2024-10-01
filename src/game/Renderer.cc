@@ -47,6 +47,7 @@ void RendererInit( void )
 	shader_uniform_mat4( shader, "view_matrix", camera_view( &camera ) );
 	shader_uniform_mat4( shader, "proj_matrix", camera_proj( &camera, window_aspect() ) );
 	shader_uniform_mat4( shader, "model_matrix", model );
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 }
 
 void RendererColor( color_t c )
@@ -153,7 +154,7 @@ void DrawRectangle( rectangle_t rect, float rot )
 
 	mat4_t t = mat4_translate( { rect.x, rect.y, 0.0f } );
 	mat4_t r = mat4_rotate_z( rot );
-	mat4_t s = mat4_scale( { rect.w, rect.h, 0.0f } );
+	mat4_t s = mat4_scale( { rect.w, rect.h, 1.0f } );
 
 	// S * R * T
 	mat4_t model = mat4_identity();
@@ -166,4 +167,21 @@ void DrawRectangle( rectangle_t rect, float rot )
 	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( float ) * vertexCount, vertexBuffer );
 	glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 	vertexCount = 0;
+}
+
+void DrawMesh( const float *mesh, int c, vec2_t pos, vec2_t scale, float angle )
+{
+	mat4_t t = mat4_translate( { pos.x, pos.y, 0.0f } );
+	mat4_t r = mat4_rotate_z( angle );
+	mat4_t s = mat4_scale( { scale.x, scale.y, 1.0f } );
+
+	// S * R * T
+	mat4_t model = mat4_identity();
+	model = mat4_mul( t, model );
+	model = mat4_mul( r, model );
+	model = mat4_mul( s, model );
+
+	shader_uniform_mat4( shader, "model_matrix", model );
+	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( float ) * c, mesh );
+	glDrawArrays( GL_TRIANGLES, 0, c );
 }

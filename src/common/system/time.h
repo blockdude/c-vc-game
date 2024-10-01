@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-double time_ticks( void );
+double time_elapsed( void );
 void   time_delay( double s );
 
 #ifdef __cplusplus

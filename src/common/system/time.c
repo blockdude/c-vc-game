@@ -1,7 +1,7 @@
 #include "time.h"
 #include <SDL3/SDL.h>
 
-double time_ticks( void )
+double time_elapsed( void )
 {
     Uint64 t = SDL_GetTicksNS();
     return ( float ) t / 1000000000.0;
