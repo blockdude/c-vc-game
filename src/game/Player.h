@@ -14,7 +14,7 @@ class Player : public SpaceObject
 public:
 	vec2_t move;
 	float rotate;
-	float force = 0.001f;
+	float force = 1.0f;
 
 	void Reset( void )
 	{
@@ -28,9 +28,10 @@ public:
 	{
 		SpaceObject::Tick();
 		float acceleration = force / mass;
+		float angacc = force / ( mass * radius );
 
 		rotate = CLAMP( rotate, -1.0f, 1.0f );
-		angularVelocity += rotate * acceleration;
+		angularVelocity += rotate * angacc;
 
 		vec2_t direction = vec2_normalize( move );
 		direction = vec2_rotate( direction, angle );

@@ -4,6 +4,8 @@
 #include "SpaceObject.h"
 #include <util/types.h>
 
+#define BUFFERSIZE 50000
+
 void RendererInit( void );
 void RendererDraw( void );
 void RendererClear( void );

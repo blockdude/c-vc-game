@@ -3,7 +3,7 @@
 
 #include <util/types.h>
 
-#define MAXBODYSIZE 99
+#define MAXBODYSIZE 201
 
 class SpaceObject
 {
@@ -26,8 +26,8 @@ public:
 		int	blocks[ MAXBODYSIZE ][ MAXBODYSIZE ];
 		int& Get( int x, int y )
 		{
-			const int xCenter = ( MAXBODYSIZE ) / 2;
-			const int yCenter = ( MAXBODYSIZE ) / 2;
+			const int xCenter = MAXBODYSIZE / 2;
+			const int yCenter = MAXBODYSIZE / 2;
 
 			int xOut = xCenter + x;
 			int yOut = yCenter + y;
@@ -42,11 +42,20 @@ public:
 		}
 	};
 
+	// vec2_t P; /* position         */
+	// float  O; /* rotation         */
+	// vec2_t v; /* velocity         */
+	// float  w; /* angular velocity */
+	// float  m; /* mass             */
+	// float  r; /* radius           */
+
 	vec2_t	position;
 	float	angle;
+	
 	vec2_t	velocity;
 	float	angularVelocity;
 	float	mass;
+	float	radius;
 	Body	body;
 
 			SpaceObject( void );

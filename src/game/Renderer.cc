@@ -10,8 +10,6 @@
 #include <math/matrix.h>
 #include <math/vector.h>
 
-#define BUFFERSIZE 4096
-
 static int vertexCount;
 static float vertexBuffer[ BUFFERSIZE ];
 
@@ -37,7 +35,7 @@ void RendererInit( void )
 	vao_attr( vao, vbo, color_idx   , 3, GL_FLOAT, sizeof( float ) * 6, sizeof( float ) * 3 );
 
 	camera_init( &camera, ORTHOGRAPHIC );
-	camera.zoom   = 0.05f;
+	camera.zoom   = 0.025f;
 	camera.eye    = { 0.0f, 0.0f,  1.0f };
 	camera.target = { 0.0f, 0.0f, -1.0f };
 	camera.up     = { 0.0f, 1.0f,  0.0f };

@@ -27,4 +27,9 @@ Game.
 
 * Test the new camera functions and see if they work
 
-* Make a minecraft clone?
+* Randomly generate planets
+* Camera should follow ship
+* Gravity
+* Player character (not just a ship)
+    - Should be able to move in and out of ship
+    - Should have health, hunger, o2, etc
