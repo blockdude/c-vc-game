@@ -29,6 +29,7 @@ int main( int argc, char *argv[] )
 		}
 
 		game->Step();
+
 		RendererColor( BLACK );
 		RendererClear();
 		game->Draw();
