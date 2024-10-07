@@ -22,9 +22,9 @@ static inline quat_t quat_add( quat_t p, quat_t q )
 }
 
 // Add quaternion and float value
-static inline quat_t quat_add_s( quat_t q, float s )
+static inline quat_t quat_add_val( quat_t q, float val )
 {
-    quat_t result = { q.x + s, q.y + s, q.z + s, q.w + s };
+    quat_t result = { q.x + val, q.y + val, q.z + val, q.w + val };
     return result;
 }
 
@@ -36,9 +36,9 @@ static inline quat_t quat_sub( quat_t p, quat_t q )
 }
 
 // Subtract quaternion and float value
-static inline quat_t quat_sub_s( quat_t q, float s )
+static inline quat_t quat_sub_val( quat_t q, float val )
 {
-    quat_t result = { q.x - s, q.y - s, q.z - s, q.w - s };
+    quat_t result = { q.x - val, q.y - val, q.z - val, q.w - val };
     return result;
 }
 

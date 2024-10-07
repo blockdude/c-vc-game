@@ -14,66 +14,77 @@
 // Module Functions Definition - Vector2 math
 //----------------------------------------------------------------------------------
 
+// Vector2 with components value 0.0f
 static inline vec2_t vec2_zero( void )
 {
 	vec2_t result = { 0.0f, 0.0f };
 	return result;
 }
 
+// Vector2 with components value 1.0f
 static inline vec2_t vec2_one( void )
 {
 	vec2_t result = { 1.0f, 1.0f };
 	return result;
 }
 
+// Add two vectors (a + b)
 static inline vec2_t vec2_add( vec2_t a, vec2_t b )
 {
 	vec2_t result = { a.x + b.x, a.y + b.y };
 	return result;
 }
 
-static inline vec2_t vec2_add_s( vec2_t v, float s )
+// Add a value to a vector
+static inline vec2_t vec2_add_val( vec2_t v, float val )
 {
-	vec2_t result = { v.x + s, v.y + s };
+	vec2_t result = { v.x + val, v.y + val };
 	return result;
 }
 
+// Subtract two vectors (a - b)
 static inline vec2_t vec2_sub( vec2_t a, vec2_t b )
 {
 	vec2_t result = { a.x - b.x, a.y - b.y };
 	return result;
 }
 
-static inline vec2_t vec2_sub_s( vec2_t v, float s )
+// Subtract a value from a vector
+static inline vec2_t vec2_sub_val( vec2_t v, float val )
 {
-	vec2_t result = { v.x - s, v.y - s };
+	vec2_t result = { v.x - val, v.y - val };
 	return result;
 }
 
+// Calculate the length of a vector
 static inline float vec2_len( vec2_t v )
 {
 	float result = sqrtf( ( v.x * v.x ) + ( v.y * v.y ) );
 	return result;
 }
 
+// Calculate the squared length of a vector
 static inline float vec2_len_sq( vec2_t v )
 {
 	float result = ( v.x * v.x ) + ( v.y * v.y );
 	return result;
 }
 
+// Calculate two vectors dot product
 static inline float vec2_dot( vec2_t a, vec2_t b )
 {
 	float result = ( a.x * b.x ) + ( a.y * b.y );
 	return result;
 }
 
+// Calculate distance between two vectors
 static inline float vec2_dist( vec2_t a, vec2_t b )
 {
 	float result = sqrtf( ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y ) );
 	return result;
 }
 
+// Calculate squared distance between two vectors
 static inline float vec2_dist_sq( vec2_t a, vec2_t b )
 {
 	float result = ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y );
@@ -101,7 +112,7 @@ static inline float vec2_line_angle( vec2_t start, vec2_t end)
 {
     float result = 0.0f;
 
-    result = -atan2f(end.y - start.y, end.x - start.x);
+    result = -atan2f( end.y - start.y, end.x - start.x );
 
     return result;
 }
@@ -266,8 +277,8 @@ static inline vec2_t vec2_clamp( vec2_t v, vec2_t min, vec2_t max )
 }
 
 // Clamp the components of the vector between
-// min and max scalar values
-static inline vec2_t vec2_clamp_s( vec2_t v, float min, float max )
+// min and max values
+static inline vec2_t vec2_clamp_val( vec2_t v, float min, float max )
 {
     vec2_t result = { 0 };
 
@@ -366,9 +377,9 @@ static inline vec3_t vec3_add( vec3_t a, vec3_t b )
 }
 
 // Add vector and float value
-static inline vec3_t vec3_add_s( vec3_t v, float s )
+static inline vec3_t vec3_add_val( vec3_t v, float val )
 {
-    vec3_t result = { v.x + s, v.y + s, v.z + s };
+    vec3_t result = { v.x + val, v.y + val, v.z + val };
     return result;
 }
 
@@ -380,9 +391,9 @@ static inline vec3_t vec3_sub( vec3_t a, vec3_t b )
 }
 
 // Subtract vector by float value
-static inline vec3_t vec3_sub_s( vec3_t v, float s )
+static inline vec3_t vec3_sub_val( vec3_t v, float val )
 {
-    vec3_t result = { v.x - s, v.y - s, v.z - s };
+    vec3_t result = { v.x - val, v.y - val, v.z - val };
     return result;
 }
 
@@ -787,9 +798,9 @@ static inline vec3_t vec3_barycenter( vec3_t p, vec3_t a, vec3_t b, vec3_t c )
 {
     vec3_t result = { 0 };
 
-    vec3_t v0 = { b.x - a.x, b.y - a.y, b.z - a.z };   // vec3_sub(b, a)
-    vec3_t v1 = { c.x - a.x, c.y - a.y, c.z - a.z };   // vec3_sub(c, a)
-    vec3_t v2 = { p.x - a.x, p.y - a.y, p.z - a.z };   // vec3_sub(p, a)
+    vec3_t v0 = { b.x - a.x, b.y - a.y, b.z - a.z };			// vec3_sub(b, a)
+    vec3_t v1 = { c.x - a.x, c.y - a.y, c.z - a.z };   			// vec3_sub(c, a)
+    vec3_t v2 = { p.x - a.x, p.y - a.y, p.z - a.z };   			// vec3_sub(p, a)
     float d00 = ( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z );    // vec3_dot(v0, v0)
     float d01 = ( v0.x * v1.x + v0.y * v1.y + v0.z * v1.z );    // vec3_dot(v0, v1)
     float d11 = ( v1.x * v1.x + v1.y * v1.y + v1.z * v1.z );    // vec3_dot(v1, v1)
@@ -911,7 +922,7 @@ static inline vec3_t vec3_clamp( vec3_t v, vec3_t min, vec3_t max )
     return result;
 }
 
-static inline vec3_t vec3_clamp_s( vec3_t v, float min, float max )
+static inline vec3_t vec3_clamp_val( vec3_t v, float min, float max )
 {
     vec3_t result = { 0 };
 
@@ -1015,13 +1026,13 @@ static inline vec4_t vec4_add( vec4_t a, vec4_t b )
     return result;
 }
 
-static inline vec4_t vec4_add_s( vec4_t v, float s )
+static inline vec4_t vec4_add_val( vec4_t v, float val )
 {
     vec4_t result = {
-        v.x + s,
-        v.y + s,
-        v.z + s,
-        v.w + s
+        v.x + val,
+        v.y + val,
+        v.z + val,
+        v.w + val
     };
     return result;
 }
@@ -1037,13 +1048,13 @@ static inline vec4_t vec4_sub( vec4_t a, vec4_t b )
     return result;
 }
 
-static inline vec4_t vec4_sub_s( vec4_t v, float s )
+static inline vec4_t vec4_sub_val( vec4_t v, float val )
 {
     vec4_t result = {
-        v.x - s,
-        v.y - s,
-        v.z - s,
-        v.w - s
+        v.x - val,
+        v.y - val,
+        v.z - val,
+        v.w - val
     };
     return result;
 }
