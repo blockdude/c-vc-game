@@ -2,32 +2,9 @@
 #define SPACEOBJECT_H
 
 #include <util/types.h>
+#include "Chunk.h"
 
-enum TileType
-{
-	NONE,
-	GRASS,
-	DIRT,
-	WATER,
-	LAVA,
-	STONE
-};
-
-struct Chunk
-{
-	static constexpr int	CHUNKSIZE = 8;
-	vec2_t					offset;
-	unsigned int *			data;
-	size_t					count;
-
-	int			GetTile( int x, int y );
-	void		SetTile( int x, int y, int tile );
-	void		Tick( void );
-	void		Step( void );
-	void		Draw( void );
-};
-
-class Object
+class SpaceObject
 {
 public:
 	vec2_t  com;		/* center of mass		*/
@@ -37,10 +14,11 @@ public:
 	float  	w;   		/* angular velocity     */
 	float  	m;   		/* mass                 */
 	float  	r;   		/* radius               */
-	Chunk	*chunks;
+	Chunk * chunks;
+	size_t  count;
 
-			Object( void );
-			~Object( void );
+			SpaceObject( void );
+			~SpaceObject( void );
 	void	Tick( void );
 	void    Step( void );
 	void    Draw( void );

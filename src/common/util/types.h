@@ -216,6 +216,9 @@ typedef struct f16v f16v_t;
 
 static _COLOR BLACK = { 0.0f, 0.0f, 0.0f, 1.0f };
 static _COLOR WHITE = { 1.0f, 1.0f, 1.0f, 1.0f };
+static _COLOR RED   = { 1.0f, 0.0f, 0.0f, 1.0f };
+static _COLOR GREEN = { 0.0f, 1.0f, 0.0f, 1.0f };
+static _COLOR BLUE  = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 /*
  * =============================
