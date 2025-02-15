@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
 
 	log_info( "Arguments: %s", args.c_str() );
 
-	SETFPS( 0 );
+	SETFPS( 144 );
 	SETTPS( 100 );
 
 	window_flags_enable( WINDOW_RELATIVE_MOUSE | WINDOW_RESIZABLE | WINDOW_HIGHDPI );
