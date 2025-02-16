@@ -6,6 +6,7 @@ obj
 tool
 .vim
 .cache
+.vs
 
 # ignore valgrind massif readouts
 massif.out.*
