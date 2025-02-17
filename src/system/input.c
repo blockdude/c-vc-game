@@ -138,7 +138,7 @@ static const int btnmap[] = {
     B_BACK            // SDL_BUTTON_X2
 };
 
-int input_poll( void )
+int input_poll_events( void )
 {
     // reset keys
     for ( int i = 0; i < K_COUNT; i++ )
@@ -253,17 +253,17 @@ bool input_mouse_moved( void )
     return core.input.m_moved;
 }
 
-vec2_t input_mouse_pos( void )
+struct vec2 input_mouse_pos( void )
 {
     return core.input.m_pos_rel;
 }
 
-vec2_t input_mouse_delta( void )
+struct vec2 input_mouse_delta( void )
 {
     return core.input.m_pos_delta;
 }
 
-vec2_t input_mouse_scroll( void )
+struct vec2 input_mouse_scroll( void )
 {
     return core.input.m_wheel;
 }

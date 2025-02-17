@@ -14,9 +14,9 @@ struct camera
 	// projection type
 	int type;
 
-	vec3_t eye;		/* camera position */
-	vec3_t target;	/* lookat position */
-	vec3_t up;		/* camera tilt     */
+	struct vec3 eye;	/* camera position */
+	struct vec3 target;	/* lookat position */
+	struct vec3 up;		/* camera tilt     */
 	
 	// perspective - controls the Y field of view
 	float fov;
@@ -31,27 +31,18 @@ extern "C" {
 
 void camera_init( struct camera *camera, int type );
 void camera_update( struct camera *camera );
-
-void camera_move( struct camera *camera, vec3_t direction, float dist );
-
+void camera_move( struct camera *camera, struct vec3 direction, float dist );
 void camera_forward( struct camera *camera, float dist );
 void camera_up( struct camera *camera, float dist );
 void camera_right( struct camera *camera, float dist );
-
 void camera_pitch( struct camera *camera, float angle );
 void camera_yaw( struct camera *camera, float angle );
 void camera_roll( struct camera *camera, float angle );
 
-/*
- * Calculate the proction matrix of the camera
- */
-mat4_t camera_proj_custom( struct camera *camera, float aspect, float near, float far );
+// calculate matricies
+struct mat4 camera_proj_custom( struct camera *camera, float aspect, float near, float far );
 #define camera_proj( _cam, _aspect ) camera_proj_custom( _cam, _aspect, 0.01f, 1000.0f )
-
-/*
- * Calculate the view matrix of the camera
- */
-mat4_t camera_view( struct camera *camera );
+struct mat4 camera_view( struct camera *camera );
 
 #ifdef __cplusplus
 }

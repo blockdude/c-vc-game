@@ -1,25 +1,14 @@
-#ifndef MAT4_H
-#define MAT4_H
+#ifndef MAT4_F32_H
+#define MAT4_F32_H
 
-#include <util/types.h>
-#include "math.h"
-#include "quat.h"
-#include "vector.h"
-
-/*
- * This is a fork of the raymath v1.5 library.
- * There are no modifications other than some formating and
- * naming differences.
- */
-
-//----------------------------------------------------------------------------------
-// Module Functions Definition - Matrix math
-//----------------------------------------------------------------------------------
-
-#define mat4_to_float( m ) ( mat4_to_f16v( m ).v )
+#include "../../util/types.h"
+#include "../math.h"
+#include "quat_f32.h"
+#include "vec3_f32.h"
+#include <math.h>
 
 // Compute matrix determinant
-static inline float mat4_det( mat4_t m )
+static inline float mat4_f32_det( struct mat4_f32 m )
 {
     float result = 0.0f;
 
@@ -29,27 +18,28 @@ static inline float mat4_det( mat4_t m )
     float a20 = m.m02, a21 = m.m12, a22 = m.m22, a23 = m.m32;
     float a30 = m.m03, a31 = m.m13, a32 = m.m23, a33 = m.m33;
 
-    result = a30 * a21 * a12 * a03 - a20 * a31 * a12 * a03 - a30 * a11 * a22 * a03 + a10 * a31 * a22 * a03 +
-             a20 * a11 * a32 * a03 - a10 * a21 * a32 * a03 - a30 * a21 * a02 * a13 + a20 * a31 * a02 * a13 +
-             a30 * a01 * a22 * a13 - a00 * a31 * a22 * a13 - a20 * a01 * a32 * a13 + a00 * a21 * a32 * a13 +
-             a30 * a11 * a02 * a23 - a10 * a31 * a02 * a23 - a30 * a01 * a12 * a23 + a00 * a31 * a12 * a23 +
-             a10 * a01 * a32 * a23 - a00 * a11 * a32 * a23 - a20 * a11 * a02 * a33 + a10 * a21 * a02 * a33 +
-             a20 * a01 * a12 * a33 - a00 * a21 * a12 * a33 - a10 * a01 * a22 * a33 + a00 * a11 * a22 * a33;
+    result =
+        a30 * a21 * a12 * a03 - a20 * a31 * a12 * a03 - a30 * a11 * a22 * a03 + a10 * a31 * a22 * a03 +
+        a20 * a11 * a32 * a03 - a10 * a21 * a32 * a03 - a30 * a21 * a02 * a13 + a20 * a31 * a02 * a13 +
+        a30 * a01 * a22 * a13 - a00 * a31 * a22 * a13 - a20 * a01 * a32 * a13 + a00 * a21 * a32 * a13 +
+        a30 * a11 * a02 * a23 - a10 * a31 * a02 * a23 - a30 * a01 * a12 * a23 + a00 * a31 * a12 * a23 +
+        a10 * a01 * a32 * a23 - a00 * a11 * a32 * a23 - a20 * a11 * a02 * a33 + a10 * a21 * a02 * a33 +
+        a20 * a01 * a12 * a33 - a00 * a21 * a12 * a33 - a10 * a01 * a22 * a33 + a00 * a11 * a22 * a33;
 
     return result;
 }
 
 // Get the trace of the matrix (sum of the values along the diagonal)
-static inline float mat4_trace( mat4_t m )
+static inline float mat4_f32_trace( struct mat4_f32 m )
 {
     float result = ( m.m00 + m.m11 + m.m22 + m.m33 );
     return result;
 }
 
 // Transposes provided matrix
-static inline mat4_t mat4_transpose( mat4_t m )
+static inline struct mat4_f32 mat4_f32_transpose( struct mat4_f32 m )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     result.m00 = m.m00;
     result.m10 = m.m01;
@@ -72,9 +62,9 @@ static inline mat4_t mat4_transpose( mat4_t m )
 }
 
 // Invert provided matrix
-static inline mat4_t mat4_invert( mat4_t m )
+static inline struct mat4_f32 mat4_f32_invert( struct mat4_f32 m )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     // Cache the matrix values (speed optimization)
     float a00 = m.m00, a01 = m.m10, a02 = m.m20, a03 = m.m30;
@@ -98,43 +88,43 @@ static inline mat4_t mat4_invert( mat4_t m )
     // Calculate the invert determinant (inlined to avoid double-caching)
     float idet = 1.0f / ( b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06 );
 
-    result.m00 = (  a11 * b11 - a12 * b10 + a13 * b09 ) * idet;
+    result.m00 = ( a11 * b11 - a12 * b10 + a13 * b09 ) * idet;
     result.m10 = ( -a01 * b11 + a02 * b10 - a03 * b09 ) * idet;
-    result.m20 = (  a31 * b05 - a32 * b04 + a33 * b03 ) * idet;
+    result.m20 = ( a31 * b05 - a32 * b04 + a33 * b03 ) * idet;
     result.m30 = ( -a21 * b05 + a22 * b04 - a23 * b03 ) * idet;
     result.m01 = ( -a10 * b11 + a12 * b08 - a13 * b07 ) * idet;
-    result.m11 = (  a00 * b11 - a02 * b08 + a03 * b07 ) * idet;
+    result.m11 = ( a00 * b11 - a02 * b08 + a03 * b07 ) * idet;
     result.m21 = ( -a30 * b05 + a32 * b02 - a33 * b01 ) * idet;
-    result.m31 = (  a20 * b05 - a22 * b02 + a23 * b01 ) * idet;
-    result.m02 = (  a10 * b10 - a11 * b08 + a13 * b06 ) * idet;
+    result.m31 = ( a20 * b05 - a22 * b02 + a23 * b01 ) * idet;
+    result.m02 = ( a10 * b10 - a11 * b08 + a13 * b06 ) * idet;
     result.m12 = ( -a00 * b10 + a01 * b08 - a03 * b06 ) * idet;
-    result.m22 = (  a30 * b04 - a31 * b02 + a33 * b00 ) * idet;
+    result.m22 = ( a30 * b04 - a31 * b02 + a33 * b00 ) * idet;
     result.m32 = ( -a20 * b04 + a21 * b02 - a23 * b00 ) * idet;
     result.m03 = ( -a10 * b09 + a11 * b07 - a12 * b06 ) * idet;
-    result.m13 = (  a00 * b09 - a01 * b07 + a02 * b06 ) * idet;
+    result.m13 = ( a00 * b09 - a01 * b07 + a02 * b06 ) * idet;
     result.m23 = ( -a30 * b03 + a31 * b01 - a32 * b00 ) * idet;
-    result.m33 = (  a20 * b03 - a21 * b01 + a22 * b00 ) * idet;
+    result.m33 = ( a20 * b03 - a21 * b01 + a22 * b00 ) * idet;
 
     return result;
 }
 
 // Get identity matrix
-static inline mat4_t mat4_identity( void )
+static inline struct mat4_f32 mat4_f32_identity( void )
 {
-    mat4_t result = {
-		1.0f, 0.0f, 0.0f, 0.0f,
+    struct mat4_f32 result = {
+        1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
 
     return result;
 }
 
 // Add two matrices
-static inline mat4_t mat4_add( mat4_t a, mat4_t b )
+static inline struct mat4_f32 mat4_f32_add( struct mat4_f32 a, struct mat4_f32 b )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     result.m00 = a.m00 + b.m00;
     result.m10 = a.m10 + b.m10;
@@ -159,9 +149,9 @@ static inline mat4_t mat4_add( mat4_t a, mat4_t b )
 // Subtract two matrices (left - right)
 // a - left matrix
 // b - right matrix
-static inline mat4_t mat4_sub( mat4_t a, mat4_t b )
+static inline struct mat4_f32 mat4_f32_sub( struct mat4_f32 a, struct mat4_f32 b )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     result.m00 = a.m00 - b.m00;
     result.m10 = a.m10 - b.m10;
@@ -185,9 +175,9 @@ static inline mat4_t mat4_sub( mat4_t a, mat4_t b )
 
 // Get two matrix multiplication
 // NOTE: When multiplying matrices... the order matters!
-static inline mat4_t mat4_mul( mat4_t a, mat4_t b )
+static inline struct mat4_f32 mat4_f32_mul( struct mat4_f32 a, struct mat4_f32 b )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     result.m00 = a.m00 * b.m00 + a.m10 * b.m01 + a.m20 * b.m02 + a.m30 * b.m03;
     result.m10 = a.m00 * b.m10 + a.m10 * b.m11 + a.m20 * b.m12 + a.m30 * b.m13;
@@ -210,23 +200,23 @@ static inline mat4_t mat4_mul( mat4_t a, mat4_t b )
 }
 
 // Get translation matrix
-static inline mat4_t mat4_translate( vec3_t v )
+static inline struct mat4_f32 mat4_f32_translate( struct vec3_f32 v )
 {
-    mat4_t result = {
-		1.0f, 0.0f, 0.0f, v.x,
+    struct mat4_f32 result = {
+        1.0f, 0.0f, 0.0f, v.x,
         0.0f, 1.0f, 0.0f, v.y,
         0.0f, 0.0f, 1.0f, v.z,
         0.0f, 0.0f, 0.0f, 1.0f
-	};
+    };
 
     return result;
 }
 
 // Create rotation matrix from axis and angle
 // NOTE: Angle should be provided in radians
-static inline mat4_t mat4_rotate( vec3_t axis, float angle )
+static inline struct mat4_f32 mat4_f32_rotate( struct vec3_f32 axis, float angle )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     float x = axis.x, y = axis.y, z = axis.z;
     float len = x * x + y * y + z * z;
@@ -268,66 +258,66 @@ static inline mat4_t mat4_rotate( vec3_t axis, float angle )
 
 // Get x-rotation matrix
 // NOTE: Angle must be provided in radians
-static inline mat4_t mat4_rotate_x( float angle )
+static inline struct mat4_f32 mat4_f32_rotate_x( float angle )
 {
-    mat4_t result = {
-		1.0f, 0.0f, 0.0f, 0.0f,
+    struct mat4_f32 result = {
+        1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f
-	}; // MatrixIdentity()
+    }; // MatrixIdentity()
 
     float cos = cosf( angle );
     float sin = sinf( angle );
 
-    result.m11 =  cos;
-    result.m21 =  sin;
+    result.m11 = cos;
+    result.m21 = sin;
     result.m12 = -sin;
-    result.m22 =  cos;
+    result.m22 = cos;
 
     return result;
 }
 
 // Get y-rotation matrix
 // NOTE: Angle must be provided in radians
-static inline mat4_t mat4_rotate_y( float angle )
+static inline struct mat4_f32 mat4_f32_rotate_y( float angle )
 {
-    mat4_t result = {
-		1.0f, 0.0f, 0.0f, 0.0f,
+    struct mat4_f32 result = {
+        1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f
-	}; // MatrixIdentity()
+    }; // MatrixIdentity()
 
     float cos = cosf( angle );
     float sin = sinf( angle );
 
-    result.m00 =  cos;
+    result.m00 = cos;
     result.m20 = -sin;
-    result.m02 =  sin;
-    result.m22 =  cos;
+    result.m02 = sin;
+    result.m22 = cos;
 
     return result;
 }
 
 // Get z-rotation matrix
 // NOTE: Angle must be provided in radians
-static inline mat4_t mat4_rotate_z( float angle )
+static inline struct mat4_f32 mat4_f32_rotate_z( float angle )
 {
-    mat4_t result = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	}; // MatrixIdentity()
+    struct mat4_f32 result = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    }; // MatrixIdentity()
 
     float cos = cosf( angle );
     float sin = sinf( angle );
 
-    result.m00 =  cos;
-    result.m10 =  sin;
+    result.m00 = cos;
+    result.m10 = sin;
     result.m01 = -sin;
-    result.m11 =  cos;
+    result.m11 = cos;
 
     return result;
 }
@@ -335,14 +325,14 @@ static inline mat4_t mat4_rotate_z( float angle )
 
 // Get xyz-rotation matrix
 // NOTE: Angle must be provided in radians
-static inline mat4_t mat_rotate_xyz( vec3_t angle )
+static inline struct mat4_f32 mat4_f32_rotate_xyz( struct vec3_f32 angle )
 {
-    mat4_t result = {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	}; // MatrixIdentity()
+    struct mat4_f32 result = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    }; // MatrixIdentity()
 
     float cosz = cosf( -angle.z );
     float sinz = sinf( -angle.z );
@@ -368,9 +358,9 @@ static inline mat4_t mat_rotate_xyz( vec3_t angle )
 
 // Get zyx-rotation matrix
 // NOTE: Angle must be provided in radians
-static inline mat4_t mat4_rotate_zyx( vec3_t angle )
+static inline struct mat4_f32 mat4_f32_rotate_zyx( struct vec3_f32 angle )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     float cosz = cosf( angle.z );
     float sinz = sinf( angle.z );
@@ -403,45 +393,45 @@ static inline mat4_t mat4_rotate_zyx( vec3_t angle )
 }
 
 // Get scaling matrix
-static inline mat4_t mat4_scale( vec3_t v )
+static inline struct mat4_f32 mat4_f32_scale( struct vec3_f32 v )
 {
-    mat4_t result = {
-		v.x,  0.0f, 0.0f, 0.0f,
-		0.0f, v.y,  0.0f, 0.0f,
-		0.0f, 0.0f, v.z,  0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
+    struct mat4_f32 result = {
+        v.x, 0.0f, 0.0f, 0.0f,
+        0.0f, v.y, 0.0f, 0.0f,
+        0.0f, 0.0f, v.z, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
 
     return result;
 }
 
 // Get perspective projection matrix
-static inline mat4_t mat4_frustum( double left, double right, double bottom, double top, double near, double far )
+static inline struct mat4_f32 mat4_f32_frustum( float left, float right, float bottom, float top, float near, float far )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
-    float rl = ( float )( right - left );
-    float tb = ( float )( top - bottom );
-    float fn = ( float )( far - near );
+    float rl = right - left;
+    float tb = top - bottom;
+    float fn = far - near;
 
-    result.m00 = ( ( float )near * 2.0f ) / rl;
+    result.m00 = ( near * 2.0f ) / rl;
     result.m10 = 0.0f;
     result.m20 = 0.0f;
     result.m30 = 0.0f;
 
     result.m01 = 0.0f;
-    result.m11 = ( ( float )near * 2.0f ) / tb;
+    result.m11 = ( near * 2.0f ) / tb;
     result.m21 = 0.0f;
     result.m31 = 0.0f;
 
-    result.m02 = ( ( float )right + ( float )left ) / rl;
-    result.m12 = ( ( float )top + ( float )bottom ) / tb;
-    result.m22 = -( ( float )far + ( float )near ) / fn;
+    result.m02 = ( right + left ) / rl;
+    result.m12 = ( top + bottom ) / tb;
+    result.m22 = -( far + near ) / fn;
     result.m32 = -1.0f;
 
     result.m03 = 0.0f;
     result.m13 = 0.0f;
-    result.m23 = -( ( float )far * ( float )near * 2.0f ) / fn;
+    result.m23 = -( far * near * 2.0f ) / fn;
     result.m33 = 0.0f;
 
     return result;
@@ -449,39 +439,39 @@ static inline mat4_t mat4_frustum( double left, double right, double bottom, dou
 
 // Get perspective projection matrix
 // NOTE: Fovy angle must be provided in radians
-static inline mat4_t mat4_perspective( double fovy, double aspect, double near, double far )
+static inline struct mat4_f32 mat4_f32_perspective( float fovy, float aspect, float near, float far )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
-    double top = near * tan( fovy * 0.5 );
-    double bottom = -top;
-    double right = top * aspect;
-    double left = -right;
+    float top = near * tan( fovy * 0.5 );
+    float bottom = -top;
+    float right = top * aspect;
+    float left = -right;
 
     // MatrixFrustum( -right, right, -top, top, near, far );
-    float rl = ( float )( right - left );
-    float tb = ( float )( top - bottom );
-    float fn = ( float )( far - near );
+    float rl = right - left;
+    float tb = top - bottom;
+    float fn = far - near;
 
-    result.m00 = ( ( float ) near * 2.0f ) / rl;
-    result.m11 = ( ( float ) near * 2.0f ) / tb;
-    result.m02 = ( ( float ) right + ( float ) left ) / rl;
-    result.m12 = ( ( float ) top + ( float ) bottom ) / tb;
-    result.m22 = -( ( float ) far + ( float ) near ) / fn;
+    result.m00 = ( near * 2.0f ) / rl;
+    result.m11 = ( near * 2.0f ) / tb;
+    result.m02 = ( right + left ) / rl;
+    result.m12 = ( top + bottom ) / tb;
+    result.m22 = -( far + near ) / fn;
     result.m32 = -1.0f;
-    result.m23 = -( ( float ) far * ( float ) near * 2.0f ) / fn;
+    result.m23 = -( far * near * 2.0f ) / fn;
 
     return result;
 }
 
 // Get orthographic projection matrix
-static inline mat4_t mat4_ortho( double left, double right, double bottom, double top, double near, double far )
+static inline struct mat4_f32 mat4_f32_ortho( float left, float right, float bottom, float top, float near, float far )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
-    float rl = ( float )( right - left );
-    float tb = ( float )( top - bottom );
-    float fn = ( float )( far - near );
+    float rl = right - left;
+    float tb = top - bottom;
+    float fn = far - near;
 
     result.m00 = 2.0f / rl;
     result.m10 = 0.0f;
@@ -495,27 +485,27 @@ static inline mat4_t mat4_ortho( double left, double right, double bottom, doubl
     result.m12 = 0.0f;
     result.m22 = -2.0f / fn;
     result.m32 = 0.0f;
-    result.m03 = -( ( float ) left + ( float ) right ) / rl;
-    result.m13 = -( ( float ) top + ( float ) bottom ) / tb;
-    result.m23 = -( ( float ) far + ( float ) near ) / fn;
+    result.m03 = -( left + right ) / rl;
+    result.m13 = -( top + bottom ) / tb;
+    result.m23 = -( far + near ) / fn;
     result.m33 = 1.0f;
 
     return result;
 }
 
 // Get camera look-at matrix (view matrix)
-static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
+static inline struct mat4_f32 mat4_f32_lookat( struct vec3_f32 eye, struct vec3_f32 target, struct vec3_f32 up )
 {
-    mat4_t result = { 0 };
+    struct mat4_f32 result = { 0 };
 
     float len = 0.0f;
     float ilen = 0.0f;
 
     // Vector3Subtract( eye, target )
-    vec3_t vz = { eye.x - target.x, eye.y - target.y, eye.z - target.z };
+    struct vec3_f32 vz = { eye.x - target.x, eye.y - target.y, eye.z - target.z };
 
     // Vector3Normalize( vz )
-    vec3_t v = vz;
+    struct vec3_f32 v = vz;
     len = sqrtf( v.x * v.x + v.y * v.y + v.z * v.z );
     if ( len == 0.0f ) len = 1.0f;
     ilen = 1.0f / len;
@@ -524,7 +514,7 @@ static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
     vz.z *= ilen;
 
     // Vector3CrossProduct( up, vz )
-    vec3_t vx = { up.y * vz.z - up.z * vz.y, up.z * vz.x - up.x * vz.z, up.x * vz.y - up.y * vz.x };
+    struct vec3_f32 vx = { up.y * vz.z - up.z * vz.y, up.z * vz.x - up.x * vz.z, up.x * vz.y - up.y * vz.x };
 
     // Vector3Normalize( x )
     v = vx;
@@ -536,7 +526,7 @@ static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
     vx.z *= ilen;
 
     // Vector3CrossProduct( vz, vx )
-    vec3_t vy = { vz.y * vx.z - vz.z * vx.y, vz.z * vx.x - vz.x * vx.z, vz.x * vx.y - vz.y * vx.x };
+    struct vec3_f32 vy = { vz.y * vx.z - vz.z * vx.y, vz.z * vx.x - vz.x * vx.z, vz.x * vx.y - vz.y * vx.x };
 
     result.m00 = vx.x;
     result.m10 = vy.x;
@@ -558,36 +548,36 @@ static inline mat4_t mat4_lookat( vec3_t eye, vec3_t target, vec3_t up )
     return result;
 }
 
-// Get float array of matrix data
-static inline f16v_t mat4_to_f16v( mat4_t m )
+// Get float array of matrix data. convert matrix to a flat array
+static inline struct mat4_f32_flat mat4_f32_flatten( struct mat4_f32 m )
 {
-    f16v_t result = { 0 };
+    struct mat4_f32_flat result = { 0 };
 
-    result.v[  0 ] = m.m00;
-    result.v[  1 ] = m.m10;
-    result.v[  2 ] = m.m20;
-    result.v[  3 ] = m.m30;
+    result.m[ 0 ] = m.m00;
+    result.m[ 1 ] = m.m10;
+    result.m[ 2 ] = m.m20;
+    result.m[ 3 ] = m.m30;
 
-    result.v[  4 ] = m.m01;
-    result.v[  5 ] = m.m11;
-    result.v[  6 ] = m.m21;
-    result.v[  7 ] = m.m31;
+    result.m[ 4 ] = m.m01;
+    result.m[ 5 ] = m.m11;
+    result.m[ 6 ] = m.m21;
+    result.m[ 7 ] = m.m31;
 
-    result.v[  8 ] = m.m02;
-    result.v[  9 ] = m.m12;
-    result.v[ 10 ] = m.m22;
-    result.v[ 11 ] = m.m32;
+    result.m[ 8 ] = m.m02;
+    result.m[ 9 ] = m.m12;
+    result.m[ 10 ] = m.m22;
+    result.m[ 11 ] = m.m32;
 
-    result.v[ 12 ] = m.m03;
-    result.v[ 13 ] = m.m13;
-    result.v[ 14 ] = m.m23;
-    result.v[ 15 ] = m.m33;
+    result.m[ 12 ] = m.m03;
+    result.m[ 13 ] = m.m13;
+    result.m[ 14 ] = m.m23;
+    result.m[ 15 ] = m.m33;
 
     return result;
 }
 
 // Decompose a transformation matrix into its rotational, translational and scaling components
-static inline void mat4_decompose( mat4_t m, vec3_t *translation, quat_t *rotation, vec3_t *scale )
+static inline void mat4_f32_decompose( struct mat4_f32 m, struct vec3_f32 *translation, struct quat_f32 *rotation, struct vec3_f32 *scale )
 {
     // Extract translation.
     translation->x = m.m03;
@@ -610,34 +600,34 @@ static inline void mat4_decompose( mat4_t m, vec3_t *translation, quat_t *rotati
 
     // Extract scale
     const float det = a * A + b * B + c * C;
-    vec3_t abc = { a, b, c };
-    vec3_t def = { d, e, f };
-    vec3_t ghi = { g, h, i };
+    struct vec3_f32 abc = { a, b, c };
+    struct vec3_f32 def = { d, e, f };
+    struct vec3_f32 ghi = { g, h, i };
 
-    float scalex = vec3_len( abc );
-    float scaley = vec3_len( def );
-    float scalez = vec3_len( ghi );
-    vec3_t s = { scalex, scaley, scalez };
+    float scalex = vec3_f32_len( abc );
+    float scaley = vec3_f32_len( def );
+    float scalez = vec3_f32_len( ghi );
+    struct vec3_f32 s = { scalex, scaley, scalez };
 
-    if ( det < 0 ) s = vec3_negate( s );
+    if ( det < 0 ) s = vec3_f32_negate( s );
 
     *scale = s;
 
     // Remove scale from the matrix if it is not close to zero
-    mat4_t clone = m;
-    if ( !flteq( det, 0, EPSILON ) )
+    struct mat4_f32 clone = m;
+    if ( !f32_equals( det, 0, EPSILON ) )
     {
         clone.m00 /= s.x;
         clone.m11 /= s.y;
         clone.m22 /= s.z;
 
         // Extract rotation
-        *rotation = quat_from_mat4( clone );
+        *rotation = quat_f32_from_mat4_f32( clone );
     }
     else
     {
         // Set to identity if close to zero
-        *rotation = quat_identity();
+        *rotation = quat_f32_identity();
     }
 }
 

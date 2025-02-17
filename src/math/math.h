@@ -1,7 +1,8 @@
 #ifndef MATH_H
 #define MATH_H
 
-#include <math.h>
+#include "float32/math_f32.h"
+#include "float64/math_f64.h"
 
 #ifdef WIN32
 
@@ -10,42 +11,21 @@
 
 #endif
 
-#define EULER   2.71828182845904523536028747135266249f
-#define PI_2    1.57079632679489661923132169163975144f
-#define PI      3.14159265358979323846264338327950288f
-#define TAU     6.28318530717958647692528676655900576f
-#define EPSILON 0.0001f
-
-#define CLAMP( v, mn, mx ) MAX( mn, MIN( mx, v ) )
+#define EULER   2.71828182845904523536028747135266249
+#define PI_2    1.57079632679489661923132169163975144
+#define PI      3.14159265358979323846264338327950288
+#define TAU     6.28318530717958647692528676655900576
+#define EPSILON 0.0001
 
 #define MAX( a, b ) ( ( a ) > ( b ) ? ( a ) : ( b ) )
 #define MIN( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
 
-#define DEGTORAD( x ) ( ( x ) * ( PI / 180.0f ) )
-#define RADTODEG( x ) ( ( x ) * ( 180.0f / PI ) )
+#define CLAMP( v, mn, mx ) MAX( mn, MIN( mx, v ) )
+
+#define DEGTORAD( x ) ( ( x ) * ( PI / 180.0 ) )
+#define RADTODEG( x ) ( ( x ) * ( 180.0 / PI ) )
 
 #define LERP( a, b, t ) ( ( a ) + ( t ) * ( ( b ) - ( a ) ) )
 #define NORMALIZE( x, min, max ) ( ( ( x ) - ( min ) ) / ( ( max ) - ( min ) ) )
-
-#ifndef BITFLAG
-#define BITFLAG( v ) ( 1 << ( v ) )
-#endif
-
-#ifndef HASFLAG
-#define HASFLAG( f, v ) ( ( ( f ) & ( v ) ) == ( v ) )
-#endif
-
-#ifndef ANYFLAG
-#define ANYFLAG( f, v ) ( ( ( f ) & ( v ) ) >  ( 0 ) )
-#endif
-
-/*
- * check if two floats are equal within an epsilon value
- */
-static inline int flteq( float a, float b, float epsilon )
-{
-	int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
-    return result;
-}
 
 #endif

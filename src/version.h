@@ -1,0 +1,10 @@
+#ifndef VCP_VERSION_H
+#define VCP_VERSION_H
+
+#define VCP_VERSION_MAJOR 0
+#define VCP_VERSION_MINOR 0
+#define VCP_VERSION_PATCH 0
+#define VCP_VERSION_PACKAGE 0
+#define VCP_VERSION "0.0.0.0"
+
+#endif

@@ -36,8 +36,6 @@ struct _ts_snapshot
 
 struct _timestep
 {
-    bool			quit;
-
     int   	        rate;
     int         	avg;
     double        	delta;
@@ -161,7 +159,7 @@ static inline void _tick_postfix(tick_control_t *tick)
 
 static inline bool _frame_can_proc(frame_control_t *frame)
 {
-    return !(frame->quit);
+    return true;
 }
 
 static inline void _frame_prefix(frame_control_t *frame)

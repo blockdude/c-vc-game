@@ -1,11 +1,21 @@
+#ifndef TS_TIME
+#define TS_TIME time_elapsed
+#endif
+
+#ifndef TS_SLEEP
+#define TS_SLEEP time_delay
+#endif
+
 #include "graphics/shader.h"
 #include "graphics/vao.h"
 #include "graphics/vbo.h"
 #include "math/color.h"
 #include "math/math.h"
-#include "math/matrix.h"
+#include "math/mat4.h"
 #include "math/quat.h"
-#include "math/vector.h"
+#include "math/vec2.h"
+#include "math/vec3.h"
+#include "math/vec4.h"
 #include "system/audio.h"
 #include "system/input.h"
 #include "system/system.h"

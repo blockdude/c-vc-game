@@ -35,10 +35,10 @@ struct core
 		struct keystate k_state[ K_COUNT ];
 		struct keystate m_state[ B_COUNT ];
 		bool         	m_moved;
-		vec2_t       	m_wheel;
-		vec2_t       	m_pos_rel;
-		vec2_t       	m_pos_global;
-		vec2_t       	m_pos_delta;
+		struct vec2     m_wheel;
+		struct vec2     m_pos_rel;
+		struct vec2     m_pos_global;
+		struct vec2     m_pos_delta;
 	} input;
 };
 

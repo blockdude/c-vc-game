@@ -34,11 +34,11 @@ struct shader shader_load( const char *vstext, const char *fstext );
 void shader_free( struct shader self );
 void shader_bind( struct shader self );
 
-void shader_uniform_mat4( struct shader self, const char *name, mat4_t m );
+void shader_uniform_mat4( struct shader self, const char *name, struct mat4 m );
 void shader_uniform_float( struct shader self, const char *name, float f );
-void shader_uniform_vec2( struct shader self, const char *name, vec2_t v );
-void shader_uniform_vec3( struct shader self, const char *name, vec3_t v );
-void shader_uniform_vec4( struct shader self, const char *name, vec4_t v );
+void shader_uniform_vec2( struct shader self, const char *name, struct vec2 v );
+void shader_uniform_vec3( struct shader self, const char *name, struct vec3 v );
+void shader_uniform_vec4( struct shader self, const char *name, struct vec4 v );
 void shader_uniform_int( struct shader self, const char *name, int v );
 void shader_uniform_uint( struct shader self, const char *name, unsigned int v );
 

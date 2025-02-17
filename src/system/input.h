@@ -116,7 +116,7 @@ extern "C" {
 #endif
 
 // poll all events
-int input_poll( void );
+int input_poll_events( void );
 
 /*
  * Returns the keystate of given key
@@ -138,19 +138,19 @@ bool input_mouse_moved( void );
  * Returns a 2d vector of the current mouse position relative to
  * the screen.
  */
-vec2_t input_mouse_pos( void );
+struct vec2 input_mouse_pos( void );
 
 /*
  * Returns the amount the mouse has moved between the current
  * frame and the previous frame.
  */
-vec2_t input_mouse_delta( void );
+struct vec2 input_mouse_delta( void );
 
 /*
  * Returns the amount the mouse wheel has been scrolled between
  * the current frame and the previous frame.
  */
-vec2_t input_mouse_scroll( void );
+struct vec2 input_mouse_scroll( void );
 
 #ifdef __cplusplus
 }

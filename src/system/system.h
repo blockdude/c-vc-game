@@ -30,7 +30,6 @@ extern "C" {
 
 void   sys_init( unsigned int flags );
 void   sys_free( void );
-void   sys_quit( void );
 
 /*
  * Audio

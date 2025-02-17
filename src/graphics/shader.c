@@ -7,8 +7,10 @@
 
 #include <util/log.h>
 #include <math/math.h>
-#include <math/vector.h>
-#include <math/matrix.h>
+#include <math/vec2.h>
+#include <math/vec3.h>
+#include <math/vec4.h>
+#include <math/mat4.h>
 
 static inline char *shader_get_log( 
 		GLint handle,
@@ -210,11 +212,11 @@ void shader_bind( struct shader self )
 	glUseProgram( self.handle );
 }
 
-void shader_uniform_mat4( struct shader self, const char *name, mat4_t m )
+void shader_uniform_mat4( struct shader self, const char *name, struct mat4 m )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniformMatrix4fv( idx, 1, GL_FALSE, mat4_to_float( m ) );
+    glUniformMatrix4fv( idx, 1, GL_FALSE, mat4_f32_flatten( m ).m );
 }
 
 void shader_uniform_float( struct shader self, const char *name, float f )
@@ -224,21 +226,21 @@ void shader_uniform_float( struct shader self, const char *name, float f )
     glUniform1f( idx, f );
 }
 
-void shader_uniform_vec2( struct shader self, const char *name, vec2_t v )
+void shader_uniform_vec2( struct shader self, const char *name, struct vec2 v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
 	glUniform2f( idx, v.x, v.y );
 }
 
-void shader_uniform_vec3( struct shader self, const char *name, vec3_t v )
+void shader_uniform_vec3( struct shader self, const char *name, struct vec3 v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
 	glUniform3f( idx, v.x, v.y, v.z );
 }
 
-void shader_uniform_vec4( struct shader self, const char *name, vec4_t v )
+void shader_uniform_vec4( struct shader self, const char *name, struct vec4 v )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
