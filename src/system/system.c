@@ -1,7 +1,6 @@
 #include "system.h"
 #include "window.h"
 #include "global.h"
-#include "timestep.h"
 
 #include <util/log.h>
 #include <SDL3/SDL.h>
@@ -26,22 +25,6 @@ struct core core = {
     .timer              = { 0 },
     .audio              = { 0 }
 };
-
-/*
- * =============================
- */
-
-
-
-/*
- * =============================
- * -----------------------------
- * TIMESTEP
- * -----------------------------
- */
-
-struct timestep __loop_local;
-struct timestep *__loop = &__loop_local;
 
 /*
  * =============================

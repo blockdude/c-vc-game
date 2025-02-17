@@ -26,8 +26,8 @@ set(platform_headers
 	src/system/input.h
 	src/system/system.h
 	src/system/time.h
-	src/system/timestep.h
 	src/system/window.h
+	src/util/timestep.h
 	src/util/camera.h
 	src/util/kdtree.h
 	src/util/list.h
