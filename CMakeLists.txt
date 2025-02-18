@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED True)
-
 set(sdl_include "extern/sdl/include")
 set(glad_include "extern/glad/include")
 set(glad_headers "extern/glad/include/glad/gl.h")
@@ -57,6 +54,8 @@ set(SDL_TEST OFF)
 add_subdirectory(extern/sdl EXCLUDE_FROM_ALL)
 
 project(platform)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED True)
 add_library(platform STATIC ${platform_sources} ${platform_headers} ${glad_sources} ${glad_headers})
 target_include_directories(platform PUBLIC ${platform_include} ${glad_include})
 target_link_libraries(platform SDL3::SDL3)

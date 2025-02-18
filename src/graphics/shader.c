@@ -175,14 +175,14 @@ static inline int shader_build_text( struct shader *self, const char *vstext, si
 
 struct shader shader_load( const char *vstext, const char *fstext )
 {
-	struct shader result;
+	struct shader result = { 0 };
 	result.status = shader_build_text( &result, vstext, strlen( vstext ), fstext, strlen( fstext ), NULL, NULL );
 	return result;
 }
 
 struct shader shader_loadf( const char *vspath, const char *fspath )
 {
-	struct shader result;
+	struct shader result = { 0 };
 	size_t vslen;
 	size_t fslen;
 	char *vstext = shader_load_text( vspath, &vslen );
