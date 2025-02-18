@@ -1,12 +1,12 @@
 [submodule "SDL"]
-	path = src/extern/sdl
+	path = extern/sdl
 	url = https://github.com/libsdl-org/SDL.git
 	ignore = untracked
 [submodule "stb"]
-	path = src/extern/stb
+	path = extern/stb
 	url = https://github.com/nothings/stb.git
 	ignore = untracked
 [submodule "tinyobjloader-c"]
-	path = src/extern/tol
+	path = extern/tol
 	url = https://github.com/syoyo/tinyobjloader-c.git
 	ignore = untracked

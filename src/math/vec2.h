@@ -1,10 +1,35 @@
 #ifndef VEC2_H
 #define VEC2_H
 
-#include "int32/vec2_i32.h"
-#include "int64/vec2_i64.h"
-#include "float32/vec2_f32.h"
-#include "float64/vec2_f64.h"
+#define __VEC2_TYPE__ struct vec2_f32
+#define __BASE_TYPE__ float
+#define __FUNC_SPEC__ static inline
+#define __FUNC_PREFIX__ vec2_f32
+#define __BASE_SUFFIX__ f
+#define __SIN__ sinf
+#define __COS__ cosf
+#define __TAN__ tanf
+#define __ATAN2__ atan2f
+#define __SQRT__ sqrtf
+#define __ABS__ fabsf
+#define __MIN__ fminf
+#define __MAX__ fminf
+#include "template/_vec2_float_template.h"
+
+#define __VEC2_TYPE__ struct vec2_f64
+#define __BASE_TYPE__ double
+#define __FUNC_SPEC__ static inline
+#define __FUNC_PREFIX__ vec2_f64
+#define __BASE_SUFFIX__
+#define __SIN__ sin
+#define __COS__ cos
+#define __TAN__ tan
+#define __ATAN2__ atan2
+#define __SQRT__ sqrt
+#define __ABS__ fabs
+#define __MIN__ fmin
+#define __MAX__ fmin
+#include "template/_vec2_float_template.h"
 
 /*
  * =============================

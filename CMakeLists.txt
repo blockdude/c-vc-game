@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.25)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-set(sdl_include "src/extern/sdl/include")
-set(glad_include "src/extern/glad/include")
-set(glad_headers "src/extern/glad/include/glad/gl.h")
-set(glad_sources "src/extern/glad/src/gl.c")
+set(sdl_include "extern/sdl/include")
+set(glad_include "extern/glad/include")
+set(glad_headers "extern/glad/include/glad/gl.h")
+set(glad_sources "extern/glad/src/gl.c")
 
 set(platform_include "src")
 set(platform_headers
@@ -57,7 +54,7 @@ set(SDL_SHARED OFF)
 set(SDL_STATIC ON)
 set(SDL_TEST_LIBRARY OFF)
 set(SDL_TEST OFF)
-add_subdirectory(src/extern/sdl EXCLUDE_FROM_ALL)
+add_subdirectory(extern/sdl EXCLUDE_FROM_ALL)
 
 project(platform)
 add_library(platform STATIC ${platform_sources} ${platform_headers} ${glad_sources} ${glad_headers})

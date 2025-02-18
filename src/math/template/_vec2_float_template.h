@@ -1,144 +1,98 @@
-#include "../../types.h"
-#include <math.h>
+#define __CONCAT__( _a, _b ) _a##_b
 
-#define VEC2_TYPE struct vec2_f32
-#define VEC2_BASE_TYPE float
-#define VEC2_FUNCTION_SPEC static inline
-#define VEC2_FUNCTION_PREFIX vec2_f32
+#define __DECL_HELPER__( _prefix, _fn ) __CONCAT__( _prefix, _##_fn )
+#define __DECL__( _fn ) __DECL_HELPER__( __FUNC_PREFIX__, _fn )
 
-#if ( VEC2_BASE_TYPE == float )
-
-#define VEC2_SIN sinf
-#define VEC2_COS cosf
-#define VEC2_TAN tanf
-#define VEC2_ATAN2 atan2f
-#define VEC2_SQRT sqrtf
-#define VEC2_ABS fabsf
-#define VEC2_MIN fminf
-#define VEC2_MAX fminf
-#define VEC2_BASE_TYPE_SUFFIX f
-
-#elif ( VEC2_BASE_TYPE == double )
-
-#define VEC2_SIN sin
-#define VEC2_COS cos
-#define VEC2_TAN tan
-#define VEC2_ATAN2 atan2
-#define VEC2_SQRT sqrt
-#define VEC2_ABS fabs
-#define VEC2_MIN fmin
-#define VEC2_MAX fmin
-#define VEC2_BASE_TYPE_SUFFIX
-
-#elif ( VEC2_BASE_TYPE == long double )
-
-#define VEC2_SIN sinl
-#define VEC2_COS cosl
-#define VEC2_TAN tanl
-#define VEC2_ATAN2 atan2l
-#define VEC2_SQRT sqrtl
-#define VEC2_ABS fabsl
-#define VEC2_MIN fminl
-#define VEC2_MAX fminl
-#define VEC2_BASE_TYPE_SUFFIX l
-
-#endif
-
-#define CAT( _a, _b ) _a##_b
-
-#define DECL_HELPER( _prefix, _fn ) CAT( _prefix, _##_fn )
-#define DECL( _fn ) DECL_HELPER( VEC2_FUNCTION_PREFIX, _fn )
-
-#define LIT_HELPER( _v, _s ) CAT( _v, _s )
-#define LIT( _v ) LIT_HELPER( _v, VEC2_BASE_TYPE_SUFFIX )
+#define __LITERAL_HELPER__( _v, _s ) __CONCAT__( _v, _s )
+#define __LITERAL__( _v ) __LITERAL_HELPER__( _v, __BASE_SUFFIX__ )
 
 // Vector2 with components value LIT( 0.0 )
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( zero )( void )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( zero )( void )
 {
-    VEC2_TYPE result = { LIT( 0.0 ), LIT( 0.0 ) };
+    __VEC2_TYPE__ result = { __LITERAL__( 0.0 ), __LITERAL__( 0.0 ) };
     return result;
 }
 
 // Vector2 with components value LIT( 1.0 )
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( one )( void )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( one )( void )
 {
-    VEC2_TYPE result = { LIT( 1.0 ), LIT( 1.0 ) };
+    __VEC2_TYPE__ result = { __LITERAL__( 1.0 ), __LITERAL__( 1.0 ) };
     return result;
 }
 
 // Add two vectors (a + b)
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( add )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( add )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_TYPE result = { a.x + b.x, a.y + b.y };
+    __VEC2_TYPE__ result = { a.x + b.x, a.y + b.y };
     return result;
 }
 
 // Add a value to a vector
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( add_val )( VEC2_TYPE v, VEC2_BASE_TYPE val )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( add_val )( __VEC2_TYPE__ v, __BASE_TYPE__ val )
 {
-    VEC2_TYPE result = { v.x + val, v.y + val };
+    __VEC2_TYPE__ result = { v.x + val, v.y + val };
     return result;
 }
 
 // Subtract two vectors (a - b)
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( sub)( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( sub )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_TYPE result = { a.x - b.x, a.y - b.y };
+    __VEC2_TYPE__ result = { a.x - b.x, a.y - b.y };
     return result;
 }
 
 // Subtract a value from a vector
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( sub_val )( VEC2_TYPE v, VEC2_BASE_TYPE val )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( sub_val )( __VEC2_TYPE__ v, __BASE_TYPE__ val )
 {
-    VEC2_TYPE result = { v.x - val, v.y - val };
+    __VEC2_TYPE__ result = { v.x - val, v.y - val };
     return result;
 }
 
 // Calculate the length of a vector
-VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( len )( VEC2_TYPE v )
+__FUNC_SPEC__ __BASE_TYPE__ __DECL__( len )( __VEC2_TYPE__ v )
 {
-    VEC2_BASE_TYPE result = VEC2_SQRT( ( v.x * v.x ) + ( v.y * v.y ) );
+    __BASE_TYPE__ result = __SQRT__( ( v.x * v.x ) + ( v.y * v.y ) );
     return result;
 }
 
 // Calculate the squared length of a vector
-VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( len_sq )( VEC2_TYPE v )
+__FUNC_SPEC__ __BASE_TYPE__ __DECL__( len_sq )( __VEC2_TYPE__ v )
 {
-    VEC2_BASE_TYPE result = ( v.x * v.x ) + ( v.y * v.y );
+    __BASE_TYPE__ result = ( v.x * v.x ) + ( v.y * v.y );
     return result;
 }
 
 // Calculate two vectors dot product
-VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( dot )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __BASE_TYPE__ __DECL__( dot )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_BASE_TYPE result = ( a.x * b.x ) + ( a.y * b.y );
+    __BASE_TYPE__ result = ( a.x * b.x ) + ( a.y * b.y );
     return result;
 }
 
 // Calculate distance between two vectors
-VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( dist )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __BASE_TYPE__ __DECL__( dist )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_BASE_TYPE result = VEC2_SQRT( ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y ) );
+    __BASE_TYPE__ result = __SQRT__( ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y ) );
     return result;
 }
 
 // Calculate squared distance between two vectors
-VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( dist_sq )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __BASE_TYPE__ __DECL__( dist_sq )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_BASE_TYPE result = ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y );
+    __BASE_TYPE__ result = ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y );
     return result;
 }
 
 // Calculate angle between two vectors
 // NOTE: Angle is calculated from origin point (0, 0)
-VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( angle )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __BASE_TYPE__ __DECL__( angle )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_BASE_TYPE result = LIT( 0.0 );
+    __BASE_TYPE__ result = __LITERAL__( 0.0 );
 
-    VEC2_BASE_TYPE dot = a.x * b.x + a.y * b.y;
-    VEC2_BASE_TYPE det = a.x * b.y - a.y * b.x;
+    __BASE_TYPE__ dot = a.x * b.x + a.y * b.y;
+    __BASE_TYPE__ det = a.x * b.y - a.y * b.x;
 
-    result = VEC2_ATAN2( det, dot );
+    result = __ATAN2__( det, dot );
 
     return result;
 }
@@ -146,53 +100,53 @@ VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( angle )( VEC2_TYPE a, VEC2_TYPE b )
 // Calculate angle defined by a two vectors line
 // NOTE: Parameters need to be normalized
 // Current implementation should be aligned with glm::angle
-VEC2_FUNCTION_SPEC VEC2_BASE_TYPE DECL( line_angle )( VEC2_TYPE start, VEC2_TYPE end )
+__FUNC_SPEC__ __BASE_TYPE__ __DECL__( line_angle )( __VEC2_TYPE__ start, __VEC2_TYPE__ end )
 {
-    VEC2_BASE_TYPE result = LIT( 0.0 );
+    __BASE_TYPE__ result = __LITERAL__( 0.0 );
 
-    result = -VEC2_ATAN2( end.y - start.y, end.x - start.x );
+    result = -__ATAN2__( end.y - start.y, end.x - start.x );
 
     return result;
 }
 
 // Scale vector (multiply by value)
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( scale )( VEC2_TYPE v, VEC2_BASE_TYPE scale )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( scale )( __VEC2_TYPE__ v, __BASE_TYPE__ scale )
 {
-    VEC2_TYPE result = { v.x * scale, v.y * scale };
+    __VEC2_TYPE__ result = { v.x * scale, v.y * scale };
     return result;
 }
 
 // Multiply vector by vector
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( mul )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( mul )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_TYPE result = { a.x * b.x, a.y * b.y };
+    __VEC2_TYPE__ result = { a.x * b.x, a.y * b.y };
     return result;
 }
 
 // Negate vector
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( negate )( VEC2_TYPE v )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( negate )( __VEC2_TYPE__ v )
 {
-    VEC2_TYPE result = { -v.x, -v.y };
+    __VEC2_TYPE__ result = { -v.x, -v.y };
     return result;
 }
 
 // Divide vector by vector
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( div )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( div )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_TYPE result = { a.x / b.x, a.y / b.y };
+    __VEC2_TYPE__ result = { a.x / b.x, a.y / b.y };
 
     return result;
 }
 
 // Normalize provided vector
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( normalize )( VEC2_TYPE v )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( normalize )( __VEC2_TYPE__ v )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    VEC2_BASE_TYPE len = VEC2_SQRT( ( v.x * v.x ) + ( v.y * v.y ) );
+    __BASE_TYPE__ len = __SQRT__( ( v.x * v.x ) + ( v.y * v.y ) );
     if ( len > 0 )
     {
-        VEC2_BASE_TYPE ilen = LIT( 1.0 ) / len;
+        __BASE_TYPE__ ilen = __LITERAL__( 1.0 ) / len;
         result.x = v.x * ilen;
         result.y = v.y * ilen;
     }
@@ -201,13 +155,13 @@ VEC2_FUNCTION_SPEC VEC2_TYPE DECL( normalize )( VEC2_TYPE v )
 }
 
 // Transforms a TYPE by a given Matrix
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( transform )( VEC2_TYPE v, struct mat4_f32 m )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( transform )( __VEC2_TYPE__ v, struct mat4_f32 m )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    VEC2_BASE_TYPE x = v.x;
-    VEC2_BASE_TYPE y = v.y;
-    VEC2_BASE_TYPE z = LIT( 0.0 );
+    __BASE_TYPE__ x = v.x;
+    __BASE_TYPE__ y = v.y;
+    __BASE_TYPE__ z = __LITERAL__( 0.0 );
 
     result.x = m.m00 * x + m.m01 * y + m.m02 * z + m.m03;
     result.y = m.m10 * x + m.m11 * y + m.m12 * z + m.m13;
@@ -216,9 +170,9 @@ VEC2_FUNCTION_SPEC VEC2_TYPE DECL( transform )( VEC2_TYPE v, struct mat4_f32 m )
 }
 
 // Calculate linear interpolation between two vectors
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( lerp )( VEC2_TYPE a, VEC2_TYPE b, VEC2_BASE_TYPE t )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( lerp )( __VEC2_TYPE__ a, __VEC2_TYPE__ b, __BASE_TYPE__ t )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
     result.x = a.x + t * ( b.x - a.x );
     result.y = a.y + t * ( b.y - a.y );
@@ -227,67 +181,67 @@ VEC2_FUNCTION_SPEC VEC2_TYPE DECL( lerp )( VEC2_TYPE a, VEC2_TYPE b, VEC2_BASE_T
 }
 
 // Calculate reflected vector to normal
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( reflect )( VEC2_TYPE v, VEC2_TYPE normal )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( reflect )( __VEC2_TYPE__ v, __VEC2_TYPE__ normal )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    VEC2_BASE_TYPE dot = ( v.x * normal.x + v.y * normal.y );
+    __BASE_TYPE__ dot = ( v.x * normal.x + v.y * normal.y );
 
-    result.x = v.x - ( LIT( 2.0 ) * normal.x ) * dot;
-    result.y = v.y - ( LIT( 2.0 ) * normal.y ) * dot;
+    result.x = v.x - ( __LITERAL__( 2.0 ) * normal.x ) * dot;
+    result.y = v.y - ( __LITERAL__( 2.0 ) * normal.y ) * dot;
 
     return result;
 }
 
 // Get min value for each pair of components
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( min )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( min )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    result.x = VEC2_MIN( a.x, b.x );
-    result.y = VEC2_MIN( a.y, b.y );
+    result.x = __MIN__( a.x, b.x );
+    result.y = __MIN__( a.y, b.y );
 
     return result;
 }
 
 // Get max value for each pair of components
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( max )( VEC2_TYPE a, VEC2_TYPE b )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( max )( __VEC2_TYPE__ a, __VEC2_TYPE__ b )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    result.x = VEC2_MAX( a.x, b.x );
-    result.y = VEC2_MAX( a.y, b.y );
+    result.x = __MAX__( a.x, b.x );
+    result.y = __MAX__( a.y, b.y );
 
     return result;
 }
 
 // Rotate vector by angle
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( rotate )( VEC2_TYPE v, VEC2_BASE_TYPE angle )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( rotate )( __VEC2_TYPE__ v, __BASE_TYPE__ angle )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    VEC2_BASE_TYPE cos = VEC2_COS( angle );
-    VEC2_BASE_TYPE sin = VEC2_SIN( angle );
+    __BASE_TYPE__ c = __COS__( angle );
+    __BASE_TYPE__ s = __SIN__( angle );
 
-    result.x = v.x * cos - v.y * sin;
-    result.y = v.x * sin + v.y * cos;
+    result.x = v.x * c - v.y * s;
+    result.y = v.x * s + v.y * c;
 
     return result;
 }
 
 // Move Vector towards target
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( move_towards )( VEC2_TYPE v, VEC2_TYPE target, VEC2_BASE_TYPE max )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( move_towards )( __VEC2_TYPE__ v, __VEC2_TYPE__ target, __BASE_TYPE__ max )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    VEC2_BASE_TYPE dx = target.x - v.x;
-    VEC2_BASE_TYPE dy = target.y - v.y;
-    VEC2_BASE_TYPE value = ( dx * dx ) + ( dy * dy );
+    __BASE_TYPE__ dx = target.x - v.x;
+    __BASE_TYPE__ dy = target.y - v.y;
+    __BASE_TYPE__ value = ( dx * dx ) + ( dy * dy );
 
     if ( ( value == 0 ) || ( ( max >= 0 ) && ( value <= max * max ) ) )
         return target;
 
-    VEC2_BASE_TYPE dist = VEC2_SQRT( value );
+    __BASE_TYPE__ dist = __SQRT__( value );
 
     result.x = v.x + dx / dist * max;
     result.y = v.y + dy / dist * max;
@@ -296,47 +250,47 @@ VEC2_FUNCTION_SPEC VEC2_TYPE DECL( move_towards )( VEC2_TYPE v, VEC2_TYPE target
 }
 
 // Invert the given vector
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( invert )( VEC2_TYPE v )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( invert )( __VEC2_TYPE__ v )
 {
-    VEC2_TYPE result = { LIT( 1.0 ) / v.x, LIT( 1.0 ) / v.y };
+    __VEC2_TYPE__ result = { __LITERAL__( 1.0 ) / v.x, __LITERAL__( 1.0 ) / v.y };
     return result;
 }
 
 // Clamp the components of the vector between
 // min and max values specified by the given vectors
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( clamp )( VEC2_TYPE v, VEC2_TYPE min, VEC2_TYPE max )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( clamp )( __VEC2_TYPE__ v, __VEC2_TYPE__ min, __VEC2_TYPE__ max )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    result.x = VEC2_MIN( max.x, VEC2_MAX( min.x, v.x ) );
-    result.y = VEC2_MIN( max.y, VEC2_MAX( min.y, v.y ) );
+    result.x = __MIN__( max.x, __MAX__( min.x, v.x ) );
+    result.y = __MIN__( max.y, __MAX__( min.y, v.y ) );
 
     return result;
 }
 
 // Clamp the components of the vector between
 // min and max values
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( clamp_val )( VEC2_TYPE v, VEC2_BASE_TYPE min, VEC2_BASE_TYPE max )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( clamp_val )( __VEC2_TYPE__ v, __BASE_TYPE__ min, __BASE_TYPE__ max )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    result.x = VEC2_MIN( max, VEC2_MAX( min, v.x ) );
-    result.y = VEC2_MIN( max, VEC2_MAX( min, v.y ) );
+    result.x = __MIN__( max, __MAX__( min, v.x ) );
+    result.y = __MIN__( max, __MAX__( min, v.y ) );
 
     return result;
 }
 
 // Clamp the magnitude of the vector between two min and max values
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( clamp_len )( VEC2_TYPE v, VEC2_BASE_TYPE min, VEC2_BASE_TYPE max )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( clamp_len )( __VEC2_TYPE__ v, __BASE_TYPE__ min, __BASE_TYPE__ max )
 {
-    VEC2_TYPE result = v;
+    __VEC2_TYPE__ result = v;
 
-    VEC2_BASE_TYPE len = ( v.x * v.x ) + ( v.y * v.y );
-    if ( len > LIT( 0.0 ) )
+    __BASE_TYPE__ len = ( v.x * v.x ) + ( v.y * v.y );
+    if ( len > __LITERAL__( 0.0 ) )
     {
-        len = VEC2_SQRT( len );
+        len = __SQRT__( len );
 
-        VEC2_BASE_TYPE scale = LIT( 1.0 );    // By default, 1 as the neutral element.
+        __BASE_TYPE__ scale = __LITERAL__( 1.0 );    // By default, 1 as the neutral element.
         if ( len < min )
         {
             scale = min / len;
@@ -354,11 +308,11 @@ VEC2_FUNCTION_SPEC VEC2_TYPE DECL( clamp_len )( VEC2_TYPE v, VEC2_BASE_TYPE min,
 }
 
 // Check whether two given vectors are almost equal
-VEC2_FUNCTION_SPEC int DECL( equals )( VEC2_TYPE p, VEC2_TYPE q, VEC2_BASE_TYPE epsilon )
+__FUNC_SPEC__ int __DECL__( equals )( __VEC2_TYPE__ p, __VEC2_TYPE__ q, __BASE_TYPE__ epsilon )
 {
     int result =
-        ( ( VEC2_ABS( p.x - q.x ) ) <= ( epsilon * VEC2_MAX( LIT( 1.0 ), VEC2_MAX( VEC2_ABS( p.x ), VEC2_ABS( q.x ) ) ) ) ) &&
-        ( ( VEC2_ABS( p.y - q.y ) ) <= ( epsilon * VEC2_MAX( LIT( 1.0 ), VEC2_MAX( VEC2_ABS( p.y ), VEC2_ABS( q.y ) ) ) ) );
+        ( ( __ABS__( p.x - q.x ) ) <= ( epsilon * __MAX__( __LITERAL__( 1.0 ), __MAX__( __ABS__( p.x ), __ABS__( q.x ) ) ) ) ) &&
+        ( ( __ABS__( p.y - q.y ) ) <= ( epsilon * __MAX__( __LITERAL__( 1.0 ), __MAX__( __ABS__( p.y ), __ABS__( q.y ) ) ) ) );
 
     return result;
 }
@@ -368,16 +322,16 @@ VEC2_FUNCTION_SPEC int DECL( equals )( VEC2_TYPE p, VEC2_TYPE q, VEC2_BASE_TYPE 
 // n: normalized normal vector of the interface of two optical media
 // r: ratio of the refractive index of the medium from where the ray comes
 //    to the refractive index of the medium on the other side of the surface
-VEC2_FUNCTION_SPEC VEC2_TYPE DECL( refract )( VEC2_TYPE v, VEC2_TYPE n, VEC2_BASE_TYPE r )
+__FUNC_SPEC__ __VEC2_TYPE__ __DECL__( refract )( __VEC2_TYPE__ v, __VEC2_TYPE__ n, __BASE_TYPE__ r )
 {
-    VEC2_TYPE result = { 0 };
+    __VEC2_TYPE__ result = { 0 };
 
-    VEC2_BASE_TYPE dot = v.x * n.x + v.y * n.y;
-    VEC2_BASE_TYPE d = LIT( 1.0 ) - r * r * ( LIT( 1.0 ) - dot * dot );
+    __BASE_TYPE__ dot = v.x * n.x + v.y * n.y;
+    __BASE_TYPE__ d = __LITERAL__( 1.0 ) - r * r * ( __LITERAL__( 1.0 ) - dot * dot );
 
-    if ( d >= LIT( 0.0 ) )
+    if ( d >= __LITERAL__( 0.0 ) )
     {
-        d = VEC2_SQRT( d );
+        d = __SQRT__( d );
         v.x = r * v.x - ( r * dot + d ) * n.x;
         v.y = r * v.y - ( r * dot + d ) * n.y;
 
@@ -386,3 +340,17 @@ VEC2_FUNCTION_SPEC VEC2_TYPE DECL( refract )( VEC2_TYPE v, VEC2_TYPE n, VEC2_BAS
 
     return result;
 }
+
+#undef __VEC2_TYPE__
+#undef __BASE_TYPE__
+#undef __FUNC_SPEC__
+#undef __FUNC_PREFIX__
+#undef __BASE_SUFFIX__
+#undef __SIN__
+#undef __COS__
+#undef __TAN__
+#undef __ATAN2__
+#undef __SQRT__
+#undef __ABS__
+#undef __MIN__
+#undef __MAX__
