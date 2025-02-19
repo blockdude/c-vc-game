@@ -1,5 +1,5 @@
-#ifndef MAT4_H
-#define MAT4_H
+#ifndef VCP_MAT4_H
+#define VCP_MAT4_H
 
 #include "int32/mat4_i32.h"
 #include "int64/mat4_i64.h"

@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef VCP_SHADER_H
+#define VCP_SHADER_H
 
 #include <glad/gl.h>
 #include <util/types.h>

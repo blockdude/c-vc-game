@@ -1,7 +1,7 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef VCP_CAMERA_H
+#define VCP_CAMERA_H
 
-#include <util/types.h>
+#include "types.h"
 
 enum camera_type
 {
@@ -25,10 +25,6 @@ struct camera
 	float zoom;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void camera_init( struct camera *camera, int type );
 void camera_update( struct camera *camera );
 void camera_move( struct camera *camera, struct vec3 direction, float dist );
@@ -40,12 +36,7 @@ void camera_yaw( struct camera *camera, float angle );
 void camera_roll( struct camera *camera, float angle );
 
 // calculate matricies
-struct mat4 camera_proj_custom( struct camera *camera, float aspect, float near, float far );
-#define camera_proj( _cam, _aspect ) camera_proj_custom( _cam, _aspect, 0.01f, 1000.0f )
+struct mat4 camera_proj( struct camera *camera, float aspect, float near, float far );
 struct mat4 camera_view( struct camera *camera );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

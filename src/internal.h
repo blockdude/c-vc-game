@@ -1,8 +1,9 @@
-#ifndef CORE_INTERNAL_H
-#define CORE_INTERNAL_H
+#ifndef VCP_INTERNAL_GLOBAL_STATE_H
+#define VCP_INTERNAL_GLOBAL_STATE_H
 
-#include "input.h"
-#include <util/types.h>
+#include "common.h"
+#include "system/input.h"
+#include "util/types.h"
 
 struct core
 {
@@ -23,7 +24,7 @@ struct core
 		bool         	initialized;
 		unsigned int	id;
 		unsigned int 	flags;
-		const char * 	title;
+		char			title[ VCP_MAX_STRING_LEN ];
 		float        	aspect;
 		unsigned int 	width;
 		unsigned int 	height;

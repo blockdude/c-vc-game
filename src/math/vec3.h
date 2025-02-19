@@ -1,5 +1,5 @@
-#ifndef VEC3_H
-#define VEC3_H
+#ifndef VCP_VEC3_H
+#define VCP_VEC3_H
 
 #include "int32/vec3_i32.h"
 #include "int64/vec3_i64.h"

@@ -1,7 +1,7 @@
 #include "camera.h"
-#include <math/math.h>
-#include <math/vec3.h>
-#include <math/mat4.h>
+#include "../math/math.h"
+#include "../math/vec3.h"
+#include "../math/mat4.h"
 
 void camera_init( struct camera *self, int type )
 {
@@ -127,7 +127,7 @@ struct mat4 camera_view( struct camera *self )
 	return mat4_f32_lookat( self->eye, self->target, self->up );
 }
 
-struct mat4 camera_proj_custom( struct camera *self, float aspect, float near, float far )
+struct mat4 camera_proj( struct camera *self, float aspect, float near, float far )
 {
 	if ( self->type == ORTHOGRAPHIC )
 	{

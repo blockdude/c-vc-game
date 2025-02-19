@@ -1,7 +1,8 @@
 #include "input.h"
-#include "global.h"
+#include "window.h"
+#include "../internal.h"
+#include "../util/log.h"
 
-#include <util/log.h>
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
 
@@ -138,7 +139,48 @@ static const int btnmap[] = {
     B_BACK            // SDL_BUTTON_X2
 };
 
-int input_poll_events( void )
+int input_init( void )
+{
+    if ( SDL_InitSubSystem( SDL_INIT_EVENTS ) != 0 )
+    {
+        log_warn( "Unable to initialize SDL event system: %s", SDL_GetError() );
+        return -1;
+    }
+
+    // reset keys
+    for ( int i = 0; i < K_COUNT; i++ )
+    {
+        core.input.k_state[ i ].just_pressed = false;
+        core.input.k_state[ i ].released = false;
+    }
+
+    // reset mouse buttons
+    for ( int i = 0; i < B_COUNT; i++ )
+    {
+        core.input.m_state[ i ].just_pressed = false;
+        core.input.m_state[ i ].released = false;
+    }
+
+    // reset mouse events
+    core.input.m_moved = false;
+    core.input.m_wheel.x = 0;
+    core.input.m_wheel.y = 0;
+    core.input.m_pos_delta.x = 0;
+    core.input.m_pos_delta.y = 0;
+    core.input.initialized = true;
+    return 0;
+}
+
+void input_deinit( void )
+{
+    if ( core.input.initialized == false )
+        return;
+
+    SDL_QuitSubSystem( SDL_INIT_TIMER );
+    core.input.initialized = false;
+}
+
+void input_poll_events( void )
 {
     // reset keys
     for ( int i = 0; i < K_COUNT; i++ )
@@ -166,7 +208,10 @@ int input_poll_events( void )
     {
         // note: SDL_EVENT_QUIT does not provide a windowID
         if ( event.type == SDL_EVENT_QUIT )
-            return INPUT_QUIT;
+        {
+            _window_notify( _WINDOW_NOTIFY_CLOSE, 0, 0 );
+            return;
+        }
 
         if ( core.window.id != event.window.windowID )
             continue;
@@ -175,16 +220,13 @@ int input_poll_events( void )
         {
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 
-                return INPUT_QUIT;
+                _window_notify( _WINDOW_NOTIFY_CLOSE, 0, 0 );
 
                 break;
 
             case SDL_EVENT_WINDOW_RESIZED:
 
-                core.window.width  = event.window.data1;
-                core.window.height = event.window.data2;
-                core.window.aspect = ( float ) core.window.width / core.window.height;
-                glViewport( 0, 0, core.window.width, core.window.height );
+                _window_notify( _WINDOW_NOTIFY_RESIZE, event.window.data1, event.window.data2 );
 
                 break;
 
@@ -234,8 +276,6 @@ int input_poll_events( void )
                 break;
         }
     }
-
-    return INPUT_SUCCESS;
 }
 
 struct keystate input_keystate( int key )

@@ -1,5 +1,5 @@
-#ifndef QUAT_H
-#define QUAT_H
+#ifndef VCP_QUAT_H
+#define VCP_QUAT_H
 
 #include "int32/quat_i32.h"
 #include "int64/quat_i64.h"

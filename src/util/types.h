@@ -1,5 +1,5 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef VCP_TYPES_H
+#define VCP_TYPES_H
 
 /*
  * =============================
@@ -21,12 +21,40 @@
 /*
  * =============================
  * -----------------------------
+ * SIZE
+ * -----------------------------
+ */
+
+#define size size_i32
+
+struct size_i32
+{
+	int32_t w, h;
+};
+
+struct size_i64
+{
+	int64_t w, h;
+};
+
+struct size_f32
+{
+	float w, h;
+};
+
+struct size_f64
+{
+	double w, h;
+};
+
+/*
+ * =============================
+ * -----------------------------
  * SIMPLE PRIMITIVES
  * -----------------------------
  */
 
 // default
-
 #define point point_f32
 #define line line_f32
 #define rectangle rectangle_f32

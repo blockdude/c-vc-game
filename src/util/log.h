@@ -5,8 +5,8 @@
  * under the terms of the MIT license. See `log.c` for details.
  */
 
-#ifndef LOG_H
-#define LOG_H
+#ifndef VCP_LOG_H
+#define VCP_LOG_H
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -46,21 +46,12 @@ enum log_level
 #define     log_error(...) log_log( LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__ )
 #define     log_fatal(...) log_log( LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__ )
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 const char* log_level_string( int level );
 void        log_set_lock( log_lockfn fn, void *udata );
 void        log_set_level( int level );
 void        log_set_quiet( bool enable );
 int         log_add_callback( log_logfn fn, void *udata, int level );
 int         log_add_fp( FILE *fp, int level );
-
 void        log_log( int level, const char *file, int line, const char *fmt, ... );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

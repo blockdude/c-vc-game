@@ -1,5 +1,5 @@
-#ifndef VBO_H
-#define VBO_H
+#ifndef VCP_VBO_H
+#define VCP_VBO_H
 
 #include <glad/gl.h>
 #include <stdbool.h>

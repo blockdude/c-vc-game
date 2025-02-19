@@ -1,5 +1,5 @@
-#ifndef TIMESTEP_H
-#define TIMESTEP_H
+#ifndef VCP_TIMESTEP_H
+#define VCP_TIMESTEP_H
 
 /*
  * TS_TIME expects a function that returns seconds since the program has started
@@ -51,6 +51,12 @@ struct _timestep
     struct _ts_snapshot snapshot;
 };
 
+static inline void set_rate( struct _timestep *t, int rate )
+{
+    t->target_delta = rate <= 0 ? -1.0 : 1.0 / ( double ) rate;
+    t->target_rate = rate;
+}
+
 typedef struct _timestep frame_control_t;
 typedef struct _timestep tick_control_t;
 
@@ -74,46 +80,6 @@ static const struct _timestep TIMESTEP_240HZ = { .target_delta = 1.0 / 240.0, .t
 #define TICK_60HZ TIMESTEP_60HZ
 #define TICK_144HZ TIMESTEP_144HZ
 #define TICK_240HZ TIMESTEP_240HZ
-
-static inline int get_fps(frame_control_t *ts)
-{
-    if (ts == NULL)
-        return 0;
-    return ts->rate;
-}
-
-static inline int get_avg_fps(frame_control_t *ts)
-{
-    if (ts == NULL)
-        return 0;
-    return (int) ts->avg;
-}
-
-static inline void set_fps(frame_control_t *ts, int fps)
-{
-    ts->target_delta = fps <= 0.0 ? -1.0 : 1.0 / fps;
-    ts->target_rate = fps;
-}
-
-static inline int get_tps(tick_control_t *ts)
-{
-    if (ts == NULL)
-        return 0;
-    return ts->rate;
-}
-
-static inline int get_avg_tps(tick_control_t *ts)
-{
-    if (ts == NULL)
-        return 0;
-    return (int) ts->avg;
-}
-
-static inline void set_tps(tick_control_t *ts, int tps)
-{
-    ts->target_delta = tps <= 0.0 ? -1.0 : 1.0 / tps;
-    ts->target_rate = tps;
-}
 
 #define TS_FRAME_WHILE(_f, _c) \
     for (_frame_prefix(_f); (_c) && _frame_can_proc(_f); _frame_postfix(_f))

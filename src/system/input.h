@@ -1,14 +1,7 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef VCP_INPUT_H
+#define VCP_INPUT_H
 
-#include <util/types.h>
-
-enum input_status
-{
-    INPUT_ERROR   = -1,
-    INPUT_SUCCESS =  0,
-    INPUT_QUIT    =  1
-};
+#include "../util/types.h"
 
 enum input_key
 {
@@ -101,59 +94,21 @@ enum input_btn
 
 struct keystate
 {
-    // Key was pressed this frame
     bool just_pressed : 1;
-    // Key was released this frame
     bool released     : 1;
-    // Key is being pressed down
     bool pressed      : 1;
-    // Key was double pressed within a certain time period
     bool repeated     : 1;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// poll all events
-int input_poll_events( void );
-
-/*
- * Returns the keystate of given key
- */
+int input_init( void );
+void input_deinit( void );
+void input_poll_events( void );
+int input_quit_event( void );
 struct keystate input_keystate( int key );
-
-/*
- * Returns the keystate of given button
- */
 struct keystate input_btnstate( int btn );
-
-/*
- * Returns true if the mouse was moved.
- * Lasts one frame.
- */
 bool input_mouse_moved( void );
-
-/*
- * Returns a 2d vector of the current mouse position relative to
- * the screen.
- */
 struct vec2 input_mouse_pos( void );
-
-/*
- * Returns the amount the mouse has moved between the current
- * frame and the previous frame.
- */
 struct vec2 input_mouse_delta( void );
-
-/*
- * Returns the amount the mouse wheel has been scrolled between
- * the current frame and the previous frame.
- */
 struct vec2 input_mouse_scroll( void );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

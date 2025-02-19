@@ -1,26 +1,35 @@
-#ifndef TIME_H
-#define TIME_H
+#ifndef VCP_TIME_H
+#define VCP_TIME_H
 
-// units per second.
-#define TIMESCALE 1.0f
+#include <stdint.h>
 
-#define NANOSECONDS( t )  ( ( double ) ( t ) * 1000000000.0 )
-#define MICROSECONDS( t ) ( ( double ) ( t ) * 1000000.0	)
-#define MILLISECONDS( t ) ( ( double ) ( t ) * 1000.0		)
-#define SECONDS( t )      ( ( double ) ( t )           		)
-#define MINUTES( t )      ( ( double ) ( t ) / 60.0    		)
-#define HOURS( t )        ( ( double ) ( t ) / 3600.0  		)
-#define DAYS( t )         ( ( double ) ( t ) / 86400.0 		)
+#define TIME_NS_PER_S  1000000000
+#define TIME_NS_PER_MS 1000000
+#define TIME_NS_PER_US 1000
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+int time_init( void );
+void time_deinit( void );
 
-double time_elapsed( void );
-void   time_delay( double s );
+uint64_t time_now( void );
+double time_now_s( void );
+double time_now_ms( void );
+double time_now_us( void );
+double time_now_ns( void );
 
-#ifdef __cplusplus
-}
-#endif
+void time_wait( uint64_t ticks );
+void time_wait_s( double s );
+void time_wait_ms( double ms );
+void time_wait_us( double us );
+void time_wait_ns( double ns );
+
+uint64_t time_stot( double s );
+uint64_t time_mstot( double ms );
+uint64_t time_ustot( double us );
+uint64_t time_nstot( double ns );
+
+double time_ttos( uint64_t ticks );
+double time_ttoms( uint64_t ticks );
+double time_ttous( uint64_t ticks );
+double time_ttons( uint64_t ticks );
 
 #endif

@@ -1,6 +1,7 @@
-#ifndef AUDIO_H
-#define AUDIO_H
+#ifndef VCP_AUDIO_H
+#define VCP_AUDIO_H
 
-void _audio( void );
+int audio_init( void );
+void audio_deinit( void );
 
 #endif

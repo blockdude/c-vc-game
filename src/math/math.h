@@ -1,5 +1,5 @@
-#ifndef MATH_H
-#define MATH_H
+#ifndef VCP_MATH_H
+#define VCP_MATH_H
 
 #include "float32/math_f32.h"
 #include "float64/math_f64.h"

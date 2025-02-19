@@ -1,5 +1,5 @@
-#ifndef VAO_H
-#define VAO_H
+#ifndef VCP_VAO_H
+#define VCP_VAO_H
 
 #include "vbo.h"
 #include <stddef.h>

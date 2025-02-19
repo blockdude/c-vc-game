@@ -20,7 +20,6 @@ set(platform_headers
 	"src/system/audio.h"
 	"src/system/global.h"
 	"src/system/input.h"
-	"src/system/system.h"
 	"src/system/time.h"
 	"src/system/window.h"
 	"src/util/timestep.h"
@@ -30,17 +29,19 @@ set(platform_headers
 	"src/util/log.h"
 	"src/util/types.h"
 	"src/util/util.h"
+	"src/internal.c"
 	"src/common.h"
 	"src/version.h"
 	"src/platform.h")
 
 set(platform_sources
+	"src/platform.c"
+	"src/internal.c"
 	"src/graphics/shader.c"
 	"src/graphics/vao.c"
 	"src/graphics/vbo.c"
 	"src/system/audio.c"
 	"src/system/input.c"
-	"src/system/system.c"
 	"src/system/time.c"
 	"src/system/window.c"
 	"src/util/camera.c"
@@ -53,9 +54,7 @@ set(SDL_TEST_LIBRARY OFF)
 set(SDL_TEST OFF)
 add_subdirectory(extern/sdl EXCLUDE_FROM_ALL)
 
-project(platform)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED True)
-add_library(platform STATIC ${platform_sources} ${platform_headers} ${glad_sources} ${glad_headers})
+project(platform C)
+add_library(platform STATIC ${platform_sources} ${glad_sources})
 target_include_directories(platform PUBLIC ${platform_include} ${glad_include})
-target_link_libraries(platform SDL3::SDL3)
+target_link_libraries(platform PUBLIC SDL3::SDL3)

@@ -1,11 +1,7 @@
-#ifndef KDTREE_H
-#define KDTREE_H
+#ifndef VCP_KDTREE_H
+#define VCP_KDTREE_H
 
 #define KDT_DATA_TYPE int
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 struct kdtree;
 
@@ -32,9 +28,5 @@ void **kdt_query_dim        ( struct kdtree *tree, KDT_DATA_TYPE point[], KDT_DA
 // search tools
 void *kdt_search            ( struct kdtree *tree, KDT_DATA_TYPE point[] );
 void *kdt_nearest           ( struct kdtree *tree, KDT_DATA_TYPE point[] );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

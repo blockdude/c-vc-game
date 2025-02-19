@@ -1,5 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef VCP_LIST_H
+#define VCP_LIST_H
 
 /*
  * A header only, C++ style dynamic array implementation.
