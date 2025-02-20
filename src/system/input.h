@@ -101,15 +101,15 @@ struct keystate
     bool repeated     : 1;
 };
 
-int input_init( void );
-void input_deinit( void );
-void input_poll_events( void );
-int input_quit_event( void );
-struct keystate input_keystate( int key );
-struct keystate input_btnstate( int btn );
-bool input_mouse_moved( void );
-struct vec2 input_mouse_pos( void );
-struct vec2 input_mouse_delta( void );
-struct vec2 input_mouse_scroll( void );
+extern int input_init( void );
+extern void input_deinit( void );
+extern void input_poll_events( void );
+extern int input_quit_event( void );
+extern struct keystate input_keystate( int key );
+extern struct keystate input_btnstate( int btn );
+extern bool input_mouse_moved( void );
+extern struct vec2 input_mouse_pos( void );
+extern struct vec2 input_mouse_delta( void );
+extern struct vec2 input_mouse_scroll( void );
 
 #endif

@@ -3,7 +3,7 @@
 
 static struct allocator g_allocator = { SDL_malloc, SDL_calloc, SDL_realloc, SDL_free };
 
-void allocator_reset( void )
+void allocator_restore_original( void )
 {
     g_allocator.malloc = SDL_malloc;
     g_allocator.calloc = SDL_calloc;

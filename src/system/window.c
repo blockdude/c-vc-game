@@ -163,10 +163,14 @@ void window_swap_buffer( void )
  * -----------------------------
  */
 
-void window_size( int *w, int *h )
+struct extent window_size( void )
 {
-    *w = g_win_state.width;
-    *h = g_win_state.height;
+    struct extent result = {
+        g_win_state.width,
+        g_win_state.height
+    };
+
+    return result;
 }
 
 float window_aspect( void )

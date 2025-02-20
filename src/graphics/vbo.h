@@ -12,18 +12,10 @@ struct vbo
 	bool dyn;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-struct vbo vbo_create( GLint type, bool dyn );
-void vbo_free( struct vbo self );
-void vbo_bind( struct vbo self );
-void vbo_buff( struct vbo self, void *data, size_t n );
+extern struct vbo vbo_create( GLint type, bool dyn );
+extern void vbo_free( struct vbo self );
+extern void vbo_bind( struct vbo self );
+extern void vbo_buff( struct vbo self, void *data, size_t n );
 //void vbo_sub_buff( void *data, size_t offset, size_t n );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

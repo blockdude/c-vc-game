@@ -10,20 +10,19 @@ typedef void ( *allocator_dealloc_fn )( void * );
 
 struct allocator
 {
-	void *( *malloc )( size_t );
-	void *( *calloc )( size_t, size_t );
-	void *( *realloc )( void *, size_t );
-	void ( *dealloc )( void * );
+	allocator_malloc_fn malloc;
+	allocator_calloc_fn calloc;
+	allocator_realloc_fn realloc;
+	allocator_dealloc_fn dealloc;
 };
 
-void allocator_reset( void );
-int allocator_set( struct allocator allocator );
-int allocator_set_shallow( struct allocator allocator );
-struct allocator allocator_get( void );
-
-void *allocator_malloc( size_t size );
-void *allocator_calloc( size_t count, size_t size );
-void *allocator_realloc( void *mem, size_t size );
-void allocator_dealloc( void *mem );
+extern void allocator_restore_original( void );
+extern int allocator_set( struct allocator allocator );
+extern int allocator_set_shallow( struct allocator allocator );
+extern struct allocator allocator_get( void );
+extern void *allocator_malloc( size_t size );
+extern void *allocator_calloc( size_t count, size_t size );
+extern void *allocator_realloc( void *mem, size_t size );
+extern void allocator_dealloc( void *mem );
 
 #endif

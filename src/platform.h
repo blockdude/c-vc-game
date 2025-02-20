@@ -41,7 +41,7 @@ enum platform_init_flags
 	TIMER  = BITFLAG( 3 )
 };
 
-extern VCP_FUNCSPEC int VCP_FUNCCONV platform_init( uint32_t flags );
-extern VCP_FUNCSPEC void VCP_FUNCCONV platform_deinit( void );
+extern int platform_init( uint32_t flags );
+extern void platform_deinit( void );
 
 #endif
