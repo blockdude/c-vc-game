@@ -22,6 +22,7 @@ set(platform_headers
 	"src/system/input.h"
 	"src/system/time.h"
 	"src/system/window.h"
+	"src/system/allocator.h"
 	"src/util/timestep.h"
 	"src/util/camera.h"
 	"src/util/kdtree.h"
@@ -29,14 +30,12 @@ set(platform_headers
 	"src/util/log.h"
 	"src/util/types.h"
 	"src/util/util.h"
-	"src/internal.c"
 	"src/common.h"
 	"src/version.h"
 	"src/platform.h")
 
 set(platform_sources
 	"src/platform.c"
-	"src/internal.c"
 	"src/graphics/shader.c"
 	"src/graphics/vao.c"
 	"src/graphics/vbo.c"
@@ -44,6 +43,7 @@ set(platform_sources
 	"src/system/input.c"
 	"src/system/time.c"
 	"src/system/window.c"
+	"src/system/allocator.c"
 	"src/util/camera.c"
 	"src/util/kdtree.c"
 	"src/util/log.c")

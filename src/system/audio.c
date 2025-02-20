@@ -1,8 +1,12 @@
 #include "audio.h"
-#include "../internal.h"
 #include "../util/log.h"
 
 #include <SDL3/SDL.h>
+
+struct
+{
+    bool initialized;
+} g_audio_state = { 0 };
 
 /*
  * =============================
@@ -19,17 +23,17 @@ int audio_init( void )
         return -1;
     }
 
-    core.audio.initialized = true;
+    g_audio_state.initialized = true;
     return 0;
 }
 
 void audio_deinit( void )
 {
-    if ( core.audio.initialized == false )
+    if ( g_audio_state.initialized == false )
         return;
 
     SDL_QuitSubSystem( SDL_INIT_AUDIO );
-    core.timer.initialized = false;
+    g_audio_state.initialized = false;
 }
 
 /*

@@ -1,5 +1,4 @@
 #include "window.h"
-#include "../internal.h"
 #include "../util/log.h"
 
 #include <SDL3/SDL.h>
@@ -7,9 +6,27 @@
 
 static struct
 {
+    bool initialized;
+    uint32_t flags;
+    char title[ VCP_MAX_STRING_LEN ];
+    float aspect;
+    int width;
+    int height;
+    int id;
+} g_win_state = { .id = -1, .title = "Application", .width = 700, .height = 700, .aspect = 1.0f };
+
+static struct
+{
     SDL_Window *handle;
     SDL_GLContext glcontext;
 } g_win_ctx = { 0 };
+
+/*
+ * =============================
+ * -----------------------------
+ * INIT
+ * -----------------------------
+ */
 
 int window_init( void )
 {
@@ -22,22 +39,22 @@ int window_init( void )
     SDL_WindowFlags flags =
         SDL_WINDOW_OPENGL;
 
-    if ( HASFLAG( core.window.flags, WINDOW_RESIZABLE ) )
+    if ( HASFLAG( g_win_state.flags, WINDOW_RESIZABLE ) )
     {
         flags |= SDL_WINDOW_RESIZABLE;
     }
 
-    if ( HASFLAG( core.window.flags, WINDOW_FULLSCREEN ) )
+    if ( HASFLAG( g_win_state.flags, WINDOW_FULLSCREEN ) )
     {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    if ( HASFLAG( core.window.flags, WINDOW_HIGHDPI ) )
+    if ( HASFLAG( g_win_state.flags, WINDOW_HIGHDPI ) )
     {
         flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
     }
 
-    if ( HASFLAG( core.window.flags, WINDOW_RELATIVE_MOUSE ) )
+    if ( HASFLAG( g_win_state.flags, WINDOW_RELATIVE_MOUSE ) )
     {
         flags |= SDL_WINDOW_MOUSE_RELATIVE_MODE;
     }
@@ -49,7 +66,7 @@ int window_init( void )
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
 
-    g_win_ctx.handle = SDL_CreateWindow( core.window.title, core.window.width, core.window.height, flags );
+    g_win_ctx.handle = SDL_CreateWindow( g_win_state.title, g_win_state.width, g_win_state.height, flags );
     if ( g_win_ctx.handle == NULL )
     {
         log_warn( "Failed to initialize system. Unable to create SDL window: %s", SDL_GetError() );
@@ -69,11 +86,11 @@ int window_init( void )
         goto cleanup;
     }
 
-    SDL_GL_SetSwapInterval( HASFLAG( core.window.flags, WINDOW_VSYNC ) ? 1 : 0 );
-    core.window.id = SDL_GetWindowID( g_win_ctx.handle );
-    core.window.initialized = true;
+    SDL_GL_SetSwapInterval( HASFLAG( g_win_state.flags, WINDOW_VSYNC ) ? 1 : 0 );
+    g_win_state.id = SDL_GetWindowID( g_win_ctx.handle );
+    g_win_state.initialized = true;
 
-    log_info( "Window ID   : %u", core.window.id );
+    log_info( "Window ID   : %u", g_win_state.id );
     log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
     log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
     log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
@@ -94,7 +111,7 @@ cleanup:
 
 void window_deinit( void )
 {
-    if ( core.window.initialized == false )
+    if ( g_win_state.initialized == false )
         return;
 
     if ( g_win_ctx.glcontext )
@@ -112,65 +129,106 @@ void window_deinit( void )
     }
 
     SDL_QuitSubSystem( SDL_INIT_VIDEO );
-    core.window.initialized = false;
+    g_win_state.initialized = false;
 }
+
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * GRAPHICS
+ * -----------------------------
+ */
 
 void window_swap_buffer( void )
 {
     SDL_GL_SwapWindow( g_win_ctx.handle );
 }
 
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * GETTERS
+ * -----------------------------
+ */
+
 void window_size( int *w, int *h )
 {
-    *w = core.window.width;
-    *h = core.window.height;
+    *w = g_win_state.width;
+    *h = g_win_state.height;
 }
 
 float window_aspect( void )
 {
-    return core.window.aspect;
+    return g_win_state.aspect;
 }
 
 const char *window_title( void )
 {
-    return core.window.title;
+    return g_win_state.title;
 }
 
 uint32_t window_flags( void )
 {
-    return core.window.flags;
+    return g_win_state.flags;
 }
 
 int window_id( void )
 {
-    return core.window.id;
+    return g_win_state.id;
 }
 
-void window_title_set( const char *title )
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * SETTERS
+ * -----------------------------
+ */
+
+void window_set_title( const char *title )
 {
     SDL_SetWindowTitle( g_win_ctx.handle, title );
-    snprintf( core.window.title, VCP_MAX_STRING_LEN, "%s", title );
+    snprintf( g_win_state.title, VCP_MAX_STRING_LEN, "%s", title );
 }
 
-void window_size_set( int w, int h )
+void window_set_size( int w, int h )
 {
     SDL_SetWindowSize( g_win_ctx.handle, w, h );
-    core.window.width = w;
-    core.window.height = h;
+    glViewport( 0, 0, w, h );
+    g_win_state.width = w;
+    g_win_state.height = h;
+    g_win_state.aspect = ( float ) w / h;
 }
 
-void window_flags_set( uint32_t flags, bool state )
+void window_set_flags( uint32_t flags, bool state )
 {
-    core.window.flags = state ?
-        core.window.flags | flags :
-        core.window.flags & ~flags;
+    g_win_state.flags = state ?
+        g_win_state.flags | flags :
+        g_win_state.flags & ~flags;
 
-    if ( !core.window.initialized )
+    if ( g_win_state.initialized == false )
         return;
 
     if ( HASFLAG( flags, WINDOW_RELATIVE_MOUSE ) )
     {
-        SDL_WarpMouseInWindow( g_win_ctx.handle, core.window.width / 2.0f, core.window.height / 2.0f );
+        SDL_WarpMouseInWindow( g_win_ctx.handle, g_win_state.width / 2.0f, g_win_state.height / 2.0f );
         SDL_SetWindowRelativeMouseMode( g_win_ctx.handle, state );
     }
 
@@ -190,36 +248,54 @@ void window_flags_set( uint32_t flags, bool state )
     }
 }
 
-void window_flags_toggle( uint32_t flags )
+void window_toggle_flags( uint32_t flags )
 {
     uint32_t z = window_flags();
     uint32_t x = ~z & flags;
     uint32_t y =  z & flags;
 
-    window_flags_set( x, true );
-    window_flags_set( y, false );
+    window_set_flags( x, true );
+    window_set_flags( y, false );
 }
 
-void window_flags_enable( uint32_t flags )
+void window_enable_flags( uint32_t flags )
 {
-    window_flags_set( flags, true );
+    window_set_flags( flags, true );
 }
 
-void window_flags_disable( uint32_t flags )
+void window_disable_flags( uint32_t flags )
 {
-    window_flags_set( flags, false );
+    window_set_flags( flags, false );
 }
+
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * INTERNAL
+ * -----------------------------
+ */
 
 void _window_notify( int type, int w, int h )
 {
     if ( type == _WINDOW_NOTIFY_RESIZE )
     {
-        core.window.width = w;
-        core.window.height = h;
-        glViewport( 0, 0, core.window.width, core.window.height );
+        g_win_state.width = w;
+        g_win_state.height = h;
+        g_win_state.aspect = ( float ) w / h;
+        glViewport( 0, 0, w, h );
     }
 
     if ( type == _WINDOW_NOTIFY_CLOSE )
     {
     }
 }
+
+/*
+ * =============================
+ */

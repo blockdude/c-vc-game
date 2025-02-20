@@ -13,21 +13,11 @@ enum shader_status
 	SHADER_INVALID_FILE_PATH		= 4,
 };
 
-//struct VertexAttr
-//{
-//	GLuint index;
-//	const GLchar *name;
-//};
-
 struct shader
 {
 	GLuint handle;
 	int status;
 };
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 struct shader shader_loadf( const char *vspath, const char *fspath );
 struct shader shader_load( const char *vstext, const char *fstext );
@@ -41,9 +31,5 @@ void shader_uniform_vec3( struct shader self, const char *name, struct vec3 v );
 void shader_uniform_vec4( struct shader self, const char *name, struct vec4 v );
 void shader_uniform_int( struct shader self, const char *name, int v );
 void shader_uniform_uint( struct shader self, const char *name, unsigned int v );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

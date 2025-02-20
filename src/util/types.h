@@ -25,24 +25,24 @@
  * -----------------------------
  */
 
-#define size size_i32
+#define extent extent_i32
 
-struct size_i32
+struct extent_i32
 {
 	int32_t w, h;
 };
 
-struct size_i64
+struct extent_i64
 {
 	int64_t w, h;
 };
 
-struct size_f32
+struct extent_f32
 {
 	float w, h;
 };
 
-struct size_f64
+struct extent_f64
 {
 	double w, h;
 };

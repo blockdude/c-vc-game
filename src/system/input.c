@@ -1,6 +1,5 @@
 #include "input.h"
 #include "window.h"
-#include "../internal.h"
 #include "../util/log.h"
 
 #include <SDL3/SDL.h>
@@ -139,6 +138,25 @@ static const int btnmap[] = {
     B_BACK            // SDL_BUTTON_X2
 };
 
+static struct
+{
+    bool         	initialized;
+    struct keystate k_state[ K_COUNT ];
+    struct keystate m_state[ B_COUNT ];
+    bool         	m_moved;
+    struct vec2     m_wheel;
+    struct vec2     m_pos_rel;
+    struct vec2     m_pos_global;
+    struct vec2     m_pos_delta;
+} g_input_state = { 0 };
+
+/*
+ * =============================
+ * -----------------------------
+ * INIT
+ * -----------------------------
+ */
+
 int input_init( void )
 {
     if ( SDL_InitSubSystem( SDL_INIT_EVENTS ) != 0 )
@@ -150,58 +168,71 @@ int input_init( void )
     // reset keys
     for ( int i = 0; i < K_COUNT; i++ )
     {
-        core.input.k_state[ i ].just_pressed = false;
-        core.input.k_state[ i ].released = false;
+        g_input_state.k_state[ i ].just_pressed = false;
+        g_input_state.k_state[ i ].released = false;
     }
 
     // reset mouse buttons
     for ( int i = 0; i < B_COUNT; i++ )
     {
-        core.input.m_state[ i ].just_pressed = false;
-        core.input.m_state[ i ].released = false;
+        g_input_state.m_state[ i ].just_pressed = false;
+        g_input_state.m_state[ i ].released = false;
     }
 
     // reset mouse events
-    core.input.m_moved = false;
-    core.input.m_wheel.x = 0;
-    core.input.m_wheel.y = 0;
-    core.input.m_pos_delta.x = 0;
-    core.input.m_pos_delta.y = 0;
-    core.input.initialized = true;
+    g_input_state.m_moved = false;
+    g_input_state.m_wheel.x = 0;
+    g_input_state.m_wheel.y = 0;
+    g_input_state.m_pos_delta.x = 0;
+    g_input_state.m_pos_delta.y = 0;
+    g_input_state.initialized = true;
     return 0;
 }
 
 void input_deinit( void )
 {
-    if ( core.input.initialized == false )
+    if ( g_input_state.initialized == false )
         return;
 
     SDL_QuitSubSystem( SDL_INIT_TIMER );
-    core.input.initialized = false;
+    g_input_state.initialized = false;
 }
+
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * POLL EVENTS
+ * -----------------------------
+ */
 
 void input_poll_events( void )
 {
     // reset keys
     for ( int i = 0; i < K_COUNT; i++ )
     {
-        core.input.k_state[ i ].just_pressed = false;
-        core.input.k_state[ i ].released = false;
+        g_input_state.k_state[ i ].just_pressed = false;
+        g_input_state.k_state[ i ].released = false;
     }
 
     // reset mouse buttons
     for ( int i = 0; i < B_COUNT; i++ )
     {
-        core.input.m_state[ i ].just_pressed = false;
-        core.input.m_state[ i ].released = false;
+        g_input_state.m_state[ i ].just_pressed = false;
+        g_input_state.m_state[ i ].released = false;
     }
 
     // reset mouse events
-    core.input.m_moved       = false;
-    core.input.m_wheel.x     = 0;
-    core.input.m_wheel.y     = 0;
-    core.input.m_pos_delta.x = 0;
-    core.input.m_pos_delta.y = 0;
+    g_input_state.m_moved       = false;
+    g_input_state.m_wheel.x     = 0;
+    g_input_state.m_wheel.y     = 0;
+    g_input_state.m_pos_delta.x = 0;
+    g_input_state.m_pos_delta.y = 0;
 
     SDL_Event event;
     while ( SDL_PollEvent( &event ) )
@@ -213,7 +244,7 @@ void input_poll_events( void )
             return;
         }
 
-        if ( core.window.id != event.window.windowID )
+        if ( window_id() != event.window.windowID )
             continue;
 
         switch ( event.type )
@@ -232,78 +263,95 @@ void input_poll_events( void )
 
             case SDL_EVENT_KEY_DOWN:
 
-                core.input.k_state[ keymap[ event.key.scancode ] ].just_pressed = true;
-                core.input.k_state[ keymap[ event.key.scancode ] ].pressed = true;
+                g_input_state.k_state[ keymap[ event.key.scancode ] ].just_pressed = true;
+                g_input_state.k_state[ keymap[ event.key.scancode ] ].pressed = true;
 
                 break;
 
             case SDL_EVENT_KEY_UP:
 
-                core.input.k_state[ keymap[ event.key.scancode ] ].pressed = false;
-                core.input.k_state[ keymap[ event.key.scancode ] ].released = true;
+                g_input_state.k_state[ keymap[ event.key.scancode ] ].pressed = false;
+                g_input_state.k_state[ keymap[ event.key.scancode ] ].released = true;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-                core.input.m_state[ btnmap[ event.button.button ] ].just_pressed = true;
-                core.input.m_state[ btnmap[ event.button.button ] ].pressed = true;
+                g_input_state.m_state[ btnmap[ event.button.button ] ].just_pressed = true;
+                g_input_state.m_state[ btnmap[ event.button.button ] ].pressed = true;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
 
-                core.input.m_state[ btnmap[ event.button.button ] ].pressed = false;
-                core.input.m_state[ btnmap[ event.button.button ] ].released = true;
+                g_input_state.m_state[ btnmap[ event.button.button ] ].pressed = false;
+                g_input_state.m_state[ btnmap[ event.button.button ] ].released = true;
 
                 break;
 
             case SDL_EVENT_MOUSE_WHEEL:
 
-                core.input.m_wheel.x += event.wheel.x;
-                core.input.m_wheel.y += event.wheel.y;
+                g_input_state.m_wheel.x += event.wheel.x;
+                g_input_state.m_wheel.y += event.wheel.y;
 
                 break;
 
             case SDL_EVENT_MOUSE_MOTION:
 
-                core.input.m_pos_rel.x    = event.motion.x;
-                core.input.m_pos_rel.y    = event.motion.y;
-                core.input.m_pos_delta.x += event.motion.xrel;
-                core.input.m_pos_delta.y += event.motion.yrel;
-                core.input.m_moved = true;
+                g_input_state.m_pos_rel.x    = event.motion.x;
+                g_input_state.m_pos_rel.y    = event.motion.y;
+                g_input_state.m_pos_delta.x += event.motion.xrel;
+                g_input_state.m_pos_delta.y += event.motion.yrel;
+                g_input_state.m_moved = true;
 
                 break;
         }
     }
 }
 
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * GET STATES
+ * -----------------------------
+ */
+
 struct keystate input_keystate( int key )
 {
-    return core.input.k_state[ key ];
+    return g_input_state.k_state[ key ];
 }
 
 struct keystate input_btnstate( int btn )
 {
-    return core.input.m_state[ btn ];
+    return g_input_state.m_state[ btn ];
 }
 
 bool input_mouse_moved( void )
 {
-    return core.input.m_moved;
+    return g_input_state.m_moved;
 }
 
 struct vec2 input_mouse_pos( void )
 {
-    return core.input.m_pos_rel;
+    return g_input_state.m_pos_rel;
 }
 
 struct vec2 input_mouse_delta( void )
 {
-    return core.input.m_pos_delta;
+    return g_input_state.m_pos_delta;
 }
 
 struct vec2 input_mouse_scroll( void )
 {
-    return core.input.m_wheel;
+    return g_input_state.m_wheel;
 }
+
+/*
+ * =============================
+ */

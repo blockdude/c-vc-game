@@ -1,6 +1,7 @@
 #ifndef VCP_INPUT_H
 #define VCP_INPUT_H
 
+#include "../common.h"
 #include "../util/types.h"
 
 enum input_key

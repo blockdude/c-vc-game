@@ -1,10 +1,14 @@
 #include "platform.h"
-#include "internal.h"
 #include <SDL3/SDL.h>
 
-int platform_init( unsigned int flags )
+struct
 {
-    core.flags = flags;
+    uint32_t flags;
+} g_platform_state = { 0 };
+
+int platform_init( uint32_t flags )
+{
+    g_platform_state.flags = flags;
 
     log_info( "SDL Version : %d.%d.%d",
         SDL_VERSIONNUM_MAJOR( SDL_VERSION ),

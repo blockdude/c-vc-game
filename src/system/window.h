@@ -1,6 +1,7 @@
 #ifndef VCP_WINDOW_H
 #define VCP_WINDOW_H
 
+#include "../common.h"
 #include "../util/bitflag.h"
 #include "../util/types.h"
 
@@ -21,12 +22,12 @@ float window_aspect( void );
 const char *window_title( void );
 uint32_t window_flags( void );
 int window_id( void );
-void window_size_set( int w, int h );
-void window_title_set( const char *title );
-void window_flags_set( uint32_t flags, bool state );
-void window_flags_toggle( uint32_t flags );
-void window_flags_enable( uint32_t flags );
-void window_flags_disable( uint32_t flags );
+void window_set_size( int w, int h );
+void window_set_title( const char *title );
+void window_set_flags( uint32_t flags, bool state );
+void window_toggle_flags( uint32_t flags );
+void window_enable_flags( uint32_t flags );
+void window_disable_flags( uint32_t flags );
 
 // INTERNAL USE
 // used for input.c to notify window on certain events

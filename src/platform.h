@@ -19,6 +19,7 @@
 #include "math/vec2.h"
 #include "math/vec3.h"
 #include "math/vec4.h"
+#include "system/allocator.h"
 #include "system/audio.h"
 #include "system/input.h"
 #include "system/time.h"
@@ -30,8 +31,9 @@
 #include "util/list.h"
 #include "util/log.h"
 #include "util/types.h"
+#include "common.h"
 
-enum platform_flags
+enum platform_init_flags
 {
 	WINDOW = BITFLAG( 0 ),
 	INPUT  = BITFLAG( 1 ),
@@ -39,9 +41,7 @@ enum platform_flags
 	TIMER  = BITFLAG( 3 )
 };
 
-int  platform_init( unsigned int flags );
-void platform_deinit( void );
-void platform_allocator_set( void );
-void platform_logger_set( void );
+extern VCP_FUNCSPEC int VCP_FUNCCONV platform_init( uint32_t flags );
+extern VCP_FUNCSPEC void VCP_FUNCCONV platform_deinit( void );
 
 #endif

@@ -1,7 +1,11 @@
 #include "time.h"
-#include "../internal.h"
 #include "../util/log.h"
 #include <SDL3/SDL.h>
+
+struct
+{
+    bool initialized;
+} g_timer_state = { 0 };
 
 /*
  * =============================
@@ -18,17 +22,17 @@ int time_init( void )
         return -1;
     }
 
-    core.timer.initialized = true;
+    g_timer_state.initialized = true;
     return 0;
 }
 
 void time_deinit( void )
 {
-    if ( core.timer.initialized == false )
+    if ( g_timer_state.initialized == false )
         return;
 
     SDL_QuitSubSystem( SDL_INIT_TIMER );
-    core.timer.initialized = false;
+    g_timer_state.initialized = false;
 }
 
 /*

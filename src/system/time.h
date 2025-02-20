@@ -1,6 +1,7 @@
 #ifndef VCP_TIME_H
 #define VCP_TIME_H
 
+#include "../common.h"
 #include <stdint.h>
 
 #define TIME_NS_PER_S  1000000000
