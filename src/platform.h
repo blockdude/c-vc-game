@@ -1,12 +1,12 @@
 #ifndef VCP_PLATFORM_H
 #define VCP_PLATFORM_h
 
-#ifndef TS_TIME
-#define TS_TIME time_now_s
+#ifndef TS_TIME_NOW
+#define TS_TIME_NOW time_now_s
 #endif
 
-#ifndef TS_SLEEP
-#define TS_SLEEP time_wait_s
+#ifndef TS_TIME_WAIT
+#define TS_TIME_WAIT time_wait_s
 #endif
 
 #include "graphics/shader.h"

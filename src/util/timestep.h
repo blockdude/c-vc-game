@@ -9,30 +9,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifndef TS_TIME
+#ifndef TS_TIME_NOW
 #error "define TS_TIME"
 #endif
 
-#ifndef TS_SLEEP
+#ifndef TS_TIME_WAIT
 #error "define TS_SLEEP"
 #endif
 
 #define TS_FRAME_CAPTURE_COUNT 256
-
-struct _ts_record
-{
-    double delta;
-    uint64_t count;
-};
-
-struct _ts_snapshot
-{
-    uint64_t count;
-    double elapsed;
-    uint64_t last;
-    int index;
-    struct _ts_record record[TS_FRAME_CAPTURE_COUNT];
-};
 
 struct _timestep
 {
@@ -48,7 +33,19 @@ struct _timestep
     double          previous;
 
     // frame rate capture history
-    struct _ts_snapshot snapshot;
+    struct
+    {
+        uint64_t count;
+        double elapsed;
+        uint64_t last;
+        int index;
+
+        struct
+        {
+            double delta;
+            uint64_t count;
+        } record[ TS_FRAME_CAPTURE_COUNT ];
+    } _snapshot;
 };
 
 static inline void set_rate( struct _timestep *t, int rate )
@@ -81,70 +78,70 @@ static const struct _timestep TIMESTEP_240HZ = { .target_delta = 1.0 / 240.0, .t
 #define TICK_144HZ TIMESTEP_144HZ
 #define TICK_240HZ TIMESTEP_240HZ
 
-#define TS_FRAME_WHILE(_f, _c) \
-    for (_frame_prefix(_f); (_c) && _frame_can_proc(_f); _frame_postfix(_f))
+#define TS_FRAME_WHILE( _f, _c ) \
+    for ( _frame_prefix( _f ); ( _c ) && _frame_can_proc( _f ); _frame_postfix( _f ) )
 
-#define TS_FRAME_LOOP(_f) \
-    for (_frame_prefix(_f); _frame_can_proc(_f); _frame_postfix(_f))
+#define TS_FRAME_LOOP( _f ) \
+    for ( _frame_prefix( _f ); _frame_can_proc( _f ); _frame_postfix( _f ) )
 
-#define TS_TICK_LOOP(_t, _f) \
-    for (_tick_prefix(_t, _f); _tick_can_proc(_t); _tick_postfix(_t))
+#define TS_TICK_LOOP( _t, _f ) \
+    for ( _tick_prefix( _t, _f ); _tick_can_proc( _t ); _tick_postfix( _t ) )
 
-static inline void _tick_prefix(tick_control_t *tick, frame_control_t *frame)
+static inline void _tick_prefix( tick_control_t *tick, frame_control_t *frame )
 {
     tick->delta += frame->delta;
 
-    int index = (tick->snapshot.index + 1) % TS_FRAME_CAPTURE_COUNT;
-    tick->snapshot.index = index;
+    int index = ( tick->_snapshot.index + 1 ) % TS_FRAME_CAPTURE_COUNT;
+    tick->_snapshot.index = index;
 
-    tick->snapshot.elapsed -= tick->snapshot.record[index].delta;
-    tick->snapshot.record[index].delta = frame->delta;
-    tick->snapshot.elapsed += tick->snapshot.record[index].delta;
+    tick->_snapshot.elapsed -= tick->_snapshot.record[ index ].delta;
+    tick->_snapshot.record[ index ].delta = frame->delta;
+    tick->_snapshot.elapsed += tick->_snapshot.record[ index ].delta;
 
-    tick->snapshot.count -= tick->snapshot.record[index].count;
-    tick->snapshot.record[index].count = tick->count - tick->snapshot.last;
-    tick->snapshot.count += tick->snapshot.record[index].count;
+    tick->_snapshot.count -= tick->_snapshot.record[ index ].count;
+    tick->_snapshot.record[ index ].count = tick->count - tick->_snapshot.last;
+    tick->_snapshot.count += tick->_snapshot.record[ index ].count;
 
-    tick->snapshot.last = tick->count;
+    tick->_snapshot.last = tick->count;
 
-    tick->rate = round((double) tick->snapshot.count / tick->snapshot.elapsed);
-    tick->avg = round((double) tick->count / tick->elapsed);
+    tick->rate = round( ( double ) tick->_snapshot.count / tick->_snapshot.elapsed );
+    tick->avg = round( ( double ) tick->count / tick->elapsed );
 }
 
-static inline bool _tick_can_proc(tick_control_t *tick)
+static inline bool _tick_can_proc( tick_control_t *tick )
 {
-    return ((tick->target_delta > 0.0) && (tick->target_delta <= tick->delta));
+    return ( ( tick->target_delta > 0.0 ) && ( tick->target_delta <= tick->delta ) );
 }
 
-static inline void _tick_postfix(tick_control_t *tick)
+static inline void _tick_postfix( tick_control_t *tick )
 {
     tick->count += 1;
     tick->delta -= tick->target_delta;
     tick->elapsed += tick->target_delta;
 }
 
-static inline bool _frame_can_proc(frame_control_t *frame)
+static inline bool _frame_can_proc( frame_control_t *frame )
 {
     return true;
 }
 
-static inline void _frame_prefix(frame_control_t *frame)
+static inline void _frame_prefix( frame_control_t *frame )
 {
-    frame->current = TS_TIME();
+    frame->current = TS_TIME_NOW();
     frame->previous = frame->current;
 }
 
-static inline void _frame_postfix(frame_control_t *frame)
+static inline void _frame_postfix( frame_control_t *frame )
 {
-    frame->current = TS_TIME();
+    frame->current = TS_TIME_NOW();
     frame->delta = frame->current - frame->previous;
     frame->previous = frame->current;
 
     // apply fps cap
-    if (frame->delta < frame->target_delta)
+    if ( frame->delta < frame->target_delta )
     {
-        TS_SLEEP(frame->target_delta - frame->delta);
-        frame->current = TS_TIME();
+        TS_TIME_WAIT( frame->target_delta - frame->delta );
+        frame->current = TS_TIME_NOW();
         frame->delta += frame->current - frame->previous;
         frame->previous = frame->current;
     }
@@ -153,21 +150,21 @@ static inline void _frame_postfix(frame_control_t *frame)
     frame->count += 1;
 
     // calculate the average fps over TS_FRAME_CAPTURE_COUNT frames
-    int index = (frame->snapshot.index + 1) % TS_FRAME_CAPTURE_COUNT;
-    frame->snapshot.index = index;
+    int index = ( frame->_snapshot.index + 1 ) % TS_FRAME_CAPTURE_COUNT;
+    frame->_snapshot.index = index;
 
-    frame->snapshot.elapsed -= frame->snapshot.record[index].delta;
-    frame->snapshot.record[index].delta = frame->delta;
-    frame->snapshot.elapsed += frame->snapshot.record[index].delta;
+    frame->_snapshot.elapsed -= frame->_snapshot.record[ index ].delta;
+    frame->_snapshot.record[ index ].delta = frame->delta;
+    frame->_snapshot.elapsed += frame->_snapshot.record[ index ].delta;
 
-    frame->snapshot.count -= frame->snapshot.record[index].count;
-    frame->snapshot.record[index].count = frame->count - frame->snapshot.last;
-    frame->snapshot.count += frame->snapshot.record[index].count;
+    frame->_snapshot.count -= frame->_snapshot.record[ index ].count;
+    frame->_snapshot.record[ index ].count = frame->count - frame->_snapshot.last;
+    frame->_snapshot.count += frame->_snapshot.record[ index ].count;
 
-    frame->snapshot.last = frame->count;
+    frame->_snapshot.last = frame->count;
 
-    frame->rate = round((double) frame->snapshot.count / frame->snapshot.elapsed);
-    frame->avg = round((double) frame->count / frame->elapsed);
+    frame->rate = round( ( double ) frame->_snapshot.count / frame->_snapshot.elapsed );
+    frame->avg = round( ( double ) frame->count / frame->elapsed );
 }
 
 #endif
