@@ -497,7 +497,7 @@ void **kdt_query_range( struct kdtree *tree, KDT_DATA_TYPE point[], KDT_DATA_TYP
     if ( tree == NULL )
         return NULL;
 
-    void **query = ( void ** ) malloc( sizeof( void * ) * PI * range * range + 2 );
+    void **query = ( void ** ) malloc( ( size_t ) ( sizeof( void * ) * PI * range * range + 2 ) );
     void **head = query;
     int l = kdt_query_range_util( tree, tree->root, point, range, 0, &query );
 

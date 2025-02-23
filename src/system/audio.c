@@ -3,7 +3,7 @@
 
 #include <SDL3/SDL.h>
 
-struct
+static struct
 {
     bool initialized;
 } g_audio_state = { 0 };

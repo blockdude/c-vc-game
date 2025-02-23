@@ -16,7 +16,7 @@ void allocator_restore_original( void )
     SDL_free_func sdl_free;
 
     SDL_GetOriginalMemoryFunctions( &sdl_malloc, &sdl_calloc, &sdl_realloc, &sdl_free );
-    SDL_GetMemoryFunctions( sdl_malloc, sdl_calloc, sdl_realloc, sdl_free );
+    SDL_SetMemoryFunctions( sdl_malloc, sdl_calloc, sdl_realloc, sdl_free );
 }
 
 int allocator_set( struct allocator allocator )

@@ -2,7 +2,7 @@
 #include "../util/log.h"
 #include <SDL3/SDL.h>
 
-struct
+static struct
 {
     bool initialized;
 } g_timer_state = { 0 };

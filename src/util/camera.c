@@ -11,7 +11,7 @@ void camera_init( struct camera *self, int type )
 	self->eye    = ( struct vec3 ) { 0.0f, 0.0f, 0.0f };
 	self->target = ( struct vec3 ) { 0.0f, 0.0f, 1.0f };
 	self->up     = ( struct vec3 ) { 0.0f, 1.0f, 0.0f };
-	self->fov    = PI / 4.0f;
+	self->fov    = ( float ) PI / 4.0f;
 	self->zoom   = 1.0f;
 
 	camera_update( self );

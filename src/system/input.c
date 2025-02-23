@@ -165,26 +165,7 @@ int input_init( void )
         return -1;
     }
 
-    // reset keys
-    for ( int i = 0; i < K_COUNT; i++ )
-    {
-        g_input_state.k_state[ i ].just_pressed = false;
-        g_input_state.k_state[ i ].released = false;
-    }
-
-    // reset mouse buttons
-    for ( int i = 0; i < B_COUNT; i++ )
-    {
-        g_input_state.m_state[ i ].just_pressed = false;
-        g_input_state.m_state[ i ].released = false;
-    }
-
-    // reset mouse events
-    g_input_state.m_moved = false;
-    g_input_state.m_wheel.x = 0;
-    g_input_state.m_wheel.y = 0;
-    g_input_state.m_pos_delta.x = 0;
-    g_input_state.m_pos_delta.y = 0;
+    memset( &g_input_state, 0, sizeof( g_input_state ) );
     g_input_state.initialized = true;
     return 0;
 }

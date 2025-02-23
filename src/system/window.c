@@ -36,8 +36,11 @@ int window_init( void )
         goto cleanup;
     }
 
-    SDL_WindowFlags flags =
-        SDL_WINDOW_OPENGL;
+    SDL_WindowFlags flags = 0;
+
+#ifdef VCP_WINDOW_OPENGL
+    flags = SDL_WINDOW_OPENGL;
+#endif
 
     if ( HASFLAG( g_win_state.flags, WINDOW_RESIZABLE ) )
     {
@@ -59,12 +62,14 @@ int window_init( void )
         flags |= SDL_WINDOW_MOUSE_RELATIVE_MODE;
     }
 
+#ifdef VCP_WINDOW_OPENGL
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
     SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
+#endif
 
     g_win_ctx.handle = SDL_CreateWindow( g_win_state.title, g_win_state.width, g_win_state.height, flags );
     if ( g_win_ctx.handle == NULL )
@@ -73,6 +78,7 @@ int window_init( void )
         goto cleanup;
     }
 
+#ifdef VCP_WINDOW_OPENGL
     g_win_ctx.glcontext = SDL_GL_CreateContext( g_win_ctx.handle );
     if ( g_win_ctx.glcontext == NULL )
     {
@@ -87,19 +93,27 @@ int window_init( void )
     }
 
     SDL_GL_SetSwapInterval( HASFLAG( g_win_state.flags, WINDOW_VSYNC ) ? 1 : 0 );
+#endif
+
     g_win_state.id = SDL_GetWindowID( g_win_ctx.handle );
     g_win_state.initialized = true;
 
     log_info( "Window ID   : %u", g_win_state.id );
+
+#ifdef VCP_WINDOW_OPENGL
     log_info( "Vendor      : %s", glGetString( GL_VENDOR ) );
     log_info( "Renderer    : %s", glGetString( GL_RENDERER ) );
     log_info( "GL Version  : %s", glGetString( GL_VERSION ) );
     log_info( "SL Version  : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+#endif
+
     return 0;
 
 cleanup:
+#ifdef VCP_WINDOW_OPENGL
     if ( g_win_ctx.glcontext )
         SDL_GL_DestroyContext( g_win_ctx.glcontext );
+#endif
 
     if ( g_win_ctx.handle )
         SDL_DestroyWindow( g_win_ctx.handle );
@@ -114,12 +128,14 @@ void window_deinit( void )
     if ( g_win_state.initialized == false )
         return;
 
+#ifdef VCP_WINDOW_OPENGL
     if ( g_win_ctx.glcontext )
     {
         SDL_GL_DestroyContext( g_win_ctx.glcontext );
         log_info( "Destroyed OpenGL context" );
         g_win_ctx.glcontext = NULL;
     }
+#endif
 
     if ( g_win_ctx.handle )
     {
@@ -147,7 +163,9 @@ void window_deinit( void )
 
 void window_swap_buffer( void )
 {
+#ifdef VCP_WINDOW_OPENGL
     SDL_GL_SwapWindow( g_win_ctx.handle );
+#endif
 }
 
 /*
@@ -215,10 +233,13 @@ void window_set_title( const char *title )
 void window_set_size( int w, int h )
 {
     SDL_SetWindowSize( g_win_ctx.handle, w, h );
-    glViewport( 0, 0, w, h );
     g_win_state.width = w;
     g_win_state.height = h;
     g_win_state.aspect = ( float ) w / h;
+
+#ifdef VCP_WINDOW_OPENGL
+    glViewport( 0, 0, w, h );
+#endif
 }
 
 void window_set_flags( uint32_t flags, bool state )
@@ -238,7 +259,9 @@ void window_set_flags( uint32_t flags, bool state )
 
     if ( HASFLAG( flags, WINDOW_VSYNC ) )
     {
+#ifdef VCP_WINDOW_OPENGL
         SDL_GL_SetSwapInterval( state ? 1 : 0 );
+#endif
     }
 
     if ( HASFLAG( flags, WINDOW_FULLSCREEN ) )
@@ -292,7 +315,10 @@ void _window_notify( int type, int w, int h )
         g_win_state.width = w;
         g_win_state.height = h;
         g_win_state.aspect = ( float ) w / h;
+
+#ifdef VCP_WINDOW_OPENGL
         glViewport( 0, 0, w, h );
+#endif
     }
 
     if ( type == _WINDOW_NOTIFY_CLOSE )

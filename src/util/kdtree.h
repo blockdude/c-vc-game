@@ -3,7 +3,7 @@
 
 #define KDT_DATA_TYPE int
 
-extern struct kdtree;
+struct kdtree;
 
 extern struct kdtree *kdt_new( int k, void ( *free_item )( void * ) );
 extern void kdt_free( struct kdtree *tree );
@@ -18,6 +18,6 @@ extern void **kdt_query_range( struct kdtree *tree, KDT_DATA_TYPE point[], KDT_D
 extern void kdt_query_dim_func( struct kdtree *tree, KDT_DATA_TYPE point[], KDT_DATA_TYPE dim[], void ( *func )( void * ) );
 extern void **kdt_query_dim( struct kdtree *tree, KDT_DATA_TYPE point[], KDT_DATA_TYPE dim[], int *length );
 extern void *kdt_search( struct kdtree *tree, KDT_DATA_TYPE point[] );
-extern void *kdt_nearest( struct kdtree *tree, KDT_DATA_TYPE point[] );
+//extern void *kdt_nearest( struct kdtree *tree, KDT_DATA_TYPE point[] );
 
 #endif

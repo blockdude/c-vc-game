@@ -17,7 +17,7 @@ enum window_flags
 extern int window_init( void );
 extern void window_deinit( void );
 extern void window_swap_buffer( void );
-extern struct extent window_size( int *w, int *h );
+extern struct extent window_size( void );
 extern float window_aspect( void );
 extern const char *window_title( void );
 extern uint32_t window_flags( void );
