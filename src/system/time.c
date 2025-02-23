@@ -16,11 +16,11 @@ static struct
 
 int time_init( void )
 {
-    if ( SDL_InitSubSystem( SDL_INIT_TIMER ) != 0 )
-    {
-        log_warn( "Unable to initialize SDL timer system: %s", SDL_GetError() );
-        return -1;
-    }
+    //if ( SDL_InitSubSystem( SDL_INIT_TIMER ) != 0 )
+    //{
+    //    log_warn( "Unable to initialize SDL timer system: %s", SDL_GetError() );
+    //    return -1;
+    //}
 
     g_timer_state.initialized = true;
     return 0;
@@ -31,7 +31,7 @@ void time_deinit( void )
     if ( g_timer_state.initialized == false )
         return;
 
-    SDL_QuitSubSystem( SDL_INIT_TIMER );
+    //SDL_QuitSubSystem( SDL_INIT_TIMER );
     g_timer_state.initialized = false;
 }
 

@@ -30,7 +30,7 @@ static struct
 
 int window_init( void )
 {
-    if ( SDL_InitSubSystem( SDL_INIT_VIDEO ) != 0 )
+    if ( SDL_InitSubSystem( SDL_INIT_VIDEO ) == false )
     {
         log_warn( "Unable to initialize SDL video system: %s", SDL_GetError() );
         goto cleanup;

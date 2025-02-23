@@ -5,7 +5,7 @@
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
 
-static const int keymap[ SDL_NUM_SCANCODES ] = {
+static const int keymap[ SDL_SCANCODE_COUNT ] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
 
     0, 0, 0,
@@ -159,7 +159,7 @@ static struct
 
 int input_init( void )
 {
-    if ( SDL_InitSubSystem( SDL_INIT_EVENTS ) != 0 )
+    if ( SDL_InitSubSystem( SDL_INIT_EVENTS ) == false )
     {
         log_warn( "Unable to initialize SDL event system: %s", SDL_GetError() );
         return -1;
@@ -175,7 +175,7 @@ void input_deinit( void )
     if ( g_input_state.initialized == false )
         return;
 
-    SDL_QuitSubSystem( SDL_INIT_TIMER );
+    SDL_QuitSubSystem( SDL_INIT_EVENTS );
     g_input_state.initialized = false;
 }
 
