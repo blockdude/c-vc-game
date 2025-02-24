@@ -443,7 +443,7 @@ static inline struct mat4_f32 mat4_f32_perspective( float fovy, float aspect, fl
 {
     struct mat4_f32 result = { 0 };
 
-    float top = near * tan( fovy * 0.5 );
+    float top = near * tanf( fovy * 0.5f );
     float bottom = -top;
     float right = top * aspect;
     float left = -right;
@@ -615,7 +615,7 @@ static inline void mat4_f32_decompose( struct mat4_f32 m, struct vec3_f32 *trans
 
     // Remove scale from the matrix if it is not close to zero
     struct mat4_f32 clone = m;
-    if ( !f32_equals( det, 0, EPSILON ) )
+    if ( !f32_equals( det, 0, ( float ) EPSILON ) )
     {
         clone.m00 /= s.x;
         clone.m11 /= s.y;

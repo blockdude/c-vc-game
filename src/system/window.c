@@ -12,8 +12,10 @@ static struct
     float aspect;
     int width;
     int height;
-    int id;
-} g_win_state = { .id = -1, .title = "Application", .width = 700, .height = 700, .aspect = 1.0f };
+    uint32_t id;
+
+    bool keep_open;
+} g_win_state = { .id = 0, .title = "Application", .width = 700, .height = 700, .aspect = 1.0f };
 
 static struct
 {
@@ -97,6 +99,7 @@ int window_init( void )
 
     g_win_state.id = SDL_GetWindowID( g_win_ctx.handle );
     g_win_state.initialized = true;
+    g_win_state.keep_open = true;
 
     log_info( "Window ID   : %u", g_win_state.id );
 
@@ -181,6 +184,11 @@ void window_swap_buffer( void )
  * -----------------------------
  */
 
+bool window_keep_open( void )
+{
+    return g_win_state.keep_open;
+}
+
 struct extent window_size( void )
 {
     struct extent result = {
@@ -206,7 +214,7 @@ uint32_t window_flags( void )
     return g_win_state.flags;
 }
 
-int window_id( void )
+uint32_t window_id( void )
 {
     return g_win_state.id;
 }
@@ -323,6 +331,7 @@ void _window_notify( int type, int w, int h )
 
     if ( type == _WINDOW_NOTIFY_CLOSE )
     {
+        g_win_state.keep_open = false;
     }
 }
 

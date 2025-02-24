@@ -1,4 +1,5 @@
 #include "../../util/types.h"
+#include <math.h>
 
 #define _VEC2_TYPE struct vec2_f32
 #define _BASE_TYPE float
@@ -15,8 +16,6 @@
 #define _MAX fminf
 
 #define _CONCAT( _a, _b ) _a##_b
-#define MATHLIB _CONCAT( <math, .h> )
-#include MATHLIB
 
 #define _NAME_HELPER( _prefix, _fn ) _CONCAT( _prefix, _##_fn )
 #define _FUNC_NAME( _fn ) _NAME_HELPER( _FUNC_PREFIX, _fn )

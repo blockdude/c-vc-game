@@ -1,10 +1,7 @@
 #ifndef VCP_VEC3_H
 #define VCP_VEC3_H
 
-#include "int32/vec3_i32.h"
-#include "int64/vec3_i64.h"
 #include "float32/vec3_f32.h"
-#include "float64/vec3_f64.h"
 
 /*
  * =============================

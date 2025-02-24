@@ -17,11 +17,12 @@ enum window_flags
 extern int window_init( void );
 extern void window_deinit( void );
 extern void window_swap_buffer( void );
+extern bool window_keep_open( void );
 extern struct extent window_size( void );
 extern float window_aspect( void );
 extern const char *window_title( void );
 extern uint32_t window_flags( void );
-extern int window_id( void );
+extern uint32_t window_id( void );
 extern void window_set_size( int w, int h );
 extern void window_set_title( const char *title );
 extern void window_set_flags( uint32_t flags, bool state );

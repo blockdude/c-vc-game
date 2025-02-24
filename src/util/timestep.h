@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h>
 
 #ifndef TS_TIME_NOW
 #error "define TS_TIME"
@@ -104,8 +105,8 @@ static inline void _tick_prefix( tick_control_t *tick, frame_control_t *frame )
 
     tick->_snapshot.last = tick->count;
 
-    tick->rate = round( ( double ) tick->_snapshot.count / tick->_snapshot.elapsed );
-    tick->avg = round( ( double ) tick->count / tick->elapsed );
+    tick->rate = ( int ) round( ( double ) tick->_snapshot.count / tick->_snapshot.elapsed );
+    tick->avg = ( int ) round( ( double ) tick->count / tick->elapsed );
 }
 
 static inline bool _tick_can_proc( tick_control_t *tick )
@@ -122,6 +123,7 @@ static inline void _tick_postfix( tick_control_t *tick )
 
 static inline bool _frame_can_proc( frame_control_t *frame )
 {
+    VCP_UNUSED_VAR( frame );
     return true;
 }
 
@@ -163,8 +165,8 @@ static inline void _frame_postfix( frame_control_t *frame )
 
     frame->_snapshot.last = frame->count;
 
-    frame->rate = round( ( double ) frame->_snapshot.count / frame->_snapshot.elapsed );
-    frame->avg = round( ( double ) frame->count / frame->elapsed );
+    frame->rate = ( int ) round( ( double ) frame->_snapshot.count / frame->_snapshot.elapsed );
+    frame->avg = ( int ) round( ( double ) frame->count / frame->elapsed );
 }
 
 #endif
