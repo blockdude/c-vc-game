@@ -5,6 +5,7 @@
 #undef _VEC4_TYPE
 #undef _QUAT_TYPE
 #undef _MAT4_TYPE
+#undef _MAT4_FLAT_TYPE
 #undef _BASE_TYPE
 
 #undef _FUNC_SPEC
@@ -17,9 +18,12 @@
 #undef _QUAT_PREFIX
 #undef _BASE_SUFFIX
 
+#undef _FEQ
 #undef _SIN
 #undef _COS
 #undef _TAN
+#undef _ASIN
+#undef _ACOS
 #undef _ATAN2
 #undef _SQRT
 #undef _ABS
@@ -33,29 +37,17 @@
 #undef _FUNC_VEC2
 #undef _FUNC_VEC3
 #undef _FUNC_VEC4
-#undef _FUNC_MAT4
 #undef _FUNC_QUAT
+#undef _FUNC_MAT4
 
 #undef LINEAR_ALGEBRA_CLEANUP
 
 #else
 
+
+
 #include "../../util/types.h"
 #include <math.h>
-
-#if defined( LINEAR_ALGEBRA_HEADER )
-#undef LINEAR_ALGEBRA_HEADER
-
-#define _FUNC_SPEC
-#define _FUNC_CONV
-
-#elif defined ( LINEAR_ALGEBRA_IMPLEMENTATION )
-#undef LINEAR_ALGEBRA_IMPLEMENTATION
-
-#define _FUNC_SPEC
-#define _FUNC_CONV
-
-#endif
 
 #if defined( LINEAR_ALGEBRA_FLT )
 #undef LINEAR_ALGEBRA_FLT
@@ -65,6 +57,7 @@
 #define _VEC4_TYPE struct vec4
 #define _QUAT_TYPE struct quat
 #define _MAT4_TYPE struct mat4
+#define _MAT4_FLAT_TYPE struct mat4_flat
 #define _BASE_TYPE float
 
 #define _VEC2_PREFIX vec2
@@ -74,9 +67,12 @@
 #define _QUAT_PREFIX quat
 #define _BASE_SUFFIX f
 
+#define _FEQ _f32_equals
 #define _SIN sinf
 #define _COS cosf
 #define _TAN tanf
+#define _ASIN asinf
+#define _ACOS acosf
 #define _ATAN2 atan2f
 #define _SQRT sqrtf
 #define _ABS fabsf
@@ -91,6 +87,7 @@
 #define _VEC4_TYPE struct vec4_f32
 #define _QUAT_TYPE struct quat_f32
 #define _MAT4_TYPE struct mat4_f32
+#define _MAT4_FLAT_TYPE struct mat4_f32_flat
 #define _BASE_TYPE float
 
 #define _VEC2_PREFIX vec2_f32
@@ -100,9 +97,12 @@
 #define _QUAT_PREFIX quat_f32
 #define _BASE_SUFFIX f
 
+#define _FEQ _f32_equals
 #define _SIN sinf
 #define _COS cosf
 #define _TAN tanf
+#define _ASIN asinf
+#define _ACOS acosf
 #define _ATAN2 atan2f
 #define _SQRT sqrtf
 #define _ABS fabsf
@@ -124,11 +124,15 @@
 #define _VEC4_PREFIX vec4_f64
 #define _MAT4_PREFIX mat4_f64
 #define _QUAT_PREFIX quat_f64
+#define _MAT4_FLAT_TYPE struct mat4_f64_flat
 #define _BASE_SUFFIX f
 
+#define _FEQ _f64_equals
 #define _SIN sin
 #define _COS cos
 #define _TAN tan
+#define _ASIN asin
+#define _ACOS acos
 #define _ATAN2 atan2
 #define _SQRT sqrt
 #define _ABS fabs
@@ -137,6 +141,39 @@
 
 #else
 #error "Only F32 and F64 version are supported"
+#endif
+
+
+
+#if defined( LINEAR_ALGEBRA_HEADER )
+#undef LINEAR_ALGEBRA_HEADER
+
+#define _FUNC_SPEC
+#define _FUNC_CONV
+
+#elif defined ( LINEAR_ALGEBRA_IMPLEMENTATION )
+#undef LINEAR_ALGEBRA_IMPLEMENTATION
+
+#define _FUNC_SPEC
+#define _FUNC_CONV
+
+#ifndef _LINEAR_ALGEBRA_INTERNAL
+#define _LINEAR_ALGEBRA_INTERNAL
+
+static inline int _f32_equals( float a, float b, float epsilon )
+{
+    int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
+    return result;
+}
+
+static inline int _f64_equals( double a, double b, double epsilon )
+{
+    int result = ( fabs( a - b ) ) <= ( epsilon * fmax( 1.0f, fmax( fabs( a ), fabs( b ) ) ) );
+    return result;
+}
+
+#endif
+
 #endif
 
 
@@ -151,15 +188,15 @@
 #define _FUNC_VEC2( _fn ) _NAME_HELPER( _VEC2_PREFIX, _fn )
 #define _FUNC_VEC3( _fn ) _NAME_HELPER( _VEC3_PREFIX, _fn )
 #define _FUNC_VEC4( _fn ) _NAME_HELPER( _VEC4_PREFIX, _fn )
-#define _FUNC_MAT4( _fn ) _NAME_HELPER( _MAT4_PREFIX, _fn )
 #define _FUNC_QUAT( _fn ) _NAME_HELPER( _QUAT_PREFIX, _fn )
+#define _FUNC_MAT4( _fn ) _NAME_HELPER( _MAT4_PREFIX, _fn )
 
 
 
 /*
  * =============================
  * -----------------------------
- * VECTOR2
+ * VECTOR 2
  * -----------------------------
  */
 
@@ -551,7 +588,7 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE
 /*
  * =============================
  * -----------------------------
- * VECTOR3
+ * VECTOR 3
  * -----------------------------
  */
 
@@ -1279,35 +1316,35 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( refract )( _VEC3_TYPE v, _VEC3_TYPE
 /*
  * =============================
  * -----------------------------
- * VECTOR4
+ * VECTOR 4
  * -----------------------------
  */
 
 #ifdef LINEAR_ALGEBRA_VEC4_HEADER
 #undef LINEAR_ALGEBRA_VEC4_HEADER
 
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( zero )( void );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( one )( void );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( add )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( add_val )( _VEC4_TYPE v, _BASE_TYPE val );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( sub )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( sub_val )( _VEC4_TYPE v, _BASE_TYPE val );
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( len )( _VEC4_TYPE v );
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( len_sq )( _VEC4_TYPE v );
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( dot )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( dist )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( dist_sq )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( scale )( _VEC4_TYPE v, _BASE_TYPE scale );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( mul )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( negate )( _VEC4_TYPE v );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( div )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( normalize )( _VEC4_TYPE v );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( min )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( max )( _VEC4_TYPE a, _VEC4_TYPE b );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( lerp )( _VEC4_TYPE a, _VEC4_TYPE b, _BASE_TYPE t );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( move_towards )( _VEC4_TYPE v, _VEC4_TYPE target, _BASE_TYPE max );
-_FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( invert )( _VEC4_TYPE v );
-_FUNC_SPEC int        _FUNC_CONV _FUNC_VEC4( equals )( _VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( zero )( void );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( one )( void );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( add )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( add_val )( _VEC4_TYPE v, _BASE_TYPE val );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( sub )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( sub_val )( _VEC4_TYPE v, _BASE_TYPE val );
+extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( len )( _VEC4_TYPE v );
+extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( len_sq )( _VEC4_TYPE v );
+extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( dot )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( dist )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC4( dist_sq )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( scale )( _VEC4_TYPE v, _BASE_TYPE scale );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( mul )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( negate )( _VEC4_TYPE v );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( div )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( normalize )( _VEC4_TYPE v );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( min )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( max )( _VEC4_TYPE a, _VEC4_TYPE b );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( lerp )( _VEC4_TYPE a, _VEC4_TYPE b, _BASE_TYPE t );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( move_towards )( _VEC4_TYPE v, _VEC4_TYPE target, _BASE_TYPE max );
+extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( invert )( _VEC4_TYPE v );
+extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC4( equals )( _VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon );
 
 #endif
 
@@ -1553,6 +1590,1246 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_VEC4( equals )( _VEC4_TYPE p, _VEC4_TYPE q, _BAS
         ( ( _ABS( p.y - q.y ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) ) &&
         ( ( _ABS( p.z - q.z ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.z ), _ABS( q.z ) ) ) ) ) &&
         ( ( _ABS( p.w - q.w ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.w ), _ABS( q.w ) ) ) ) );
+
+    return result;
+}
+
+#endif
+
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * QUATERNION
+ * -----------------------------
+ */
+
+#ifdef LINEAR_ALGEBRA_QUAT_HEADER
+#undef LINEAR_ALGEBRA_QUAT_HEADER
+
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( add )( _QUAT_TYPE p, _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( add_val )( _QUAT_TYPE q, _BASE_TYPE val );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( sub )( _QUAT_TYPE p, _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( sub_val )( _QUAT_TYPE q, _BASE_TYPE val );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( identity )( void );
+_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_QUAT( len )( _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( normalize )( _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( invert )( _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( mul )( _QUAT_TYPE p, _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( scale )( _QUAT_TYPE q, _BASE_TYPE s );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( div )( _QUAT_TYPE p, _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( lerp )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE t );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( nlerp )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE t );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( slerp )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE t, _BASE_TYPE epsilon );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( cubic_hermite_spline )( _QUAT_TYPE p, _QUAT_TYPE out_tan_p, _QUAT_TYPE q, _QUAT_TYPE in_tan_q, _BASE_TYPE t );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_vec3 )( _VEC3_TYPE p, _VEC3_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_mat4 )( _MAT4_TYPE m );
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_QUAT( to_mat4 )( _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_axis_angle )( _VEC3_TYPE axis, _BASE_TYPE angle );
+_FUNC_SPEC void       _FUNC_CONV _FUNC_QUAT( to_axis_angle )( _QUAT_TYPE q, _BASE_TYPE epsilon, _VEC3_TYPE *out_axis, _BASE_TYPE *out_angle );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_euler )( _BASE_TYPE pitch, _BASE_TYPE yaw, _BASE_TYPE roll );
+_FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_QUAT( to_euler )( _QUAT_TYPE q );
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( transform )( _QUAT_TYPE q, _MAT4_TYPE m );
+_FUNC_SPEC int        _FUNC_CONV _FUNC_QUAT( equals )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon );
+
+#endif
+
+
+
+#ifdef LINEAR_ALGEBRA_QUAT_IMPLEMENTATION
+#undef LINEAR_ALGEBRA_QUAT_IMPLEMENTATION
+
+// Add two quaternions
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( add )( _QUAT_TYPE p, _QUAT_TYPE q )
+{
+    _QUAT_TYPE result = { p.x + q.x, p.y + q.y, p.z + q.z, p.w + q.w };
+    return result;
+}
+
+// Add quaternion and _BASE_TYPE value
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( add_val )( _QUAT_TYPE q, _BASE_TYPE val )
+{
+    _QUAT_TYPE result = { q.x + val, q.y + val, q.z + val, q.w + val };
+    return result;
+}
+
+// Subtract two quaternions
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( sub )( _QUAT_TYPE p, _QUAT_TYPE q )
+{
+    _QUAT_TYPE result = { p.x - q.x, p.y - q.y, p.z - q.z, p.w - q.w };
+    return result;
+}
+
+// Subtract quaternion and _BASE_TYPE value
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( sub_val )( _QUAT_TYPE q, _BASE_TYPE val )
+{
+    _QUAT_TYPE result = { q.x - val, q.y - val, q.z - val, q.w - val };
+    return result;
+}
+
+// Get identity quaternion
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( identity )( void )
+{
+    _QUAT_TYPE result = {
+        _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ),
+        _LITERAL( 1.0 )
+    };
+
+    return result;
+}
+
+// Computes the length of a quaternion
+_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_QUAT( len )( _QUAT_TYPE q )
+{
+    _BASE_TYPE result = _SQRT( q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w );
+    return result;
+}
+
+// Normalize provided quaternion
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( normalize )( _QUAT_TYPE q )
+{
+    _QUAT_TYPE result = { 0 };
+
+    _BASE_TYPE len = _SQRT( q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w );
+    if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+    _BASE_TYPE ilen = _LITERAL( 1.0 ) / len;
+
+    result.x = q.x * ilen;
+    result.y = q.y * ilen;
+    result.z = q.z * ilen;
+    result.w = q.w * ilen;
+
+    return result;
+}
+
+// Invert provided quaternion
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( invert )( _QUAT_TYPE q )
+{
+    _QUAT_TYPE result = q;
+
+    _BASE_TYPE len = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
+
+    if ( len != _LITERAL( 0.0 ) )
+    {
+        _BASE_TYPE ilen = _LITERAL( 1.0 ) / len;
+
+        result.x *= -ilen;
+        result.y *= -ilen;
+        result.z *= -ilen;
+        result.w *= ilen;
+    }
+
+    return result;
+}
+
+// Calculate two quaternion multiplication
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( mul )( _QUAT_TYPE p, _QUAT_TYPE q )
+{
+    _QUAT_TYPE result = { 0 };
+
+    _BASE_TYPE qax = p.x, qay = p.y, qaz = p.z, qaw = p.w;
+    _BASE_TYPE qbx = q.x, qby = q.y, qbz = q.z, qbw = q.w;
+
+    result.x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+    result.y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+    result.z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+    result.w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+    return result;
+}
+
+// Scale quaternion by _BASE_TYPE value
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( scale )( _QUAT_TYPE q, _BASE_TYPE s )
+{
+    _QUAT_TYPE result = { 0 };
+
+    result.x = q.x * s;
+    result.y = q.y * s;
+    result.z = q.z * s;
+    result.w = q.w * s;
+
+    return result;
+}
+
+// Divide two quaternions
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( div )( _QUAT_TYPE p, _QUAT_TYPE q )
+{
+    _QUAT_TYPE result = { p.x / q.x, p.y / q.y, p.z / q.z, p.w / q.w };
+    return result;
+}
+
+// Calculate linear interpolation between two quaternions
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( lerp )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE t )
+{
+    _QUAT_TYPE result = { 0 };
+
+    result.x = p.x + t * ( q.x - p.x );
+    result.y = p.y + t * ( q.y - p.y );
+    result.z = p.z + t * ( q.z - p.z );
+    result.w = p.w + t * ( q.w - p.w );
+
+    return result;
+}
+
+// Calculate slerp-optimized interpolation between two quaternions
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( nlerp )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE t )
+{
+    _QUAT_TYPE result = { 0 };
+
+    // _QUAT_TYPELerp(p, q, t)
+    result.x = p.x + t * ( q.x - p.x );
+    result.y = p.y + t * ( q.y - p.y );
+    result.z = p.z + t * ( q.z - p.z );
+    result.w = p.w + t * ( q.w - p.w );
+
+    // quat_f32_Normalize(n);
+    _QUAT_TYPE n = result;
+    _BASE_TYPE len = _SQRT( n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w );
+    if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+    _BASE_TYPE ilen = _LITERAL( 1.0 ) / len;
+
+    result.x = n.x * ilen;
+    result.y = n.y * ilen;
+    result.z = n.z * ilen;
+    result.w = n.w * ilen;
+
+    return result;
+}
+
+// Calculates spherical linear interpolation between two quaternions
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( slerp )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE t, _BASE_TYPE epsilon )
+{
+    _QUAT_TYPE result = { 0 };
+
+    _BASE_TYPE cos_half_theta = p.x * q.x + p.y * q.y + p.z * q.z + p.w * q.w;
+
+    if ( cos_half_theta < _LITERAL( 0.0 ) )
+    {
+        q.x = -q.x; q.y = -q.y; q.z = -q.z; q.w = -q.w;
+        cos_half_theta = -cos_half_theta;
+    }
+
+    if ( _ABS( cos_half_theta ) >= _LITERAL( 1.0 ) ) result = p;
+    else if ( cos_half_theta > _LITERAL( 0.95 ) ) result = _FUNC_QUAT( nlerp )( p, q, t );
+    else
+    {
+        _BASE_TYPE half_theta = _ACOS( cos_half_theta );
+        _BASE_TYPE sin_half_theta = _SQRT( _LITERAL( 1.0 ) - cos_half_theta * cos_half_theta );
+
+        if ( _ABS( sin_half_theta ) < epsilon )
+        {
+            result.x = ( p.x * _LITERAL( 0.5 ) + q.x * _LITERAL( 0.5 ) );
+            result.y = ( p.y * _LITERAL( 0.5 ) + q.y * _LITERAL( 0.5 ) );
+            result.z = ( p.z * _LITERAL( 0.5 ) + q.z * _LITERAL( 0.5 ) );
+            result.w = ( p.w * _LITERAL( 0.5 ) + q.w * _LITERAL( 0.5 ) );
+        }
+        else
+        {
+            _BASE_TYPE ratio_a = _SIN( ( _LITERAL( 1.0 ) - t ) * half_theta ) / sin_half_theta;
+            _BASE_TYPE ratio_b = _SIN( t * half_theta ) / sin_half_theta;
+
+            result.x = ( p.x * ratio_a + q.x * ratio_b );
+            result.y = ( p.y * ratio_a + q.y * ratio_b );
+            result.z = ( p.z * ratio_a + q.z * ratio_b );
+            result.w = ( p.w * ratio_a + q.w * ratio_b );
+        }
+    }
+
+    return result;
+}
+
+// Calculate quaternion cubic spline interpolation using Cubic Hermite Spline algorithm
+// as described in the GLTF 2.0 specification: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#interpolation-cubic
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( cubic_hermite_spline )( _QUAT_TYPE p, _QUAT_TYPE out_tan_p, _QUAT_TYPE q, _QUAT_TYPE in_tan_q, _BASE_TYPE t )
+{
+    _BASE_TYPE t2 = t * t;
+    _BASE_TYPE t3 = t2 * t;
+    _BASE_TYPE h00 = _LITERAL( 2.0 ) * t3 - _LITERAL( 3.0 ) * t2 + _LITERAL( 1.0 );
+    _BASE_TYPE h10 = t3 - _LITERAL( 2.0 ) * t2 + t;
+    _BASE_TYPE h01 = _LITERAL( -2.0 ) * t3 + _LITERAL( 3.0 ) * t2;
+    _BASE_TYPE h11 = t3 - t2;
+
+    _QUAT_TYPE p0 = _FUNC_QUAT( scale )( p, h00 );
+    _QUAT_TYPE m0 = _FUNC_QUAT( scale )( out_tan_p, h10 );
+    _QUAT_TYPE p1 = _FUNC_QUAT( scale )( q, h01 );
+    _QUAT_TYPE m1 = _FUNC_QUAT( scale )( in_tan_q, h11 );
+
+    _QUAT_TYPE result = { 0 };
+
+    result = _FUNC_QUAT( add )( p0, m0 );
+    result = _FUNC_QUAT( add )( result, p1 );
+    result = _FUNC_QUAT( add )( result, m1 );
+    result = _FUNC_QUAT( normalize )( result );
+
+    return result;
+}
+
+// Calculate quaternion based on the rotation from vector a to vector b
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_vec3 )( _VEC3_TYPE p, _VEC3_TYPE q )
+{
+    _QUAT_TYPE result = { 0 };
+
+    _BASE_TYPE dot = ( p.x * q.x + p.y * q.y + p.z * q.z );    // vec3_DotProduct(p, q) | cos2theta
+    _VEC3_TYPE cross = { p.y * q.z - p.z * q.y, p.z * q.x - p.x * q.z, p.x * q.y - p.y * q.x }; // Vecbr3CrossProduct(p, q)
+
+    result.x = cross.x;
+    result.y = cross.y;
+    result.z = cross.z;
+    result.w = _LITERAL( 1.0 ) + dot;
+
+    // _QUAT_TYPENormalize(n);
+    // NOTE: Normalize q essentially nlerp the original and identity q 0.5
+    _QUAT_TYPE n = result;
+    _BASE_TYPE len = _SQRT( n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w );
+    if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+    _BASE_TYPE ilen = _LITERAL( 1.0 ) / len;
+
+    result.x = n.x * ilen;
+    result.y = n.y * ilen;
+    result.z = n.z * ilen;
+    result.w = n.w * ilen;
+
+    return result;
+}
+
+// Get a quaternion for a given rotation matrix
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_mat4 )( _MAT4_TYPE m )
+{
+    _QUAT_TYPE result = { 0 };
+
+    _BASE_TYPE four_w_sq_sub_one = m.m00 + m.m11 + m.m22;
+    _BASE_TYPE four_x_sq_sub_one = m.m00 - m.m11 - m.m22;
+    _BASE_TYPE four_y_sq_sub_one = m.m11 - m.m00 - m.m22;
+    _BASE_TYPE four_z_sq_sub_one = m.m22 - m.m00 - m.m11;
+
+    int biggest_idx = 0;
+    _BASE_TYPE four_biggest_sq_sub_one = four_w_sq_sub_one;
+
+    if ( four_x_sq_sub_one > four_biggest_sq_sub_one )
+    {
+        four_biggest_sq_sub_one = four_x_sq_sub_one;
+        biggest_idx = 1;
+    }
+
+    if ( four_y_sq_sub_one > four_biggest_sq_sub_one )
+    {
+        four_biggest_sq_sub_one = four_y_sq_sub_one;
+        biggest_idx = 2;
+    }
+
+    if ( four_z_sq_sub_one > four_biggest_sq_sub_one )
+    {
+        four_biggest_sq_sub_one = four_z_sq_sub_one;
+        biggest_idx = 3;
+    }
+
+    _BASE_TYPE biggest_val = _SQRT( four_biggest_sq_sub_one + _LITERAL( 1.0 ) ) * _LITERAL( 0.5 );
+    _BASE_TYPE mult = _LITERAL( 0.25 ) / biggest_val;
+
+    switch ( biggest_idx )
+    {
+    case 0:
+        result.w = biggest_val;
+        result.x = ( m.m21 - m.m12 ) * mult;
+        result.y = ( m.m02 - m.m20 ) * mult;
+        result.z = ( m.m10 - m.m01 ) * mult;
+        break;
+    case 1:
+        result.x = biggest_val;
+        result.w = ( m.m21 - m.m12 ) * mult;
+        result.y = ( m.m10 + m.m01 ) * mult;
+        result.z = ( m.m02 + m.m20 ) * mult;
+        break;
+    case 2:
+        result.y = biggest_val;
+        result.w = ( m.m02 - m.m20 ) * mult;
+        result.x = ( m.m10 + m.m01 ) * mult;
+        result.z = ( m.m21 + m.m12 ) * mult;
+        break;
+    case 3:
+        result.z = biggest_val;
+        result.w = ( m.m10 - m.m01 ) * mult;
+        result.x = ( m.m02 + m.m20 ) * mult;
+        result.y = ( m.m21 + m.m12 ) * mult;
+        break;
+    }
+
+    return result;
+}
+
+// Get a matrix for a given quaternion
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_QUAT( to_mat4 )( _QUAT_TYPE q )
+{
+    _MAT4_TYPE result = {
+        _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    }; // MatrixIdentity()
+
+    _BASE_TYPE a2 = q.x * q.x;
+    _BASE_TYPE b2 = q.y * q.y;
+    _BASE_TYPE c2 = q.z * q.z;
+    _BASE_TYPE ac = q.x * q.z;
+    _BASE_TYPE ab = q.x * q.y;
+    _BASE_TYPE bc = q.y * q.z;
+    _BASE_TYPE ad = q.w * q.x;
+    _BASE_TYPE bd = q.w * q.y;
+    _BASE_TYPE cd = q.w * q.z;
+
+    result.m00 = _LITERAL( 1.0 ) - _LITERAL( 2.0 ) * ( b2 + c2 );
+    result.m10 = _LITERAL( 2.0 ) * ( ab + cd );
+    result.m20 = _LITERAL( 2.0 ) * ( ac - bd );
+
+    result.m01 = _LITERAL( 2.0 ) * ( ab - cd );
+    result.m11 = _LITERAL( 1.0 ) - _LITERAL( 2.0 ) * ( a2 + c2 );
+    result.m21 = _LITERAL( 2.0 ) * ( bc + ad );
+
+    result.m02 = _LITERAL( 2.0 ) * ( ac + bd );
+    result.m12 = _LITERAL( 2.0 ) * ( bc - ad );
+    result.m22 = _LITERAL( 1.0 ) - _LITERAL( 2.0 ) * ( a2 + b2 );
+
+    return result;
+}
+
+// Get rotation quaternion for an angle and axis
+// NOTE: Angle must be provided in radians
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_axis_angle )( _VEC3_TYPE axis, _BASE_TYPE angle )
+{
+    _QUAT_TYPE result = {
+        _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ),
+        _LITERAL( 1.0 )
+    };
+
+    _BASE_TYPE axislen = _SQRT( axis.x * axis.x + axis.y * axis.y + axis.z * axis.z );
+
+    if ( axislen != _LITERAL( 0.0 ) )
+    {
+        angle *= _LITERAL( 0.5 );
+
+        _BASE_TYPE len = _LITERAL( 0.0 );
+        _BASE_TYPE ilen = _LITERAL( 0.0 );
+
+        // Vector3Normalize( axis )
+        len = axislen;
+        if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+        ilen = _LITERAL( 1.0 ) / len;
+        axis.x *= ilen;
+        axis.y *= ilen;
+        axis.z *= ilen;
+
+        _BASE_TYPE s = _SIN( angle );
+        _BASE_TYPE c = _COS( angle );
+
+        result.x = axis.x * s;
+        result.y = axis.y * s;
+        result.z = axis.z * s;
+        result.w = c;
+
+        // _QUAT_TYPENormalize( q );
+        _QUAT_TYPE q = result;
+        len = _SQRT( q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w );
+        if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+        ilen = _LITERAL( 1.0 ) / len;
+        result.x = q.x * ilen;
+        result.y = q.y * ilen;
+        result.z = q.z * ilen;
+        result.w = q.w * ilen;
+    }
+
+    return result;
+}
+
+// Get the rotation angle and axis for a given quaternion
+_FUNC_SPEC void _FUNC_CONV _FUNC_QUAT( to_axis_angle )( _QUAT_TYPE q, _BASE_TYPE epsilon, _VEC3_TYPE *out_axis, _BASE_TYPE *out_angle )
+{
+    if ( _ABS( q.w ) > _LITERAL( 1.0 ) )
+    {
+        // _QUAT_TYPENormalize( q );
+        _BASE_TYPE len = _SQRT( q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w );
+        if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+        _BASE_TYPE ilen = _LITERAL( 1.0 ) / len;
+
+        q.x = q.x * ilen;
+        q.y = q.y * ilen;
+        q.z = q.z * ilen;
+        q.w = q.w * ilen;
+    }
+
+    _VEC3_TYPE res_axis = { _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ) };
+    _BASE_TYPE res_angle = _LITERAL( 2.0 ) * _ACOS( q.w );
+    _BASE_TYPE den = _SQRT( _LITERAL( 1.0 ) - q.w * q.w );
+
+    if ( den > epsilon )
+    {
+        res_axis.x = q.x / den;
+        res_axis.y = q.y / den;
+        res_axis.z = q.z / den;
+    }
+    else
+    {
+        // This occurs when the angle is zero.
+        // Not a problem: just set an arbitrary normalized axis.
+        res_axis.x = _LITERAL( 1.0 );
+    }
+
+    *out_axis = res_axis;
+    *out_angle = res_angle;
+}
+
+// Get the quaternion equivalent to Euler angles
+// NOTE: Rotation order is ZYX
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_euler )( _BASE_TYPE pitch, _BASE_TYPE yaw, _BASE_TYPE roll )
+{
+    _QUAT_TYPE result = { 0 };
+
+    _BASE_TYPE x0 = _COS( pitch * _LITERAL( 0.5 ) );
+    _BASE_TYPE x1 = _SIN( pitch * _LITERAL( 0.5 ) );
+    _BASE_TYPE y0 = _COS( yaw * _LITERAL( 0.5 ) );
+    _BASE_TYPE y1 = _SIN( yaw * _LITERAL( 0.5 ) );
+    _BASE_TYPE z0 = _COS( roll * _LITERAL( 0.5 ) );
+    _BASE_TYPE z1 = _SIN( roll * _LITERAL( 0.5 ) );
+
+    result.x = x1 * y0 * z0 - x0 * y1 * z1;
+    result.y = x0 * y1 * z0 + x1 * y0 * z1;
+    result.z = x0 * y0 * z1 - x1 * y1 * z0;
+    result.w = x0 * y0 * z0 + x1 * y1 * z1;
+
+    return result;
+}
+
+// Get the Euler angles equivalent to quaternion (roll, pitch, yaw)
+// NOTE: Angles are returned in a Vector3 struct in radians
+_FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_QUAT( to_euler )( _QUAT_TYPE q )
+{
+    _VEC3_TYPE result = { 0 };
+
+    // Roll ( x-axis rotation )
+    _BASE_TYPE x0 = _LITERAL( 2.0 ) * ( q.w * q.x + q.y * q.z );
+    _BASE_TYPE x1 = _LITERAL( 1.0 ) - _LITERAL( 2.0 ) * ( q.x * q.x + q.y * q.y );
+    result.x = _ATAN2( x0, x1 );
+
+    // Pitch ( y-axis rotation )
+    _BASE_TYPE y0 = _LITERAL( 2.0 ) * ( q.w * q.y - q.z * q.x );
+    y0 = y0 > _LITERAL( 1.0 ) ? _LITERAL( 1.0 ) : y0;
+    y0 = y0 < _LITERAL( -1.0 ) ? _LITERAL( -1.0 ) : y0;
+    result.y = _ASIN( y0 );
+
+    // Yaw ( z-axis rotation )
+    _BASE_TYPE z0 = _LITERAL( 2.0 ) * ( q.w * q.z + q.x * q.y );
+    _BASE_TYPE z1 = _LITERAL( 1.0 ) - _LITERAL( 2.0 ) * ( q.y * q.y + q.z * q.z );
+    result.z = _ATAN2( z0, z1 );
+
+    return result;
+}
+
+// Transform a quaternion given a transformation matrix
+_FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( transform )( _QUAT_TYPE q, _MAT4_TYPE m )
+{
+    _QUAT_TYPE result = { 0 };
+
+    result.x = m.m00 * q.x + m.m01 * q.y + m.m02 * q.z + m.m03 * q.w;
+    result.y = m.m10 * q.x + m.m11 * q.y + m.m12 * q.z + m.m13 * q.w;
+    result.z = m.m20 * q.x + m.m21 * q.y + m.m22 * q.z + m.m23 * q.w;
+    result.w = m.m30 * q.x + m.m31 * q.y + m.m32 * q.z + m.m33 * q.w;
+
+    return result;
+}
+
+// Check whether two given quaternions are almost equal
+_FUNC_SPEC int _FUNC_CONV _FUNC_QUAT( equals )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon )
+{
+    int result =
+        ( ( ( _ABS( p.x - q.x ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.x ), _ABS( q.x ) ) ) ) ) &&
+          ( ( _ABS( p.y - q.y ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) ) &&
+          ( ( _ABS( p.z - q.z ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.z ), _ABS( q.z ) ) ) ) ) &&
+          ( ( _ABS( p.w - q.w ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.w ), _ABS( q.w ) ) ) ) ) ) ||
+
+        ( ( ( _ABS( p.x + q.x ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.x ), _ABS( q.x ) ) ) ) ) &&
+          ( ( _ABS( p.y + q.y ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) ) &&
+          ( ( _ABS( p.z + q.z ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.z ), _ABS( q.z ) ) ) ) ) &&
+          ( ( _ABS( p.w + q.w ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.w ), _ABS( q.w ) ) ) ) ) );
+
+    return result;
+}
+
+#endif
+
+/*
+ * =============================
+ */
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * MATRIX 4X4
+ * -----------------------------
+ */
+
+#ifdef LINEAR_ALGEBRA_MAT4_HEADER
+#undef LINEAR_ALGEBRA_MAT4_HEADER
+
+extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_MAT4( det )( _MAT4_TYPE m );
+extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_MAT4( trace )( _MAT4_TYPE m );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( transpose )( _MAT4_TYPE m );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( invert )( _MAT4_TYPE m );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( identity )( void );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( add )( _MAT4_TYPE a, _MAT4_TYPE b );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( sub )( _MAT4_TYPE a, _MAT4_TYPE b );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( mul )( _MAT4_TYPE a, _MAT4_TYPE b );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( translate )( _VEC3_TYPE v );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate )( _VEC3_TYPE axis, _BASE_TYPE angle );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_x )( _BASE_TYPE angle );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_y )( _BASE_TYPE angle );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_z )( _BASE_TYPE angle );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_xyz )( _VEC3_TYPE angle );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_zyx )( _VEC3_TYPE angle );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( scale )( _VEC3_TYPE v );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( frustum )( _BASE_TYPE left, _BASE_TYPE right, _BASE_TYPE bottom, _BASE_TYPE top, _BASE_TYPE near, _BASE_TYPE far );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( perspective )( _BASE_TYPE fovy, _BASE_TYPE aspect, _BASE_TYPE near, _BASE_TYPE far );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( ortho )( _BASE_TYPE left, _BASE_TYPE right, _BASE_TYPE bottom, _BASE_TYPE top, _BASE_TYPE near, _BASE_TYPE far );
+extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( lookat )( _VEC3_TYPE eye, _VEC3_TYPE target, _VEC3_TYPE up );
+extern _FUNC_SPEC void       _FUNC_CONV _FUNC_MAT4( decompose )( _MAT4_TYPE m, _VEC3_TYPE *translation, _QUAT_TYPE *rotation, _VEC3_TYPE *scale );
+extern _FUNC_SPEC _MAT4_FLAT_TYPE _FUNC_CONV _FUNC_MAT4( flatten )( _MAT4_TYPE m );
+
+#endif
+
+
+
+#ifdef LINEAR_ALGEBRA_MAT4_IMPLEMENTATION
+#undef LINEAR_ALGEBRA_MAT4_IMPLEMENTATION
+
+// Compute matrix determinant
+_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_MAT4( det )( _MAT4_TYPE m )
+{
+    _BASE_TYPE result = _LITERAL( 0.0 );
+
+    // Cache the matrix values (speed optimization)
+    _BASE_TYPE a00 = m.m00, a01 = m.m10, a02 = m.m20, a03 = m.m30;
+    _BASE_TYPE a10 = m.m01, a11 = m.m11, a12 = m.m21, a13 = m.m31;
+    _BASE_TYPE a20 = m.m02, a21 = m.m12, a22 = m.m22, a23 = m.m32;
+    _BASE_TYPE a30 = m.m03, a31 = m.m13, a32 = m.m23, a33 = m.m33;
+
+    result =
+        a30 * a21 * a12 * a03 - a20 * a31 * a12 * a03 - a30 * a11 * a22 * a03 + a10 * a31 * a22 * a03 +
+        a20 * a11 * a32 * a03 - a10 * a21 * a32 * a03 - a30 * a21 * a02 * a13 + a20 * a31 * a02 * a13 +
+        a30 * a01 * a22 * a13 - a00 * a31 * a22 * a13 - a20 * a01 * a32 * a13 + a00 * a21 * a32 * a13 +
+        a30 * a11 * a02 * a23 - a10 * a31 * a02 * a23 - a30 * a01 * a12 * a23 + a00 * a31 * a12 * a23 +
+        a10 * a01 * a32 * a23 - a00 * a11 * a32 * a23 - a20 * a11 * a02 * a33 + a10 * a21 * a02 * a33 +
+        a20 * a01 * a12 * a33 - a00 * a21 * a12 * a33 - a10 * a01 * a22 * a33 + a00 * a11 * a22 * a33;
+
+    return result;
+}
+
+// Get the trace of the matrix (sum of the values along the diagonal)
+_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_MAT4( trace )( _MAT4_TYPE m )
+{
+    _BASE_TYPE result = ( m.m00 + m.m11 + m.m22 + m.m33 );
+    return result;
+}
+
+// Transposes provided matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( transpose )( _MAT4_TYPE m )
+{
+    _MAT4_TYPE result = { 0 };
+
+    result.m00 = m.m00;
+    result.m10 = m.m01;
+    result.m20 = m.m02;
+    result.m30 = m.m03;
+    result.m01 = m.m10;
+    result.m11 = m.m11;
+    result.m21 = m.m12;
+    result.m31 = m.m13;
+    result.m02 = m.m20;
+    result.m12 = m.m21;
+    result.m22 = m.m22;
+    result.m32 = m.m23;
+    result.m03 = m.m30;
+    result.m13 = m.m31;
+    result.m23 = m.m32;
+    result.m33 = m.m33;
+
+    return result;
+}
+
+// Invert provided matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( invert )( _MAT4_TYPE m )
+{
+    _MAT4_TYPE result = { 0 };
+
+    // Cache the matrix values (speed optimization)
+    _BASE_TYPE a00 = m.m00, a01 = m.m10, a02 = m.m20, a03 = m.m30;
+    _BASE_TYPE a10 = m.m01, a11 = m.m11, a12 = m.m21, a13 = m.m31;
+    _BASE_TYPE a20 = m.m02, a21 = m.m12, a22 = m.m22, a23 = m.m32;
+    _BASE_TYPE a30 = m.m03, a31 = m.m13, a32 = m.m23, a33 = m.m33;
+
+    _BASE_TYPE b00 = a00 * a11 - a01 * a10;
+    _BASE_TYPE b01 = a00 * a12 - a02 * a10;
+    _BASE_TYPE b02 = a00 * a13 - a03 * a10;
+    _BASE_TYPE b03 = a01 * a12 - a02 * a11;
+    _BASE_TYPE b04 = a01 * a13 - a03 * a11;
+    _BASE_TYPE b05 = a02 * a13 - a03 * a12;
+    _BASE_TYPE b06 = a20 * a31 - a21 * a30;
+    _BASE_TYPE b07 = a20 * a32 - a22 * a30;
+    _BASE_TYPE b08 = a20 * a33 - a23 * a30;
+    _BASE_TYPE b09 = a21 * a32 - a22 * a31;
+    _BASE_TYPE b10 = a21 * a33 - a23 * a31;
+    _BASE_TYPE b11 = a22 * a33 - a23 * a32;
+
+    // Calculate the invert determinant (inlined to avoid double-caching)
+    _BASE_TYPE idet = _LITERAL( 1.0 ) / ( b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06 );
+
+    result.m00 = ( a11 * b11 - a12 * b10 + a13 * b09 ) * idet;
+    result.m10 = ( -a01 * b11 + a02 * b10 - a03 * b09 ) * idet;
+    result.m20 = ( a31 * b05 - a32 * b04 + a33 * b03 ) * idet;
+    result.m30 = ( -a21 * b05 + a22 * b04 - a23 * b03 ) * idet;
+    result.m01 = ( -a10 * b11 + a12 * b08 - a13 * b07 ) * idet;
+    result.m11 = ( a00 * b11 - a02 * b08 + a03 * b07 ) * idet;
+    result.m21 = ( -a30 * b05 + a32 * b02 - a33 * b01 ) * idet;
+    result.m31 = ( a20 * b05 - a22 * b02 + a23 * b01 ) * idet;
+    result.m02 = ( a10 * b10 - a11 * b08 + a13 * b06 ) * idet;
+    result.m12 = ( -a00 * b10 + a01 * b08 - a03 * b06 ) * idet;
+    result.m22 = ( a30 * b04 - a31 * b02 + a33 * b00 ) * idet;
+    result.m32 = ( -a20 * b04 + a21 * b02 - a23 * b00 ) * idet;
+    result.m03 = ( -a10 * b09 + a11 * b07 - a12 * b06 ) * idet;
+    result.m13 = ( a00 * b09 - a01 * b07 + a02 * b06 ) * idet;
+    result.m23 = ( -a30 * b03 + a31 * b01 - a32 * b00 ) * idet;
+    result.m33 = ( a20 * b03 - a21 * b01 + a22 * b00 ) * idet;
+
+    return result;
+}
+
+// Get identity matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( identity )( void )
+{
+    _MAT4_TYPE result = {
+        _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    };
+
+    return result;
+}
+
+// Add two matrices
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( add )( _MAT4_TYPE a, _MAT4_TYPE b )
+{
+    _MAT4_TYPE result = { 0 };
+
+    result.m00 = a.m00 + b.m00;
+    result.m10 = a.m10 + b.m10;
+    result.m20 = a.m20 + b.m20;
+    result.m30 = a.m30 + b.m30;
+    result.m01 = a.m01 + b.m01;
+    result.m11 = a.m11 + b.m11;
+    result.m21 = a.m21 + b.m21;
+    result.m31 = a.m31 + b.m31;
+    result.m02 = a.m02 + b.m02;
+    result.m12 = a.m12 + b.m12;
+    result.m22 = a.m22 + b.m22;
+    result.m32 = a.m32 + b.m32;
+    result.m03 = a.m03 + b.m03;
+    result.m13 = a.m13 + b.m13;
+    result.m23 = a.m23 + b.m23;
+    result.m33 = a.m33 + b.m33;
+
+    return result;
+}
+
+// Subtract two matrices (left - right)
+// a - left matrix
+// b - right matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( sub )( _MAT4_TYPE a, _MAT4_TYPE b )
+{
+    _MAT4_TYPE result = { 0 };
+
+    result.m00 = a.m00 - b.m00;
+    result.m10 = a.m10 - b.m10;
+    result.m20 = a.m20 - b.m20;
+    result.m30 = a.m30 - b.m30;
+    result.m01 = a.m01 - b.m01;
+    result.m11 = a.m11 - b.m11;
+    result.m21 = a.m21 - b.m21;
+    result.m31 = a.m31 - b.m31;
+    result.m02 = a.m02 - b.m02;
+    result.m12 = a.m12 - b.m12;
+    result.m22 = a.m22 - b.m22;
+    result.m32 = a.m32 - b.m32;
+    result.m03 = a.m03 - b.m03;
+    result.m13 = a.m13 - b.m13;
+    result.m23 = a.m23 - b.m23;
+    result.m33 = a.m33 - b.m33;
+
+    return result;
+}
+
+// Get two matrix multiplication
+// NOTE: When multiplying matrices... the order matters!
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( mul )( _MAT4_TYPE a, _MAT4_TYPE b )
+{
+    _MAT4_TYPE result = { 0 };
+
+    result.m00 = a.m00 * b.m00 + a.m10 * b.m01 + a.m20 * b.m02 + a.m30 * b.m03;
+    result.m10 = a.m00 * b.m10 + a.m10 * b.m11 + a.m20 * b.m12 + a.m30 * b.m13;
+    result.m20 = a.m00 * b.m20 + a.m10 * b.m21 + a.m20 * b.m22 + a.m30 * b.m23;
+    result.m30 = a.m00 * b.m30 + a.m10 * b.m31 + a.m20 * b.m32 + a.m30 * b.m33;
+    result.m01 = a.m01 * b.m00 + a.m11 * b.m01 + a.m21 * b.m02 + a.m31 * b.m03;
+    result.m11 = a.m01 * b.m10 + a.m11 * b.m11 + a.m21 * b.m12 + a.m31 * b.m13;
+    result.m21 = a.m01 * b.m20 + a.m11 * b.m21 + a.m21 * b.m22 + a.m31 * b.m23;
+    result.m31 = a.m01 * b.m30 + a.m11 * b.m31 + a.m21 * b.m32 + a.m31 * b.m33;
+    result.m02 = a.m02 * b.m00 + a.m12 * b.m01 + a.m22 * b.m02 + a.m32 * b.m03;
+    result.m12 = a.m02 * b.m10 + a.m12 * b.m11 + a.m22 * b.m12 + a.m32 * b.m13;
+    result.m22 = a.m02 * b.m20 + a.m12 * b.m21 + a.m22 * b.m22 + a.m32 * b.m23;
+    result.m32 = a.m02 * b.m30 + a.m12 * b.m31 + a.m22 * b.m32 + a.m32 * b.m33;
+    result.m03 = a.m03 * b.m00 + a.m13 * b.m01 + a.m23 * b.m02 + a.m33 * b.m03;
+    result.m13 = a.m03 * b.m10 + a.m13 * b.m11 + a.m23 * b.m12 + a.m33 * b.m13;
+    result.m23 = a.m03 * b.m20 + a.m13 * b.m21 + a.m23 * b.m22 + a.m33 * b.m23;
+    result.m33 = a.m03 * b.m30 + a.m13 * b.m31 + a.m23 * b.m32 + a.m33 * b.m33;
+
+    return result;
+}
+
+// Get translation matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( translate )( _VEC3_TYPE v )
+{
+    _MAT4_TYPE result = {
+        _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), v.x,
+        _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ), v.y,
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 ), v.z,
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    };
+
+    return result;
+}
+
+// Create rotation matrix from axis and angle
+// NOTE: Angle should be provided in radians
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate )( _VEC3_TYPE axis, _BASE_TYPE angle )
+{
+    _MAT4_TYPE result = { 0 };
+
+    _BASE_TYPE x = axis.x, y = axis.y, z = axis.z;
+    _BASE_TYPE len = x * x + y * y + z * z;
+
+    if ( ( len != _LITERAL( 1.0 ) ) && ( len != _LITERAL( 0.0 ) ) )
+    {
+        _BASE_TYPE ilen = _LITERAL( 1.0 ) / _SQRT( len );
+        x *= ilen;
+        y *= ilen;
+        z *= ilen;
+    }
+
+    _BASE_TYPE s = _SIN( angle );
+    _BASE_TYPE c = _COS( angle );
+    _BASE_TYPE t = _LITERAL( 1.0 ) - c;
+
+    result.m00 = x * x * t + c;
+    result.m10 = y * x * t + z * s;
+    result.m20 = z * x * t - y * s;
+    result.m30 = _LITERAL( 0.0 );
+
+    result.m01 = x * y * t - z * s;
+    result.m11 = y * y * t + c;
+    result.m21 = z * y * t + x * s;
+    result.m31 = _LITERAL( 0.0 );
+
+    result.m02 = x * z * t + y * s;
+    result.m12 = y * z * t - x * s;
+    result.m22 = z * z * t + c;
+    result.m32 = _LITERAL( 0.0 );
+
+    result.m03 = _LITERAL( 0.0 );
+    result.m13 = _LITERAL( 0.0 );
+    result.m23 = _LITERAL( 0.0 );
+    result.m33 = _LITERAL( 1.0 );
+
+    return result;
+}
+
+// Get x-rotation matrix
+// NOTE: Angle must be provided in radians
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_x )( _BASE_TYPE angle )
+{
+    _MAT4_TYPE result = {
+        _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    }; // MatrixIdentity()
+
+    _BASE_TYPE c = _COS( angle );
+    _BASE_TYPE s = _SIN( angle );
+
+    result.m11 = c;
+    result.m21 = s;
+    result.m12 = -s;
+    result.m22 = c;
+
+    return result;
+}
+
+// Get y-rotation matrix
+// NOTE: Angle must be provided in radians
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_y )( _BASE_TYPE angle )
+{
+    _MAT4_TYPE result = {
+        _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    }; // MatrixIdentity()
+
+    _BASE_TYPE c = _COS( angle );
+    _BASE_TYPE s = _SIN( angle );
+
+    result.m00 = c;
+    result.m20 = -s;
+    result.m02 = s;
+    result.m22 = c;
+
+    return result;
+}
+
+// Get z-rotation matrix
+// NOTE: Angle must be provided in radians
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_z )( _BASE_TYPE angle )
+{
+    _MAT4_TYPE result = {
+        _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    }; // MatrixIdentity()
+
+    _BASE_TYPE c = _COS( angle );
+    _BASE_TYPE s = _SIN( angle );
+
+    result.m00 = c;
+    result.m10 = s;
+    result.m01 = -s;
+    result.m11 = c;
+
+    return result;
+}
+
+
+// Get xyz-rotation matrix
+// NOTE: Angle must be provided in radians
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_xyz )( _VEC3_TYPE angle )
+{
+    _MAT4_TYPE result = {
+        _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    }; // MatrixIdentity()
+
+    _BASE_TYPE cosz = _COS( -angle.z );
+    _BASE_TYPE sinz = _SIN( -angle.z );
+    _BASE_TYPE cosy = _COS( -angle.y );
+    _BASE_TYPE siny = _SIN( -angle.y );
+    _BASE_TYPE cosx = _COS( -angle.x );
+    _BASE_TYPE sinx = _SIN( -angle.x );
+
+    result.m00 = cosz * cosy;
+    result.m10 = ( cosz * siny * sinx ) - ( sinz * cosx );
+    result.m20 = ( cosz * siny * cosx ) + ( sinz * sinx );
+
+    result.m01 = sinz * cosy;
+    result.m11 = ( sinz * siny * sinx ) + ( cosz * cosx );
+    result.m21 = ( sinz * siny * cosx ) - ( cosz * sinx );
+
+    result.m02 = -siny;
+    result.m12 = cosy * sinx;
+    result.m22 = cosy * cosx;
+
+    return result;
+}
+
+// Get zyx-rotation matrix
+// NOTE: Angle must be provided in radians
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( rotate_zyx )( _VEC3_TYPE angle )
+{
+    _MAT4_TYPE result = { 0 };
+
+    _BASE_TYPE cosz = _COS( angle.z );
+    _BASE_TYPE sinz = _SIN( angle.z );
+    _BASE_TYPE cosy = _COS( angle.y );
+    _BASE_TYPE siny = _SIN( angle.y );
+    _BASE_TYPE cosx = _COS( angle.x );
+    _BASE_TYPE sinx = _SIN( angle.x );
+
+    result.m00 = cosz * cosy;
+    result.m01 = cosz * siny * sinx - cosx * sinz;
+    result.m02 = sinz * sinx + cosz * cosx * siny;
+    result.m03 = _LITERAL( 0.0 );
+
+    result.m10 = cosy * sinz;
+    result.m11 = cosz * cosx + sinz * siny * sinx;
+    result.m12 = cosx * sinz * siny - cosz * sinx;
+    result.m13 = _LITERAL( 0.0 );
+
+    result.m20 = -siny;
+    result.m21 = cosy * sinx;
+    result.m22 = cosy * cosx;
+    result.m23 = _LITERAL( 0.0 );
+
+    result.m30 = _LITERAL( 0.0 );
+    result.m31 = _LITERAL( 0.0 );
+    result.m32 = _LITERAL( 0.0 );
+    result.m33 = _LITERAL( 1.0 );
+
+    return result;
+}
+
+// Get scaling matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( scale )( _VEC3_TYPE v )
+{
+    _MAT4_TYPE result = {
+        v.x,             _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), v.y,             _LITERAL( 0.0 ), _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), v.z,             _LITERAL( 0.0 ),
+        _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 0.0 ), _LITERAL( 1.0 )
+    };
+
+    return result;
+}
+
+// Get perspective projection matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( frustum )( _BASE_TYPE left, _BASE_TYPE right, _BASE_TYPE bottom, _BASE_TYPE top, _BASE_TYPE near, _BASE_TYPE far )
+{
+    _MAT4_TYPE result = { 0 };
+
+    _BASE_TYPE rl = right - left;
+    _BASE_TYPE tb = top - bottom;
+    _BASE_TYPE fn = far - near;
+
+    result.m00 = ( near * _LITERAL( 2.0 ) ) / rl;
+    result.m10 = _LITERAL( 0.0 );
+    result.m20 = _LITERAL( 0.0 );
+    result.m30 = _LITERAL( 0.0 );
+
+    result.m01 = _LITERAL( 0.0 );
+    result.m11 = ( near * _LITERAL( 2.0 ) ) / tb;
+    result.m21 = _LITERAL( 0.0 );
+    result.m31 = _LITERAL( 0.0 );
+
+    result.m02 = ( right + left ) / rl;
+    result.m12 = ( top + bottom ) / tb;
+    result.m22 = -( far + near ) / fn;
+    result.m32 = _LITERAL( -1.0 );
+
+    result.m03 = _LITERAL( 0.0 );
+    result.m13 = _LITERAL( 0.0 );
+    result.m23 = -( far * near * _LITERAL( 2.0 ) ) / fn;
+    result.m33 = _LITERAL( 0.0 );
+
+    return result;
+}
+
+// Get perspective projection matrix
+// NOTE: Fovy angle must be provided in radians
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( perspective )( _BASE_TYPE fovy, _BASE_TYPE aspect, _BASE_TYPE near, _BASE_TYPE far )
+{
+    _MAT4_TYPE result = { 0 };
+
+    _BASE_TYPE top = near * _TAN( fovy * _LITERAL( 0.5 ) );
+    _BASE_TYPE bottom = -top;
+    _BASE_TYPE right = top * aspect;
+    _BASE_TYPE left = -right;
+
+    // MatrixFrustum( -right, right, -top, top, near, far );
+    _BASE_TYPE rl = right - left;
+    _BASE_TYPE tb = top - bottom;
+    _BASE_TYPE fn = far - near;
+
+    result.m00 = ( near * _LITERAL( 2.0 ) ) / rl;
+    result.m11 = ( near * _LITERAL( 2.0 ) ) / tb;
+    result.m02 = ( right + left ) / rl;
+    result.m12 = ( top + bottom ) / tb;
+    result.m22 = -( far + near ) / fn;
+    result.m32 = _LITERAL( -1.0 );
+    result.m23 = -( far * near * _LITERAL( 2.0 ) ) / fn;
+
+    return result;
+}
+
+// Get orthographic projection matrix
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( ortho )( _BASE_TYPE left, _BASE_TYPE right, _BASE_TYPE bottom, _BASE_TYPE top, _BASE_TYPE near, _BASE_TYPE far )
+{
+    _MAT4_TYPE result = { 0 };
+
+    _BASE_TYPE rl = right - left;
+    _BASE_TYPE tb = top - bottom;
+    _BASE_TYPE fn = far - near;
+
+    result.m00 = _LITERAL( 2.0 ) / rl;
+    result.m10 = _LITERAL( 0.0 );
+    result.m20 = _LITERAL( 0.0 );
+    result.m30 = _LITERAL( 0.0 );
+    result.m01 = _LITERAL( 0.0 );
+    result.m11 = _LITERAL( 2.0 ) / tb;
+    result.m21 = _LITERAL( 0.0 );
+    result.m31 = _LITERAL( 0.0 );
+    result.m02 = _LITERAL( 0.0 );
+    result.m12 = _LITERAL( 0.0 );
+    result.m22 = _LITERAL( -2.0 ) / fn;
+    result.m32 = _LITERAL( 0.0 );
+    result.m03 = -( left + right ) / rl;
+    result.m13 = -( top + bottom ) / tb;
+    result.m23 = -( far + near ) / fn;
+    result.m33 = _LITERAL( 1.0 );
+
+    return result;
+}
+
+// Get camera look-at matrix (view matrix)
+_FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( lookat )( _VEC3_TYPE eye, _VEC3_TYPE target, _VEC3_TYPE up )
+{
+    _MAT4_TYPE result = { 0 };
+
+    _BASE_TYPE len = _LITERAL( 0.0 );
+    _BASE_TYPE ilen = _LITERAL( 0.0 );
+
+    // Vector3Subtract( eye, target )
+    _VEC3_TYPE vz = { eye.x - target.x, eye.y - target.y, eye.z - target.z };
+
+    // Vector3Normalize( vz )
+    _VEC3_TYPE v = vz;
+    len = _SQRT( v.x * v.x + v.y * v.y + v.z * v.z );
+    if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+    ilen = _LITERAL( 1.0 ) / len;
+    vz.x *= ilen;
+    vz.y *= ilen;
+    vz.z *= ilen;
+
+    // Vector3CrossProduct( up, vz )
+    _VEC3_TYPE vx = { up.y * vz.z - up.z * vz.y, up.z * vz.x - up.x * vz.z, up.x * vz.y - up.y * vz.x };
+
+    // Vector3Normalize( x )
+    v = vx;
+    len = _SQRT( v.x * v.x + v.y * v.y + v.z * v.z );
+    if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );
+    ilen = _LITERAL( 1.0 ) / len;
+    vx.x *= ilen;
+    vx.y *= ilen;
+    vx.z *= ilen;
+
+    // Vector3CrossProduct( vz, vx )
+    _VEC3_TYPE vy = { vz.y * vx.z - vz.z * vx.y, vz.z * vx.x - vz.x * vx.z, vz.x * vx.y - vz.y * vx.x };
+
+    result.m00 = vx.x;
+    result.m10 = vy.x;
+    result.m20 = vz.x;
+    result.m30 = _LITERAL( 0.0 );
+    result.m01 = vx.y;
+    result.m11 = vy.y;
+    result.m21 = vz.y;
+    result.m31 = _LITERAL( 0.0 );
+    result.m02 = vx.z;
+    result.m12 = vy.z;
+    result.m22 = vz.z;
+    result.m32 = _LITERAL( 0.0 );
+    result.m03 = -( vx.x * eye.x + vx.y * eye.y + vx.z * eye.z );   // Vector3DotProduct( vx, eye )
+    result.m13 = -( vy.x * eye.x + vy.y * eye.y + vy.z * eye.z );   // Vector3DotProduct( vy, eye )
+    result.m23 = -( vz.x * eye.x + vz.y * eye.y + vz.z * eye.z );   // Vector3DotProduct( vz, eye )
+    result.m33 = _LITERAL( 1.0 );
+
+    return result;
+}
+
+// Decompose a transformation matrix into its rotational, translational and scaling components
+_FUNC_SPEC void _FUNC_CONV _FUNC_MAT4( decompose )( _MAT4_TYPE m, _VEC3_TYPE *translation, _QUAT_TYPE *rotation, _VEC3_TYPE *scale )
+{
+    // Extract translation.
+    translation->x = m.m03;
+    translation->y = m.m13;
+    translation->z = m.m23;
+
+    // Extract upper-left for determinant computation
+    const _BASE_TYPE a = m.m00;
+    const _BASE_TYPE b = m.m01;
+    const _BASE_TYPE c = m.m02;
+    const _BASE_TYPE d = m.m10;
+    const _BASE_TYPE e = m.m11;
+    const _BASE_TYPE f = m.m12;
+    const _BASE_TYPE g = m.m20;
+    const _BASE_TYPE h = m.m21;
+    const _BASE_TYPE i = m.m22;
+    const _BASE_TYPE A = e * i - f * h;
+    const _BASE_TYPE B = f * g - d * i;
+    const _BASE_TYPE C = d * h - e * g;
+
+    // Extract scale
+    const _BASE_TYPE det = a * A + b * B + c * C;
+    _VEC3_TYPE abc = { a, b, c };
+    _VEC3_TYPE def = { d, e, f };
+    _VEC3_TYPE ghi = { g, h, i };
+
+    _BASE_TYPE scalex = _FUNC_VEC3( len )( abc );
+    _BASE_TYPE scaley = _FUNC_VEC3( len )( def );
+    _BASE_TYPE scalez = _FUNC_VEC3( len )( ghi );
+    _VEC3_TYPE s = { scalex, scaley, scalez };
+
+    if ( det < _LITERAL( 0.0 ) ) s = _FUNC_VEC3( negate )( s );
+
+    *scale = s;
+
+    // Remove scale from the matrix if it is not close to zero
+    _MAT4_TYPE clone = m;
+    if ( !_FEQ( det, _LITERAL( 0.0 ), _LITERAL( 0.0001 ) ) )
+    {
+        clone.m00 /= s.x;
+        clone.m11 /= s.y;
+        clone.m22 /= s.z;
+
+        // Extract rotation
+        *rotation = _FUNC_QUAT( from_mat4 )( clone );
+    }
+    else
+    {
+        // Set to identity if close to zero
+        *rotation = _FUNC_QUAT( identity )();
+    }
+}
+
+// Get _BASE_TYPE array of matrix data. convert matrix to a flat array
+_FUNC_SPEC _MAT4_FLAT_TYPE _FUNC_CONV _FUNC_MAT4( flatten )( _MAT4_TYPE m )
+{
+    _MAT4_FLAT_TYPE result = { 0 };
+
+    result.m[ 0 ] = m.m00;
+    result.m[ 1 ] = m.m10;
+    result.m[ 2 ] = m.m20;
+    result.m[ 3 ] = m.m30;
+
+    result.m[ 4 ] = m.m01;
+    result.m[ 5 ] = m.m11;
+    result.m[ 6 ] = m.m21;
+    result.m[ 7 ] = m.m31;
+
+    result.m[ 8 ] = m.m02;
+    result.m[ 9 ] = m.m12;
+    result.m[ 10 ] = m.m22;
+    result.m[ 11 ] = m.m32;
+
+    result.m[ 12 ] = m.m03;
+    result.m[ 13 ] = m.m13;
+    result.m[ 14 ] = m.m23;
+    result.m[ 15 ] = m.m33;
 
     return result;
 }

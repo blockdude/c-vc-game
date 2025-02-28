@@ -1,6 +1,18 @@
 #ifndef VCP_MAT4_H
 #define VCP_MAT4_H
 
-#include "float32/mat4_f32.h"
+#define LINEAR_ALGEBRA_F32
+#define LINEAR_ALGEBRA_HEADER
+#define LINEAR_ALGEBRA_MAT4_HEADER
+#include "template/_vec2_float_template.h"
+#define LINEAR_ALGEBRA_CLEANUP
+#include "template/_vec2_float_template.h"
+
+#define LINEAR_ALGEBRA_F64
+#define LINEAR_ALGEBRA_HEADER
+#define LINEAR_ALGEBRA_MAT4_HEADER
+#include "template/_vec2_float_template.h"
+#define LINEAR_ALGEBRA_CLEANUP
+#include "template/_vec2_float_template.h"
 
 #endif

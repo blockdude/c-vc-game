@@ -226,7 +226,7 @@ static inline struct quat_f32 quat_f32_cubic_hermite_spline( struct quat_f32 p, 
 }
 
 // Calculate quaternion based on the rotation from vector a to vector b
-static inline struct quat_f32 quat_f32_from_vec3_f32( struct vec3_f32 p, struct vec3_f32 q )
+static inline struct quat_f32 quat_f32_from_vec3( struct vec3_f32 p, struct vec3_f32 q )
 {
     struct quat_f32 result = { 0 };
 
@@ -254,7 +254,7 @@ static inline struct quat_f32 quat_f32_from_vec3_f32( struct vec3_f32 p, struct 
 }
 
 // Get a quaternion for a given rotation matrix
-static inline struct quat_f32 quat_f32_from_mat4_f32( struct mat4_f32 m )
+static inline struct quat_f32 quat_f32_from_mat4( struct mat4_f32 m )
 {
     struct quat_f32 result = { 0 };
 
@@ -319,7 +319,7 @@ static inline struct quat_f32 quat_f32_from_mat4_f32( struct mat4_f32 m )
 }
 
 // Get a matrix for a given quaternion
-static inline struct mat4_f32 quat_f32_to_mat4_f32( struct quat_f32 q )
+static inline struct mat4_f32 quat_f32_to_mat4( struct quat_f32 q )
 {
     struct mat4_f32 result = {
 		1.0f, 0.0f, 0.0f, 0.0f,

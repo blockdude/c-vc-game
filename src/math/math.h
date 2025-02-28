@@ -1,8 +1,7 @@
 #ifndef VCP_MATH_H
 #define VCP_MATH_H
 
-#include "float32/math_f32.h"
-#include "float64/math_f64.h"
+#include <math.h>
 
 #ifdef WIN32
 
@@ -29,5 +28,17 @@
 
 #define LERP( a, b, t ) ( ( a ) + ( t ) * ( ( b ) - ( a ) ) )
 #define NORMALIZE( x, min, max ) ( ( ( x ) - ( min ) ) / ( ( max ) - ( min ) ) )
+
+static inline int f32_equals( float a, float b, float epsilon )
+{
+    int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
+    return result;
+}
+
+static inline int f64_equals( double a, double b, double epsilon )
+{
+    int result = ( fabs( a - b ) ) <= ( epsilon * fmax( 1.0f, fmax( fabs( a ), fabs( b ) ) ) );
+    return result;
+}
 
 #endif
