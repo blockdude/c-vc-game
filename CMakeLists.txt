@@ -36,6 +36,7 @@ set(platform_headers
 
 set(platform_sources
 	"src/platform.c"
+	"src/math/math.c"
 	"src/graphics/shader.c"
 	"src/graphics/vao.c"
 	"src/graphics/vbo.c"
@@ -44,7 +45,6 @@ set(platform_sources
 	"src/system/time.c"
 	"src/system/window.c"
 	"src/system/allocator.c"
-	"src/util/camera.c"
 	"src/util/kdtree.c"
 	"src/util/log.c")
 

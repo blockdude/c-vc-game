@@ -8,6 +8,8 @@
 
 #undef MIN
 #undef MAX
+#undef min
+#undef max
 
 #endif
 
@@ -17,8 +19,8 @@
 #define TAU     6.28318530717958647692528676655900576
 #define EPSILON 0.0001
 
-#define MAX( a, b ) ( ( a ) > ( b ) ? ( a ) : ( b ) )
-#define MIN( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
+#define MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+#define MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 
 #define CLAMP( v, mn, mx ) MAX( mn, MIN( mx, v ) )
 
