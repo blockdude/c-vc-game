@@ -54,14 +54,22 @@ extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC
 // Vector2 with components value LIT( 0.0 )
 _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void )
 {
-    _VEC2_TYPE result = { _LITERAL( 0.0 ), _LITERAL( 0.0 ) };
+    _VEC2_TYPE result = {
+        _STATIC_CAST( _BASE_TYPE, 0 ),
+        _STATIC_CAST( _BASE_TYPE, 0 )
+    };
+
     return result;
 }
 
 // Vector2 with components value LIT( 1.0 )
 _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void )
 {
-    _VEC2_TYPE result = { _LITERAL( 1.0 ), _LITERAL( 1.0 ) };
+    _VEC2_TYPE result = {
+        _STATIC_CAST( _BASE_TYPE, 1 ),
+        _STATIC_CAST( _BASE_TYPE, 1 )
+    };
+
     return result;
 }
 
@@ -164,7 +172,7 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( transform )( _VEC2_TYPE v, _MAT4_TY
 
     _BASE_TYPE x = v.x;
     _BASE_TYPE y = v.y;
-    _BASE_TYPE z = _LITERAL( 0.0 );
+    _BASE_TYPE z = _STATIC_CAST( _BASE_TYPE, 0 );
 
     result.x = m.m00 * x + m.m01 * y + m.m02 * z + m.m03;
     result.y = m.m10 * x + m.m11 * y + m.m12 * z + m.m13;
@@ -190,8 +198,8 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( reflect )( _VEC2_TYPE v, _VEC2_TYPE
 
     _BASE_TYPE dot = ( v.x * normal.x + v.y * normal.y );
 
-    result.x = v.x - ( _LITERAL( 2.0 ) * normal.x ) * dot;
-    result.y = v.y - ( _LITERAL( 2.0 ) * normal.y ) * dot;
+    result.x = v.x - ( _STATIC_CAST( _BASE_TYPE, 2 ) * normal.x ) * dot;
+    result.y = v.y - ( _STATIC_CAST( _BASE_TYPE, 2 ) * normal.y ) * dot;
 
     return result;
 }
@@ -250,8 +258,8 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BAS
     static_assert( _IS_IEC559 == true, "equals must use floating point vectors" );
 
     int result =
-        ( ( _ABS( p.x - q.x ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.x ), _ABS( q.x ) ) ) ) ) &&
-        ( ( _ABS( p.y - q.y ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) );
+        ( ( _ABS( p.x - q.x ) ) <= ( epsilon * _MAX( _STATIC_CAST( _BASE_TYPE, 1 ), _MAX( _ABS( p.x ), _ABS( q.x ) ) ) ) ) &&
+        ( ( _ABS( p.y - q.y ) ) <= ( epsilon * _MAX( _STATIC_CAST( _BASE_TYPE, 1 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) );
 
     return result;
 }
@@ -262,7 +270,7 @@ _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b
 {
     static_assert( _IS_IEC559 == true, "angle must use floating point vectors" );
 
-    _BASE_TYPE result = _LITERAL( 0.0 );
+    _BASE_TYPE result = _STATIC_CAST( _BASE_TYPE, 0 );
 
     _BASE_TYPE dot = a.x * b.x + a.y * b.y;
     _BASE_TYPE det = a.x * b.y - a.y * b.x;
@@ -279,7 +287,7 @@ _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VE
 {
     static_assert( _IS_IEC559 == true, "line_angle must use floating point vectors" );
 
-    _BASE_TYPE result = _LITERAL( 0.0 );
+    _BASE_TYPE result = _STATIC_CAST( _BASE_TYPE, 0 );
 
     result = -_ATAN2( end.y - start.y, end.x - start.x );
 
@@ -294,9 +302,9 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( normalize )( _VEC2_TYPE v )
     _VEC2_TYPE result = { 0 };
 
     _BASE_TYPE len = _SQRT( ( v.x * v.x ) + ( v.y * v.y ) );
-    if ( len > _LITERAL( 0.0 ) )
+    if ( len > _STATIC_CAST( _BASE_TYPE, 0 ) )
     {
-        _BASE_TYPE ilen = _LITERAL( 1.0 ) / len;
+        _BASE_TYPE ilen = _STATIC_CAST( _BASE_TYPE, 1 ) / len;
         result.x = v.x * ilen;
         result.y = v.y * ilen;
     }
@@ -331,7 +339,7 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( move_towards )( _VEC2_TYPE v, _VEC2
     _BASE_TYPE dy = target.y - v.y;
     _BASE_TYPE value = ( dx * dx ) + ( dy * dy );
 
-    if ( ( value == _LITERAL( 0.0 ) ) || ( ( max >= _LITERAL( 0.0 ) ) && ( value <= max * max ) ) )
+    if ( ( value == _STATIC_CAST( _BASE_TYPE, 0 ) ) || ( ( max >= _STATIC_CAST( _BASE_TYPE, 0 ) ) && ( value <= max * max ) ) )
         return target;
 
     _BASE_TYPE dist = _SQRT( value );
@@ -347,7 +355,7 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( invert )( _VEC2_TYPE v )
 {
     static_assert( _IS_IEC559 == true, "invert must use floating point vectors" );
 
-    _VEC2_TYPE result = { _LITERAL( 1.0 ) / v.x, _LITERAL( 1.0 ) / v.y };
+    _VEC2_TYPE result = { _STATIC_CAST( _BASE_TYPE, 1 ) / v.x, _STATIC_CAST( _BASE_TYPE, 1 ) / v.y };
     return result;
 }
 
@@ -360,11 +368,11 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_len )( _VEC2_TYPE v, _BASE_TY
     _VEC2_TYPE result = v;
 
     _BASE_TYPE len = ( v.x * v.x ) + ( v.y * v.y );
-    if ( len > _LITERAL( 0.0 ) )
+    if ( len > _STATIC_CAST( _BASE_TYPE, 0 ) )
     {
         len = _SQRT( len );
 
-        _BASE_TYPE scale = _LITERAL( 1.0 );    // By default, 1 as the neutral element.
+        _BASE_TYPE scale = _STATIC_CAST( _BASE_TYPE, 1 );    // By default, 1 as the neutral element.
         if ( len < min )
         {
             scale = min / len;
@@ -393,9 +401,9 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE
     _VEC2_TYPE result = { 0 };
 
     _BASE_TYPE dot = v.x * n.x + v.y * n.y;
-    _BASE_TYPE d = _LITERAL( 1.0 ) - r * r * ( _LITERAL( 1.0 ) - dot * dot );
+    _BASE_TYPE d = _STATIC_CAST( _BASE_TYPE, 1 ) - r * r * ( _STATIC_CAST( _BASE_TYPE, 1 ) - dot * dot );
 
-    if ( d >= _LITERAL( 0.0 ) )
+    if ( d >= _STATIC_CAST( _BASE_TYPE, 0 ) )
     {
         d = _SQRT( d );
         v.x = r * v.x - ( r * dot + d ) * n.x;
