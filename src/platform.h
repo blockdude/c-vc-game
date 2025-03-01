@@ -1,5 +1,5 @@
 #ifndef VCP_PLATFORM_H
-#define VCP_PLATFORM_h
+#define VCP_PLATFORM_H
 
 #ifndef TS_TIME_NOW
 #define TS_TIME_NOW time_now_s
