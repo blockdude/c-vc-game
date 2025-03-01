@@ -124,7 +124,7 @@ void camera_roll( struct camera *self, float angle )
 
 struct mat4 camera_view( struct camera *self )
 {
-	return mat4_f32_lookat( self->eye, self->target, self->up );
+	return mat4_lookat( self->eye, self->target, self->up );
 }
 
 struct mat4 camera_proj( struct camera *self, float aspect, float near, float far )
@@ -133,13 +133,13 @@ struct mat4 camera_proj( struct camera *self, float aspect, float near, float fa
 	{
 		float top = 1.0f / self->zoom;
 		float right = top * aspect;
-		return mat4_f32_ortho( -right, right, -top, top, near, far );
+		return mat4_ortho( -right, right, -top, top, near, far );
 	}
 
 	else if ( self->type == PERSPECTIVE )
 	{
-		return mat4_f32_perspective( self->fov, aspect, near, far );
+		return mat4_perspective( self->fov, aspect, near, far );
 	}
 
-	return mat4_f32_identity();
+	return mat4_identity();
 }

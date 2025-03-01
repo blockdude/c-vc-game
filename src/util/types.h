@@ -25,27 +25,12 @@
  * -----------------------------
  */
 
-#define extent extent_i32
-
-struct extent_i32
-{
-	int32_t w, h;
-};
-
-struct extent_i64
-{
-	int64_t w, h;
-};
-
-struct extent_f32
-{
-	float w, h;
-};
-
-struct extent_f64
-{
-	double w, h;
-};
+#define _extent_type( T ) { T w, h; }
+struct extent     _extent_type( int );
+struct extent_i32 _extent_type( int32_t );
+struct extent_i64 _extent_type( int64_t );
+struct extent_f32 _extent_type( float );
+struct extent_f64 _extent_type( double );
 
 /*
  * =============================
@@ -54,152 +39,41 @@ struct extent_f64
  * -----------------------------
  */
 
-// default
-#define point point_f32
-#define line line_f32
-#define rectangle rectangle_f32
-#define circle circle_f32
-#define triangle triangle_f32
+#define _line_type( T ) { T x0, y0; T x1, y1; }
+#define _point_type( T ) { T x, y; }
+#define _circle_type( T ) { T x, y; T r; }
+#define _triangle_type( T ) { T x0, y0; T x1, y1; T x2, y2; }
+#define _rectangle_type( T ) { T x, y; T w, h; }
 
-// i32
+struct line          _line_type( float );
+struct point         _point_type( float );
+struct circle        _circle_type( float );
+struct triangle      _triangle_type( float );
+struct rectangle     _rectangle_type( float );
 
-struct point_i32
-{
-	int32_t x, y;
-};
+struct line_i32      _line_type( int32_t );
+struct point_i32     _point_type( int32_t );
+struct circle_i32    _circle_type( int32_t );
+struct triangle_i32  _triangle_type( int32_t );
+struct rectangle_i32 _rectangle_type( int32_t );
 
-struct line_i32
-{
-	int32_t x0, y0;
-	int32_t x1, y1;
-};
+struct line_i64      _line_type( int64_t );
+struct point_i64     _point_type( int64_t );
+struct circle_i64    _circle_type( int64_t );
+struct triangle_i64  _triangle_type( int64_t );
+struct rectangle_i64 _rectangle_type( int64_t );
 
-struct rectangle_i32
-{
-	int32_t x;
-	int32_t y;
-	int32_t w;
-	int32_t h;
-};
+struct line_f32      _line_type( float );
+struct point_f32     _point_type( float );
+struct circle_f32    _circle_type( float );
+struct triangle_f32  _triangle_type( float );
+struct rectangle_f32 _rectangle_type( float );
 
-struct circle_i32
-{
-	int32_t x;
-	int32_t y;
-	int32_t r;
-};
-
-struct triangle_i32
-{
-	int32_t x0, y0;
-	int32_t x1, y1;
-	int32_t x2, y2;
-};
-
-// i64
-
-struct point_i64
-{
-	int64_t x, y;
-};
-
-struct line_i64
-{
-	int64_t x0, y0;
-	int64_t x1, y1;
-};
-
-struct rectangle_i64
-{
-	int64_t x;
-	int64_t y;
-	int64_t w;
-	int64_t h;
-};
-
-struct circle_i64
-{
-	int64_t x;
-	int64_t y;
-	int64_t r;
-};
-
-struct triangle_i64
-{
-	int64_t x0, y0;
-	int64_t x1, y1;
-	int64_t x2, y2;
-};
-
-// f32
-
-struct point_f32
-{
-	float x, y;
-};
-
-struct line_f32
-{
-	float x0, y0;
-	float x1, y1;
-};
-
-struct rectangle_f32
-{
-	float x;
-	float y;
-	float w;
-	float h;
-};
-
-struct circle_f32
-{
-	float x;
-	float y;
-	float r;
-};
-
-struct triangle_f32
-{
-	float x0, y0;
-	float x1, y1;
-	float x2, y2;
-};
-
-// f64
-
-struct point_f64
-{
-	double x, y;
-};
-
-struct line_f64
-{
-	double x0, y0;
-	double x1, y1;
-};
-
-struct rectangle_f64
-{
-	double x;
-	double y;
-	double w;
-	double h;
-};
-
-struct circle_f64
-{
-	double x;
-	double y;
-	double r;
-};
-
-struct triangle_f64
-{
-	double x0, y0;
-	double x1, y1;
-	double x2, y2;
-};
+struct line_f64      _line_type( double );
+struct point_f64     _point_type( double );
+struct circle_f64    _circle_type( double );
+struct triangle_f64  _triangle_type( double );
+struct rectangle_f64 _rectangle_type( double );
 
 /*
  * =============================
@@ -214,39 +88,12 @@ struct triangle_f64
  * -----------------------------
  */
 
-#define color color_u8
-
-struct color_u8
-{
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-	uint8_t a;
-};
-
-struct color_u16
-{
-	uint16_t r;
-	uint16_t g;
-	uint16_t b;
-	uint16_t a;
-};
-
-struct color_f32
-{
-    float r;
-    float g;
-    float b;
-    float a;
-};
-
-struct color_f64
-{
-	double r;
-	double g;
-	double b;
-	double a;
-};
+#define _color_type( T ) { T r, g, b, a; }
+struct color     _color_type( uint8_t );
+struct color_u8  _color_type( uint8_t );
+struct color_u16 _color_type( uint16_t );
+struct color_f32 _color_type( float );
+struct color_f64 _color_type( double );
 
 /*
  * =============================
@@ -272,195 +119,50 @@ struct color_f64
   *	   { m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33 }
   */
 
-// default types
+#define _vec2_type( T )  { T x, y; }
+#define _vec3_type( T )  { T x, y, z; }
+#define _vec4_type( T )  { T x, y, z, w; }
+#define _quat_type( T )  { T x, y, z, w; }
+#define _fmat4_type( T ) { T m[ 16 ]; }
+#define _mat4_type( T )  { T m00, m01, m02, m03; \
+						   T m10, m11, m12, m13; \
+	                       T m20, m21, m22, m23; \
+	                       T m30, m31, m32, m33; }
 
-#define vec2 vec2_f32
-#define vec3 vec3_f32
-#define vec4 vec4_f32
-#define quat quat_f32
-#define mat4 mat4_f32
+struct vec2 _vec2_type( float );
+struct vec3 _vec3_type( float );
+struct vec4 _vec4_type( float );
+struct quat _quat_type( float );
+struct mat4 _mat4_type( float );
+struct fmat4 _fmat4_type( float );
 
-#define vec2i vec2_i32
-#define vec3i vec3_i32
-#define vec4i vec4_i32
-#define quati quat_i32
-#define mat4i mat4_i32
+struct vec2_i32 _vec2_type( int32_t );
+struct vec3_i32 _vec3_type( int32_t );
+struct vec4_i32 _vec4_type( int32_t );
+struct quat_i32 _quat_type( int32_t );
+struct mat4_i32 _mat4_type( int32_t );
+struct fmat4_i32 _fmat4_type( int32_t );
 
-// i32
+struct vec2_i64 _vec2_type( int64_t );
+struct vec3_i64 _vec3_type( int64_t );
+struct vec4_i64 _vec4_type( int64_t );
+struct quat_i64 _quat_type( int64_t );
+struct mat4_i64 _mat4_type( int64_t );
+struct fmat4_i64 _fmat4_type( int64_t );
 
-struct vec2_i32
-{
-	int32_t x;
-	int32_t y;
-};
+struct vec2_f32 _vec2_type( float );
+struct vec3_f32 _vec3_type( float );
+struct vec4_f32 _vec4_type( float );
+struct quat_f32 _quat_type( float );
+struct mat4_f32 _mat4_type( float );
+struct fmat4_f32 _fmat4_type( float );
 
-struct vec3_i32
-{
-	int32_t x;
-	int32_t y;
-	int32_t z;
-};
-
-struct vec4_i32
-{
-	int32_t x;
-	int32_t y;
-	int32_t z;
-	int32_t w;
-};
-
-struct quat_i32
-{
-	int32_t x;
-	int32_t y;
-	int32_t z;
-	int32_t w;
-};
-
-struct mat4_i32
-{
-	int32_t m00, m01, m02, m03;
-	int32_t m10, m11, m12, m13;
-	int32_t m20, m21, m22, m23;
-	int32_t m30, m31, m32, m33;
-};
-
-struct mat4_i32_flat
-{
-	int32_t m[ 16 ];
-};
-
-// i64
-
-struct vec2_i64
-{
-	int64_t x;
-	int64_t y;
-};
-
-struct vec3_i64
-{
-	int64_t x;
-	int64_t y;
-	int64_t z;
-};
-
-struct vec4_i64
-{
-	int64_t x;
-	int64_t y;
-	int64_t z;
-	int64_t w;
-};
-
-struct quat_i64
-{
-	int64_t x;
-	int64_t y;
-	int64_t z;
-	int64_t w;
-};
-
-struct mat4_i64
-{
-	int64_t m00, m01, m02, m03;
-	int64_t m10, m11, m12, m13;
-	int64_t m20, m21, m22, m23;
-	int64_t m30, m31, m32, m33;
-};
-
-struct mat4_i64_flat
-{
-	int64_t m[ 16 ];
-};
-
-// f32
-
-struct vec2_f32
-{
-	float x;
-	float y;
-};
-
-struct vec3_f32
-{
-	float x;
-	float y;
-	float z;
-};
-
-struct vec4_f32
-{
-	float x;
-	float y;
-	float z;
-	float w;
-};
-
-struct quat_f32
-{
-	float x;
-	float y;
-	float z;
-	float w;
-};
-
-struct mat4_f32
-{
-	float m00, m01, m02, m03;
-	float m10, m11, m12, m13;
-	float m20, m21, m22, m23;
-	float m30, m31, m32, m33;
-};
-
-struct mat4_f32_flat
-{
-	float m[ 16 ];
-};
-
-// f64
-
-struct vec2_f64
-{
-	double x;
-	double y;
-};
-
-struct vec3_f64
-{
-	double x;
-	double y;
-	double z;
-};
-
-struct vec4_f64
-{
-	double x;
-	double y;
-	double z;
-	double w;
-};
-
-struct quat_f64
-{
-	double x;
-	double y;
-	double z;
-	double w;
-};
-
-struct mat4_f64
-{
-	double m00, m01, m02, m03;
-	double m10, m11, m12, m13;
-	double m20, m21, m22, m23;
-	double m30, m31, m32, m33;
-};
-
-struct mat4_f64_flat
-{
-	double m[ 16 ];
-};
+struct vec2_f64 _vec2_type( double );
+struct vec3_f64 _vec3_type( double );
+struct vec4_f64 _vec4_type( double );
+struct quat_f64 _quat_type( double );
+struct mat4_f64 _mat4_type( double );
+struct fmat4_f64 _fmat4_type( double );
 
 /*
  * =============================

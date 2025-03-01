@@ -216,7 +216,7 @@ void shader_uniform_mat4( struct shader self, const char *name, struct mat4 m )
 {
 	GLint idx = glGetUniformLocation( self.handle, name );
 	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniformMatrix4fv( idx, 1, GL_FALSE, mat4_f32_flatten( m ).m );
+    glUniformMatrix4fv( idx, 1, GL_FALSE, mat4_flatten( m ).m );
 }
 
 void shader_uniform_float( struct shader self, const char *name, float f )
