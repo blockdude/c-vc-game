@@ -72,17 +72,17 @@
 #define _BASE_SUFFIX
 #define _FLOAT_SUFFIX f
 
-#define _FEQ _f32_equals
+#define _FEQ _la_f32_equals
 #define _SIN sinf
 #define _COS cosf
 #define _TAN tanf
 #define _ASIN asinf
 #define _ACOS acosf
 #define _ATAN2 atan2f
-#define _SQRT sqrtf
-#define _ABS fabsf
-#define _MIN fminf
-#define _MAX fminf
+#define _SQRT _la_i32_sqrt
+#define _ABS _la_i32_abs
+#define _MIN _la_i32_min
+#define _MAX _la_i32_max
 
 // FLOAT TYPES
 #elif defined( LINEAR_ALGEBRA_FLT )
@@ -107,7 +107,7 @@
 #define _BASE_SUFFIX f
 #define _FLOAT_SUFFIX f
 
-#define _FEQ _f32_equals
+#define _FEQ _la_f32_equals
 #define _SIN sinf
 #define _COS cosf
 #define _TAN tanf
@@ -142,7 +142,7 @@
 #define _BASE_SUFFIX f
 #define _FLOAT_SUFFIX f
 
-#define _FEQ _f32_equals
+#define _FEQ _la_f32_equals
 #define _SIN sinf
 #define _COS cosf
 #define _TAN tanf
@@ -177,7 +177,7 @@
 #define _BASE_SUFFIX
 #define _FLOAT_SUFFIX
 
-#define _FEQ _f64_equals
+#define _FEQ _la_f64_equals
 #define _SIN sin
 #define _COS cos
 #define _TAN tan
@@ -192,5 +192,110 @@
 #else
 #error "Only F32 and F64 version are supported"
 #endif /* LINEAR_ALGEBRA_(TYPE)*/
+
+#define _CONCAT( _a, _b ) _a##_b
+
+#define _LITERAL_HELPER( _v, _s ) _CONCAT( _v, _s )
+#define _LITERAL( _v ) _LITERAL_HELPER( _v, _BASE_SUFFIX )
+
+#define _STATIC_CAST( T, _e ) ( ( T ) ( _e ) )
+#define _B_LIT( _v ) _STATIC_CAST( _BASE_TYPE, _v )
+#define _F_LIT( _v ) _STATIC_CAST( _FLOAT_TYPE, _v )
+
+#define _NAME_HELPER( _prefix, _fn ) _CONCAT( _prefix, _##_fn )
+#define _FUNC_VEC2( _fn ) _NAME_HELPER( _VEC2_PREFIX, _fn )
+#define _FUNC_VEC3( _fn ) _NAME_HELPER( _VEC3_PREFIX, _fn )
+#define _FUNC_VEC4( _fn ) _NAME_HELPER( _VEC4_PREFIX, _fn )
+#define _FUNC_QUAT( _fn ) _NAME_HELPER( _QUAT_PREFIX, _fn )
+#define _FUNC_MAT4( _fn ) _NAME_HELPER( _MAT4_PREFIX, _fn )
+
+#ifdef LINEAR_ALGEBRA_IMPLEMENTATION
+
+// define all implementations if none are defined
+#if \
+!defined( LINEAR_ALGEBRA_VEC2_IMPLEMENTATION ) && \
+!defined( LINEAR_ALGEBRA_VEC3_IMPLEMENTATION ) && \
+!defined( LINEAR_ALGEBRA_VEC4_IMPLEMENTATION ) && \
+!defined( LINEAR_ALGEBRA_QUAT_IMPLEMENTATION ) && \
+!defined( LINEAR_ALGEBRA_MAT4_IMPLEMENTATION )
+#define LINEAR_ALGEBRA_VEC2_IMPLEMENTATION
+#define LINEAR_ALGEBRA_VEC3_IMPLEMENTATION
+#define LINEAR_ALGEBRA_VEC4_IMPLEMENTATION
+#define LINEAR_ALGEBRA_QUAT_IMPLEMENTATION
+#define LINEAR_ALGEBRA_MAT4_IMPLEMENTATION
+#endif /* LINEAR_ALGEBRA_(TYPE)_IMPLENTATION */
+
+#include <stdint.h>
+#include <assert.h>
+#include <math.h>
+
+#define _FUNC_SPEC
+#define _FUNC_CONV
+
+#ifndef _LINEAR_ALGEBRA_INTERNAL
+#define _LINEAR_ALGEBRA_INTERNAL
+
+static inline int32_t _la_i32_abs( int32_t a )
+{
+    return a < 0 ? -a : a;
+}
+
+static inline int64_t _la_i64_abs( int64_t a )
+{
+    return a < 0 ? -a : a;
+}
+
+static inline int32_t _la_i32_min( int32_t a, int32_t b )
+{
+    return a < b ? a : b;
+}
+
+static inline int64_t _la_i64_min( int64_t a, int64_t b )
+{
+    return a < b ? a : b;
+}
+
+static inline int32_t _la_i32_max( int32_t a, int32_t b )
+{
+    return a > b ? a : b;
+}
+
+static inline int64_t _la_i64_max( int64_t a, int64_t b )
+{
+    return a > b ? a : b;
+}
+
+static inline int32_t _la_i32_sqrt( int32_t a )
+{
+    assert( a >= 0 );
+    return ( int32_t ) sqrtf( ( float ) a );
+}
+
+static inline int64_t _la_i64_sqrt( int64_t a )
+{
+    assert( a >= 0 );
+    return ( int64_t ) sqrt( ( double ) a );
+}
+
+static inline int _la_f32_equals( float a, float b, float epsilon )
+{
+    int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
+    return result;
+}
+
+static inline int _la_f64_equals( double a, double b, double epsilon )
+{
+    int result = ( fabs( a - b ) ) <= ( epsilon * fmax( 1.0, fmax( fabs( a ), fabs( b ) ) ) );
+    return result;
+}
+
+#endif /* _LINEAR_ALGEBRA_INTERNAL */
+
+#else /* LINEAR_ALGEBRA_IMPLEMENTATION */
+
+#define _FUNC_SPEC
+#define _FUNC_CONV
+
+#endif /* LINEAR_ALGEBRA_IMPLEMENATION */
 
 #endif /* LINEAR_ALGEBRA_CLEANUP */

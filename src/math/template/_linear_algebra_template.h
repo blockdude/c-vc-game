@@ -1,255 +1,5 @@
-#if defined( LINEAR_ALGEBRA_CLEANUP )
-
-#undef _IS_IEC559
-
-#undef _VEC2_TYPE
-#undef _VEC3_TYPE
-#undef _VEC4_TYPE
-#undef _QUAT_TYPE
-#undef _MAT4_TYPE
-#undef _FMAT4_TYPE
-#undef _BASE_TYPE
-#undef _FLOAT_TYPE
-
-#undef _FUNC_SPEC
-#undef _FUNC_CONV
-
-#undef _VEC2_PREFIX
-#undef _VEC3_PREFIX
-#undef _VEC4_PREFIX
-#undef _MAT4_PREFIX
-#undef _QUAT_PREFIX
-#undef _BASE_SUFFIX
-#undef _FLOAT_SUFFIX
-
-#undef _FEQ
-#undef _SIN
-#undef _COS
-#undef _TAN
-#undef _ASIN
-#undef _ACOS
-#undef _ATAN2
-#undef _SQRT
-#undef _ABS
-#undef _MIN
-#undef _MAX
-
-#undef _CONCAT
-#undef _LITERAL_HELPER
-#undef _LITERAL
-#undef _B_LIT
-#undef _F_LIT
-#undef _NAME_HELPER
-#undef _FUNC_VEC2
-#undef _FUNC_VEC3
-#undef _FUNC_VEC4
-#undef _FUNC_QUAT
-#undef _FUNC_MAT4
-
-#undef LINEAR_ALGEBRA_CLEANUP
-
-#else
-
-
-
 #include "../../util/types.h"
-#include <assert.h>
-#include <math.h>
-
-#if defined( LINEAR_ALGEBRA_I32 )
-#undef LINEAR_ALGEBRA_I32
-
-#define _IS_IEC559 0
-
-#define _VEC2_TYPE struct vec2_i32
-#define _VEC3_TYPE struct vec3_i32
-#define _VEC4_TYPE struct vec4_i32
-#define _QUAT_TYPE struct quat_i32
-#define _MAT4_TYPE struct mat4_i32
-#define _FMAT4_TYPE struct fmat4_i32
-#define _BASE_TYPE int32_t
-#define _FLOAT_TYPE float
-
-#define _VEC2_PREFIX vec2_i32
-#define _VEC3_PREFIX vec3_i32
-#define _VEC4_PREFIX vec4_i32
-#define _MAT4_PREFIX mat4_i32
-#define _QUAT_PREFIX quat_i32
-#define _BASE_SUFFIX
-#define _FLOAT_SUFFIX f
-
-#define _FEQ _f32_equals
-#define _SIN sinf
-#define _COS cosf
-#define _TAN tanf
-#define _ASIN asinf
-#define _ACOS acosf
-#define _ATAN2 atan2f
-#define _SQRT sqrtf
-#define _ABS fabsf
-#define _MIN fminf
-#define _MAX fminf
-
-#elif defined( LINEAR_ALGEBRA_FLT )
-#undef LINEAR_ALGEBRA_FLT
-
-#define _IS_IEC559 1
-
-#define _VEC2_TYPE struct vec2
-#define _VEC3_TYPE struct vec3
-#define _VEC4_TYPE struct vec4
-#define _QUAT_TYPE struct quat
-#define _MAT4_TYPE struct mat4
-#define _FMAT4_TYPE struct fmat4
-#define _BASE_TYPE float
-#define _FLOAT_TYPE float
-
-#define _VEC2_PREFIX vec2
-#define _VEC3_PREFIX vec3
-#define _VEC4_PREFIX vec4
-#define _MAT4_PREFIX mat4
-#define _QUAT_PREFIX quat
-#define _BASE_SUFFIX f
-#define _FLOAT_SUFFIX f
-
-#define _FEQ _f32_equals
-#define _SIN sinf
-#define _COS cosf
-#define _TAN tanf
-#define _ASIN asinf
-#define _ACOS acosf
-#define _ATAN2 atan2f
-#define _SQRT sqrtf
-#define _ABS fabsf
-#define _MIN fminf
-#define _MAX fminf
-
-#elif defined( LINEAR_ALGEBRA_F32 )
-#undef LINEAR_ALGEBRA_F32
-
-#define _IS_IEC559 1
-
-#define _VEC2_TYPE struct vec2_f32
-#define _VEC3_TYPE struct vec3_f32
-#define _VEC4_TYPE struct vec4_f32
-#define _QUAT_TYPE struct quat_f32
-#define _MAT4_TYPE struct mat4_f32
-#define _FMAT4_TYPE struct fmat4_f32
-#define _BASE_TYPE float
-#define _FLOAT_TYPE float
-
-#define _VEC2_PREFIX vec2_f32
-#define _VEC3_PREFIX vec3_f32
-#define _VEC4_PREFIX vec4_f32
-#define _MAT4_PREFIX mat4_f32
-#define _QUAT_PREFIX quat_f32
-#define _BASE_SUFFIX f
-#define _FLOAT_SUFFIX f
-
-#define _FEQ _f32_equals
-#define _SIN sinf
-#define _COS cosf
-#define _TAN tanf
-#define _ASIN asinf
-#define _ACOS acosf
-#define _ATAN2 atan2f
-#define _SQRT sqrtf
-#define _ABS fabsf
-#define _MIN fminf
-#define _MAX fminf
-
-#elif defined( LINEAR_ALGEBRA_F64 )
-#undef LINEAR_ALGEBRA_F64
-
-#define _IS_IEC559 1
-
-#define _VEC2_TYPE struct vec2_f64
-#define _VEC3_TYPE struct vec3_f64
-#define _VEC4_TYPE struct vec4_f64
-#define _QUAT_TYPE struct quat_f64
-#define _MAT4_TYPE struct mat4_f64
-#define _FMAT4_TYPE struct fmat4_f64
-#define _BASE_TYPE double
-#define _FLOAT_TYPE double
-
-#define _VEC2_PREFIX vec2_f64
-#define _VEC3_PREFIX vec3_f64
-#define _VEC4_PREFIX vec4_f64
-#define _MAT4_PREFIX mat4_f64
-#define _QUAT_PREFIX quat_f64
-#define _BASE_SUFFIX
-#define _FLOAT_SUFFIX
-
-#define _FEQ _f64_equals
-#define _SIN sin
-#define _COS cos
-#define _TAN tan
-#define _ASIN asin
-#define _ACOS acos
-#define _ATAN2 atan2
-#define _SQRT sqrt
-#define _ABS fabs
-#define _MIN fmin
-#define _MAX fmin
-
-#else
-#error "Only F32 and F64 version are supported"
-#endif
-
-
-
-#if defined( LINEAR_ALGEBRA_HEADER )
-#undef LINEAR_ALGEBRA_HEADER
-
-#define _FUNC_SPEC
-#define _FUNC_CONV
-
-#elif defined( LINEAR_ALGEBRA_IMPLEMENTATION )
-#undef LINEAR_ALGEBRA_IMPLEMENTATION
-
-#define _FUNC_SPEC
-#define _FUNC_CONV
-
-#ifndef _LINEAR_ALGEBRA_INTERNAL
-#define _LINEAR_ALGEBRA_INTERNAL
-
-static inline int _f32_equals( float a, float b, float epsilon )
-{
-    int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
-    return result;
-}
-
-static inline int _f64_equals( double a, double b, double epsilon )
-{
-    int result = ( fabs( a - b ) ) <= ( epsilon * fmax( 1.0, fmax( fabs( a ), fabs( b ) ) ) );
-    return result;
-}
-
-#endif
-
-#else
-#error "Must define linear algebra header or implementation"
-#endif
-
-
-
-#define _CONCAT( _a, _b ) _a##_b
-
-#define _LITERAL_HELPER( _v, _s ) _CONCAT( _v, _s )
-#define _LITERAL( _v ) _LITERAL_HELPER( _v, _BASE_SUFFIX )
-
-#define _STATIC_CAST( T, _e ) ( ( T ) ( _e ) )
-#define _B_LIT( _v ) _STATIC_CAST( _BASE_TYPE, _v )
-#define _F_LIT( _v ) _STATIC_CAST( _FLOAT_TYPE, _v )
-
-#define _NAME_HELPER( _prefix, _fn ) _CONCAT( _prefix, _##_fn )
-#define _FUNC_VEC2( _fn ) _NAME_HELPER( _VEC2_PREFIX, _fn )
-#define _FUNC_VEC3( _fn ) _NAME_HELPER( _VEC3_PREFIX, _fn )
-#define _FUNC_VEC4( _fn ) _NAME_HELPER( _VEC4_PREFIX, _fn )
-#define _FUNC_QUAT( _fn ) _NAME_HELPER( _QUAT_PREFIX, _fn )
-#define _FUNC_MAT4( _fn ) _NAME_HELPER( _MAT4_PREFIX, _fn )
-
-
+#include "_linear_algebra_define.h"
 
 /*
  * =============================
@@ -258,8 +8,7 @@ static inline int _f64_equals( double a, double b, double epsilon )
  * -----------------------------
  */
 
-#ifdef LINEAR_ALGEBRA_VEC2_HEADER
-#undef LINEAR_ALGEBRA_VEC2_HEADER
+#if defined( LINEAR_ALGEBRA_VEC2_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_VEC2_HEADER )
 
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void );
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void );
@@ -294,16 +43,13 @@ extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( move_towards )( _VEC2_TYPE v
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( invert )( _VEC2_TYPE v );
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_len )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r );
-#else
+#else /* _IS_IEC559 */
 extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q );
-#endif
+#endif /* _IS_IEC559 */
 
-#endif
-
-
+#endif /* LINEAR_ALGEBRA_VEC2_IMPLEMENATAION || HEADER */
 
 #ifdef LINEAR_ALGEBRA_VEC2_IMPLEMENTATION
-#undef LINEAR_ALGEBRA_VEC2_IMPLEMENTATION
 
 // Vector2 with components value LIT( 0.0 )
 _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void )
@@ -496,11 +242,13 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_val )( _VEC2_TYPE v, _BASE_TY
     return result;
 }
 
-#if _IS_IEC559
+#if _IS_IEC559 /* ONLY FUNCTIONS THAT USE FLOATING POINT IEEE754 (I don't know why c++ calls it iec559 but ill do the same) */
 
 // Check whether two given vectors are almost equal
 _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon )
 {
+    static_assert( _IS_IEC559 == true, "equals must use floating point vectors" );
+
     int result =
         ( ( _ABS( p.x - q.x ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.x ), _ABS( q.x ) ) ) ) ) &&
         ( ( _ABS( p.y - q.y ) ) <= ( epsilon * _MAX( _LITERAL( 1.0 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) );
@@ -512,7 +260,7 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BAS
 // NOTE: Angle is calculated from origin point (0, 0)
 _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b )
 {
-    static_assert( _IS_IEC559 == true, "angle muse use floating point vectors" );
+    static_assert( _IS_IEC559 == true, "angle must use floating point vectors" );
 
     _BASE_TYPE result = _LITERAL( 0.0 );
 
@@ -529,7 +277,7 @@ _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b
 // Current implementation should be aligned with glm::angle
 _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VEC2_TYPE end )
 {
-    static_assert( _IS_IEC559 == true, "line_angle muse use floating point vectors" );
+    static_assert( _IS_IEC559 == true, "line_angle must use floating point vectors" );
 
     _BASE_TYPE result = _LITERAL( 0.0 );
 
@@ -541,7 +289,7 @@ _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VE
 // Normalize provided vector
 _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( normalize )( _VEC2_TYPE v )
 {
-    static_assert( _IS_IEC559 == true, "normalize muse use floating point vectors" );
+    static_assert( _IS_IEC559 == true, "normalize must use floating point vectors" );
 
     _VEC2_TYPE result = { 0 };
 
@@ -659,7 +407,7 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE
     return result;
 }
 
-#else /* we are not working with proper floats so the above functions will not work */
+#else /* _IS_IEC559 */
 
 // Check whether two given vectors are equal
 _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q )
@@ -672,10 +420,12 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q )
 }
 
 #endif /* _IS_IEC559 */
-
-#endif
+#endif /* LINEAR_ALGEBRA_VEC2_IMPLEMENTATION*/
 
 /*
+ * -----------------------------
+ * VECTOR 2
+ * -----------------------------
  * =============================
  */
 
@@ -688,10 +438,9 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q )
  * -----------------------------
  */
 
-#ifdef LINEAR_ALGEBRA_VEC3_HEADER
-#undef LINEAR_ALGEBRA_VEC3_HEADER
-
+#if defined( LINEAR_ALGEBRA_VEC3_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_VEC3_HEADER )
 #if _IS_IEC559
+
 extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( zero )( void );
 extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( one )( void );
 extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( add )( _VEC3_TYPE a, _VEC3_TYPE b );
@@ -732,15 +481,11 @@ extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( clamp_val )( _VEC3_TYPE v, _
 extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( clamp_len )( _VEC3_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
 extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC3( equals )( _VEC3_TYPE p, _VEC3_TYPE q, _BASE_TYPE epsilon );
 extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( refract )( _VEC3_TYPE v, _VEC3_TYPE n, _BASE_TYPE r );
-#endif
 
-#endif
-
-
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_VEC3_IMPLEMENTATION || HEADER */
 
 #ifdef LINEAR_ALGEBRA_VEC3_IMPLEMENTATION
-#undef LINEAR_ALGEBRA_VEC3_IMPLEMENTATION
-
 #if _IS_IEC559
 
 // Vector with components value 0.0f
@@ -1405,11 +1150,13 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( refract )( _VEC3_TYPE v, _VEC3_TYPE
     return result;
 }
 
-#endif
-
-#endif
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_VEC3_IMPLEMENTATION */
 
 /*
+ * -----------------------------
+ * VECTOR 3
+ * -----------------------------
  * =============================
  */
 
@@ -1422,10 +1169,9 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( refract )( _VEC3_TYPE v, _VEC3_TYPE
  * -----------------------------
  */
 
-#ifdef LINEAR_ALGEBRA_VEC4_HEADER
-#undef LINEAR_ALGEBRA_VEC4_HEADER
-
+#if defined( LINEAR_ALGEBRA_VEC4_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_VEC4_HEADER )
 #if _IS_IEC559
+
 extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( zero )( void );
 extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( one )( void );
 extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( add )( _VEC4_TYPE a, _VEC4_TYPE b );
@@ -1448,15 +1194,11 @@ extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( lerp )( _VEC4_TYPE a, _VEC4_
 extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( move_towards )( _VEC4_TYPE v, _VEC4_TYPE target, _BASE_TYPE max );
 extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( invert )( _VEC4_TYPE v );
 extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC4( equals )( _VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon );
-#endif
 
-#endif
-
-
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_VEC4_IMPLEMENTATION || HEADER */
 
 #ifdef LINEAR_ALGEBRA_VEC4_IMPLEMENTATION
-#undef LINEAR_ALGEBRA_VEC4_IMPLEMENTATION
-
 #if _IS_IEC559
 
 _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4( zero )( void )
@@ -1700,11 +1442,13 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_VEC4( equals )( _VEC4_TYPE p, _VEC4_TYPE q, _BAS
     return result;
 }
 
-#endif
-
-#endif
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_VEC4_IMPLEMENTATION */
 
 /*
+ * -----------------------------
+ * VECTOR 4
+ * -----------------------------
  * =============================
  */
 
@@ -1717,10 +1461,9 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_VEC4( equals )( _VEC4_TYPE p, _VEC4_TYPE q, _BAS
  * -----------------------------
  */
 
-#ifdef LINEAR_ALGEBRA_QUAT_HEADER
-#undef LINEAR_ALGEBRA_QUAT_HEADER
-
+#if defined( LINEAR_ALGEBRA_QUAT_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_QUAT_HEADER )
 #if _IS_IEC559
+
 _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( add )( _QUAT_TYPE p, _QUAT_TYPE q );
 _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( add_val )( _QUAT_TYPE q, _BASE_TYPE val );
 _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( sub )( _QUAT_TYPE p, _QUAT_TYPE q );
@@ -1745,15 +1488,11 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( from_euler )( _BASE_TYPE pitch, _BA
 _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_QUAT( to_euler )( _QUAT_TYPE q );
 _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( transform )( _QUAT_TYPE q, _MAT4_TYPE m );
 _FUNC_SPEC int        _FUNC_CONV _FUNC_QUAT( equals )( _QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon );
-#endif
 
-#endif
-
-
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_QUAT_IMPLEMENTATION || HEADER */
 
 #ifdef LINEAR_ALGEBRA_QUAT_IMPLEMENTATION
-#undef LINEAR_ALGEBRA_QUAT_IMPLEMENTATION
-
 #if _IS_IEC559
 
 // Add two quaternions
@@ -2274,11 +2013,13 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_QUAT( equals )( _QUAT_TYPE p, _QUAT_TYPE q, _BAS
     return result;
 }
 
-#endif
-
-#endif
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_QUAT_IMPLEMENTATION */
 
 /*
+ * -----------------------------
+ * QUATERNION
+ * -----------------------------
  * =============================
  */
 
@@ -2291,10 +2032,9 @@ _FUNC_SPEC int _FUNC_CONV _FUNC_QUAT( equals )( _QUAT_TYPE p, _QUAT_TYPE q, _BAS
  * -----------------------------
  */
 
-#ifdef LINEAR_ALGEBRA_MAT4_HEADER
-#undef LINEAR_ALGEBRA_MAT4_HEADER
-
+#if defined( LINEAR_ALGEBRA_MAT4_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_MAT4_HEADER )
 #if _IS_IEC559
+
 extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_MAT4( det )( _MAT4_TYPE m );
 extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_MAT4( trace )( _MAT4_TYPE m );
 extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( transpose )( _MAT4_TYPE m );
@@ -2317,15 +2057,11 @@ extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( ortho )( _BASE_TYPE left, _B
 extern _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4( lookat )( _VEC3_TYPE eye, _VEC3_TYPE target, _VEC3_TYPE up );
 extern _FUNC_SPEC void       _FUNC_CONV _FUNC_MAT4( decompose )( _MAT4_TYPE m, _VEC3_TYPE *translation, _QUAT_TYPE *rotation, _VEC3_TYPE *scale );
 extern _FUNC_SPEC _FMAT4_TYPE _FUNC_CONV _FUNC_MAT4( flatten )( _MAT4_TYPE m );
-#endif
 
-#endif
-
-
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_MAT4_IMPLEMENTATION || HEADER */
 
 #ifdef LINEAR_ALGEBRA_MAT4_IMPLEMENTATION
-#undef LINEAR_ALGEBRA_MAT4_IMPLEMENTATION
-
 #if _IS_IEC559
 
 // Compute matrix determinant
@@ -2952,12 +2688,18 @@ _FUNC_SPEC _FMAT4_TYPE _FUNC_CONV _FUNC_MAT4( flatten )( _MAT4_TYPE m )
     return result;
 }
 
-#endif
-
-#endif
+#endif /* _IS_IEC559 */
+#endif /* LINEAR_ALGEBRA_MAT4_IMPLEMENTATION */
 
 /*
+ * -----------------------------
+ * MATRIX 4X4
+ * -----------------------------
  * =============================
  */
 
-#endif
+
+
+// cleanup defined macros
+#define LINEAR_ALGEBRA_CLEANUP
+#include "_linear_algebra_define.h"

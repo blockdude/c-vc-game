@@ -136,6 +136,13 @@ struct quat _quat_type( float );
 struct mat4 _mat4_type( float );
 struct fmat4 _fmat4_type( float );
 
+struct vec2i _vec2_type( int );
+struct vec3i _vec3_type( int );
+struct vec4i _vec4_type( int );
+struct quati _quat_type( int );
+struct mat4i _mat4_type( int );
+struct fmat4i _fmat4_type( int );
+
 struct vec2_i32 _vec2_type( int32_t );
 struct vec3_i32 _vec3_type( int32_t );
 struct vec4_i32 _vec4_type( int32_t );
@@ -163,6 +170,66 @@ struct vec4_f64 _vec4_type( double );
 struct quat_f64 _quat_type( double );
 struct mat4_f64 _mat4_type( double );
 struct fmat4_f64 _fmat4_type( double );
+
+#define _vec2_decl_cast_func( A, name ) \
+static inline struct vec2     name##_to_vec2( A a )     { struct vec2     b = { ( float )   a.x, ( float )   a.y }; return b; } \
+static inline struct vec2i    name##_to_vec2i( A a )    { struct vec2i    b = { ( int )     a.x, ( int )     a.y }; return b; } \
+static inline struct vec2_i32 name##_to_vec2_i32( A a ) { struct vec2_i32 b = { ( int32_t ) a.x, ( int32_t ) a.y }; return b; } \
+static inline struct vec2_i64 name##_to_vec2_i64( A a ) { struct vec2_i64 b = { ( int64_t ) a.x, ( int64_t ) a.y }; return b; } \
+static inline struct vec2_f32 name##_to_vec2_f32( A a ) { struct vec2_f32 b = { ( float )   a.x, ( float )   a.y }; return b; } \
+static inline struct vec2_f64 name##_to_vec2_f64( A a ) { struct vec2_f64 b = { ( double )  a.x, ( double )  a.y }; return b; }
+
+_vec2_decl_cast_func( struct vec2,     vec2     );
+_vec2_decl_cast_func( struct vec2i,    vec2i    );
+_vec2_decl_cast_func( struct vec2_i32, vec2_i32 );
+_vec2_decl_cast_func( struct vec2_i64, vec2_i64 );
+_vec2_decl_cast_func( struct vec2_f32, vec2_f32 );
+_vec2_decl_cast_func( struct vec2_f64, vec2_f64 );
+
+#define _vec3_decl_cast_func( A, name ) \
+static inline struct vec3     name##_to_vec3( A a )     { struct vec3     b = { ( float )   a.x, ( float )   a.y, ( float )   a.z }; return b; } \
+static inline struct vec3i    name##_to_vec3i( A a )    { struct vec3i    b = { ( int )     a.x, ( int )     a.y, ( int )     a.z }; return b; } \
+static inline struct vec3_i32 name##_to_vec3_i32( A a ) { struct vec3_i32 b = { ( int32_t ) a.x, ( int32_t ) a.y, ( int32_t ) a.z }; return b; } \
+static inline struct vec3_i64 name##_to_vec3_i64( A a ) { struct vec3_i64 b = { ( int64_t ) a.x, ( int64_t ) a.y, ( int64_t ) a.z }; return b; } \
+static inline struct vec3_f32 name##_to_vec3_f32( A a ) { struct vec3_f32 b = { ( float )   a.x, ( float )   a.y, ( float )   a.z }; return b; } \
+static inline struct vec3_f64 name##_to_vec3_f64( A a ) { struct vec3_f64 b = { ( double )  a.x, ( double )  a.y, ( double )  a.z }; return b; }
+
+_vec3_decl_cast_func( struct vec3, vec3 );
+_vec3_decl_cast_func( struct vec3i, vec3i );
+_vec3_decl_cast_func( struct vec3_i32, vec3_i32 );
+_vec3_decl_cast_func( struct vec3_i64, vec3_i64 );
+_vec3_decl_cast_func( struct vec3_f32, vec3_f32 );
+_vec3_decl_cast_func( struct vec3_f64, vec3_f64 );
+
+#define _vec4_decl_cast_func( A, name ) \
+static inline struct vec4     name##_to_vec4( A a )     { struct vec4     b = { ( float )   a.x, ( float )   a.y, ( float )   a.z, ( float )   a.w }; return b; } \
+static inline struct vec4i    name##_to_vec4i( A a )    { struct vec4i    b = { ( int )     a.x, ( int )     a.y, ( int )     a.z, ( int )     a.w }; return b; } \
+static inline struct vec4_i32 name##_to_vec4_i32( A a ) { struct vec4_i32 b = { ( int32_t ) a.x, ( int32_t ) a.y, ( int32_t ) a.z, ( int32_t ) a.w }; return b; } \
+static inline struct vec4_i64 name##_to_vec4_i64( A a ) { struct vec4_i64 b = { ( int64_t ) a.x, ( int64_t ) a.y, ( int64_t ) a.z, ( int64_t ) a.w }; return b; } \
+static inline struct vec4_f32 name##_to_vec4_f32( A a ) { struct vec4_f32 b = { ( float )   a.x, ( float )   a.y, ( float )   a.z, ( float )   a.w }; return b; } \
+static inline struct vec4_f64 name##_to_vec4_f64( A a ) { struct vec4_f64 b = { ( double )  a.x, ( double )  a.y, ( double )  a.z, ( double )  a.w }; return b; }
+
+_vec4_decl_cast_func( struct vec4, vec4 );
+_vec4_decl_cast_func( struct vec4i, vec4i );
+_vec4_decl_cast_func( struct vec4_i32, vec4_i32 );
+_vec4_decl_cast_func( struct vec4_i64, vec4_i64 );
+_vec4_decl_cast_func( struct vec4_f32, vec4_f32 );
+_vec4_decl_cast_func( struct vec4_f64, vec4_f64 );
+
+#define _quat_decl_cast_func( A, name ) \
+static inline struct quat     name##_to_quat( A a )     { struct quat     b = { ( float )   a.x, ( float )   a.y, ( float )   a.z, ( float )   a.w }; return b; } \
+static inline struct quati    name##_to_quati( A a )    { struct quati    b = { ( int )     a.x, ( int )     a.y, ( int )     a.z, ( int )     a.w }; return b; } \
+static inline struct quat_i32 name##_to_quat_i32( A a ) { struct quat_i32 b = { ( int32_t ) a.x, ( int32_t ) a.y, ( int32_t ) a.z, ( int32_t ) a.w }; return b; } \
+static inline struct quat_i64 name##_to_quat_i64( A a ) { struct quat_i64 b = { ( int64_t ) a.x, ( int64_t ) a.y, ( int64_t ) a.z, ( int64_t ) a.w }; return b; } \
+static inline struct quat_f32 name##_to_quat_f32( A a ) { struct quat_f32 b = { ( float )   a.x, ( float )   a.y, ( float )   a.z, ( float )   a.w }; return b; } \
+static inline struct quat_f64 name##_to_quat_f64( A a ) { struct quat_f64 b = { ( double )  a.x, ( double )  a.y, ( double )  a.z, ( double )  a.w }; return b; }
+
+_quat_decl_cast_func( struct quat, quat );
+_quat_decl_cast_func( struct quati, quati );
+_quat_decl_cast_func( struct quat_i32, quat_i32 );
+_quat_decl_cast_func( struct quat_i64, quat_i64 );
+_quat_decl_cast_func( struct quat_f32, quat_f32 );
+_quat_decl_cast_func( struct quat_f64, quat_f64 );
 
 /*
  * =============================
