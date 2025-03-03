@@ -8,6 +8,7 @@
  * -----------------------------
  */
 
+#include "../common.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -100,6 +101,33 @@ struct color_u8  _color_type( uint8_t );
 struct color_u16 _color_type( uint16_t );
 struct color_f32 _color_type( float );
 struct color_f64 _color_type( double );
+
+static struct color COLOR_LIGHTGRAY  = { 200, 200, 200, 255 };
+static struct color COLOR_GRAY       = { 130, 130, 130, 255 };
+static struct color COLOR_DARKGRAY   = { 80,  80,  80,  255 };
+static struct color COLOR_YELLOW     = { 253, 249, 0,   255 };
+static struct color COLOR_GOLD       = { 255, 203, 0,   255 };
+static struct color COLOR_ORANGE     = { 255, 161, 0,   255 };
+static struct color COLOR_PINK       = { 255, 109, 194, 255 };
+static struct color COLOR_RED        = { 230, 41,  55,  255 };
+static struct color COLOR_MAROON     = { 190, 33,  55,  255 };
+static struct color COLOR_GREEN      = { 0,   228, 48,  255 };
+static struct color COLOR_LIME       = { 0,   158, 47,  255 };
+static struct color COLOR_DARKGREEN  = { 0,   117, 44,  255 };
+static struct color COLOR_SKYBLUE    = { 102, 191, 255, 255 };
+static struct color COLOR_BLUE       = { 0,   121, 241, 255 };
+static struct color COLOR_DARKBLUE   = { 0,   82,  172, 255 };
+static struct color COLOR_PURPLE     = { 200, 122, 255, 255 };
+static struct color COLOR_VIOLET     = { 135, 60,  190, 255 };
+static struct color COLOR_DARKPURPLE = { 112, 31,  126, 255 };
+static struct color COLOR_BEIGE      = { 211, 176, 131, 255 };
+static struct color COLOR_BROWN      = { 127, 106, 79,  255 };
+static struct color COLOR_DARKBROWN  = { 76,  63,  47,  255 };
+
+static struct color COLOR_WHITE      = { 255, 255, 255, 255 };
+static struct color COLOR_BLACK      = { 0,   0,   0,   255 };
+static struct color COLOR_BLANK      = { 0,   0,   0,   0   };
+static struct color COLOR_MAGENTA    = { 255, 0,   255, 255 };
 
 /*
  * =============================

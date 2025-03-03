@@ -199,6 +199,16 @@ struct extent window_size( void )
     return result;
 }
 
+int window_width( void )
+{
+    return g_win_state.width;
+}
+
+int window_height( void )
+{
+    return g_win_state.height;
+}
+
 float window_aspect( void )
 {
     return g_win_state.aspect;

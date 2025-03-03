@@ -19,6 +19,8 @@ extern void window_deinit( void );
 extern void window_swap_buffer( void );
 extern bool window_keep_open( void );
 extern struct extent window_size( void );
+extern int window_width( void );
+extern int window_height( void );
 extern float window_aspect( void );
 extern const char *window_title( void );
 extern uint32_t window_flags( void );
