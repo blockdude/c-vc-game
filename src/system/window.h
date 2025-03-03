@@ -23,6 +23,7 @@ extern float window_aspect( void );
 extern const char *window_title( void );
 extern uint32_t window_flags( void );
 extern uint32_t window_id( void );
+extern void *window_handle( void );
 extern void window_set_size( int w, int h );
 extern void window_set_title( const char *title );
 extern void window_set_flags( uint32_t flags, bool state );

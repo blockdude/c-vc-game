@@ -219,6 +219,11 @@ uint32_t window_id( void )
     return g_win_state.id;
 }
 
+void *window_handle( void )
+{
+    return ( void * ) g_win_ctx.handle;
+}
+
 /*
  * =============================
  */
