@@ -8,7 +8,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <math.h>
 
 #ifndef TS_TIME_NOW
 #error "define TS_TIME"
@@ -88,6 +87,11 @@ static const struct _timestep TIMESTEP_240HZ = { .target_delta = 1.0 / 240.0, .t
 #define TS_TICK_LOOP( _t, _f ) \
     for ( _tick_prefix( _t, _f ); _tick_can_proc( _t ); _tick_postfix( _t ) )
 
+static inline int _ts_compute_rate( int64_t n, double d )
+{
+    return ( ( n < 0 ) == ( d < 0 ) ) ? ( int ) ( ( n + d / 2 ) / d ) : ( int ) ( ( n - d / 2 ) / d );
+}
+
 static inline void _tick_prefix( tick_control_t *tick, frame_control_t *frame )
 {
     tick->delta += frame->delta;
@@ -105,8 +109,8 @@ static inline void _tick_prefix( tick_control_t *tick, frame_control_t *frame )
 
     tick->_snapshot.last = tick->count;
 
-    tick->rate = ( int ) round( ( double ) tick->_snapshot.count / tick->_snapshot.elapsed );
-    tick->avg = ( int ) round( ( double ) tick->count / tick->elapsed );
+    tick->rate = _ts_compute_rate( tick->_snapshot.count, tick->_snapshot.elapsed );
+    tick->avg = _ts_compute_rate( tick->count, tick->elapsed );
 }
 
 static inline bool _tick_can_proc( tick_control_t *tick )
@@ -165,8 +169,8 @@ static inline void _frame_postfix( frame_control_t *frame )
 
     frame->_snapshot.last = frame->count;
 
-    frame->rate = ( int ) round( ( double ) frame->_snapshot.count / frame->_snapshot.elapsed );
-    frame->avg = ( int ) round( ( double ) frame->count / frame->elapsed );
+    frame->rate = _ts_compute_rate( frame->_snapshot.count, frame->_snapshot.elapsed );
+    frame->avg = _ts_compute_rate( frame->count, frame->elapsed );
 }
 
 #endif
