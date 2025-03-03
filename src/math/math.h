@@ -29,16 +29,18 @@
 #define LERP( a, b, t ) ( ( a ) + ( t ) * ( ( b ) - ( a ) ) )
 #define NORMALIZE( x, min, max ) ( ( ( x ) - ( min ) ) / ( ( max ) - ( min ) ) )
 
-static inline int f32_equals( float a, float b, float epsilon )
-{
-    int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
-    return result;
-}
+#define _math_decl_int_rdiv_func( T, _name ) \
+static inline T _name##_rdiv( T n, T d ) { return ( ( n < 0 ) == ( d < 0 ) ) ? ( ( n + d / 2 ) / d ) : ( ( n - d / 2 ) / d ); }
 
-static inline int f64_equals( double a, double b, double epsilon )
-{
-    int result = ( fabs( a - b ) ) <= ( epsilon * fmax( 1.0f, fmax( fabs( a ), fabs( b ) ) ) );
-    return result;
-}
+_math_decl_int_rdiv_func( int, int );
+_math_decl_int_rdiv_func( int32_t, i32 );
+_math_decl_int_rdiv_func( int64_t, i64 );
+
+#define _math_decl_float_equals_func( T, _name, _abs_fn, _max_fn ) \
+static inline int _name##_equals( T a, T b, T epsilon ) { return ( _abs_fn( a - b ) ) <= ( epsilon * _max_fn( 1.0f, _max_fn( _abs_fn( a ), _abs_fn( b ) ) ) ); }
+
+_math_decl_float_equals_func( float, float, fabsf, fmaxf );
+_math_decl_float_equals_func( float, f32, fabsf, fmaxf );
+_math_decl_float_equals_func( double, f64, fabs, fmax );
 
 #endif
