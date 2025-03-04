@@ -85,31 +85,34 @@ double time_now_ns( void )
 
 void time_wait( uint64_t ticks )
 {
-    SDL_DelayNS( ticks );
+    uint64_t stop_time = time_now() + ticks;
+    uint64_t sleep_time = ticks - ( ticks * 0.1 );
+    SDL_Delay( sleep_time / 1000000 );
+    while ( time_now() < stop_time );
 }
 
 void time_wait_s( double s )
 {
     Uint64 t = ( Uint64 ) ( s * 1.0e9 );
-    SDL_DelayNS( t );
+    time_wait( t );
 }
 
 void time_wait_ms( double ms )
 {
     Uint64 t = ( Uint64 ) ( ms * 1.0e6 );
-    SDL_DelayNS( t );
+    time_wait( t );
 }
 
 void time_wait_us( double us )
 {
     Uint64 t = ( Uint64 ) ( us * 1.0e3 );
-    SDL_DelayNS( t );
+    time_wait( t );
 }
 
 void time_wait_ns( double ns )
 {
     Uint64 t = ( Uint64 ) ( ns * 1.0e0 );
-    SDL_DelayNS( t );
+    time_wait( t );
 }
 
 /*
