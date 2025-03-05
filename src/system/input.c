@@ -1,6 +1,7 @@
 #include "input.h"
 #include "window.h"
 #include "assert.h"
+#include "../util/log.h"
 
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
