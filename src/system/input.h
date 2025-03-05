@@ -95,10 +95,10 @@ enum input_btn
 
 struct keystate
 {
-    bool pressed      : 1;
-    bool released     : 1;
-    bool down         : 1;
-    bool repeated     : 1;
+    bool down     : 1;
+    bool pressed  : 1;
+    bool released : 1;
+    bool repeated : 1;
 };
 
 extern int input_init( void );

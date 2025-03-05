@@ -1,6 +1,6 @@
 #include "input.h"
 #include "window.h"
-#include "../util/log.h"
+#include "assert.h"
 
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
@@ -148,6 +148,7 @@ static struct
     struct vec2     m_pos_rel;
     struct vec2     m_pos_global;
     struct vec2     m_pos_delta;
+    uint32_t        text_buffer[ VCP_MAX_STRING_LEN ];
 } g_input_state = { 0 };
 
 /*
@@ -230,62 +231,62 @@ void input_poll_events( void )
 
         switch ( event.type )
         {
-            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+        case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 
-                _window_notify( _WINDOW_NOTIFY_CLOSE, 0, 0 );
+            _window_notify( _WINDOW_NOTIFY_CLOSE, 0, 0 );
 
-                break;
+            break;
 
-            case SDL_EVENT_WINDOW_RESIZED:
+        case SDL_EVENT_WINDOW_RESIZED:
 
-                _window_notify( _WINDOW_NOTIFY_RESIZE, event.window.data1, event.window.data2 );
+            _window_notify( _WINDOW_NOTIFY_RESIZE, event.window.data1, event.window.data2 );
 
-                break;
+            break;
 
-            case SDL_EVENT_KEY_DOWN:
+        case SDL_EVENT_KEY_DOWN:
 
-                g_input_state.k_state[ keymap[ event.key.scancode ] ].pressed = true;
-                g_input_state.k_state[ keymap[ event.key.scancode ] ].down = true;
+            g_input_state.k_state[ keymap[ event.key.scancode ] ].pressed = true;
+            g_input_state.k_state[ keymap[ event.key.scancode ] ].down = true;
 
-                break;
+            break;
 
-            case SDL_EVENT_KEY_UP:
+        case SDL_EVENT_KEY_UP:
 
-                g_input_state.k_state[ keymap[ event.key.scancode ] ].down = false;
-                g_input_state.k_state[ keymap[ event.key.scancode ] ].released = true;
+            g_input_state.k_state[ keymap[ event.key.scancode ] ].down = false;
+            g_input_state.k_state[ keymap[ event.key.scancode ] ].released = true;
 
-                break;
+            break;
 
-            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-                g_input_state.m_state[ btnmap[ event.button.button ] ].pressed = true;
-                g_input_state.m_state[ btnmap[ event.button.button ] ].down = true;
+            g_input_state.m_state[ btnmap[ event.button.button ] ].pressed = true;
+            g_input_state.m_state[ btnmap[ event.button.button ] ].down = true;
 
-                break;
+            break;
 
-            case SDL_EVENT_MOUSE_BUTTON_UP:
+        case SDL_EVENT_MOUSE_BUTTON_UP:
 
-                g_input_state.m_state[ btnmap[ event.button.button ] ].down = false;
-                g_input_state.m_state[ btnmap[ event.button.button ] ].released = true;
+            g_input_state.m_state[ btnmap[ event.button.button ] ].down = false;
+            g_input_state.m_state[ btnmap[ event.button.button ] ].released = true;
 
-                break;
+            break;
 
-            case SDL_EVENT_MOUSE_WHEEL:
+        case SDL_EVENT_MOUSE_WHEEL:
 
-                g_input_state.m_wheel.x += event.wheel.x;
-                g_input_state.m_wheel.y += event.wheel.y;
+            g_input_state.m_wheel.x += event.wheel.x;
+            g_input_state.m_wheel.y += event.wheel.y;
 
-                break;
+            break;
 
-            case SDL_EVENT_MOUSE_MOTION:
+        case SDL_EVENT_MOUSE_MOTION:
 
-                g_input_state.m_pos_rel.x    = event.motion.x;
-                g_input_state.m_pos_rel.y    = event.motion.y;
-                g_input_state.m_pos_delta.x += event.motion.xrel;
-                g_input_state.m_pos_delta.y += event.motion.yrel;
-                g_input_state.m_moved = true;
+            g_input_state.m_pos_rel.x    = event.motion.x;
+            g_input_state.m_pos_rel.y    = event.motion.y;
+            g_input_state.m_pos_delta.x += event.motion.xrel;
+            g_input_state.m_pos_delta.y += event.motion.yrel;
+            g_input_state.m_moved = true;
 
-                break;
+            break;
         }
     }
 }
@@ -305,11 +306,13 @@ void input_poll_events( void )
 
 struct keystate input_keystate( int key )
 {
+    assert( ( key >= 0 ) && ( key < K_COUNT ) );
     return g_input_state.k_state[ key ];
 }
 
 struct keystate input_btnstate( int btn )
 {
+    assert( ( btn >= 0 ) && ( btn < B_COUNT ) );
     return g_input_state.m_state[ btn ];
 }
 
