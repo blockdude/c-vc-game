@@ -95,9 +95,9 @@ enum input_btn
 
 struct keystate
 {
-    bool just_pressed : 1;
-    bool released     : 1;
     bool pressed      : 1;
+    bool released     : 1;
+    bool down         : 1;
     bool repeated     : 1;
 };
 
@@ -105,6 +105,7 @@ extern int input_init( void );
 extern void input_deinit( void );
 extern void input_poll_events( void );
 extern int input_quit_event( void );
+extern int input_text( char *buffer, size_t count );
 extern struct keystate input_keystate( int key );
 extern struct keystate input_btnstate( int btn );
 extern bool input_mouse_moved( void );

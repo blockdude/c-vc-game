@@ -5,5 +5,6 @@
 #define VCP_DECLSPEC
 #define VCP_CALLCONV
 #define VCP_UNUSED_VAR( _v ) ( ( void ) ( _v ) )
+#define VCP_CLITERAL( T ) ( T )
 
 #endif

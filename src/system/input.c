@@ -197,14 +197,14 @@ void input_poll_events( void )
     // reset keys
     for ( int i = 0; i < K_COUNT; i++ )
     {
-        g_input_state.k_state[ i ].just_pressed = false;
+        g_input_state.k_state[ i ].pressed = false;
         g_input_state.k_state[ i ].released = false;
     }
 
     // reset mouse buttons
     for ( int i = 0; i < B_COUNT; i++ )
     {
-        g_input_state.m_state[ i ].just_pressed = false;
+        g_input_state.m_state[ i ].pressed = false;
         g_input_state.m_state[ i ].released = false;
     }
 
@@ -244,28 +244,28 @@ void input_poll_events( void )
 
             case SDL_EVENT_KEY_DOWN:
 
-                g_input_state.k_state[ keymap[ event.key.scancode ] ].just_pressed = true;
                 g_input_state.k_state[ keymap[ event.key.scancode ] ].pressed = true;
+                g_input_state.k_state[ keymap[ event.key.scancode ] ].down = true;
 
                 break;
 
             case SDL_EVENT_KEY_UP:
 
-                g_input_state.k_state[ keymap[ event.key.scancode ] ].pressed = false;
+                g_input_state.k_state[ keymap[ event.key.scancode ] ].down = false;
                 g_input_state.k_state[ keymap[ event.key.scancode ] ].released = true;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-                g_input_state.m_state[ btnmap[ event.button.button ] ].just_pressed = true;
                 g_input_state.m_state[ btnmap[ event.button.button ] ].pressed = true;
+                g_input_state.m_state[ btnmap[ event.button.button ] ].down = true;
 
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_UP:
 
-                g_input_state.m_state[ btnmap[ event.button.button ] ].pressed = false;
+                g_input_state.m_state[ btnmap[ event.button.button ] ].down = false;
                 g_input_state.m_state[ btnmap[ event.button.button ] ].released = true;
 
                 break;
