@@ -50,8 +50,8 @@ struct _timestep
 
 static inline void set_rate( struct _timestep *t, int rate )
 {
-    t->target_delta = rate <= 0 ? -1.0 : 1.0 / ( double ) rate;
-    t->target_rate = rate;
+    t->target_delta = rate <= 0 ? -1.0 : 1.0 / rate;
+    t->target_rate = rate <= 0 ? 0 : rate;
 }
 
 typedef struct _timestep frame_control_t;
