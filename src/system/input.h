@@ -76,7 +76,7 @@ enum input_key
     K_RMETA      = 231,
 
     K_COUNT,
-    K_LAST       = K_RSHIFT
+    K_LAST       = K_RMETA
 };
 
 enum input_btn
