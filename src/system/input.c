@@ -150,6 +150,7 @@ static struct
     struct vec2     m_pos_global;
     struct vec2     m_pos_delta;
     bool            e_quit;
+
     int             text_input_ref_count;
     int             text_buffer_count;
     char            text_buffer[ VCP_MAX_STRING_LEN ];
@@ -365,6 +366,34 @@ int input_quit_event( void )
 
 int input_text( char *buffer, size_t buffer_size )
 {
+    /*
+    * I don't know if this is a good way to do it.
+    * I would rather input_text_active be true
+    * at startup rather than be true after a call
+    * to this function.
+    * 
+    * When this is called for the first time, the
+    * buffer will always be empty and this will
+    * return zero. So text input can only be
+    * retrieved after this has been called once
+    * before input_poll_events then after
+    * input_poll_events. It has no relation to
+    * keystates. If a keystate is pressed or down
+    * there is no garentee that this will fill
+    * the buffer with that keystate.
+    * 
+    * This feels hacky but I guess it is fine for
+    * now. Actually now that im thinking about it
+    * it may be good that it does not capture
+    * text input in the frame that this is
+    * called.
+    * 
+    * Note: consider putting input_text_start and
+    * input_text_end in the public api so it
+    * would basically act as a wrapper of the sdl
+    * functions.
+    */
+
     g_input_state.text_input_ref_count += 1;
     if ( !input_text_active() )
     {
