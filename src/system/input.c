@@ -149,8 +149,43 @@ static struct
     struct vec2     m_pos_rel;
     struct vec2     m_pos_global;
     struct vec2     m_pos_delta;
-    uint32_t        text_buffer[ VCP_MAX_STRING_LEN ];
+    bool            e_quit;
+    int             text_input_ref_count;
+    int             text_buffer_count;
+    char            text_buffer[ VCP_MAX_STRING_LEN ];
 } g_input_state = { 0 };
+
+
+
+/*
+ * =============================
+ * -----------------------------
+ * INTERNAL UTILITY
+ * -----------------------------
+ */
+
+#define MIN( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
+
+static inline bool input_text_active( void )
+{
+    return SDL_TextInputActive( ( SDL_Window * ) window_handle() );
+}
+
+static inline void input_text_start( void )
+{
+    SDL_StartTextInput( ( SDL_Window * ) window_handle() );
+}
+
+static inline void input_text_end( void )
+{
+    SDL_StopTextInput( ( SDL_Window * ) window_handle() );
+}
+
+/*
+ * =============================
+ */
+
+
 
 /*
  * =============================
@@ -210,6 +245,16 @@ void input_poll_events( void )
         g_input_state.m_state[ i ].released = false;
     }
 
+    // reset text buffer
+    memset( g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN );
+    if ( g_input_state.text_input_ref_count <= 0 && input_text_active() )
+    {
+        input_text_end();
+    }
+
+    // reset text input ref count
+    g_input_state.text_input_ref_count = 0;
+
     // reset mouse events
     g_input_state.m_moved       = false;
     g_input_state.m_wheel.x     = 0;
@@ -224,6 +269,7 @@ void input_poll_events( void )
         if ( event.type == SDL_EVENT_QUIT )
         {
             _window_notify( _WINDOW_NOTIFY_CLOSE, 0, 0 );
+            g_input_state.e_quit = true;
             return;
         }
 
@@ -288,6 +334,13 @@ void input_poll_events( void )
             g_input_state.m_moved = true;
 
             break;
+
+        case SDL_EVENT_TEXT_INPUT:
+
+            g_input_state.text_buffer_count = snprintf( g_input_state.text_buffer, VCP_MAX_STRING_LEN, "%s", event.text.text );
+            g_input_state.text_buffer_count = MIN( g_input_state.text_buffer_count, VCP_MAX_STRING_LEN );
+
+            break;
         }
     }
 }
@@ -304,6 +357,25 @@ void input_poll_events( void )
  * GET STATES
  * -----------------------------
  */
+
+int input_quit_event( void )
+{
+    return g_input_state.e_quit;
+}
+
+int input_text( char *buffer, size_t buffer_size )
+{
+    g_input_state.text_input_ref_count += 1;
+    if ( !input_text_active() )
+    {
+        input_text_start();
+        return 0;
+    }
+
+    int len = ( int ) strnlen( g_input_state.text_buffer, VCP_MAX_STRING_LEN );
+    int result = snprintf( buffer, buffer_size, "%.*s", len, g_input_state.text_buffer );
+    return MIN( result, buffer_size );
+}
 
 struct keystate input_keystate( int key )
 {

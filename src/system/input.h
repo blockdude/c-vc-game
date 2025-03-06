@@ -105,7 +105,7 @@ extern int input_init( void );
 extern void input_deinit( void );
 extern void input_poll_events( void );
 extern int input_quit_event( void );
-extern int input_text( char *buffer, size_t count );
+extern int input_text( char *buffer, size_t buffer_size );
 extern struct keystate input_keystate( int key );
 extern struct keystate input_btnstate( int btn );
 extern bool input_mouse_moved( void );
