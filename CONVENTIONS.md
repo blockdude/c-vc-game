@@ -65,7 +65,7 @@ switch ( value )
 ```
  - All conditions are always between parenthesis, but not boolean values:
 ```c
-if ( ( value > 1 ) && ( value < 50 ) && ( value_active ) )
+if ( ( value > 1 ) && ( value < 50 ) && value_active )
 {
 
 }
