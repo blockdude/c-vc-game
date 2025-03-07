@@ -17,7 +17,10 @@
 #error "define TIMESTEP_TIME_WAIT"
 #endif
 
-#define TIMESTEP_CAPTURE_COUNT 256
+#ifndef TIMESTEP_CAPTURE_COUNT
+#define TIMESTEP_CAPTURE_COUNT 512
+#endif
+
 #define _timestep_type \
 {                                                   \
     int   	        rate;                           \
