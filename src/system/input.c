@@ -172,14 +172,14 @@ static inline bool input_text_active( void )
     return SDL_TextInputActive( ( SDL_Window * ) window_handle() );
 }
 
-static inline void input_text_start( void )
+static inline bool input_text_start( void )
 {
-    SDL_StartTextInput( ( SDL_Window * ) window_handle() );
+    return SDL_StartTextInput( ( SDL_Window * ) window_handle() );
 }
 
-static inline void input_text_end( void )
+static inline bool input_text_end( void )
 {
-    SDL_StopTextInput( ( SDL_Window * ) window_handle() );
+    return SDL_StopTextInput( ( SDL_Window * ) window_handle() );
 }
 
 /*
@@ -394,15 +394,20 @@ int input_text( char *buffer, size_t buffer_size )
     * functions.
     */
 
-    g_input_state.text_input_ref_count += 1;
-    if ( !input_text_active() )
+    if ( ( buffer == NULL ) || ( buffer_size <= 0 ) )
     {
-        input_text_start();
         return 0;
     }
 
-    int len = ( int ) strnlen( g_input_state.text_buffer, VCP_MAX_STRING_LEN );
-    int result = snprintf( buffer, buffer_size, "%.*s", len, g_input_state.text_buffer );
+    g_input_state.text_input_ref_count += 1;
+
+    if ( !input_text_active() )
+    {
+        return input_text_start() ? 0 : -1;
+    }
+
+    int length = ( int ) strnlen( g_input_state.text_buffer, VCP_MAX_STRING_LEN );
+    int result = snprintf( buffer, buffer_size, "%.*s", length, g_input_state.text_buffer );
     return MIN( result, buffer_size );
 }
 
