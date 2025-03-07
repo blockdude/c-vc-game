@@ -248,6 +248,7 @@ void input_poll_events( void )
 
     // reset text buffer
     memset( g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN );
+    g_input_state.text_buffer_count = 0;
     if ( g_input_state.text_input_ref_count <= 0 && input_text_active() )
     {
         input_text_end();
@@ -338,8 +339,8 @@ void input_poll_events( void )
 
         case SDL_EVENT_TEXT_INPUT:
 
-            g_input_state.text_buffer_count = snprintf( g_input_state.text_buffer, VCP_MAX_STRING_LEN, "%s", event.text.text );
-            g_input_state.text_buffer_count = MIN( g_input_state.text_buffer_count, VCP_MAX_STRING_LEN );
+            g_input_state.text_buffer_count += snprintf( &g_input_state.text_buffer[ g_input_state.text_buffer_count ], VCP_MAX_STRING_LEN, "%s", event.text.text);
+            g_input_state.text_buffer_count = MIN( g_input_state.text_buffer_count, VCP_MAX_STRING_LEN - 1 );
 
             break;
         }
@@ -406,8 +407,7 @@ int input_text( char *buffer, size_t buffer_size )
         return input_text_start() ? 0 : -1;
     }
 
-    int length = ( int ) strnlen( g_input_state.text_buffer, VCP_MAX_STRING_LEN );
-    int result = snprintf( buffer, buffer_size, "%.*s", length, g_input_state.text_buffer );
+    int result = snprintf( buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer );
     return MIN( result, buffer_size );
 }
 
