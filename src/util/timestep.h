@@ -50,7 +50,6 @@
                                                     \
     struct                                          \
     {                                               \
-        bool initalized;                            \
         bool looping;                               \
     } _state;                                       \
 }
@@ -202,12 +201,6 @@ static inline bool timestep_tick( struct timestep *timestep )
     * for ( initalization; condition; update );
     */
 
-    if ( timestep->_state.initalized == false )
-    {
-        timestep->_state.looping = false;
-        timestep->_state.initalized = true;
-    }
-
     /*
     * initalization
     */
@@ -263,12 +256,6 @@ static inline bool timestep_fixed_tick( struct timestep_fixed *timestep, const d
     * this function should mimic a for loop.
     * for ( initalization; condition; update );
     */
-
-    if ( timestep->_state.initalized == false )
-    {
-        timestep->_state.looping = false;
-        timestep->_state.initalized = true;
-    }
 
     /*
     * initalization
