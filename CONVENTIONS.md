@@ -77,7 +77,7 @@ void bar( const int a )
 }
 
 // The same will apply to pointers for example in this
-// implementation we know now that in won't ever be reassigned
+// implementation we know now that "in" won't ever be reassigned
 // throughout the function.
 void foo( const char *const in, char *const out )
 {
