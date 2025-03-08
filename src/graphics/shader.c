@@ -29,7 +29,7 @@ static inline char *shader_get_log(
 	return logtext;
 }
 
-static const char *shader_load_text( const char *const path, size_t *const out_len )
+static char *shader_load_text( const char *const path, size_t *const out_len )
 {
 	FILE *f = NULL;
 	char *text = NULL;
@@ -85,7 +85,7 @@ static inline void shader_log_status(
 		void ( *const getlog )( GLuint, GLsizei, GLsizei *, GLchar * ),
 		void ( *const getiv )( GLuint, GLenum, GLint * ) )
 {
-	const char *const logtext = shader_get_log( handle, getlog, getiv );
+	char *const logtext = shader_get_log( handle, getlog, getiv );
 
 	char path[ VCP_MAX_STRING_LEN ] = { 0 };
 	if      ( path_a ) snprintf( path, VCP_MAX_STRING_LEN, " [ %s ]", path_a );
@@ -185,8 +185,8 @@ struct shader shader_loadf( const char *const vspath, const char *const fspath )
 	struct shader result = { 0 };
 	size_t vslen = 0;
 	size_t fslen = 0;
-	const char *const vstext = shader_load_text( vspath, &vslen );
-	const char *const fstext = shader_load_text( fspath, &fslen );
+	char *const vstext = shader_load_text( vspath, &vslen );
+	char *const fstext = shader_load_text( fspath, &fslen );
 
 	if ( !vstext || !fstext )
 	{

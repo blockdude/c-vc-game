@@ -408,7 +408,7 @@ int input_text( char *const buffer, const size_t buffer_size )
     }
 
     const int result = snprintf( buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer );
-    return MIN( result, buffer_size );
+    return ( int ) MIN( result, buffer_size );
 }
 
 struct keystate input_keystate( const int key )

@@ -130,7 +130,7 @@ const char* log_level_string( const int level )
 }
 
 
-void log_set_lock( const log_lock_fn_t fn, const void *const udata )
+void log_set_lock( const log_lock_fn_t fn, void *const udata )
 {
     L.lock = fn;
     L.udata = udata;
@@ -149,7 +149,7 @@ void log_set_quiet( const bool enable )
 }
 
 
-int log_add_callback( const log_log_fn_t fn, const void *const udata, const int level )
+int log_add_callback( const log_log_fn_t fn, void *const udata, const int level )
 {
     for ( int i = 0; i < MAX_CALLBACKS; i++ )
     {
@@ -163,13 +163,13 @@ int log_add_callback( const log_log_fn_t fn, const void *const udata, const int 
 }
 
 
-int log_add_fp( const FILE *const fp, const int level )
+int log_add_fp( FILE *const fp, const int level )
 {
     return log_add_callback( file_callback, fp, level );
 }
 
 
-static void init_event( struct log_event *const ev, const void *const udata )
+static void init_event( struct log_event *const ev, void *const udata )
 {
     if ( !ev->time )
     {
