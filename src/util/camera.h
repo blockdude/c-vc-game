@@ -26,7 +26,6 @@ struct camera
 };
 
 extern void camera_init( struct camera *camera, int type );
-extern void camera_update( struct camera *camera );
 extern void camera_move( struct camera *camera, struct vec3 direction, float dist );
 extern void camera_forward( struct camera *camera, float dist );
 extern void camera_up( struct camera *camera, float dist );
@@ -34,9 +33,7 @@ extern void camera_right( struct camera *camera, float dist );
 extern void camera_pitch( struct camera *camera, float angle );
 extern void camera_yaw( struct camera *camera, float angle );
 extern void camera_roll( struct camera *camera, float angle );
-
-// calculate matricies
-extern struct mat4 camera_proj( struct camera *camera, float aspect, float near, float far );
-extern struct mat4 camera_view( struct camera *camera );
+extern struct mat4 camera_proj( const struct camera *camera, float aspect, float near, float far );
+extern struct mat4 camera_view( const struct camera *camera );
 
 #endif

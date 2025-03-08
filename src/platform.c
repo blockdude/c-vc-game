@@ -6,7 +6,7 @@ struct
     uint32_t flags;
 } g_platform_state = { 0 };
 
-int platform_init( uint32_t flags )
+int platform_init( const uint32_t flags )
 {
     g_platform_state.flags = flags;
 

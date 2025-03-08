@@ -4,11 +4,12 @@ Date Created: 2-17-22
 VCPlatform. A small wrapper/framework library built around SDL used for personal app and game development.
 
 ## TODO
-* Finish implimenting util data structures ( not important )
+* Finish implementing util data structures ( not important )
     - state machine
     - linkedlist
     - quadtree
     - map
+* Redo dynamic array list to be less macro heavy
 * Cleanup kdtree to be more inlined with how I structure code now
     - For kdtree I mainly want to just update it to make it clearer
       and finish implimenting the rest of the funcitonality

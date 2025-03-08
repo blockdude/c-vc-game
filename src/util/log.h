@@ -16,7 +16,7 @@
 
 #define LOG_VERSION "0.1.0"
 
-typedef struct
+struct log_event
 {
     va_list ap;
     const char *fmt;
@@ -25,10 +25,10 @@ typedef struct
     void *udata;
     int line;
     int level;
-} log_event;
+};
 
-typedef void ( *log_logfn )( log_event *ev );
-typedef void ( *log_lockfn )( bool lock, void *udata );
+typedef void ( *log_log_fn_t )( struct log_event *ev );
+typedef void ( *log_lock_fn_t )( bool lock, void *udata );
 
 enum log_level
 {
@@ -48,11 +48,11 @@ enum log_level
 #define log_fatal(...) log_log( LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__ )
 
 extern const char* log_level_string( int level );
-extern void log_set_lock( log_lockfn fn, void *udata );
+extern void log_set_lock( log_lock_fn_t fn, const void *udata );
 extern void log_set_level( int level );
 extern void log_set_quiet( bool enable );
-extern int log_add_callback( log_logfn fn, void *udata, int level );
-extern int log_add_fp( FILE *fp, int level );
+extern int log_add_callback( log_log_fn_t fn, const void *udata, int level );
+extern int log_add_fp( const FILE *fp, int level );
 extern void log_log( int level, const char *file, int line, const char *fmt, ... );
 
 #endif

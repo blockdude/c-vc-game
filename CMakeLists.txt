@@ -25,7 +25,6 @@ set(platform_headers
 	"src/system/allocator.h"
 	"src/util/timestep.h"
 	"src/util/camera.h"
-	"src/util/kdtree.h"
 	"src/util/list.h"
 	"src/util/log.h"
 	"src/util/types.h"
@@ -45,7 +44,7 @@ set(platform_sources
 	"src/system/time.c"
 	"src/system/window.c"
 	"src/system/allocator.c"
-	"src/util/kdtree.c"
+	"src/util/camera.c"
 	"src/util/log.c")
 
 set(SDL_SHARED OFF)

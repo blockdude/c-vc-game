@@ -27,7 +27,6 @@
 #include "util/bitflag.h"
 #include "util/timestep.h"
 #include "util/camera.h"
-#include "util/kdtree.h"
 #include "util/list.h"
 #include "util/log.h"
 #include "util/types.h"

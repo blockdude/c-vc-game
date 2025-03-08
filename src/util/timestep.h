@@ -58,7 +58,7 @@ struct timestep _timestep_type;
 struct timestep_fixed _timestep_type;
 
 #define _timestep_decl_set_rate_func( T, _name ) \
-static inline void _name##_set_rate( T *ts, const int rate ) { ts->target_delta = rate <= 0 ? 0.0 : 1.0 / rate; ts->target_rate = rate <= 0 ? 0 : rate; }
+static inline void _name##_set_rate( T *const ts, const int rate ) { ts->target_delta = rate <= 0 ? 0.0 : 1.0 / rate; ts->target_rate = rate <= 0 ? 0 : rate; }
 
 _timestep_decl_set_rate_func( struct timestep, timestep );
 _timestep_decl_set_rate_func( struct timestep_fixed, timestep_fixed );
@@ -96,11 +96,11 @@ static inline int _timestep_compute_rate( const int64_t n, const double d )
     return ( ( n < 0 ) == ( d < 0 ) ) ? ( int ) ( ( n + d / 2 ) / d ) : ( int ) ( ( n - d / 2 ) / d );
 }
 
-static inline void _timestep_fixed_prefix( struct timestep_fixed *timestep, const double delta_time )
+static inline void _timestep_fixed_prefix( struct timestep_fixed *const timestep, const double delta_time )
 {
     timestep->delta += delta_time;
 
-    int index = ( timestep->_snapshot.index + 1 ) % TIMESTEP_CAPTURE_COUNT;
+    const int index = ( timestep->_snapshot.index + 1 ) % TIMESTEP_CAPTURE_COUNT;
     timestep->_snapshot.index = index;
 
     timestep->_snapshot.elapsed -= timestep->_snapshot.record[ index ].delta;
@@ -117,31 +117,31 @@ static inline void _timestep_fixed_prefix( struct timestep_fixed *timestep, cons
     timestep->avg = _timestep_compute_rate( timestep->count, timestep->elapsed );
 }
 
-static inline bool _timestep_fixed_can_proc( struct timestep_fixed *timestep )
+static inline bool _timestep_fixed_can_proc( struct timestep_fixed *const timestep )
 {
     return ( ( timestep->target_delta > 0.0 ) && ( timestep->target_delta <= timestep->delta ) );
 }
 
-static inline void _timestep_fixed_postfix( struct timestep_fixed *timestep )
+static inline void _timestep_fixed_postfix( struct timestep_fixed *const timestep )
 {
     timestep->count += 1;
     timestep->delta -= timestep->target_delta;
     timestep->elapsed += timestep->target_delta;
 }
 
-static inline bool _timestep_can_proc( struct timestep *timestep )
+static inline bool _timestep_can_proc( struct timestep *const timestep )
 {
     VCP_UNUSED_VAR( timestep );
     return true;
 }
 
-static inline void _timestep_prefix( struct timestep *timestep )
+static inline void _timestep_prefix( struct timestep *const timestep )
 {
     timestep->current = TIMESTEP_TIME_NOW();
     timestep->previous = timestep->current;
 }
 
-static inline void _timestep_postfix( struct timestep *timestep )
+static inline void _timestep_postfix( struct timestep *const timestep )
 {
     timestep->current = TIMESTEP_TIME_NOW();
     timestep->delta = timestep->current - timestep->previous;
@@ -160,7 +160,7 @@ static inline void _timestep_postfix( struct timestep *timestep )
     timestep->count += 1;
 
     // calculate the average fps over TIMESTEP_CAPTURE_COUNT frames
-    int index = ( timestep->_snapshot.index + 1 ) % TIMESTEP_CAPTURE_COUNT;
+    const int index = ( timestep->_snapshot.index + 1 ) % TIMESTEP_CAPTURE_COUNT;
     timestep->_snapshot.index = index;
 
     timestep->_snapshot.elapsed -= timestep->_snapshot.record[ index ].delta;
@@ -194,7 +194,7 @@ somefunction();
 timestep_tick( &timestep );
 printf( "somefunction() took %f seconds to run", timestep.delta );
 */
-static inline bool timestep_tick( struct timestep *timestep )
+static inline bool timestep_tick( struct timestep *const timestep )
 {
     /*
     * this function should mimic a for loop.
@@ -250,7 +250,7 @@ while ( timestep_tick( &timestep ) )
     }
 }
 */
-static inline bool timestep_fixed_tick( struct timestep_fixed *timestep, const double delta_time )
+static inline bool timestep_fixed_tick( struct timestep_fixed *const timestep, const double delta_time )
 {
     /*
     * this function should mimic a for loop.
