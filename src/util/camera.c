@@ -15,11 +15,9 @@ void camera_init( struct camera *const self, const int type )
 	self->zoom   = 1.0f;
 }
 
-void camera_move( struct camera *const self, struct vec3 direction, const float dist )
+void camera_move( struct camera *const self, const struct vec3 direction, const float dist )
 {
-	direction = vec3_normalize( direction );
-	const struct vec3 move = vec3_scale( direction, dist );
-
+	const struct vec3 move = vec3_scale( vec3_normalize( direction ), dist );
 	self->eye = vec3_add( self->eye, move );
 	self->target = vec3_add( self->target, move );
 }
