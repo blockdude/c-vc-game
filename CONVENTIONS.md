@@ -30,6 +30,61 @@ Other conventions:
  - Avoid typedef-ing structures and enums
  - Four spaces are used, instead of TABS
  - Trailing spaces are always avoided
+ - Function prototypes and implementations with no parameters must specify void in the parameter
+```c
+extern void foo( void );
+void foo( void )
+{
+    // do something
+}
+```
+ - Function prototypes always explicitly state extern
+```c
+extern void foo( void );
+extern void bar( int b );
+
+void foo( void )
+{
+    // do something
+}
+
+void bar( const int b )
+{
+    // do something else
+}
+```
+ - Function prototypes should specify pointer parameters as const if the function does not modify data
+```c
+extern void foo( const char *in, char *out ); // "in" will not be modified
+extern void bar( char *data ); // "data" will be modified
+```
+ - Function implementations should specify all their parameters as const
+```c
+// We don't specify "const" in the prototype because
+// it is an implementation detail that is useless for
+// the caller.
+extern void bar( int a );
+extern void foo( const char *in, char *out );
+
+// Here we specify "const" because in the
+// implementation, we will not modify "a" anywhere in
+// the function. Note: this is valid C as both the
+// prototype and the implementation still maintain
+// the same signature.
+void bar( const int a )
+{
+    // the value of a will not change through out this function
+}
+
+// The same will apply to pointers for example in this
+// implementation we know now that in won't ever be reassigned
+// throughout the function.
+void foo( const char *const in, char *const out )
+{
+    // "in" will not be modified and the "in" pointer will not point to different memory
+    // the "out" pointer will never point to different memory
+}
+```
  - All statements within parenthesis or brakets are padded **by a space**
 ```c
 char buffer[ 256 ] = { 0 };
@@ -72,7 +127,7 @@ if ( ( value > 1 ) && ( value < 50 ) && value_active )
 ```
  - Braces and curly brackets always open-close in aligned mode:
 ```c
-void some_function()
+void some_function( void )
 {
    // TODO: Do something here!
 }
