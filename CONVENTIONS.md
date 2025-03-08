@@ -30,6 +30,12 @@ Other conventions:
  - Avoid typedef-ing structures and enums
  - Four spaces are used, instead of TABS
  - Trailing spaces are always avoided
+ - Casts should be seperated with a space
+```c
+int foo = 10;
+i32 val = ( i32 ) foo;
+f32 bar = ( f32 ) ( foo / val );
+```
  - Function prototypes and implementations with no parameters must specify void in the parameter
 ```c
 extern void foo( void );

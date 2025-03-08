@@ -3,9 +3,9 @@
 
 #include "../util/types.h"
 
-static inline uint32_t rgba8888_to_u32( const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a )
+static inline u32 rgba8888_to_uint32( const u8 r, const u8 g, const u8 b, const u8 a )
 {
-    uint32_t result = 0;
+    u32 result = 0;
     result = ( result | r ) << 24;
     result = ( result | g ) << 16;
     result = ( result | b ) << 8;
@@ -13,9 +13,9 @@ static inline uint32_t rgba8888_to_u32( const uint8_t r, const uint8_t g, const 
     return result;
 }
 
-static inline struct color_f32 color_f32_mix( const struct color_f32 a, const struct color_f32 b, const float ratio )
+static inline struct colorf colorf_mix( const struct colorf a, const struct colorf b, const float ratio )
 {
-    struct color_f32 result = { 0 };
+    struct colorf result = { 0 };
     result.r = a.r * ratio + b.r * ( 1.0f - ratio );
     result.g = a.g * ratio + b.g * ( 1.0f - ratio );
     result.b = a.b * ratio + b.b * ( 1.0f - ratio );
@@ -23,9 +23,9 @@ static inline struct color_f32 color_f32_mix( const struct color_f32 a, const st
     return result;
 }
 
-static inline struct color_f32 color_f32_blend( const struct color_f32 a, const struct color_f32 b )
+static inline struct colorf colorf_blend( const struct colorf a, const struct colorf b )
 {
-    struct color_f32 result = { 0 };
+    struct colorf result = { 0 };
     result.r = a.r * b.r;
     result.g = a.g * b.g;
     result.b = a.b * b.b;

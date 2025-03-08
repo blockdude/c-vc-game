@@ -114,8 +114,8 @@
 #define _QUAT_TYPE struct quat_i32
 #define _MAT4_TYPE struct mat4_i32
 #define _FMAT4_TYPE struct fmat4_i32
-#define _BASE_TYPE int32_t
-#define _FLOAT_TYPE float
+#define _BASE_TYPE i32
+#define _FLOAT_TYPE f32
 
 #define _VEC2_PREFIX vec2_i32
 #define _VEC3_PREFIX vec3_i32
@@ -154,8 +154,8 @@
 #define _QUAT_TYPE struct quat_i64
 #define _MAT4_TYPE struct mat4_i64
 #define _FMAT4_TYPE struct fmat4_i64
-#define _BASE_TYPE int64_t
-#define _FLOAT_TYPE double
+#define _BASE_TYPE i64
+#define _FLOAT_TYPE f64
 
 #define _VEC2_PREFIX vec2_i64
 #define _VEC3_PREFIX vec3_i64
@@ -236,8 +236,8 @@
 #define _QUAT_TYPE struct quat_f32
 #define _MAT4_TYPE struct mat4_f32
 #define _FMAT4_TYPE struct fmat4_f32
-#define _BASE_TYPE float
-#define _FLOAT_TYPE float
+#define _BASE_TYPE f32
+#define _FLOAT_TYPE f32
 
 #define _VEC2_PREFIX vec2_f32
 #define _VEC3_PREFIX vec3_f32
@@ -277,8 +277,8 @@
 #define _QUAT_TYPE struct quat_f64
 #define _MAT4_TYPE struct mat4_f64
 #define _FMAT4_TYPE struct fmat4_f64
-#define _BASE_TYPE double
-#define _FLOAT_TYPE double
+#define _BASE_TYPE f64
+#define _FLOAT_TYPE f64
 
 #define _VEC2_PREFIX vec2_f64
 #define _VEC3_PREFIX vec3_f64
@@ -349,46 +349,46 @@
 #ifndef _LINEAR_ALGEBRA_INTERNAL
 #define _LINEAR_ALGEBRA_INTERNAL
 
-static inline int32_t _la_i32_abs( int32_t a )
+static inline i32 _la_i32_abs( i32 a )
 {
     return a < 0 ? -a : a;
 }
 
-static inline int64_t _la_i64_abs( int64_t a )
+static inline i64 _la_i64_abs( i64 a )
 {
     return a < 0 ? -a : a;
 }
 
-static inline int32_t _la_i32_min( int32_t a, int32_t b )
+static inline i32 _la_i32_min( i32 a, i32 b )
 {
     return a < b ? a : b;
 }
 
-static inline int64_t _la_i64_min( int64_t a, int64_t b )
+static inline i64 _la_i64_min( i64 a, i64 b )
 {
     return a < b ? a : b;
 }
 
-static inline int32_t _la_i32_max( int32_t a, int32_t b )
+static inline i32 _la_i32_max( i32 a, i32 b )
 {
     return a > b ? a : b;
 }
 
-static inline int64_t _la_i64_max( int64_t a, int64_t b )
+static inline i64 _la_i64_max( i64 a, i64 b )
 {
     return a > b ? a : b;
 }
 
-static inline int32_t _la_i32_sqrt( int32_t a )
+static inline i32 _la_i32_sqrt( i32 a )
 {
     assert( a >= 0 );
-    return ( int32_t ) sqrtf( ( float ) a );
+    return ( i32 ) sqrtf( ( float ) a );
 }
 
-static inline int64_t _la_i64_sqrt( int64_t a )
+static inline i64 _la_i64_sqrt( i64 a )
 {
     assert( a >= 0 );
-    return ( int64_t ) sqrt( ( double ) a );
+    return ( i64 ) sqrt( ( double ) a );
 }
 
 static inline int _la_f32_equals( float a, float b, float epsilon )
