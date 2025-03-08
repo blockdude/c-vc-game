@@ -247,13 +247,13 @@ void *window_handle( void )
  * -----------------------------
  */
 
-void window_set_title( const char *title )
+void window_set_title( const char *const title )
 {
     SDL_SetWindowTitle( g_win_ctx.handle, title );
     snprintf( g_win_state.title, VCP_MAX_STRING_LEN, "%s", title );
 }
 
-void window_set_size( int w, int h )
+void window_set_size( const int w, const int h )
 {
     SDL_SetWindowSize( g_win_ctx.handle, w, h );
     g_win_state.width = w;
@@ -265,7 +265,7 @@ void window_set_size( int w, int h )
 #endif
 }
 
-void window_set_flags( uint32_t flags, bool state )
+void window_set_flags( const uint32_t flags, const bool state )
 {
     g_win_state.flags = state ?
         g_win_state.flags | flags :
@@ -298,22 +298,22 @@ void window_set_flags( uint32_t flags, bool state )
     }
 }
 
-void window_toggle_flags( uint32_t flags )
+void window_toggle_flags( const uint32_t flags )
 {
-    uint32_t z = window_flags();
-    uint32_t x = ~z & flags;
-    uint32_t y =  z & flags;
+    const uint32_t z = window_flags();
+    const uint32_t x = ~z & flags;
+    const uint32_t y =  z & flags;
 
     window_set_flags( x, true );
     window_set_flags( y, false );
 }
 
-void window_enable_flags( uint32_t flags )
+void window_enable_flags( const uint32_t flags )
 {
     window_set_flags( flags, true );
 }
 
-void window_disable_flags( uint32_t flags )
+void window_disable_flags( const uint32_t flags )
 {
     window_set_flags( flags, false );
 }
@@ -331,7 +331,7 @@ void window_disable_flags( uint32_t flags )
  * -----------------------------
  */
 
-void _window_notify( int type, int w, int h )
+void _window_notify( const int type, const int w, const int h )
 {
     if ( type == _WINDOW_NOTIFY_RESIZE )
     {

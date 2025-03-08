@@ -365,7 +365,7 @@ int input_quit_event( void )
     return g_input_state.e_quit;
 }
 
-int input_text( char *buffer, size_t buffer_size )
+int input_text( char *const buffer, const size_t buffer_size )
 {
     /*
     * I don't know if this is a good way to do it.
@@ -407,17 +407,17 @@ int input_text( char *buffer, size_t buffer_size )
         return input_text_start() ? 0 : -1;
     }
 
-    int result = snprintf( buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer );
+    const int result = snprintf( buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer );
     return MIN( result, buffer_size );
 }
 
-struct keystate input_keystate( int key )
+struct keystate input_keystate( const int key )
 {
     assert( ( key >= 0 ) && ( key < K_COUNT ) );
     return g_input_state.k_state[ key ];
 }
 
-struct keystate input_btnstate( int btn )
+struct keystate input_btnstate( const int btn )
 {
     assert( ( btn >= 0 ) && ( btn < B_COUNT ) );
     return g_input_state.m_state[ btn ];

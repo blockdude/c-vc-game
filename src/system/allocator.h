@@ -17,7 +17,7 @@ struct allocator
 };
 
 extern void allocator_restore_original( void );
-extern int allocator_set( struct allocator allocator );
+extern int allocator_set_global( struct allocator allocator );
 extern int allocator_set_shallow( struct allocator allocator );
 extern struct allocator allocator_get( void );
 extern void *allocator_malloc( size_t size );

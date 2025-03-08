@@ -19,7 +19,7 @@ void allocator_restore_original( void )
     SDL_SetMemoryFunctions( sdl_malloc, sdl_calloc, sdl_realloc, sdl_free );
 }
 
-int allocator_set( struct allocator allocator )
+int allocator_set_global( const struct allocator allocator )
 {
     if ( allocator.malloc == NULL )
         return -1;
@@ -38,7 +38,7 @@ int allocator_set( struct allocator allocator )
     return 0;
 }
 
-int allocator_set_shallow( struct allocator allocator )
+int allocator_set_shallow( const struct allocator allocator )
 {
     if ( allocator.malloc == NULL )
         return -1;
@@ -61,22 +61,22 @@ struct allocator allocator_get( void )
     return g_allocator;
 }
 
-void *allocator_malloc( size_t size )
+void *allocator_malloc( const size_t size )
 {
     return g_allocator.malloc( size );
 }
 
-void *allocator_calloc( size_t count, size_t size )
+void *allocator_calloc( const size_t count, const size_t size )
 {
     return g_allocator.calloc( count, size );
 }
 
-void *allocator_realloc( void *mem, size_t size )
+void *allocator_realloc( void *const mem, const size_t size )
 {
     return g_allocator.realloc( mem, size );
 }
 
-void allocator_dealloc( void *mem )
+void allocator_dealloc( void *const mem )
 {
     g_allocator.dealloc( mem );
 }
