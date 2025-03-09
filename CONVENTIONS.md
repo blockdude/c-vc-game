@@ -30,13 +30,17 @@ Other conventions:
  - Avoid typedef-ing structures and enums
  - Four spaces are used, instead of TABS
  - Trailing spaces are always avoided
- - Casts should be seperated with a space
+ - Type modifiers, "signed" and "unsigned", always go before "short" and "long" in a declaration
+ - Type modifiers always go before the type
+ - Type qualifiers always go before the type and/or type modifiers, obviously excluding type qualifiers for pointers which must go on the right of the pointer
+ - Storage class specifiers are always specified before any type qualifiers, type modifiers, and/or type
+ - Casts are seperated with a space
 ```c
 int foo = 10;
 i32 val = ( i32 ) foo;
 f32 bar = ( f32 ) ( foo / val );
 ```
- - Function prototypes and implementations with no parameters must specify void in the parameter
+ - Function prototypes and implementations with no parameters must put "void" as the parameter
 ```c
 extern void foo( void );
 void foo( void )
@@ -46,9 +50,11 @@ void foo( void )
 ```
  - Function prototypes always explicitly state extern
 ```c
+// header.h
 extern void foo( void );
 extern void bar( int b );
 
+// source.c
 void foo( void )
 {
     // do something
