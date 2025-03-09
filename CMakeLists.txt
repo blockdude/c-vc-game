@@ -28,7 +28,7 @@ set(platform_headers
 	"src/util/list.h"
 	"src/util/log.h"
 	"src/util/types.h"
-	"src/util/util.h"
+	"src/util/tcast.h"
 	"src/common.h"
 	"src/version.h"
 	"src/platform.h")

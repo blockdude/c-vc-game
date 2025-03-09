@@ -30,6 +30,7 @@
 #include "util/list.h"
 #include "util/log.h"
 #include "util/types.h"
+#include "util/tcast.h"
 #include "common.h"
 
 enum platform_init_flags
