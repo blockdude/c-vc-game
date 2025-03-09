@@ -120,10 +120,10 @@ case 1:
     bar();
     break;
 case 2:
-{
-    int a = 0;
-    break;
-}
+    {
+        int a = 0;
+        break;
+    }
 default:
     break;
 }
@@ -142,9 +142,9 @@ for ( int i = 0; i < NUM_VALUES; i++ ) printf( "%i", i );
 switch ( value )
 {
 case 0:
-{
+    {
 
-} break;
+    } break;
 case 2: break;
 default: break;
 }
