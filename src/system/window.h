@@ -23,15 +23,15 @@ extern int window_width( void );
 extern int window_height( void );
 extern float window_aspect( void );
 extern const char *window_title( void );
-extern uint32_t window_flags( void );
-extern uint32_t window_id( void );
+extern u32 window_flags( void );
+extern u32 window_id( void );
 extern void *window_handle( void );
 extern void window_set_size( int w, int h );
 extern void window_set_title( const char *title );
-extern void window_set_flags( uint32_t flags, bool state );
-extern void window_toggle_flags( uint32_t flags );
-extern void window_enable_flags( uint32_t flags );
-extern void window_disable_flags( uint32_t flags );
+extern void window_set_flags( u32 flags, bool state );
+extern void window_toggle_flags( u32 flags );
+extern void window_enable_flags( u32 flags );
+extern void window_disable_flags( u32 flags );
 
 // INTERNAL USE
 // used for input.c to notify window on certain events

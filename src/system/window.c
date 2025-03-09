@@ -7,12 +7,12 @@
 static struct
 {
     bool initialized;
-    uint32_t flags;
+    u32 flags;
     char title[ VCP_MAX_STRING_LEN ];
     float aspect;
     int width;
     int height;
-    uint32_t id;
+    u32 id;
 
     bool keep_open;
 } g_win_state = { .id = 0, .title = "Application", .width = 700, .height = 700, .aspect = 1.0f };
@@ -219,12 +219,12 @@ const char *window_title( void )
     return g_win_state.title;
 }
 
-uint32_t window_flags( void )
+u32 window_flags( void )
 {
     return g_win_state.flags;
 }
 
-uint32_t window_id( void )
+u32 window_id( void )
 {
     return g_win_state.id;
 }
@@ -265,7 +265,7 @@ void window_set_size( const int w, const int h )
 #endif
 }
 
-void window_set_flags( const uint32_t flags, const bool state )
+void window_set_flags( const u32 flags, const bool state )
 {
     g_win_state.flags = state ?
         g_win_state.flags | flags :
@@ -298,22 +298,22 @@ void window_set_flags( const uint32_t flags, const bool state )
     }
 }
 
-void window_toggle_flags( const uint32_t flags )
+void window_toggle_flags( const u32 flags )
 {
-    const uint32_t z = window_flags();
-    const uint32_t x = ~z & flags;
-    const uint32_t y =  z & flags;
+    const u32 z = window_flags();
+    const u32 x = ~z & flags;
+    const u32 y =  z & flags;
 
     window_set_flags( x, true );
     window_set_flags( y, false );
 }
 
-void window_enable_flags( const uint32_t flags )
+void window_enable_flags( const u32 flags )
 {
     window_set_flags( flags, true );
 }
 
-void window_disable_flags( const uint32_t flags )
+void window_disable_flags( const u32 flags )
 {
     window_set_flags( flags, false );
 }

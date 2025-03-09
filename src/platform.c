@@ -3,10 +3,10 @@
 
 struct
 {
-    uint32_t flags;
+    u32 flags;
 } g_platform_state = { 0 };
 
-int platform_init( const uint32_t flags )
+int platform_init( const u32 flags )
 {
     g_platform_state.flags = flags;
 

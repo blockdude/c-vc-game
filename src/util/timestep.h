@@ -6,6 +6,7 @@
  * TS_SLEEP expects a function that takes in seconds and sleeps the calling thread for that amount of seconds
  */
 
+#include "../common.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -25,26 +26,26 @@
 {                                                   \
     int   	        rate;                           \
     int         	avg;                            \
-    double        	delta;                          \
-    double        	target_delta;                   \
+    f64        	    delta;                          \
+    f64        	    target_delta;                   \
     int             target_rate;                    \
-    uint64_t     	count;                          \
+    u64     	    count;                          \
                                                     \
-    double          elapsed;                        \
-    double          current;                        \
-    double          previous;                       \
+    f64             elapsed;                        \
+    f64             current;                        \
+    f64             previous;                       \
                                                     \
     struct                                          \
     {                                               \
-        uint64_t count;                             \
-        double elapsed;                             \
-        uint64_t last;                              \
+        f64 elapsed;                                \
+        u64 count;                                  \
+        u64 last;                                   \
         int index;                                  \
                                                     \
         struct                                      \
         {                                           \
-            double delta;                           \
-            uint64_t count;                         \
+            f64 delta;                              \
+            u64 count;                              \
         } record[ TIMESTEP_CAPTURE_COUNT ];         \
     } _snapshot;                                    \
                                                     \
@@ -91,12 +92,12 @@ _timestep_decl_preset_rate( 360 );
 #define TIMESTEP_FIXED_TICK( _ts, _dt ) \
     for ( _timestep_fixed_prefix( _ts, _dt ); _timestep_fixed_can_proc( _ts ); _timestep_fixed_postfix( _ts ) )
 
-static inline int _timestep_compute_rate( const int64_t n, const double d )
+static inline int _timestep_compute_rate( const i64 n, const f64 d )
 {
     return ( ( n < 0 ) == ( d < 0 ) ) ? ( int ) ( ( n + d / 2 ) / d ) : ( int ) ( ( n - d / 2 ) / d );
 }
 
-static inline void _timestep_fixed_prefix( struct timestep_fixed *const timestep, const double delta_time )
+static inline void _timestep_fixed_prefix( struct timestep_fixed *const timestep, const f64 delta_time )
 {
     timestep->delta += delta_time;
 
@@ -250,7 +251,7 @@ while ( timestep_tick( &timestep ) )
     }
 }
 */
-static inline bool timestep_fixed_tick( struct timestep_fixed *const timestep, const double delta_time )
+static inline bool timestep_fixed_tick( struct timestep_fixed *const timestep, const f64 delta_time )
 {
     /*
     * this function should mimic a for loop.

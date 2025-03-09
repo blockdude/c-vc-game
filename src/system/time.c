@@ -41,33 +41,33 @@ void time_deinit( void )
  * -----------------------------
  */
 
-uint64_t time_now( void )
+u64 time_now( void )
 {
-    return SDL_GetTicksNS();
+    return ( u64 ) SDL_GetTicksNS();
 }
 
-double time_now_s( void )
+f64 time_now_s( void )
 {
     const Uint64 t = SDL_GetTicksNS();
-    return ( double ) t / 1.0e9;
+    return ( f64 ) t / 1.0e9;
 }
 
-double time_now_ms( void )
+f64 time_now_ms( void )
 {
     const Uint64 t = SDL_GetTicksNS();
-    return ( double ) t / 1.0e6;
+    return ( f64 ) t / 1.0e6;
 }
 
-double time_now_us( void )
+f64 time_now_us( void )
 {
     const Uint64 t = SDL_GetTicksNS();
-    return ( double ) t / 1.0e3;
+    return ( f64 ) t / 1.0e3;
 }
 
-double time_now_ns( void )
+f64 time_now_ns( void )
 {
     const Uint64 t = SDL_GetTicksNS();
-    return ( double ) t / 1.0e0;
+    return ( f64 ) t / 1.0e0;
 }
 
 /*
@@ -83,35 +83,34 @@ double time_now_ns( void )
  * -----------------------------
  */
 
-void time_wait( const uint64_t ticks )
+void time_wait( const u64 ticks )
 {
-    const uint64_t stop_time = time_now() + ticks;
-    const Uint32 sleep_time = ( Uint32 ) ( ( ticks - ( uint64_t ) ( ticks * 0.1 ) ) / 1000000i64 );
-    SDL_Delay( sleep_time );
+    const u64 stop_time = time_now() + ticks;
+    SDL_Delay( ( Uint32 ) ( ( ticks - ( u64 ) ( ticks * 0.1 ) ) / 1000000 ) );
     while ( time_now() < stop_time );
 }
 
-void time_wait_s( const double s )
+void time_wait_s( const f64 s )
 {
-    const Uint64 t = ( Uint64 ) ( s * 1.0e9 );
+    const u64 t = ( u64 ) ( s * 1.0e9 );
     time_wait( t );
 }
 
-void time_wait_ms( const double ms )
+void time_wait_ms( const f64 ms )
 {
-    const Uint64 t = ( Uint64 ) ( ms * 1.0e6 );
+    const u64 t = ( u64 ) ( ms * 1.0e6 );
     time_wait( t );
 }
 
-void time_wait_us( const double us )
+void time_wait_us( const f64 us )
 {
-    const Uint64 t = ( Uint64 ) ( us * 1.0e3 );
+    const u64 t = ( u64 ) ( us * 1.0e3 );
     time_wait( t );
 }
 
-void time_wait_ns( const double ns )
+void time_wait_ns( const f64 ns )
 {
-    const Uint64 t = ( Uint64 ) ( ns * 1.0e0 );
+    const u64 t = ( u64 ) ( ns * 1.0e0 );
     time_wait( t );
 }
 
@@ -128,24 +127,24 @@ void time_wait_ns( const double ns )
  * -----------------------------
  */
 
-uint64_t time_stot( const double s )
+u64 time_stot( const f64 s )
 {
-    return ( uint64_t ) ( s * 1.0e9 );
+    return ( u64 ) ( s * 1.0e9 );
 }
 
-uint64_t time_mstot( const double ms )
+u64 time_mstot( const f64 ms )
 {
-    return ( uint64_t ) ( ms * 1.0e6 );
+    return ( u64 ) ( ms * 1.0e6 );
 }
 
-uint64_t time_ustot( const double us )
+u64 time_ustot( const f64 us )
 {
-    return ( uint64_t ) ( us * 1.0e3 );
+    return ( u64 ) ( us * 1.0e3 );
 }
 
-uint64_t time_nstot( const double ns )
+u64 time_nstot( const f64 ns )
 {
-    return ( uint64_t ) ( ns * 1.0e0 );
+    return ( u64 ) ( ns * 1.0e0 );
 }
 
 /*
@@ -161,24 +160,24 @@ uint64_t time_nstot( const double ns )
  * -----------------------------
  */
 
-double time_ttos( const uint64_t ticks )
+f64 time_ttos( const u64 ticks )
 {
-    return ( double ) ticks / 1.0e9;
+    return ( f64 ) ticks / 1.0e9;
 }
 
-double time_ttoms( const uint64_t ticks )
+f64 time_ttoms( const u64 ticks )
 {
-    return ( double ) ticks / 1.0e6;
+    return ( f64 ) ticks / 1.0e6;
 }
 
-double time_ttous( const uint64_t ticks )
+f64 time_ttous( const u64 ticks )
 {
-    return ( double ) ticks / 1.0e3;
+    return ( f64 ) ticks / 1.0e3;
 }
 
-double time_ttons( const uint64_t ticks )
+f64 time_ttons( const u64 ticks )
 {
-    return ( double ) ticks / 1.0e0;
+    return ( f64 ) ticks / 1.0e0;
 }
 
 /*

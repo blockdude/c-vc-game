@@ -40,7 +40,7 @@ enum platform_init_flags
 	TIMER  = BITFLAG( 3 )
 };
 
-extern int platform_init( uint32_t flags );
+extern int platform_init( u32 flags );
 extern void platform_deinit( void );
 
 #endif

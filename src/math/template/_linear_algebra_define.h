@@ -391,13 +391,13 @@ static inline i64 _la_i64_sqrt( i64 a )
     return ( i64 ) sqrt( ( double ) a );
 }
 
-static inline int _la_f32_equals( float a, float b, float epsilon )
+static inline int _la_f32_equals( f32 a, f32 b, f32 epsilon )
 {
     int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
     return result;
 }
 
-static inline int _la_f64_equals( double a, double b, double epsilon )
+static inline int _la_f64_equals( f64 a, f64 b, f64 epsilon )
 {
     int result = ( fabs( a - b ) ) <= ( epsilon * fmax( 1.0, fmax( fabs( a ), fabs( b ) ) ) );
     return result;
