@@ -88,6 +88,14 @@ void bar( const int a )
     // the value of a will not change through out this function
 }
 
+// The parameter does not have to be specified with "const".
+// Here "a" is not constant so we can assume a is modified
+// within the implementation.
+void bar( int a )
+{
+    // the value of "a" is assumed to change at least once through out this function
+}
+
 // The same will apply to pointers for example in this
 // implementation we know now that "in" won't ever be reassigned
 // throughout the function.
