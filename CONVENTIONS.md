@@ -34,13 +34,13 @@ Other conventions:
  - Type modifiers always go before the type
  - Type qualifiers always go before the type and/or type modifiers, obviously excluding type qualifiers for pointers which must go on the right of the pointer
  - Storage class specifiers are always specified before any type qualifiers, type modifiers, and/or type
- - Casts are seperated with a space
+ - Casts are seperated with a space:
 ```c
 int foo = 10;
 i32 val = ( i32 ) foo;
 f32 bar = ( f32 ) ( foo / val );
 ```
- - Function prototypes and implementations with no parameters must put "void" as the parameter
+ - Function prototypes and implementations with no parameters must put "void" as the parameter:
 ```c
 extern void foo( void );
 void foo( void )
@@ -48,7 +48,7 @@ void foo( void )
     // do something
 }
 ```
- - Function prototypes always explicitly state extern
+ - Function prototypes always explicitly state extern:
 ```c
 // header.h
 extern void foo( void );
@@ -65,12 +65,12 @@ void bar( const int b )
     // do something else
 }
 ```
- - Function prototypes should specify pointer parameters as const if the function does not modify data
+ - Function prototypes should specify pointer parameters as const if the function does not modify data:
 ```c
 extern void foo( const char *in, char *out ); // "in" will not be modified
 extern void bar( char *data ); // "data" will be modified
 ```
- - Function implementations should specify all their parameters as const
+ - Function implementations should specify all their parameters as const:
 ```c
 // We don't specify "const" in the prototype because
 // it is an implementation detail that is useless for
@@ -97,7 +97,7 @@ void foo( const char *const in, char *const out )
     // the "out" pointer will never point to different memory
 }
 ```
- - All statements within parenthesis or brakets are padded **by a space**
+ - All statements within parenthesis or brakets are padded **by a space**:
 ```c
 char buffer[ 256 ] = { 0 };
 snprintf( buffer, 256, "%s", "Hello, world!" );
@@ -108,6 +108,25 @@ if ( foo( bar ) )
 }
 
 printf( buffer );
+```
+ - Cases are flush with switch statements:
+```c
+switch ( value )
+{
+case 0:
+    foo();
+    break;
+case 1:
+    bar();
+    break;
+case 2:
+{
+    int a = 0;
+    break;
+}
+default:
+    break;
+}
 ```
  - Control flow statements are followed **by a space**:
 ```c
@@ -122,12 +141,12 @@ for ( int i = 0; i < NUM_VALUES; i++ ) printf( "%i", i );
 
 switch ( value )
 {
-    case 0:
-    {
+case 0:
+{
 
-    } break;
-    case 2: break;
-    default: break;
+} break;
+case 2: break;
+default: break;
 }
 ```
  - All conditions are always between parenthesis, but not boolean values:
