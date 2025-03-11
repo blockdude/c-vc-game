@@ -32,6 +32,12 @@ static struct
 
 int window_init( void )
 {
+    if ( g_win_state.initialized == true )
+    {
+        log_info( "Window already initialized" );
+        return 0;
+    }
+
     if ( SDL_InitSubSystem( SDL_INIT_VIDEO ) == false )
     {
         log_warn( "Unable to initialize SDL video system: %s", SDL_GetError() );

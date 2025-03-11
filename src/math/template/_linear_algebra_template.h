@@ -10,6 +10,10 @@
 
 #if defined( LINEAR_ALGEBRA_VEC2_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_VEC2_HEADER )
 
+//                     | function | return type | parameters
+//                     | ---      | :---:       | ---
+//extern _VEC2_DECL_FUNC(  zero,      _VEC2_TYPE,   void  );
+
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void );
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void );
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add )( _VEC2_TYPE a, _VEC2_TYPE b );
