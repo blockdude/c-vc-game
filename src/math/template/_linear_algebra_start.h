@@ -52,7 +52,7 @@
 #define _FMAT4_NAME fmat4
 #define _BASE_TYPE float
 #define _BASE_SUFFIX f
-#elif defined( LINEAR_ALGEBRA_F32 )
+#elif defined(LINEAR_ALGEBRA_F32)
 #define _VEC2_NAME vec2_f32
 #define _VEC3_NAME vec3_f32
 #define _VEC4_NAME vec4_f32

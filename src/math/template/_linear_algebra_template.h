@@ -8,49 +8,41 @@
  * -----------------------------
  */
 
-_VEC2_FUNC_DECL(
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add_val )( _VEC2_TYPE v, _BASE_TYPE val );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub_val )( _VEC2_TYPE v, _BASE_TYPE val );
-    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len )( _VEC2_TYPE v );
-    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len_sq )( _VEC2_TYPE v );
-    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dot )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist_sq )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( scale )( _VEC2_TYPE v, _BASE_TYPE scale );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( mul )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( negate )( _VEC2_TYPE v );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( div )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( transform )( _VEC2_TYPE v, _MAT4_TYPE m );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( lerp )( _VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( reflect )( _VEC2_TYPE v, _VEC2_TYPE normal );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( min )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( max )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp )( _VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_val )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
-);
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(zero)(void));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(one)(void));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(add)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(add_val)(_VEC2_TYPE v, _BASE_TYPE val));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(sub)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(sub_val)(_VEC2_TYPE v, _BASE_TYPE val));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(len)(_VEC2_TYPE v));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(len_sq)(_VEC2_TYPE v));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(dot)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(dist)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(dist_sq)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(scale)(_VEC2_TYPE v, _BASE_TYPE scale));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(mul)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(negate)(_VEC2_TYPE v));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(div)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(transform)(_VEC2_TYPE v, _MAT4_TYPE m));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(lerp)(_VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(reflect)(_VEC2_TYPE v, _VEC2_TYPE normal));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(min)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(max)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(clamp)(_VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(clamp_val)(_VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(angle)(_VEC2_TYPE a, _VEC2_TYPE b));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(line_angle)(_VEC2_TYPE start, _VEC2_TYPE end));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(normalize)(_VEC2_TYPE v));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(rotate)(_VEC2_TYPE v, _BASE_TYPE angle));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(move_towards)(_VEC2_TYPE v, _VEC2_TYPE target, _BASE_TYPE max));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(invert)(_VEC2_TYPE v));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(clamp_len)(_VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(refract)(_VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r));
+_VEC2_FUNC_DECL_INT_RESTRICTED  (extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q));
 
-_VEC2_FUNC_DECL_FLOAT_RESTRICTED(
-    extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon );
-    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b );
-    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VEC2_TYPE end );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( normalize )( _VEC2_TYPE v );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( rotate )( _VEC2_TYPE v, _BASE_TYPE angle );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( move_towards )( _VEC2_TYPE v, _VEC2_TYPE target, _BASE_TYPE max );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( invert )( _VEC2_TYPE v );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_len )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
-    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r );
-);
-
-_VEC2_FUNC_DECL_INT_RESTRICTED(
-    extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q );
-);
-
+/* Vector2 with components value 0 */
 _VEC2_FUNC_IMPL(
-    /* Vector2 with components value 0 */
     _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void )
     {
         _VEC2_TYPE result = {
@@ -60,7 +52,9 @@ _VEC2_FUNC_IMPL(
     
         return result;
     }
+);
     
+_VEC2_FUNC_IMPL(
     /* Vector2 with components value LIT(1.0) */
     _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void )
     {
