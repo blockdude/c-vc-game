@@ -8,452 +8,426 @@
  * -----------------------------
  */
 
-#if defined( LINEAR_ALGEBRA_VEC2_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_VEC2_HEADER )
+_VEC2_FUNC_DECL(
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add_val )( _VEC2_TYPE v, _BASE_TYPE val );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub_val )( _VEC2_TYPE v, _BASE_TYPE val );
+    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len )( _VEC2_TYPE v );
+    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len_sq )( _VEC2_TYPE v );
+    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dot )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist_sq )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( scale )( _VEC2_TYPE v, _BASE_TYPE scale );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( mul )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( negate )( _VEC2_TYPE v );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( div )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( transform )( _VEC2_TYPE v, _MAT4_TYPE m );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( lerp )( _VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( reflect )( _VEC2_TYPE v, _VEC2_TYPE normal );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( min )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( max )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp )( _VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_val )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
+);
 
-//                        | function  | return type | parameters
-//                        | ---       | :---:       | ---
-//extern _VEC2_DECL_FUNC(     zero,       _VEC2_TYPE,   void                                             );
-//extern _VEC2_DECL_FUNC(     one,        _VEC2_TYPE,   void                                             );
-//extern _VEC2_DECL_FUNC(     add,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     add_val,    _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE val                     );
-//extern _VEC2_DECL_FUNC(     sub,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     sub_val,    _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE val                     );
-//extern _VEC2_DECL_FUNC(     len,        _BASE_TYPE,   _VEC2_TYPE v                                     );
-//extern _VEC2_DECL_FUNC(     len_sq,     _BASE_TYPE,   _VEC2_TYPE v                                     );
-//extern _VEC2_DECL_FUNC(     dot,        _BASE_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     dist,       _BASE_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     dist_sq,    _BASE_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     scale,      _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE scale                   );
-//extern _VEC2_DECL_FUNC(     mul,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     negate,     _VEC2_TYPE,   _VEC2_TYPE v                                     );
-//extern _VEC2_DECL_FUNC(     div,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     transform,  _VEC2_TYPE,   _VEC2_TYPE v, _MAT4_TYPE m                       );
-//extern _VEC2_DECL_FUNC(     lerp,       _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t         );
-//extern _VEC2_DECL_FUNC(     reflect,    _VEC2_TYPE,   _VEC2_TYPE v, _VEC2_TYPE normal                  );
-//extern _VEC2_DECL_FUNC(     min,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     max,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
-//extern _VEC2_DECL_FUNC(     clamp,      _VEC2_TYPE,   _VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max     );
-//extern _VEC2_DECL_FUNC(     clamp_val,  _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max     );
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(
+    extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon );
+    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b );
+    extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VEC2_TYPE end );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( normalize )( _VEC2_TYPE v );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( rotate )( _VEC2_TYPE v, _BASE_TYPE angle );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( move_towards )( _VEC2_TYPE v, _VEC2_TYPE target, _BASE_TYPE max );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( invert )( _VEC2_TYPE v );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_len )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
+    extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r );
+);
 
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add_val )( _VEC2_TYPE v, _BASE_TYPE val );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub_val )( _VEC2_TYPE v, _BASE_TYPE val );
-extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len )( _VEC2_TYPE v );
-extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len_sq )( _VEC2_TYPE v );
-extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dot )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist_sq )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( scale )( _VEC2_TYPE v, _BASE_TYPE scale );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( mul )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( negate )( _VEC2_TYPE v );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( div )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( transform )( _VEC2_TYPE v, _MAT4_TYPE m );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( lerp )( _VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( reflect )( _VEC2_TYPE v, _VEC2_TYPE normal );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( min )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( max )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp )( _VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_val )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
+_VEC2_FUNC_DECL_INT_RESTRICTED(
+    extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q );
+);
 
-#if _IS_IEC559
-extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon );
-extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b );
-extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VEC2_TYPE end );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( normalize )( _VEC2_TYPE v );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( rotate )( _VEC2_TYPE v, _BASE_TYPE angle );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( move_towards )( _VEC2_TYPE v, _VEC2_TYPE target, _BASE_TYPE max );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( invert )( _VEC2_TYPE v );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_len )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max );
-extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r );
-#else /* _IS_IEC559 */
-extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q );
-#endif /* _IS_IEC559 */
-
-#endif /* LINEAR_ALGEBRA_VEC2_IMPLEMENATAION || HEADER */
-
-#ifdef LINEAR_ALGEBRA_VEC2_IMPLEMENTATION
-
-// Vector2 with components value LIT( 0.0 )
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void )
-{
-    _VEC2_TYPE result = {
-        _STATIC_CAST( _BASE_TYPE, 0 ),
-        _STATIC_CAST( _BASE_TYPE, 0 )
-    };
-
-    return result;
-}
-
-// Vector2 with components value LIT( 1.0 )
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void )
-{
-    _VEC2_TYPE result = {
-        _STATIC_CAST( _BASE_TYPE, 1 ),
-        _STATIC_CAST( _BASE_TYPE, 1 )
-    };
-
-    return result;
-}
-
-// Add two vectors (a + b)
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _VEC2_TYPE result = { a.x + b.x, a.y + b.y };
-    return result;
-}
-
-// Add a value to a vector
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add_val )( _VEC2_TYPE v, _BASE_TYPE val )
-{
-    _VEC2_TYPE result = { v.x + val, v.y + val };
-    return result;
-}
-
-// Subtract two vectors (a - b)
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _VEC2_TYPE result = { a.x - b.x, a.y - b.y };
-    return result;
-}
-
-// Subtract a value from a vector
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub_val )( _VEC2_TYPE v, _BASE_TYPE val )
-{
-    _VEC2_TYPE result = { v.x - val, v.y - val };
-    return result;
-}
-
-// Calculate the length of a vector
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len )( _VEC2_TYPE v )
-{
-    _BASE_TYPE result = _SQRT( ( v.x * v.x ) + ( v.y * v.y ) );
-    return result;
-}
-
-// Calculate the squared length of a vector
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len_sq )( _VEC2_TYPE v )
-{
-    _BASE_TYPE result = ( v.x * v.x ) + ( v.y * v.y );
-    return result;
-}
-
-// Calculate two vectors dot product
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dot )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _BASE_TYPE result = ( a.x * b.x ) + ( a.y * b.y );
-    return result;
-}
-
-// Calculate distance between two vectors
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _BASE_TYPE result = _SQRT( ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y ) );
-    return result;
-}
-
-// Calculate squared distance between two vectors
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist_sq )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _BASE_TYPE result = ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y );
-    return result;
-}
-
-// Scale vector (multiply by value)
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( scale )( _VEC2_TYPE v, _BASE_TYPE scale )
-{
-    _VEC2_TYPE result = { v.x * scale, v.y * scale };
-    return result;
-}
-
-// Multiply vector by vector
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( mul )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _VEC2_TYPE result = { a.x * b.x, a.y * b.y };
-    return result;
-}
-
-// Negate vector
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( negate )( _VEC2_TYPE v )
-{
-    _VEC2_TYPE result = { -v.x, -v.y };
-    return result;
-}
-
-// Divide vector by vector
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( div )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _VEC2_TYPE result = { a.x / b.x, a.y / b.y };
-
-    return result;
-}
-
-// Transforms a TYPE by a given Matrix
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( transform )( _VEC2_TYPE v, _MAT4_TYPE m )
-{
-    _VEC2_TYPE result = { 0 };
-
-    _BASE_TYPE x = v.x;
-    _BASE_TYPE y = v.y;
-    _BASE_TYPE z = _STATIC_CAST( _BASE_TYPE, 0 );
-
-    result.x = m.m00 * x + m.m01 * y + m.m02 * z + m.m03;
-    result.y = m.m10 * x + m.m11 * y + m.m12 * z + m.m13;
-
-    return result;
-}
-
-// Calculate linear interpolation between two vectors
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( lerp )( _VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t )
-{
-    _VEC2_TYPE result = { 0 };
-
-    result.x = a.x + t * ( b.x - a.x );
-    result.y = a.y + t * ( b.y - a.y );
-
-    return result;
-}
-
-// Calculate reflected vector to normal
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( reflect )( _VEC2_TYPE v, _VEC2_TYPE normal )
-{
-    _VEC2_TYPE result = { 0 };
-
-    _BASE_TYPE dot = ( v.x * normal.x + v.y * normal.y );
-
-    result.x = v.x - ( _STATIC_CAST( _BASE_TYPE, 2 ) * normal.x ) * dot;
-    result.y = v.y - ( _STATIC_CAST( _BASE_TYPE, 2 ) * normal.y ) * dot;
-
-    return result;
-}
-
-// Get min value for each pair of components
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( min )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _VEC2_TYPE result = { 0 };
-
-    result.x = _MIN( a.x, b.x );
-    result.y = _MIN( a.y, b.y );
-
-    return result;
-}
-
-// Get max value for each pair of components
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( max )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    _VEC2_TYPE result = { 0 };
-
-    result.x = _MAX( a.x, b.x );
-    result.y = _MAX( a.y, b.y );
-
-    return result;
-}
-
-// Clamp the components of the vector between
-// min and max values specified by the given vectors
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp )( _VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max )
-{
-    _VEC2_TYPE result = { 0 };
-
-    result.x = _MIN( max.x, _MAX( min.x, v.x ) );
-    result.y = _MIN( max.y, _MAX( min.y, v.y ) );
-
-    return result;
-}
-
-// Clamp the components of the vector between
-// min and max values
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_val )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max )
-{
-    _VEC2_TYPE result = { 0 };
-
-    result.x = _MIN( max, _MAX( min, v.x ) );
-    result.y = _MIN( max, _MAX( min, v.y ) );
-
-    return result;
-}
-
-#if _IS_IEC559 /* ONLY FUNCTIONS THAT USE FLOATING POINT IEEE754 (I don't know why c++ calls it iec559 but ill do the same) */
-
-// Check whether two given vectors are almost equal
-_FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon )
-{
-    static_assert( _IS_IEC559 == true, "equals must use floating point vectors" );
-
-    int result =
-        ( ( _ABS( p.x - q.x ) ) <= ( epsilon * _MAX( _STATIC_CAST( _BASE_TYPE, 1 ), _MAX( _ABS( p.x ), _ABS( q.x ) ) ) ) ) &&
-        ( ( _ABS( p.y - q.y ) ) <= ( epsilon * _MAX( _STATIC_CAST( _BASE_TYPE, 1 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) );
-
-    return result;
-}
-
-// Calculate angle between two vectors
-// NOTE: Angle is calculated from origin point (0, 0)
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b )
-{
-    static_assert( _IS_IEC559 == true, "angle must use floating point vectors" );
-
-    _BASE_TYPE result = _STATIC_CAST( _BASE_TYPE, 0 );
-
-    _BASE_TYPE dot = a.x * b.x + a.y * b.y;
-    _BASE_TYPE det = a.x * b.y - a.y * b.x;
-
-    result = _ATAN2( det, dot );
-
-    return result;
-}
-
-// Calculate angle defined by a two vectors line
-// NOTE: Parameters need to be normalized
-// Current implementation should be aligned with glm::angle
-_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VEC2_TYPE end )
-{
-    static_assert( _IS_IEC559 == true, "line_angle must use floating point vectors" );
-
-    _BASE_TYPE result = _STATIC_CAST( _BASE_TYPE, 0 );
-
-    result = -_ATAN2( end.y - start.y, end.x - start.x );
-
-    return result;
-}
-
-// Normalize provided vector
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( normalize )( _VEC2_TYPE v )
-{
-    static_assert( _IS_IEC559 == true, "normalize must use floating point vectors" );
-
-    _VEC2_TYPE result = { 0 };
-
-    _BASE_TYPE len = _SQRT( ( v.x * v.x ) + ( v.y * v.y ) );
-    if ( len > _STATIC_CAST( _BASE_TYPE, 0 ) )
+_VEC2_FUNC_IMPL(
+    /* Vector2 with components value 0 */
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void )
     {
-        _BASE_TYPE ilen = _STATIC_CAST( _BASE_TYPE, 1 ) / len;
-        result.x = v.x * ilen;
-        result.y = v.y * ilen;
+        _VEC2_TYPE result = {
+            _STATIC_CAST( _BASE_TYPE, 0 ),
+            _STATIC_CAST( _BASE_TYPE, 0 )
+        };
+    
+        return result;
     }
-
-    return result;
-}
-
-// Rotate vector by angle
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( rotate )( _VEC2_TYPE v, _BASE_TYPE angle )
-{
-    static_assert( _IS_IEC559 == true, "rotate must use floating point vectors" );
-
-    _VEC2_TYPE result = { 0 };
-
-    _BASE_TYPE c = _COS( angle );
-    _BASE_TYPE s = _SIN( angle );
-
-    result.x = v.x * c - v.y * s;
-    result.y = v.x * s + v.y * c;
-
-    return result;
-}
-
-// Move Vector towards target
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( move_towards )( _VEC2_TYPE v, _VEC2_TYPE target, _BASE_TYPE max )
-{
-    static_assert( _IS_IEC559 == true, "move_towards must use floating point vectors" );
-
-    _VEC2_TYPE result = { 0 };
-
-    _BASE_TYPE dx = target.x - v.x;
-    _BASE_TYPE dy = target.y - v.y;
-    _BASE_TYPE value = ( dx * dx ) + ( dy * dy );
-
-    if ( ( value == _STATIC_CAST( _BASE_TYPE, 0 ) ) || ( ( max >= _STATIC_CAST( _BASE_TYPE, 0 ) ) && ( value <= max * max ) ) )
-        return target;
-
-    _BASE_TYPE dist = _SQRT( value );
-
-    result.x = v.x + dx / dist * max;
-    result.y = v.y + dy / dist * max;
-
-    return result;
-}
-
-// Invert the given vector
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( invert )( _VEC2_TYPE v )
-{
-    static_assert( _IS_IEC559 == true, "invert must use floating point vectors" );
-
-    _VEC2_TYPE result = { _STATIC_CAST( _BASE_TYPE, 1 ) / v.x, _STATIC_CAST( _BASE_TYPE, 1 ) / v.y };
-    return result;
-}
-
-
-// Clamp the magnitude of the vector between two min and max values
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_len )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max )
-{
-    static_assert( _IS_IEC559 == true, "clamp_len must use floating point vectors" );
-
-    _VEC2_TYPE result = v;
-
-    _BASE_TYPE len = ( v.x * v.x ) + ( v.y * v.y );
-    if ( len > _STATIC_CAST( _BASE_TYPE, 0 ) )
+    
+    /* Vector2 with components value LIT(1.0) */
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void )
     {
-        len = _SQRT( len );
+        _VEC2_TYPE result = {
+            _STATIC_CAST( _BASE_TYPE, 1 ),
+            _STATIC_CAST( _BASE_TYPE, 1 )
+        };
+    
+        return result;
+    }
+    
+    /* Add two vectors(a + b) */
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _VEC2_TYPE result = { a.x + b.x, a.y + b.y };
+        return result;
+    }
+    
+    // Add a value to a vector
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( add_val )( _VEC2_TYPE v, _BASE_TYPE val )
+    {
+        _VEC2_TYPE result = { v.x + val, v.y + val };
+        return result;
+    }
+    
+    // Subtract two vectors (a - b)
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _VEC2_TYPE result = { a.x - b.x, a.y - b.y };
+        return result;
+    }
+    
+    // Subtract a value from a vector
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( sub_val )( _VEC2_TYPE v, _BASE_TYPE val )
+    {
+        _VEC2_TYPE result = { v.x - val, v.y - val };
+        return result;
+    }
+    
+    // Calculate the length of a vector
+    _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len )( _VEC2_TYPE v )
+    {
+        _BASE_TYPE result = _SQRT( ( v.x * v.x ) + ( v.y * v.y ) );
+        return result;
+    }
+    
+    // Calculate the squared length of a vector
+    _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( len_sq )( _VEC2_TYPE v )
+    {
+        _BASE_TYPE result = ( v.x * v.x ) + ( v.y * v.y );
+        return result;
+    }
+    
+    // Calculate two vectors dot product
+    _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dot )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _BASE_TYPE result = ( a.x * b.x ) + ( a.y * b.y );
+        return result;
+    }
+    
+    // Calculate distance between two vectors
+    _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _BASE_TYPE result = _SQRT( ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y ) );
+        return result;
+    }
+    
+    // Calculate squared distance between two vectors
+    _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( dist_sq )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _BASE_TYPE result = ( a.x - b.x ) * ( a.x - b.x ) + ( a.y - b.y ) * ( a.y - b.y );
+        return result;
+    }
+    
+    // Scale vector (multiply by value)
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( scale )( _VEC2_TYPE v, _BASE_TYPE scale )
+    {
+        _VEC2_TYPE result = { v.x * scale, v.y * scale };
+        return result;
+    }
+    
+    // Multiply vector by vector
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( mul )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _VEC2_TYPE result = { a.x * b.x, a.y * b.y };
+        return result;
+    }
+    
+    // Negate vector
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( negate )( _VEC2_TYPE v )
+    {
+        _VEC2_TYPE result = { -v.x, -v.y };
+        return result;
+    }
+    
+    // Divide vector by vector
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( div )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _VEC2_TYPE result = { a.x / b.x, a.y / b.y };
+    
+        return result;
+    }
+    
+    // Transforms a TYPE by a given Matrix
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( transform )( _VEC2_TYPE v, _MAT4_TYPE m )
+    {
+        _VEC2_TYPE result = { 0 };
+    
+        _BASE_TYPE x = v.x;
+        _BASE_TYPE y = v.y;
+        _BASE_TYPE z = _STATIC_CAST( _BASE_TYPE, 0 );
+    
+        result.x = m.m00 * x + m.m01 * y + m.m02 * z + m.m03;
+        result.y = m.m10 * x + m.m11 * y + m.m12 * z + m.m13;
+    
+        return result;
+    }
+    
+    // Calculate linear interpolation between two vectors
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( lerp )( _VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t )
+    {
+        _VEC2_TYPE result = { 0 };
+    
+        result.x = a.x + t * ( b.x - a.x );
+        result.y = a.y + t * ( b.y - a.y );
+    
+        return result;
+    }
+    
+    // Calculate reflected vector to normal
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( reflect )( _VEC2_TYPE v, _VEC2_TYPE normal )
+    {
+        _VEC2_TYPE result = { 0 };
+    
+        _BASE_TYPE dot = ( v.x * normal.x + v.y * normal.y );
+    
+        result.x = v.x - ( _STATIC_CAST( _BASE_TYPE, 2 ) * normal.x ) * dot;
+        result.y = v.y - ( _STATIC_CAST( _BASE_TYPE, 2 ) * normal.y ) * dot;
+    
+        return result;
+    }
+    
+    // Get min value for each pair of components
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( min )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _VEC2_TYPE result = { 0 };
+    
+        result.x = _MIN( a.x, b.x );
+        result.y = _MIN( a.y, b.y );
+    
+        return result;
+    }
+    
+    // Get max value for each pair of components
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( max )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        _VEC2_TYPE result = { 0 };
+    
+        result.x = _MAX( a.x, b.x );
+        result.y = _MAX( a.y, b.y );
+    
+        return result;
+    }
+    
+    // Clamp the components of the vector between
+    // min and max values specified by the given vectors
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp )( _VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max )
+    {
+        _VEC2_TYPE result = { 0 };
+    
+        result.x = _MIN( max.x, _MAX( min.x, v.x ) );
+        result.y = _MIN( max.y, _MAX( min.y, v.y ) );
+    
+        return result;
+    }
+    
+    // Clamp the components of the vector between
+    // min and max values
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_val )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max )
+    {
+        _VEC2_TYPE result = { 0 };
+    
+        result.x = _MIN( max, _MAX( min, v.x ) );
+        result.y = _MIN( max, _MAX( min, v.y ) );
+    
+        return result;
+    }
+);
 
-        _BASE_TYPE scale = _STATIC_CAST( _BASE_TYPE, 1 );    // By default, 1 as the neutral element.
-        if ( len < min )
+_VEC2_FUNC_IMPL_FLOAT_RESTRICTED(
+    // Check whether two given vectors are almost equal
+    _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon )
+    {
+        static_assert( _IS_IEC559 == true, "equals must use floating point vectors" );
+    
+        int result =
+            ( ( _ABS( p.x - q.x ) ) <= ( epsilon * _MAX( _STATIC_CAST( _BASE_TYPE, 1 ), _MAX( _ABS( p.x ), _ABS( q.x ) ) ) ) ) &&
+            ( ( _ABS( p.y - q.y ) ) <= ( epsilon * _MAX( _STATIC_CAST( _BASE_TYPE, 1 ), _MAX( _ABS( p.y ), _ABS( q.y ) ) ) ) );
+    
+        return result;
+    }
+    
+    // Calculate angle between two vectors
+    // NOTE: Angle is calculated from origin point (0, 0)
+    _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( angle )( _VEC2_TYPE a, _VEC2_TYPE b )
+    {
+        static_assert( _IS_IEC559 == true, "angle must use floating point vectors" );
+    
+        _BASE_TYPE result = _STATIC_CAST( _BASE_TYPE, 0 );
+    
+        _BASE_TYPE dot = a.x * b.x + a.y * b.y;
+        _BASE_TYPE det = a.x * b.y - a.y * b.x;
+    
+        result = _ATAN2( det, dot );
+    
+        return result;
+    }
+    
+    // Calculate angle defined by a two vectors line
+    // NOTE: Parameters need to be normalized
+    // Current implementation should be aligned with glm::angle
+    _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2( line_angle )( _VEC2_TYPE start, _VEC2_TYPE end )
+    {
+        static_assert( _IS_IEC559 == true, "line_angle must use floating point vectors" );
+    
+        _BASE_TYPE result = _STATIC_CAST( _BASE_TYPE, 0 );
+    
+        result = -_ATAN2( end.y - start.y, end.x - start.x );
+    
+        return result;
+    }
+    
+    // Normalize provided vector
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( normalize )( _VEC2_TYPE v )
+    {
+        static_assert( _IS_IEC559 == true, "normalize must use floating point vectors" );
+    
+        _VEC2_TYPE result = { 0 };
+    
+        _BASE_TYPE len = _SQRT( ( v.x * v.x ) + ( v.y * v.y ) );
+        if ( len > _STATIC_CAST( _BASE_TYPE, 0 ) )
         {
-            scale = min / len;
+            _BASE_TYPE ilen = _STATIC_CAST( _BASE_TYPE, 1 ) / len;
+            result.x = v.x * ilen;
+            result.y = v.y * ilen;
         }
-        else if ( len > max )
-        {
-            scale = max / len;
-        }
-
-        result.x = v.x * scale;
-        result.y = v.y * scale;
+    
+        return result;
     }
-
-    return result;
-}
-
-// Compute the direction of a refracted ray
-// v: normalized direction of the incoming ray
-// n: normalized normal vector of the interface of two optical media
-// r: ratio of the refractive index of the medium from where the ray comes
-//    to the refractive index of the medium on the other side of the surface
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r )
-{
-    static_assert( _IS_IEC559 == true, "refract must use floating point vectors" );
-
-    _VEC2_TYPE result = { 0 };
-
-    _BASE_TYPE dot = v.x * n.x + v.y * n.y;
-    _BASE_TYPE d = _STATIC_CAST( _BASE_TYPE, 1 ) - r * r * ( _STATIC_CAST( _BASE_TYPE, 1 ) - dot * dot );
-
-    if ( d >= _STATIC_CAST( _BASE_TYPE, 0 ) )
+    
+    // Rotate vector by angle
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( rotate )( _VEC2_TYPE v, _BASE_TYPE angle )
     {
-        d = _SQRT( d );
-        v.x = r * v.x - ( r * dot + d ) * n.x;
-        v.y = r * v.y - ( r * dot + d ) * n.y;
-
-        result = v;
+        static_assert( _IS_IEC559 == true, "rotate must use floating point vectors" );
+    
+        _VEC2_TYPE result = { 0 };
+    
+        _BASE_TYPE c = _COS( angle );
+        _BASE_TYPE s = _SIN( angle );
+    
+        result.x = v.x * c - v.y * s;
+        result.y = v.x * s + v.y * c;
+    
+        return result;
     }
+    
+    // Move Vector towards target
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( move_towards )( _VEC2_TYPE v, _VEC2_TYPE target, _BASE_TYPE max )
+    {
+        static_assert( _IS_IEC559 == true, "move_towards must use floating point vectors" );
+    
+        _VEC2_TYPE result = { 0 };
+    
+        _BASE_TYPE dx = target.x - v.x;
+        _BASE_TYPE dy = target.y - v.y;
+        _BASE_TYPE value = ( dx * dx ) + ( dy * dy );
+    
+        if ( ( value == _STATIC_CAST( _BASE_TYPE, 0 ) ) || ( ( max >= _STATIC_CAST( _BASE_TYPE, 0 ) ) && ( value <= max * max ) ) )
+            return target;
+    
+        _BASE_TYPE dist = _SQRT( value );
+    
+        result.x = v.x + dx / dist * max;
+        result.y = v.y + dy / dist * max;
+    
+        return result;
+    }
+    
+    // Invert the given vector
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( invert )( _VEC2_TYPE v )
+    {
+        static_assert( _IS_IEC559 == true, "invert must use floating point vectors" );
+    
+        _VEC2_TYPE result = { _STATIC_CAST( _BASE_TYPE, 1 ) / v.x, _STATIC_CAST( _BASE_TYPE, 1 ) / v.y };
+        return result;
+    }
+    
+    
+    // Clamp the magnitude of the vector between two min and max values
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( clamp_len )( _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max )
+    {
+        static_assert( _IS_IEC559 == true, "clamp_len must use floating point vectors" );
+    
+        _VEC2_TYPE result = v;
+    
+        _BASE_TYPE len = ( v.x * v.x ) + ( v.y * v.y );
+        if ( len > _STATIC_CAST( _BASE_TYPE, 0 ) )
+        {
+            len = _SQRT( len );
+    
+            _BASE_TYPE scale = _STATIC_CAST( _BASE_TYPE, 1 );    // By default, 1 as the neutral element.
+            if ( len < min )
+            {
+                scale = min / len;
+            }
+            else if ( len > max )
+            {
+                scale = max / len;
+            }
+    
+            result.x = v.x * scale;
+            result.y = v.y * scale;
+        }
+    
+        return result;
+    }
+    
+    // Compute the direction of a refracted ray
+    // v: normalized direction of the incoming ray
+    // n: normalized normal vector of the interface of two optical media
+    // r: ratio of the refractive index of the medium from where the ray comes
+    //    to the refractive index of the medium on the other side of the surface
+    _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( refract )( _VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r )
+    {
+        static_assert( _IS_IEC559 == true, "refract must use floating point vectors" );
+    
+        _VEC2_TYPE result = { 0 };
+    
+        _BASE_TYPE dot = v.x * n.x + v.y * n.y;
+        _BASE_TYPE d = _STATIC_CAST( _BASE_TYPE, 1 ) - r * r * ( _STATIC_CAST( _BASE_TYPE, 1 ) - dot * dot );
+    
+        if ( d >= _STATIC_CAST( _BASE_TYPE, 0 ) )
+        {
+            d = _SQRT( d );
+            v.x = r * v.x - ( r * dot + d ) * n.x;
+            v.y = r * v.y - ( r * dot + d ) * n.y;
+    
+            result = v;
+        }
+    
+        return result;
+    }
+);
 
-    return result;
-}
-
-#else /* _IS_IEC559 */
-
-// Check whether two given vectors are equal
-_FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q )
-{
-    int result =
-        ( p.x == q.x ) &&
-        ( p.y == q.y );
-
-    return result;
-}
-
-#endif /* _IS_IEC559 */
-#endif /* LINEAR_ALGEBRA_VEC2_IMPLEMENTATION*/
+_VEC2_FUNC_IMPL_INT_RESTRICTED(
+    /* Check whether two given vectors are equal */
+    _FUNC_SPEC int _FUNC_CONV _FUNC_VEC2( equals )( _VEC2_TYPE p, _VEC2_TYPE q )
+    {
+        static_assert( _IS_IEC559 == false, "vec2i_equals must use integer based vectors" );
+    
+        int result =
+            ( p.x == q.x ) &&
+            ( p.y == q.y );
+    
+        return result;
+    }
+);
 
 /*
  * -----------------------------

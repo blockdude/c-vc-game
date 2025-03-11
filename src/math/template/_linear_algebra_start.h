@@ -136,43 +136,76 @@
 #define _MAX fmin
 #endif
 
+// IF NO SPECIFIC IMPLEMENTATION IS DEFINED THEN DEFINE ALL OF THEM
+#ifdef LINEAR_ALGEBRA_IMPLEMENTATION
+#if \
+!defined(LINEAR_ALGEBRA_VEC2_IMPLEMENTATION) && \
+!defined(LINEAR_ALGEBRA_VEC3_IMPLEMENTATION) && \
+!defined(LINEAR_ALGEBRA_VEC4_IMPLEMENTATION) && \
+!defined(LINEAR_ALGEBRA_QUAT_IMPLEMENTATION) && \
+!defined(LINEAR_ALGEBRA_MAT4_IMPLEMENTATION)
+#define LINEAR_ALGEBRA_VEC2_IMPLEMENTATION
+#define LINEAR_ALGEBRA_VEC3_IMPLEMENTATION
+#define LINEAR_ALGEBRA_VEC4_IMPLEMENTATION
+#define LINEAR_ALGEBRA_QUAT_IMPLEMENTATION
+#define LINEAR_ALGEBRA_MAT4_IMPLEMENTATION
+#endif
+#endif
+
 #define _VEC2_TYPE struct _VEC2_NAME
 #define _VEC3_TYPE struct _VEC3_NAME
 #define _VEC4_TYPE struct _VEC4_NAME
 #define _QUAT_TYPE struct _QUAT_NAME
 #define _MAT4_TYPE struct _MAT4_NAME
 #define _FMAT4_TYPE struct _FMAT4_NAME
-
-#define _CONCAT( _a, _b ) _a##_b
-#define _LITERAL_HELPER( _v, _s ) _CONCAT( _v, _s )
-#define _LITERAL( _v ) _LITERAL_HELPER( _v, _BASE_SUFFIX )
-#define _STATIC_CAST( T, _e ) ( ( T ) ( _e ) )
-#define _NAME_HELPER( _prefix, _fn ) _CONCAT( _prefix, _##_fn )
-#define _FUNC_VEC2( _fn ) _NAME_HELPER( _VEC2_NAME, _fn )
-#define _FUNC_VEC3( _fn ) _NAME_HELPER( _VEC3_NAME, _fn )
-#define _FUNC_VEC4( _fn ) _NAME_HELPER( _VEC4_NAME, _fn )
-#define _FUNC_QUAT( _fn ) _NAME_HELPER( _QUAT_NAME, _fn )
-#define _FUNC_MAT4( _fn ) _NAME_HELPER( _MAT4_NAME, _fn )
-#define _FUNC_FMAT4( _fn ) _NAME_HELPER( _FMAT4_NAME, _fn )
-
-#ifdef LINEAR_ALGEBRA_IMPLEMENTATION
-
-#if \
-!defined( LINEAR_ALGEBRA_VEC2_IMPLEMENTATION ) && \
-!defined( LINEAR_ALGEBRA_VEC3_IMPLEMENTATION ) && \
-!defined( LINEAR_ALGEBRA_VEC4_IMPLEMENTATION ) && \
-!defined( LINEAR_ALGEBRA_QUAT_IMPLEMENTATION ) && \
-!defined( LINEAR_ALGEBRA_MAT4_IMPLEMENTATION )
-#define LINEAR_ALGEBRA_VEC2_IMPLEMENTATION
-#define LINEAR_ALGEBRA_VEC3_IMPLEMENTATION
-#define LINEAR_ALGEBRA_VEC4_IMPLEMENTATION
-#define LINEAR_ALGEBRA_QUAT_IMPLEMENTATION
-#define LINEAR_ALGEBRA_MAT4_IMPLEMENTATION
-#endif /* LINEAR_ALGEBRA_(TYPE)_IMPLENTATION */
-
+#define _CONCAT(_a, _b) _a##_b
+#define _LITERAL_HELPER(_v, _s) _CONCAT(_v, _s)
+#define _LITERAL(_v) _LITERAL_HELPER(_v, _BASE_SUFFIX)
+#define _STATIC_CAST(T, _e) ((T) (_e))
+#define _NAME_HELPER(_prefix, _fn) _CONCAT(_prefix, _##_fn)
+#define _FUNC_VEC2(_fn) _NAME_HELPER(_VEC2_NAME, _fn)
+#define _FUNC_VEC3(_fn) _NAME_HELPER(_VEC3_NAME, _fn)
+#define _FUNC_VEC4(_fn) _NAME_HELPER(_VEC4_NAME, _fn)
+#define _FUNC_QUAT(_fn) _NAME_HELPER(_QUAT_NAME, _fn)
+#define _FUNC_MAT4(_fn) _NAME_HELPER(_MAT4_NAME, _fn)
+#define _FUNC_FMAT4(_fn) _NAME_HELPER(_FMAT4_NAME, _fn)
 #define _FUNC_SPEC
 #define _FUNC_CONV
 
+#define _FUNC_DECL(...) __VA_ARGS__
+#ifdef LINEAR_ALGEBRA_IMPLEMENTATION
+#define _FUNC_IMPL(...) __VA_ARGS__
+#else
+#define _FUNC_IMPL(...)
+#endif
+
+#define _RESTRICTION_NONE(...) __VA_ARGS__
+#if _IS_IEC559
+#define _RESTRICTION_FLOAT(...) __VA_ARGS__
+#define _RESTRICTION_INT(...)
+#else
+#define _RESTRICTION_FLOAT(...)
+#define _RESTRICTION_INT(...) __VA_ARGS__
+#endif
+
+#if defined(LINEAR_ALGEBRA_VEC2_HEADER) || defined(LINEAR_ALGEBRA_VEC2_IMPLEMENTATION)
+#define _VEC2_FUNC_DECL(...)                  _FUNC_DECL(_RESTRICTION_NONE(__VA_ARGS__))
+#define _VEC2_FUNC_DECL_FLOAT_RESTRICTED(...) _FUNC_DECL(_RESTRICTION_FLOAT(__VA_ARGS__))
+#define _VEC2_FUNC_DECL_INT_RESTRICTED(...)   _FUNC_DECL(_RESTRICTION_INT(__VA_ARGS__))
+#define _VEC2_FUNC_IMPL(...)                  _FUNC_IMPL(_RESTRICTION_NONE(__VA_ARGS__))
+#define _VEC2_FUNC_IMPL_FLOAT_RESTRICTED(...) _FUNC_IMPL(_RESTRICTION_FLOAT(__VA_ARGS__))
+#define _VEC2_FUNC_IMPL_INT_RESTRICTED(...)   _FUNC_IMPL(_RESTRICTION_INT(__VA_ARGS__))
+#else
+#define _VEC2_FUNC_DECL(...)
+#define _VEC2_FUNC_DECL_FLOAT_RESTRICTED(...)
+#define _VEC2_FUNC_DECL_INT_RESTRICTED(...)
+#define _VEC2_FUNC_IMPL(...)
+#define _VEC2_FUNC_IMPL_FLOAT_RESTRICTED(...)
+#define _VEC2_FUNC_IMPL_INT_RESTRICTED(...)
+#endif
+
+// INTERNAL STATIC FUNCTIONS FOR IMPLEMENTATION
+#ifdef LINEAR_ALGEBRA_IMPLEMENTATION
 #ifndef _LINEAR_ALGEBRA_INTERNAL
 #define _LINEAR_ALGEBRA_INTERNAL
 
@@ -180,65 +213,59 @@
 #include <assert.h>
 #include <math.h>
 
-static inline i32 _la_i32_abs( i32 a )
+static inline i32 _la_i32_abs(i32 a)
 {
     return a < 0 ? -a : a;
 }
 
-static inline i64 _la_i64_abs( i64 a )
+static inline i64 _la_i64_abs(i64 a)
 {
     return a < 0 ? -a : a;
 }
 
-static inline i32 _la_i32_min( i32 a, i32 b )
+static inline i32 _la_i32_min(i32 a, i32 b)
 {
     return a < b ? a : b;
 }
 
-static inline i64 _la_i64_min( i64 a, i64 b )
+static inline i64 _la_i64_min(i64 a, i64 b)
 {
     return a < b ? a : b;
 }
 
-static inline i32 _la_i32_max( i32 a, i32 b )
+static inline i32 _la_i32_max(i32 a, i32 b)
 {
     return a > b ? a : b;
 }
 
-static inline i64 _la_i64_max( i64 a, i64 b )
+static inline i64 _la_i64_max(i64 a, i64 b)
 {
     return a > b ? a : b;
 }
 
-static inline i32 _la_i32_sqrt( i32 a )
+static inline i32 _la_i32_sqrt(i32 a)
 {
-    assert( a >= 0 );
-    return ( i32 ) sqrtf( ( float ) a );
+    assert(a >= 0);
+    return (i32) sqrtf((float) a);
 }
 
-static inline i64 _la_i64_sqrt( i64 a )
+static inline i64 _la_i64_sqrt(i64 a)
 {
-    assert( a >= 0 );
-    return ( i64 ) sqrt( ( double ) a );
+    assert(a >= 0);
+    return (i64) sqrt((double) a);
 }
 
-static inline int _la_f32_equals( f32 a, f32 b, f32 epsilon )
+static inline int _la_f32_equals(f32 a, f32 b, f32 epsilon)
 {
-    int result = ( fabsf( a - b ) ) <= ( epsilon * fmaxf( 1.0f, fmaxf( fabsf( a ), fabsf( b ) ) ) );
+    int result = (fabsf(a - b)) <= (epsilon * fmaxf(1.0f, fmaxf(fabsf(a), fabsf(b))));
     return result;
 }
 
-static inline int _la_f64_equals( f64 a, f64 b, f64 epsilon )
+static inline int _la_f64_equals(f64 a, f64 b, f64 epsilon)
 {
-    int result = ( fabs( a - b ) ) <= ( epsilon * fmax( 1.0, fmax( fabs( a ), fabs( b ) ) ) );
+    int result = (fabs(a - b)) <= (epsilon * fmax(1.0, fmax(fabs(a), fabs(b))));
     return result;
 }
 
 #endif /* _LINEAR_ALGEBRA_INTERNAL */
-
-#else /* LINEAR_ALGEBRA_HEADER */
-
-#define _FUNC_SPEC
-#define _FUNC_CONV
-
 #endif /* LINEAR_ALGEBRA_IMPLEMENATION */
