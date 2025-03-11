@@ -10,9 +10,30 @@
 
 #if defined( LINEAR_ALGEBRA_VEC2_IMPLEMENTATION ) || defined( LINEAR_ALGEBRA_VEC2_HEADER )
 
-//                     | function | return type | parameters
-//                     | ---      | :---:       | ---
-//extern _VEC2_DECL_FUNC(  zero,      _VEC2_TYPE,   void  );
+//                        | function  | return type | parameters
+//                        | ---       | :---:       | ---
+//extern _VEC2_DECL_FUNC(     zero,       _VEC2_TYPE,   void                                             );
+//extern _VEC2_DECL_FUNC(     one,        _VEC2_TYPE,   void                                             );
+//extern _VEC2_DECL_FUNC(     add,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     add_val,    _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE val                     );
+//extern _VEC2_DECL_FUNC(     sub,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     sub_val,    _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE val                     );
+//extern _VEC2_DECL_FUNC(     len,        _BASE_TYPE,   _VEC2_TYPE v                                     );
+//extern _VEC2_DECL_FUNC(     len_sq,     _BASE_TYPE,   _VEC2_TYPE v                                     );
+//extern _VEC2_DECL_FUNC(     dot,        _BASE_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     dist,       _BASE_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     dist_sq,    _BASE_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     scale,      _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE scale                   );
+//extern _VEC2_DECL_FUNC(     mul,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     negate,     _VEC2_TYPE,   _VEC2_TYPE v                                     );
+//extern _VEC2_DECL_FUNC(     div,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     transform,  _VEC2_TYPE,   _VEC2_TYPE v, _MAT4_TYPE m                       );
+//extern _VEC2_DECL_FUNC(     lerp,       _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t         );
+//extern _VEC2_DECL_FUNC(     reflect,    _VEC2_TYPE,   _VEC2_TYPE v, _VEC2_TYPE normal                  );
+//extern _VEC2_DECL_FUNC(     min,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     max,        _VEC2_TYPE,   _VEC2_TYPE a, _VEC2_TYPE b                       );
+//extern _VEC2_DECL_FUNC(     clamp,      _VEC2_TYPE,   _VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max     );
+//extern _VEC2_DECL_FUNC(     clamp_val,  _VEC2_TYPE,   _VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max     );
 
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( zero )( void );
 extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2( one )( void );
