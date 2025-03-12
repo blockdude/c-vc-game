@@ -23,36 +23,36 @@
 #endif
 
 #define _timestep_type \
-{                                                   \
-    int   	        rate;                           \
-    int         	avg;                            \
-    f64        	    delta;                          \
-    f64        	    target_delta;                   \
-    int             target_rate;                    \
-    u64     	    count;                          \
-                                                    \
-    f64             elapsed;                        \
-    f64             current;                        \
-    f64             previous;                       \
-                                                    \
-    struct                                          \
-    {                                               \
-        f64 elapsed;                                \
-        u64 count;                                  \
-        u64 last;                                   \
-        int index;                                  \
-                                                    \
-        struct                                      \
-        {                                           \
-            f64 delta;                              \
-            u64 count;                              \
-        } record[ TIMESTEP_CAPTURE_COUNT ];         \
-    } _snapshot;                                    \
-                                                    \
-    struct                                          \
-    {                                               \
-        bool looping;                               \
-    } _state;                                       \
+{                                           \
+    int rate;                               \
+    int avg;                                \
+    f64 delta;                              \
+    f64 target_delta;                       \
+    int target_rate;                        \
+    u64 count;                              \
+                                            \
+    f64 elapsed;                            \
+    f64 current;                            \
+    f64 previous;                           \
+                                            \
+    struct                                  \
+    {                                       \
+        f64 elapsed;                        \
+        u64 count;                          \
+        u64 last;                           \
+        int index;                          \
+                                            \
+        struct                              \
+        {                                   \
+            f64 delta;                      \
+            u64 count;                      \
+        } record[ TIMESTEP_CAPTURE_COUNT ]; \
+    } _snapshot;                            \
+                                            \
+    struct                                  \
+    {                                       \
+        bool looping;                       \
+    } _state;                               \
 }
 
 struct timestep _timestep_type;
