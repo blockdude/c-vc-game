@@ -32,6 +32,7 @@
 #include "util/types.h"
 #include "util/tcast.h"
 #include "common.h"
+#include "version.h"
 
 enum platform_init_flags
 {
