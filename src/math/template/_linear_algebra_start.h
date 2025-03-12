@@ -3,6 +3,7 @@
 // * remove _LITERAL_HELPER and _LITERAL in favor of _STATIC_CAST
 // * finish int type functions for vec3, vec4, quat, and mat4
 // * seperate functions into their own file?
+// * try and figureout better macro names that won't collide and maybe don't start with underscore?
 
 // LINEAR_ALGEBRA_TYPE_INFORMATION
 #if defined(LINEAR_ALGEBRA_INT) || defined(LINEAR_ALGEBRA_I32)

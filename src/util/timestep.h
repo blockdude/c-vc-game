@@ -58,27 +58,27 @@
 struct timestep _timestep_type;
 struct timestep_fixed _timestep_type;
 
-#define _timestep_decl_set_rate_func( T, _name ) \
+#define _TIMESTEP_FUNC_DECL_SET_RATE( T, _name ) \
 static inline void _name##_set_rate( T *const ts, const int rate ) { ts->target_delta = rate <= 0 ? 0.0 : 1.0 / rate; ts->target_rate = rate <= 0 ? 0 : rate; }
 
-_timestep_decl_set_rate_func( struct timestep, timestep );
-_timestep_decl_set_rate_func( struct timestep_fixed, timestep_fixed );
+_TIMESTEP_FUNC_DECL_SET_RATE( struct timestep, timestep );
+_TIMESTEP_FUNC_DECL_SET_RATE( struct timestep_fixed, timestep_fixed );
 
-#define _timestep_decl_preset_rate( _rate ) \
+#define _TIMESTEP_PRESET_DECL_RATE( _rate ) \
 static const struct timestep       TIMESTEP_##_rate##HZ       = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate }; \
 static const struct timestep_fixed TIMESTEP_FIXED_##_rate##HZ = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate };
 
-_timestep_decl_preset_rate( 30 );
-_timestep_decl_preset_rate( 35 );
-_timestep_decl_preset_rate( 40 );
-_timestep_decl_preset_rate( 45 );
-_timestep_decl_preset_rate( 50 );
-_timestep_decl_preset_rate( 55 );
-_timestep_decl_preset_rate( 60 );
-_timestep_decl_preset_rate( 120 );
-_timestep_decl_preset_rate( 144 );
-_timestep_decl_preset_rate( 240 );
-_timestep_decl_preset_rate( 360 );
+_TIMESTEP_PRESET_DECL_RATE( 30 );
+_TIMESTEP_PRESET_DECL_RATE( 35 );
+_TIMESTEP_PRESET_DECL_RATE( 40 );
+_TIMESTEP_PRESET_DECL_RATE( 45 );
+_TIMESTEP_PRESET_DECL_RATE( 50 );
+_TIMESTEP_PRESET_DECL_RATE( 55 );
+_TIMESTEP_PRESET_DECL_RATE( 60 );
+_TIMESTEP_PRESET_DECL_RATE( 120 );
+_TIMESTEP_PRESET_DECL_RATE( 144 );
+_TIMESTEP_PRESET_DECL_RATE( 240 );
+_TIMESTEP_PRESET_DECL_RATE( 360 );
 
 #define TIMESTEP_TICK_WHILE( _ts, _cnd ) \
     for ( _timestep_prefix( _ts ); ( _cnd ) && _timestep_can_proc( _ts ); _timestep_postfix( _ts ) )
