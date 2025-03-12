@@ -22,7 +22,7 @@
 #define TIMESTEP_CAPTURE_COUNT 512
 #endif
 
-#define _timestep_type \
+#define _TIMESTEP_TEMPLATE \
 {                                           \
     int rate;                               \
     int avg;                                \
@@ -55,30 +55,30 @@
     } _state;                               \
 }
 
-struct timestep _timestep_type;
-struct timestep_fixed _timestep_type;
+struct timestep _TIMESTEP_TEMPLATE;
+struct timestep_fixed _TIMESTEP_TEMPLATE;
 
-#define _TIMESTEP_FUNC_DECL_SET_RATE( T, _name ) \
+#define _TIMESTEP_FUNC_TEMPLATE_SET_RATE( T, _name ) \
 static inline void _name##_set_rate( T *const ts, const int rate ) { ts->target_delta = rate <= 0 ? 0.0 : 1.0 / rate; ts->target_rate = rate <= 0 ? 0 : rate; }
 
-_TIMESTEP_FUNC_DECL_SET_RATE( struct timestep, timestep );
-_TIMESTEP_FUNC_DECL_SET_RATE( struct timestep_fixed, timestep_fixed );
+_TIMESTEP_FUNC_TEMPLATE_SET_RATE( struct timestep, timestep );
+_TIMESTEP_FUNC_TEMPLATE_SET_RATE( struct timestep_fixed, timestep_fixed );
 
-#define _TIMESTEP_PRESET_DECL_RATE( _rate ) \
+#define _TIMESTEP_PRESET( _rate ) \
 static const struct timestep       TIMESTEP_##_rate##HZ       = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate }; \
 static const struct timestep_fixed TIMESTEP_FIXED_##_rate##HZ = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate };
 
-_TIMESTEP_PRESET_DECL_RATE( 30 );
-_TIMESTEP_PRESET_DECL_RATE( 35 );
-_TIMESTEP_PRESET_DECL_RATE( 40 );
-_TIMESTEP_PRESET_DECL_RATE( 45 );
-_TIMESTEP_PRESET_DECL_RATE( 50 );
-_TIMESTEP_PRESET_DECL_RATE( 55 );
-_TIMESTEP_PRESET_DECL_RATE( 60 );
-_TIMESTEP_PRESET_DECL_RATE( 120 );
-_TIMESTEP_PRESET_DECL_RATE( 144 );
-_TIMESTEP_PRESET_DECL_RATE( 240 );
-_TIMESTEP_PRESET_DECL_RATE( 360 );
+_TIMESTEP_PRESET( 30 );
+_TIMESTEP_PRESET( 35 );
+_TIMESTEP_PRESET( 40 );
+_TIMESTEP_PRESET( 45 );
+_TIMESTEP_PRESET( 50 );
+_TIMESTEP_PRESET( 55 );
+_TIMESTEP_PRESET( 60 );
+_TIMESTEP_PRESET( 120 );
+_TIMESTEP_PRESET( 144 );
+_TIMESTEP_PRESET( 240 );
+_TIMESTEP_PRESET( 360 );
 
 #define TIMESTEP_TICK_WHILE( _ts, _cnd ) \
     for ( _timestep_prefix( _ts ); ( _cnd ) && _timestep_can_proc( _ts ); _timestep_postfix( _ts ) )
