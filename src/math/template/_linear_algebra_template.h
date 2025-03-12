@@ -965,7 +965,7 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( reflect )( _VEC3_TYPE v, _VEC3_TYPE
 
 // Get min value for each pair of components
 _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
-_FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3( min )( _VEC3_TYPE a, _VEC3_TYPE b )
+_FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(min)(_VEC3_TYPE a, _VEC3_TYPE b)
 {
     _VEC3_TYPE result = { 0 };
 
@@ -1703,13 +1703,13 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT( nlerp )( _QUAT_TYPE p, _QUAT_TYPE q
 {
     _QUAT_TYPE result = { 0 };
 
-    // _QUAT_TYPELerp(p, q, t)
+    /* _QUAT_TYPELerp(p, q, t) */
     result.x = p.x + t * ( q.x - p.x );
     result.y = p.y + t * ( q.y - p.y );
     result.z = p.z + t * ( q.z - p.z );
     result.w = p.w + t * ( q.w - p.w );
 
-    // quat_f32_Normalize(n);
+    /* quat_f32_Normalize(n); */
     _QUAT_TYPE n = result;
     _BASE_TYPE len = _SQRT( n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w );
     if ( len == _LITERAL( 0.0 ) ) len = _LITERAL( 1.0 );

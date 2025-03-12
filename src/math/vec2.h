@@ -27,4 +27,6 @@
 #include "template/_linear_algebra_template.h"
 #undef LINEAR_ALGEBRA_F64
 
+#undef LINEAR_ALGEBRA_VEC2_HEADER
+
 #endif
