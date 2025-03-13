@@ -155,15 +155,15 @@ static const struct color COLOR_MAGENTA    = { 255, 0,   255, 255 };
   *	   { m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33 }
   */
 
-#define _VEC2_TEMPLATE(T)  {T x, y;}
-#define _VEC3_TEMPLATE(T)  {T x, y, z;}
-#define _VEC4_TEMPLATE(T)  {T x, y, z, w;}
-#define _QUAT_TEMPLATE(T)  {T x, y, z, w;}
-#define _FMAT4_TEMPLATE(T) {T m[ 16 ];}
-#define _MAT4_TEMPLATE(T)  {T m00, m01, m02, m03; \
-						    T m10, m11, m12, m13; \
-	                        T m20, m21, m22, m23; \
-	                        T m30, m31, m32, m33;}
+#define _VEC2_TEMPLATE(T)  { T x, y; }
+#define _VEC3_TEMPLATE(T)  { T x, y, z; }
+#define _VEC4_TEMPLATE(T)  { T x, y, z, w; }
+#define _QUAT_TEMPLATE(T)  { T x, y, z, w; }
+#define _FMAT4_TEMPLATE(T) { T m[ 16 ];}
+#define _MAT4_TEMPLATE(T)  { T m00, m01, m02, m03; \
+                             T m10, m11, m12, m13; \
+                             T m20, m21, m22, m23; \
+                             T m30, m31, m32, m33; }
 
 struct vec2 _VEC2_TEMPLATE( float );
 struct vec3 _VEC3_TEMPLATE( float );
