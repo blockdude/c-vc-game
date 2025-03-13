@@ -25,7 +25,6 @@ set(platform_headers
 	"src/system/allocator.h"
 	"src/util/timestep.h"
 	"src/util/camera.h"
-	"src/util/list.h"
 	"src/util/log.h"
 	"src/util/types.h"
 	"src/util/tcast.h"
