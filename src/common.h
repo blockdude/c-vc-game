@@ -30,7 +30,7 @@ typedef double f64;
 #define VCP_MAX_STRING_LEN 128
 #define VCP_DECLSPEC
 #define VCP_CALLCONV
-#define VCP_UNUSED_VAR( _v ) ( ( void ) ( _v ) )
-#define VCP_CLITERAL( T ) ( T )
+#define VCP_UNUSED_VAR(_v) ((void)(_v))
+#define VCP_CLITERAL(T) (T)
 
 #endif

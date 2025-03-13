@@ -36,13 +36,13 @@
 
 enum platform_init_flags
 {
-	WINDOW = BITFLAG( 0 ),
-	INPUT  = BITFLAG( 1 ),
-	AUDIO  = BITFLAG( 2 ),
-	TIMER  = BITFLAG( 3 )
+    WINDOW = BITFLAG(0),
+    INPUT  = BITFLAG(1),
+    AUDIO  = BITFLAG(2),
+    TIMER  = BITFLAG(3)
 };
 
-extern int platform_init( u32 flags );
-extern void platform_deinit( void );
+extern int platform_init(u32 flags);
+extern void platform_deinit(void);
 
 #endif
