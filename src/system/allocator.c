@@ -3,7 +3,7 @@
 
 static struct allocator g_allocator = { SDL_malloc, SDL_calloc, SDL_realloc, SDL_free };
 
-void allocator_restore_original( void )
+void allocator_restore_original(void)
 {
     g_allocator.malloc = SDL_malloc;
     g_allocator.calloc = SDL_calloc;
@@ -15,68 +15,68 @@ void allocator_restore_original( void )
     SDL_realloc_func sdl_realloc;
     SDL_free_func sdl_free;
 
-    SDL_GetOriginalMemoryFunctions( &sdl_malloc, &sdl_calloc, &sdl_realloc, &sdl_free );
-    SDL_SetMemoryFunctions( sdl_malloc, sdl_calloc, sdl_realloc, sdl_free );
+    SDL_GetOriginalMemoryFunctions(&sdl_malloc, &sdl_calloc, &sdl_realloc, &sdl_free);
+    SDL_SetMemoryFunctions(sdl_malloc, sdl_calloc, sdl_realloc, sdl_free);
 }
 
-int allocator_set_global( const struct allocator allocator )
+int allocator_set_global(const struct allocator allocator)
 {
-    if ( allocator.malloc == NULL )
+    if (allocator.malloc == NULL)
         return -1;
 
-    if ( allocator.calloc == NULL )
+    if (allocator.calloc == NULL)
         return -1;
 
-    if ( allocator.realloc == NULL )
+    if (allocator.realloc == NULL)
         return -1;
 
-    if ( allocator.dealloc == NULL )
+    if (allocator.dealloc == NULL)
         return -1;
 
-    SDL_SetMemoryFunctions( allocator.malloc, allocator.calloc, allocator.realloc, allocator.dealloc );
+    SDL_SetMemoryFunctions(allocator.malloc, allocator.calloc, allocator.realloc, allocator.dealloc);
     g_allocator = allocator;
     return 0;
 }
 
-int allocator_set_shallow( const struct allocator allocator )
+int allocator_set_shallow(const struct allocator allocator)
 {
-    if ( allocator.malloc == NULL )
+    if (allocator.malloc == NULL)
         return -1;
 
-    if ( allocator.calloc == NULL )
+    if (allocator.calloc == NULL)
         return -1;
 
-    if ( allocator.realloc == NULL )
+    if (allocator.realloc == NULL)
         return -1;
 
-    if ( allocator.dealloc == NULL )
+    if (allocator.dealloc == NULL)
         return -1;
 
     g_allocator = allocator;
     return 0;
 }
 
-struct allocator allocator_get( void )
+struct allocator allocator_get(void)
 {
     return g_allocator;
 }
 
-void *allocator_malloc( const size_t size )
+void *allocator_malloc(const size_t size)
 {
-    return g_allocator.malloc( size );
+    return g_allocator.malloc(size);
 }
 
-void *allocator_calloc( const size_t count, const size_t size )
+void *allocator_calloc(const size_t count, const size_t size)
 {
-    return g_allocator.calloc( count, size );
+    return g_allocator.calloc(count, size);
 }
 
-void *allocator_realloc( void *const mem, const size_t size )
+void *allocator_realloc(void *const mem, const size_t size)
 {
-    return g_allocator.realloc( mem, size );
+    return g_allocator.realloc(mem, size);
 }
 
-void allocator_dealloc( void *const mem )
+void allocator_dealloc(void *const mem)
 {
-    g_allocator.dealloc( mem );
+    g_allocator.dealloc(mem);
 }

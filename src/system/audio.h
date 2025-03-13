@@ -3,7 +3,7 @@
 
 #include "../common.h"
 
-extern int audio_init( void );
-extern void audio_deinit( void );
+extern int audio_init(void);
+extern void audio_deinit(void);
 
 #endif

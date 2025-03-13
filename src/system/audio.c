@@ -15,11 +15,11 @@ static struct
  * -----------------------------
  */
 
-int audio_init( void )
+int audio_init(void)
 {
-    if ( SDL_Init( SDL_INIT_AUDIO ) == false )
+    if (SDL_Init(SDL_INIT_AUDIO) == false)
     {
-        log_warn( "Unable to initialize SDL audio system: %s", SDL_GetError() );
+        log_warn("Unable to initialize SDL audio system: %s", SDL_GetError());
         return -1;
     }
 
@@ -27,12 +27,12 @@ int audio_init( void )
     return 0;
 }
 
-void audio_deinit( void )
+void audio_deinit(void)
 {
-    if ( g_audio_state.initialized == false )
+    if (g_audio_state.initialized == false)
         return;
 
-    SDL_QuitSubSystem( SDL_INIT_AUDIO );
+    SDL_QuitSubSystem(SDL_INIT_AUDIO);
     g_audio_state.initialized = false;
 }
 

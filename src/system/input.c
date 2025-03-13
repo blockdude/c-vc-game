@@ -6,7 +6,7 @@
 #include <SDL3/SDL.h>
 #include <glad/gl.h>
 
-static const int keymap[ SDL_SCANCODE_COUNT ] = {
+static const int keymap[SDL_SCANCODE_COUNT] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
 
     0, 0, 0,
@@ -142,8 +142,8 @@ static const int btnmap[] = {
 static struct
 {
     bool         	initialized;
-    struct keystate k_state[ K_COUNT ];
-    struct keystate m_state[ B_COUNT ];
+    struct keystate k_state[K_COUNT];
+    struct keystate m_state[B_COUNT];
     bool         	m_moved;
     struct vec2     m_wheel;
     struct vec2     m_pos_rel;
@@ -153,7 +153,7 @@ static struct
 
     int             text_input_ref_count;
     int             text_buffer_count;
-    char            text_buffer[ VCP_MAX_STRING_LEN ];
+    char            text_buffer[VCP_MAX_STRING_LEN];
 } g_input_state = { 0 };
 
 
@@ -165,21 +165,21 @@ static struct
  * -----------------------------
  */
 
-#define MIN( a, b ) ( ( a ) < ( b ) ? ( a ) : ( b ) )
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-static inline bool input_text_active( void )
+static inline bool input_text_active(void)
 {
-    return SDL_TextInputActive( ( SDL_Window * ) window_handle() );
+    return SDL_TextInputActive((SDL_Window *)window_handle());
 }
 
-static inline bool input_text_start( void )
+static inline bool input_text_start(void)
 {
-    return SDL_StartTextInput( ( SDL_Window * ) window_handle() );
+    return SDL_StartTextInput((SDL_Window *)window_handle());
 }
 
-static inline bool input_text_end( void )
+static inline bool input_text_end(void)
 {
-    return SDL_StopTextInput( ( SDL_Window * ) window_handle() );
+    return SDL_StopTextInput((SDL_Window *)window_handle());
 }
 
 /*
@@ -195,25 +195,25 @@ static inline bool input_text_end( void )
  * -----------------------------
  */
 
-int input_init( void )
+int input_init(void)
 {
-    if ( SDL_InitSubSystem( SDL_INIT_EVENTS ) == false )
+    if (SDL_InitSubSystem(SDL_INIT_EVENTS) == false)
     {
-        log_warn( "Unable to initialize SDL event system: %s", SDL_GetError() );
+        log_warn("Unable to initialize SDL event system: %s", SDL_GetError());
         return -1;
     }
 
-    memset( &g_input_state, 0, sizeof( g_input_state ) );
+    memset(&g_input_state, 0, sizeof(g_input_state));
     g_input_state.initialized = true;
     return 0;
 }
 
-void input_deinit( void )
+void input_deinit(void)
 {
-    if ( g_input_state.initialized == false )
+    if (g_input_state.initialized == false)
         return;
 
-    SDL_QuitSubSystem( SDL_INIT_EVENTS );
+    SDL_QuitSubSystem(SDL_INIT_EVENTS);
     g_input_state.initialized = false;
 }
 
@@ -230,26 +230,26 @@ void input_deinit( void )
  * -----------------------------
  */
 
-void input_poll_events( void )
+void input_poll_events(void)
 {
     // reset keys
-    for ( int i = 0; i < K_COUNT; i++ )
+    for (int i = 0; i < K_COUNT; i++)
     {
-        g_input_state.k_state[ i ].pressed = false;
-        g_input_state.k_state[ i ].released = false;
+        g_input_state.k_state[i].pressed = false;
+        g_input_state.k_state[i].released = false;
     }
 
     // reset mouse buttons
-    for ( int i = 0; i < B_COUNT; i++ )
+    for (int i = 0; i < B_COUNT; i++)
     {
-        g_input_state.m_state[ i ].pressed = false;
-        g_input_state.m_state[ i ].released = false;
+        g_input_state.m_state[i].pressed = false;
+        g_input_state.m_state[i].released = false;
     }
 
     // reset text buffer
-    memset( g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN );
+    memset(g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN);
     g_input_state.text_buffer_count = 0;
-    if ( g_input_state.text_input_ref_count <= 0 && input_text_active() )
+    if (g_input_state.text_input_ref_count <= 0 && input_text_active())
     {
         input_text_end();
     }
@@ -258,65 +258,65 @@ void input_poll_events( void )
     g_input_state.text_input_ref_count = 0;
 
     // reset mouse events
-    g_input_state.m_moved       = false;
-    g_input_state.m_wheel.x     = 0;
-    g_input_state.m_wheel.y     = 0;
+    g_input_state.m_moved = false;
+    g_input_state.m_wheel.x = 0;
+    g_input_state.m_wheel.y = 0;
     g_input_state.m_pos_delta.x = 0;
     g_input_state.m_pos_delta.y = 0;
 
     SDL_Event event;
-    while ( SDL_PollEvent( &event ) )
+    while (SDL_PollEvent(&event))
     {
         // note: SDL_EVENT_QUIT does not provide a windowID
-        if ( event.type == SDL_EVENT_QUIT )
+        if (event.type == SDL_EVENT_QUIT)
         {
-            _window_notify( _WINDOW_NOTIFY_CLOSE, 0, 0 );
+            _window_notify(_WINDOW_NOTIFY_CLOSE, 0, 0);
             g_input_state.e_quit = true;
             return;
         }
 
-        if ( window_id() != event.window.windowID )
+        if (window_id() != event.window.windowID)
             continue;
 
-        switch ( event.type )
+        switch (event.type)
         {
         case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 
-            _window_notify( _WINDOW_NOTIFY_CLOSE, 0, 0 );
+            _window_notify(_WINDOW_NOTIFY_CLOSE, 0, 0);
 
             break;
 
         case SDL_EVENT_WINDOW_RESIZED:
 
-            _window_notify( _WINDOW_NOTIFY_RESIZE, event.window.data1, event.window.data2 );
+            _window_notify(_WINDOW_NOTIFY_RESIZE, event.window.data1, event.window.data2);
 
             break;
 
         case SDL_EVENT_KEY_DOWN:
 
-            g_input_state.k_state[ keymap[ event.key.scancode ] ].pressed = true;
-            g_input_state.k_state[ keymap[ event.key.scancode ] ].down = true;
+            g_input_state.k_state[keymap[event.key.scancode]].pressed = true;
+            g_input_state.k_state[keymap[event.key.scancode]].down = true;
 
             break;
 
         case SDL_EVENT_KEY_UP:
 
-            g_input_state.k_state[ keymap[ event.key.scancode ] ].down = false;
-            g_input_state.k_state[ keymap[ event.key.scancode ] ].released = true;
+            g_input_state.k_state[keymap[event.key.scancode]].down = false;
+            g_input_state.k_state[keymap[event.key.scancode]].released = true;
 
             break;
 
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-            g_input_state.m_state[ btnmap[ event.button.button ] ].pressed = true;
-            g_input_state.m_state[ btnmap[ event.button.button ] ].down = true;
+            g_input_state.m_state[btnmap[event.button.button]].pressed = true;
+            g_input_state.m_state[btnmap[event.button.button]].down = true;
 
             break;
 
         case SDL_EVENT_MOUSE_BUTTON_UP:
 
-            g_input_state.m_state[ btnmap[ event.button.button ] ].down = false;
-            g_input_state.m_state[ btnmap[ event.button.button ] ].released = true;
+            g_input_state.m_state[btnmap[event.button.button]].down = false;
+            g_input_state.m_state[btnmap[event.button.button]].released = true;
 
             break;
 
@@ -329,8 +329,8 @@ void input_poll_events( void )
 
         case SDL_EVENT_MOUSE_MOTION:
 
-            g_input_state.m_pos_rel.x    = event.motion.x;
-            g_input_state.m_pos_rel.y    = event.motion.y;
+            g_input_state.m_pos_rel.x = event.motion.x;
+            g_input_state.m_pos_rel.y = event.motion.y;
             g_input_state.m_pos_delta.x += event.motion.xrel;
             g_input_state.m_pos_delta.y += event.motion.yrel;
             g_input_state.m_moved = true;
@@ -339,8 +339,8 @@ void input_poll_events( void )
 
         case SDL_EVENT_TEXT_INPUT:
 
-            g_input_state.text_buffer_count += snprintf( &g_input_state.text_buffer[ g_input_state.text_buffer_count ], VCP_MAX_STRING_LEN, "%s", event.text.text);
-            g_input_state.text_buffer_count = MIN( g_input_state.text_buffer_count, VCP_MAX_STRING_LEN - 1 );
+            g_input_state.text_buffer_count += snprintf(&g_input_state.text_buffer[g_input_state.text_buffer_count], VCP_MAX_STRING_LEN, "%s", event.text.text);
+            g_input_state.text_buffer_count = MIN(g_input_state.text_buffer_count, VCP_MAX_STRING_LEN - 1);
 
             break;
         }
@@ -360,19 +360,19 @@ void input_poll_events( void )
  * -----------------------------
  */
 
-int input_quit_event( void )
+int input_quit_event(void)
 {
     return g_input_state.e_quit;
 }
 
-int input_text( char *const buffer, const size_t buffer_size )
+int input_text(char *const buffer, const size_t buffer_size)
 {
     /*
     * I don't know if this is a good way to do it.
     * I would rather input_text_active be true
     * at startup rather than be true after a call
     * to this function.
-    * 
+    *
     * When this is called for the first time, the
     * buffer will always be empty and this will
     * return zero. So text input can only be
@@ -382,63 +382,63 @@ int input_text( char *const buffer, const size_t buffer_size )
     * keystates. If a keystate is pressed or down
     * there is no garentee that this will fill
     * the buffer with that keystate.
-    * 
+    *
     * This feels hacky but I guess it is fine for
     * now. Actually now that im thinking about it
     * it may be good that it does not capture
     * text input in the frame that this is
     * called.
-    * 
+    *
     * Note: consider putting input_text_start and
     * input_text_end in the public api so it
     * would basically act as a wrapper of the sdl
     * functions.
     */
 
-    if ( ( buffer == NULL ) || ( buffer_size <= 0 ) )
+    if ((buffer == NULL) || (buffer_size <= 0))
     {
         return 0;
     }
 
     g_input_state.text_input_ref_count += 1;
 
-    if ( !input_text_active() )
+    if (!input_text_active())
     {
         return input_text_start() ? 0 : -1;
     }
 
-    const int result = snprintf( buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer );
-    return ( int ) MIN( result, buffer_size );
+    const int result = snprintf(buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer);
+    return (int)MIN(result, buffer_size);
 }
 
-struct keystate input_keystate( const int key )
+struct keystate input_keystate(const int key)
 {
-    assert( ( key >= 0 ) && ( key < K_COUNT ) );
-    return g_input_state.k_state[ key ];
+    assert((key >= 0) && (key < K_COUNT));
+    return g_input_state.k_state[key];
 }
 
-struct keystate input_btnstate( const int btn )
+struct keystate input_btnstate(const int btn)
 {
-    assert( ( btn >= 0 ) && ( btn < B_COUNT ) );
-    return g_input_state.m_state[ btn ];
+    assert((btn >= 0) && (btn < B_COUNT));
+    return g_input_state.m_state[btn];
 }
 
-bool input_mouse_moved( void )
+bool input_mouse_moved(void)
 {
     return g_input_state.m_moved;
 }
 
-struct vec2 input_mouse_pos( void )
+struct vec2 input_mouse_pos(void)
 {
     return g_input_state.m_pos_rel;
 }
 
-struct vec2 input_mouse_delta( void )
+struct vec2 input_mouse_delta(void)
 {
     return g_input_state.m_pos_delta;
 }
 
-struct vec2 input_mouse_scroll( void )
+struct vec2 input_mouse_scroll(void)
 {
     return g_input_state.m_wheel;
 }
