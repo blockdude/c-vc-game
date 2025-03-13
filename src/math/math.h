@@ -19,36 +19,36 @@
 #define TAU     6.28318530717958647692528676655900576
 #define EPSILON 0.0001
 
-#define MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
-#define MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
-#define CLAMP( v, mn, mx ) MAX( mn, MIN( mx, v ) )
+#define CLAMP(v, mn, mx) MAX(mn, MIN(mx, v))
 
-#define DEGTORAD( x ) ( ( x ) * ( PI / 180.0 ) )
-#define RADTODEG( x ) ( ( x ) * ( 180.0 / PI ) )
+#define DEGTORAD(x) ((x) * (PI / 180.0))
+#define RADTODEG(x) ((x) * (180.0 / PI))
 
-#define LERP( a, b, t ) ( ( a ) + ( t ) * ( ( b ) - ( a ) ) )
-#define NORMALIZE( x, min, max ) ( ( ( x ) - ( min ) ) / ( ( max ) - ( min ) ) )
+#define LERP(a, b, t) ((a) + (t) * ((b) - (a)))
+#define NORMALIZE(x, min, max) (((x) - (min)) / ((max) - (min)))
 
-#define _MATH_FUNC_TEMPLATE_INT_DIVRND( T, _name ) \
-static inline T _name##_divrnd( const T n, const T d ) { return ( ( n < 0 ) == ( d < 0 ) ) ? ( ( n + d / 2 ) / d ) : ( ( n - d / 2 ) / d ); }
+#define _MATH_FUNC_TEMPLATE_INT_DIVRND(T, _name) \
+static inline T _name##_divrnd(const T n, const T d) { return ((n < 0) == (d < 0)) ? ((n + d / 2) / d) : ((n - d / 2) / d); }
 
-_MATH_FUNC_TEMPLATE_INT_DIVRND( int, int );
-_MATH_FUNC_TEMPLATE_INT_DIVRND( i32, int32 );
-_MATH_FUNC_TEMPLATE_INT_DIVRND( i64, int64 );
+_MATH_FUNC_TEMPLATE_INT_DIVRND(int, int);
+_MATH_FUNC_TEMPLATE_INT_DIVRND(i32, int32);
+_MATH_FUNC_TEMPLATE_INT_DIVRND(i64, int64);
 
-#define _MATH_FUNC_TEMPLATE_INT_DIVFLR( T, _name ) \
-static inline T _name##_divflr( const T n, const T d ) { return ( n / d ) - ( n < 0 ); }
+#define _MATH_FUNC_TEMPLATE_INT_DIVFLR(T, _name) \
+static inline T _name##_divflr(const T n, const T d) { return (n / d) - (n < 0); }
 
-_MATH_FUNC_TEMPLATE_INT_DIVFLR( int, int );
-_MATH_FUNC_TEMPLATE_INT_DIVFLR( i32, int32 );
-_MATH_FUNC_TEMPLATE_INT_DIVFLR( i64, int64 );
+_MATH_FUNC_TEMPLATE_INT_DIVFLR(int, int);
+_MATH_FUNC_TEMPLATE_INT_DIVFLR(i32, int32);
+_MATH_FUNC_TEMPLATE_INT_DIVFLR(i64, int64);
 
-#define _MATH_FUNC_TEMPLATE_FLOAT_EQUALS( T, _name, _abs_fn, _max_fn ) \
-static inline int _name##_equals( const T a, const T b, const T epsilon ) { return ( _abs_fn( a - b ) ) <= ( epsilon * _max_fn( 1.0f, _max_fn( _abs_fn( a ), _abs_fn( b ) ) ) ); }
+#define _MATH_FUNC_TEMPLATE_FLOAT_EQUALS(T, _name, _abs_fn, _max_fn) \
+static inline int _name##_equals(const T a, const T b, const T epsilon) { return (_abs_fn(a - b)) <= (epsilon * _max_fn(1.0f, _max_fn(_abs_fn(a), _abs_fn(b)))); }
 
-_MATH_FUNC_TEMPLATE_FLOAT_EQUALS( float, float, fabsf, fmaxf );
-_MATH_FUNC_TEMPLATE_FLOAT_EQUALS( f32, float32, fabsf, fmaxf );
-_MATH_FUNC_TEMPLATE_FLOAT_EQUALS( f64, float64, fabs, fmax );
+_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(float, float, fabsf, fmaxf);
+_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f32, float32, fabsf, fmaxf);
+_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f64, float64, fabs, fmax);
 
 #endif
