@@ -7,12 +7,12 @@
 
 struct vao
 {
-	GLuint handle;
+    GLuint handle;
 };
 
-extern struct vao vao_create( void );
-extern void vao_free( struct vao self );
-extern void vao_bind( struct vao self );
-extern void vao_attr( struct vao self, struct vbo vbo, GLuint index, GLint size, GLenum type, GLsizei stride, size_t offset);
+extern struct vao vao_create(void);
+extern void vao_free(struct vao self);
+extern void vao_bind(struct vao self);
+extern void vao_attr(struct vao self, struct vbo vbo, GLuint index, GLint size, GLenum type, GLsizei stride, size_t offset);
 
 #endif

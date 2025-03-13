@@ -12,251 +12,251 @@
 #include <math/vec4.h>
 #include <math/mat4.h>
 
-static inline char *shader_get_log( 
-		const GLint handle,
-		void ( *const getlog )( GLuint, GLsizei, GLsizei *, GLchar * ),
-		void ( *const getiv )( GLuint, GLenum, GLint * ) )
+static inline char *shader_get_log(
+    const GLint handle,
+    void (*const getlog)(GLuint, GLsizei, GLsizei *, GLchar *),
+    void (*const getiv)(GLuint, GLenum, GLint *))
 {
-	GLint loglen = 0;
-	getiv( handle, GL_INFO_LOG_LENGTH, &loglen );
+    GLint loglen = 0;
+    getiv(handle, GL_INFO_LOG_LENGTH, &loglen);
 
-	if ( loglen <= 1 )
-		return NULL;
+    if (loglen <= 1)
+        return NULL;
 
-	char *const logtext = malloc( loglen * sizeof( *logtext ) );
-	getlog( handle, loglen, NULL, logtext );
+    char *const logtext = malloc(loglen * sizeof(*logtext));
+    getlog(handle, loglen, NULL, logtext);
 
-	return logtext;
+    return logtext;
 }
 
-static char *shader_load_text( const char *const path, size_t *const out_len )
+static char *shader_load_text(const char *const path, size_t *const out_len)
 {
-	FILE *f = NULL;
-	char *text = NULL;
-	size_t len = 0;
+    FILE *f = NULL;
+    char *text = NULL;
+    size_t len = 0;
 
-	f = fopen( path, "rb" );
-	if ( f == NULL )
-	{
-		log_warn( "Could not open shader file: %s", path );
-		return NULL;
-	}
+    f = fopen(path, "rb");
+    if (f == NULL)
+    {
+        log_warn("Could not open shader file: %s", path);
+        return NULL;
+    }
 
-	// put shader in buffer text
-	fseek( f, 0, SEEK_END );
-	len = ftell( f );
-	assert( len > 0 );
-	text = calloc( 1, len + 1 );
-	assert( text != NULL );
-	fseek( f, 0, SEEK_SET );
-	fread( text, 1, len, f );
-	assert( strlen( text ) > 0 );
-	fclose( f );
-	text[ len ] = '\0';
+    // put shader in buffer text
+    fseek(f, 0, SEEK_END);
+    len = ftell(f);
+    assert(len > 0);
+    text = calloc(1, len + 1);
+    assert(text != NULL);
+    fseek(f, 0, SEEK_SET);
+    fread(text, 1, len, f);
+    assert(strlen(text) > 0);
+    fclose(f);
+    text[len] = '\0';
 
-	if ( out_len )
-		*out_len = len;
+    if (out_len)
+        *out_len = len;
 
-	// return null terminated string
-	return text;
+    // return null terminated string
+    return text;
 }
 
-static inline GLuint shader_compile_text( const char *const text, const size_t len, const GLenum type )
+static inline GLuint shader_compile_text(const char *const text, const size_t len, const GLenum type)
 {
-	// create and compile shader
-	const GLuint handle = glCreateShader( type );
-	glShaderSource( handle, 1, ( const GLchar *const * ) &text, ( const GLint * ) &len );
-	glCompileShader( handle );
+    // create and compile shader
+    const GLuint handle = glCreateShader(type);
+    glShaderSource(handle, 1, (const GLchar *const *)&text, (const GLint *)&len);
+    glCompileShader(handle);
 
-	return handle;
+    return handle;
 }
 
 static inline GLint shader_get_status(
-		const GLuint handle, const GLenum pname,
-		void ( *const getiv )( GLuint, GLenum, GLint * ) )
+    const GLuint handle, const GLenum pname,
+    void (*const getiv)(GLuint, GLenum, GLint *))
 {
-	GLint status = 0;
-	getiv( handle, pname, &status );
-	return status;
+    GLint status = 0;
+    getiv(handle, pname, &status);
+    return status;
 }
 
 static inline void shader_log_status(
-		const GLuint handle, const char *const prefix, const char *const path_a, const char *const path_b,
-		void ( *const getlog )( GLuint, GLsizei, GLsizei *, GLchar * ),
-		void ( *const getiv )( GLuint, GLenum, GLint * ) )
+    const GLuint handle, const char *const prefix, const char *const path_a, const char *const path_b,
+    void (*const getlog)(GLuint, GLsizei, GLsizei *, GLchar *),
+    void (*const getiv)(GLuint, GLenum, GLint *))
 {
-	char *const logtext = shader_get_log( handle, getlog, getiv );
+    char *const logtext = shader_get_log(handle, getlog, getiv);
 
-	char path[ VCP_MAX_STRING_LEN ] = { 0 };
-	if      ( path_a ) snprintf( path, VCP_MAX_STRING_LEN, " [ %s ]", path_a );
-	else if ( path_b ) snprintf( path, VCP_MAX_STRING_LEN, " [ %s, %s ]", path_a, path_b );
+    char path[VCP_MAX_STRING_LEN] = { 0 };
+    if (path_a) snprintf(path, VCP_MAX_STRING_LEN, " [ %s ]", path_a);
+    else if (path_b) snprintf(path, VCP_MAX_STRING_LEN, " [ %s, %s ]", path_a, path_b);
 
-	// Log shader messages
-	if ( logtext )
-	{
-		log_trace( "%s shader logs%s:\n%s", prefix, path, logtext );
-	}
+    // Log shader messages
+    if (logtext)
+    {
+        log_trace("%s shader logs%s:\n%s", prefix, path, logtext);
+    }
 
-	free( logtext );
+    free(logtext);
 }
 
-static inline GLuint shader_link_program( const GLuint vs, const GLuint fs )
+static inline GLuint shader_link_program(const GLuint vs, const GLuint fs)
 {
-	const GLuint handle = glCreateProgram();
+    const GLuint handle = glCreateProgram();
 
-	// Link shader program
-	glAttachShader( handle, vs );
-	glAttachShader( handle, fs );
+    // Link shader program
+    glAttachShader(handle, vs);
+    glAttachShader(handle, fs);
 
-	// note: must bind attributes before linking
-	//// Bind vertex attributes
-	//for (size_t i = 0; i < n; i++) {
-	//	glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name);
-	//}
+    // note: must bind attributes before linking
+    //// Bind vertex attributes
+    //for (size_t i = 0; i < n; i++) {
+    //	glBindAttribLocation(self.handle, attributes[i].index, attributes[i].name);
+    //}
 
-	glLinkProgram( handle );
+    glLinkProgram(handle);
 
-	// we can detach and delete the shaders after we are done linking them
-	glDetachShader( handle, vs );
-	glDeleteShader( vs );
+    // we can detach and delete the shaders after we are done linking them
+    glDetachShader(handle, vs);
+    glDeleteShader(vs);
 
-	glDetachShader( handle, fs );
-	glDeleteShader( fs );
+    glDetachShader(handle, fs);
+    glDeleteShader(fs);
 
-	return handle;
+    return handle;
 }
 
-static inline int shader_build_text( struct shader *const self, const char *const vstext, const size_t vslen, const char *const fstext, const size_t fslen, const char *const vspath, const char *const fspath )
+static inline int shader_build_text(struct shader *const self, const char *const vstext, const size_t vslen, const char *const fstext, const size_t fslen, const char *const vspath, const char *const fspath)
 {
-	*self = ( struct shader ) { 0 };
+    *self = (struct shader){ 0 };
 
-	const GLuint vs_handle = shader_compile_text( vstext, vslen, GL_VERTEX_SHADER );
-	const GLuint fs_handle = shader_compile_text( fstext, fslen, GL_FRAGMENT_SHADER );
+    const GLuint vs_handle = shader_compile_text(vstext, vslen, GL_VERTEX_SHADER);
+    const GLuint fs_handle = shader_compile_text(fstext, fslen, GL_FRAGMENT_SHADER);
 
-	const GLint vs_status = shader_get_status( vs_handle, GL_COMPILE_STATUS, glGetShaderiv );
-	const GLint fs_status = shader_get_status( fs_handle, GL_COMPILE_STATUS, glGetShaderiv );
-	
-	shader_log_status( vs_handle, "Vertex"  , vspath, NULL, glGetShaderInfoLog, glGetShaderiv );
-	shader_log_status( fs_handle, "Fragment", fspath, NULL, glGetShaderInfoLog, glGetShaderiv );
+    const GLint vs_status = shader_get_status(vs_handle, GL_COMPILE_STATUS, glGetShaderiv);
+    const GLint fs_status = shader_get_status(fs_handle, GL_COMPILE_STATUS, glGetShaderiv);
 
-	if ( vs_status == GL_FALSE )
-	{
-		glDeleteShader( vs_handle );
-		glDeleteShader( fs_handle );
-		log_warn( "Vertex Shader [ID:%d] %s failed to compile", vs_handle, vspath ? vspath : "" );
-		return SHADER_VS_COMPILE_ERROR;
-	}
-	log_info( "Vertex Shader [ID:%d] %s compiled successfully", vs_handle, vspath ? vspath : "" );
+    shader_log_status(vs_handle, "Vertex", vspath, NULL, glGetShaderInfoLog, glGetShaderiv);
+    shader_log_status(fs_handle, "Fragment", fspath, NULL, glGetShaderInfoLog, glGetShaderiv);
 
-	if ( fs_status == GL_FALSE )
-	{
-		glDeleteShader( vs_handle );
-		glDeleteShader( fs_handle );
-		log_warn( "Fragment Shader [ID:%d] %s failed to compile", fs_handle, fspath ? fspath : "" );
-		return SHADER_FS_COMPILE_ERROR;
-	}
-	log_info( "Fragment Shader [ID:%d] %s compiled successfully", fs_handle, fspath ? fspath : "" );
+    if (vs_status == GL_FALSE)
+    {
+        glDeleteShader(vs_handle);
+        glDeleteShader(fs_handle);
+        log_warn("Vertex Shader [ID:%d] %s failed to compile", vs_handle, vspath ? vspath : "");
+        return SHADER_VS_COMPILE_ERROR;
+    }
+    log_info("Vertex Shader [ID:%d] %s compiled successfully", vs_handle, vspath ? vspath : "");
 
-	self->handle = shader_link_program( vs_handle, fs_handle );
-	const GLint sp_status = shader_get_status( self->handle, GL_LINK_STATUS, glGetProgramiv );
-	shader_log_status( self->handle, "Program", vspath, fspath, glGetProgramInfoLog, glGetProgramiv );
+    if (fs_status == GL_FALSE)
+    {
+        glDeleteShader(vs_handle);
+        glDeleteShader(fs_handle);
+        log_warn("Fragment Shader [ID:%d] %s failed to compile", fs_handle, fspath ? fspath : "");
+        return SHADER_FS_COMPILE_ERROR;
+    }
+    log_info("Fragment Shader [ID:%d] %s compiled successfully", fs_handle, fspath ? fspath : "");
 
-	if ( sp_status == GL_FALSE )
-	{
-		glDeleteProgram( self->handle );
-		log_warn( "Shader Program [ID:%d|VS:%d|FS:%d] failed to link", self->handle, vs_handle, fs_handle );
-		return SHADER_PROGRAM_LINKING_ERROR;
-	}
-	log_info( "Shader Program [ID:%d|VS:%d|FS:%d] successfully loaded", self->handle, vs_handle, fs_handle );
+    self->handle = shader_link_program(vs_handle, fs_handle);
+    const GLint sp_status = shader_get_status(self->handle, GL_LINK_STATUS, glGetProgramiv);
+    shader_log_status(self->handle, "Program", vspath, fspath, glGetProgramInfoLog, glGetProgramiv);
 
-	glUseProgram( self->handle );
-	return SHADER_SUCCESS;
+    if (sp_status == GL_FALSE)
+    {
+        glDeleteProgram(self->handle);
+        log_warn("Shader Program [ID:%d|VS:%d|FS:%d] failed to link", self->handle, vs_handle, fs_handle);
+        return SHADER_PROGRAM_LINKING_ERROR;
+    }
+    log_info("Shader Program [ID:%d|VS:%d|FS:%d] successfully loaded", self->handle, vs_handle, fs_handle);
+
+    glUseProgram(self->handle);
+    return SHADER_SUCCESS;
 }
 
-struct shader shader_load( const char *const vstext, const char *const fstext )
+struct shader shader_load(const char *const vstext, const char *const fstext)
 {
-	struct shader result = { 0 };
-	result.status = shader_build_text( &result, vstext, strlen( vstext ), fstext, strlen( fstext ), NULL, NULL );
-	return result;
+    struct shader result = { 0 };
+    result.status = shader_build_text(&result, vstext, strlen(vstext), fstext, strlen(fstext), NULL, NULL);
+    return result;
 }
 
-struct shader shader_loadf( const char *const vspath, const char *const fspath )
+struct shader shader_loadf(const char *const vspath, const char *const fspath)
 {
-	struct shader result = { 0 };
-	size_t vslen = 0;
-	size_t fslen = 0;
-	char *const vstext = shader_load_text( vspath, &vslen );
-	char *const fstext = shader_load_text( fspath, &fslen );
+    struct shader result = { 0 };
+    size_t vslen = 0;
+    size_t fslen = 0;
+    char *const vstext = shader_load_text(vspath, &vslen);
+    char *const fstext = shader_load_text(fspath, &fslen);
 
-	if ( !vstext || !fstext )
-	{
-		result.status = SHADER_INVALID_FILE_PATH;
-		return result;
-	}
+    if (!vstext || !fstext)
+    {
+        result.status = SHADER_INVALID_FILE_PATH;
+        return result;
+    }
 
-	result.status = shader_build_text( &result, vstext, vslen, fstext, fslen, vspath, fspath );
+    result.status = shader_build_text(&result, vstext, vslen, fstext, fslen, vspath, fspath);
 
-	free( vstext );
-	free( fstext );
+    free(vstext);
+    free(fstext);
 
-	return result;
+    return result;
 }
 
-void shader_free( const struct shader self )
+void shader_free(const struct shader self)
 {
-	glDeleteProgram( self.handle );
+    glDeleteProgram(self.handle);
 }
 
-void shader_bind( const struct shader self )
+void shader_bind(const struct shader self)
 {
-	glUseProgram( self.handle );
+    glUseProgram(self.handle);
 }
 
-void shader_uniform_mat4( const struct shader self, const char *const name, const struct mat4 m )
+void shader_uniform_mat4(const struct shader self, const char *const name, const struct mat4 m)
 {
-	const GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniformMatrix4fv( idx, 1, GL_FALSE, mat4_flatten( m ).m );
+    const GLint idx = glGetUniformLocation(self.handle, name);
+    if (idx < 0) log_warn("Unable to uniform variable: %s", name);
+    glUniformMatrix4fv(idx, 1, GL_FALSE, mat4_flatten(m).m);
 }
 
-void shader_uniform_float( const struct shader self, const char *const name, const float f )
+void shader_uniform_float(const struct shader self, const char *const name, const float f)
 {
-	const GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniform1f( idx, f );
+    const GLint idx = glGetUniformLocation(self.handle, name);
+    if (idx < 0) log_warn("Unable to uniform variable: %s", name);
+    glUniform1f(idx, f);
 }
 
-void shader_uniform_vec2( const struct shader self, const char *const name, const struct vec2 v )
+void shader_uniform_vec2(const struct shader self, const char *const name, const struct vec2 v)
 {
-	const GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-	glUniform2f( idx, v.x, v.y );
+    const GLint idx = glGetUniformLocation(self.handle, name);
+    if (idx < 0) log_warn("Unable to uniform variable: %s", name);
+    glUniform2f(idx, v.x, v.y);
 }
 
-void shader_uniform_vec3( const struct shader self, const char *const name, const struct vec3 v )
+void shader_uniform_vec3(const struct shader self, const char *const name, const struct vec3 v)
 {
-	const GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-	glUniform3f( idx, v.x, v.y, v.z );
+    const GLint idx = glGetUniformLocation(self.handle, name);
+    if (idx < 0) log_warn("Unable to uniform variable: %s", name);
+    glUniform3f(idx, v.x, v.y, v.z);
 }
 
-void shader_uniform_vec4( const struct shader self, const char *const name, const struct vec4 v )
+void shader_uniform_vec4(const struct shader self, const char *const name, const struct vec4 v)
 {
-	const GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-	glUniform4f( idx, v.x, v.y, v.z, v.w );
+    const GLint idx = glGetUniformLocation(self.handle, name);
+    if (idx < 0) log_warn("Unable to uniform variable: %s", name);
+    glUniform4f(idx, v.x, v.y, v.z, v.w);
 }
 
-void shader_uniform_int( const struct shader self, const char *const name, const int v )
+void shader_uniform_int(const struct shader self, const char *const name, const int v)
 {
-	const GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniform1i( idx, v );
+    const GLint idx = glGetUniformLocation(self.handle, name);
+    if (idx < 0) log_warn("Unable to uniform variable: %s", name);
+    glUniform1i(idx, v);
 }
 
-void shader_uniform_uint( const struct shader self, const char *const name, const unsigned int v )
+void shader_uniform_uint(const struct shader self, const char *const name, const unsigned int v)
 {
-	const GLint idx = glGetUniformLocation( self.handle, name );
-	if ( idx < 0 ) log_warn( "Unable to uniform variable: %s", name );
-    glUniform1ui( idx, v );
+    const GLint idx = glGetUniformLocation(self.handle, name);
+    if (idx < 0) log_warn("Unable to uniform variable: %s", name);
+    glUniform1ui(idx, v);
 }
