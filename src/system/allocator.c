@@ -56,7 +56,7 @@ int allocator_set_shallow(const struct allocator allocator)
     return 0;
 }
 
-struct allocator allocator_get(void)
+struct allocator allocator_get_global(void)
 {
     return g_allocator;
 }
