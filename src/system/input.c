@@ -246,15 +246,15 @@ void input_poll_events(void)
         g_input_state.m_state[i].released = false;
     }
 
-    // reset text buffer
-    memset(g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN);
-    g_input_state.text_buffer_count = 0;
+    // stop text input if we can
     if (g_input_state.text_input_ref_count <= 0 && input_text_active())
     {
         input_text_end();
     }
 
-    // reset text input ref count
+    // reset text input
+    memset(g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN);
+    g_input_state.text_buffer_count = 0;
     g_input_state.text_input_ref_count = 0;
 
     // reset mouse events
@@ -393,6 +393,12 @@ int input_text(char *const buffer, const size_t buffer_size)
     * input_text_end in the public api so it
     * would basically act as a wrapper of the sdl
     * functions.
+    * 
+    * Returns: the number of characters copied to
+    * the buffer excluding the null character. So
+    * it should only ever return buffer_size - 1
+    * at most. The output buffer should always be
+    * null terminated.
     */
 
     if ((buffer == NULL) || (buffer_size <= 0))
@@ -408,7 +414,7 @@ int input_text(char *const buffer, const size_t buffer_size)
     }
 
     const int result = snprintf(buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer);
-    return (int)MIN(result, buffer_size);
+    return (int)MIN(result, buffer_size - 1);
 }
 
 struct keystate input_keystate(const int key)
