@@ -27,8 +27,8 @@ struct log_event
     int level;
 };
 
-typedef void (*log_log_fn_t)(struct log_event *ev);
-typedef void (*log_lock_fn_t)(bool lock, void *udata);
+typedef void (*log_log_fn)(struct log_event *ev);
+typedef void (*log_lock_fn)(bool lock, void *udata);
 
 enum log_level
 {
@@ -48,10 +48,10 @@ enum log_level
 #define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
 
 extern const char *log_level_string(int level);
-extern void log_set_lock(log_lock_fn_t fn, void *udata);
+extern void log_set_lock(log_lock_fn fn, void *udata);
 extern void log_set_level(int level);
 extern void log_set_quiet(bool enable);
-extern int log_add_callback(log_log_fn_t fn, void *udata, int level);
+extern int log_add_callback(log_log_fn fn, void *udata, int level);
 extern int log_add_fp(FILE *fp, int level);
 extern void log_log(int level, const char *file, int line, const char *fmt, ...);
 

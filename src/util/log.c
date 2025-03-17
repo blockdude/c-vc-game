@@ -26,7 +26,7 @@
 
 struct callback
 {
-    log_log_fn_t fn;
+    log_log_fn fn;
     void *udata;
     int level;
 };
@@ -34,7 +34,7 @@ struct callback
 static struct
 {
     void *udata;
-    log_lock_fn_t lock;
+    log_lock_fn lock;
     int level;
     bool quiet;
     struct callback callbacks[MAX_CALLBACKS];
@@ -130,7 +130,7 @@ const char *log_level_string(const int level)
 }
 
 
-void log_set_lock(const log_lock_fn_t fn, void *const udata)
+void log_set_lock(const log_lock_fn fn, void *const udata)
 {
     L.lock = fn;
     L.udata = udata;
@@ -149,7 +149,7 @@ void log_set_quiet(const bool enable)
 }
 
 
-int log_add_callback(const log_log_fn_t fn, void *const udata, const int level)
+int log_add_callback(const log_log_fn fn, void *const udata, const int level)
 {
     for (int i = 0; i < MAX_CALLBACKS; i++)
     {

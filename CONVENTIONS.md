@@ -18,7 +18,7 @@ Enum                     | snake_case        | `enum texture_format`
 Enum members             | UPPER_SNAKE_CASE  | `PIXELFORMAT_UNCOMPRESSED_R8G8B8`
 Struct                   | snake_case        | `struct vec2_f32`, `struct material`
 Struct typedef           | snake_case_t      | `typedef struct texture { ... } texture_t;`
-Function pointer typedef | snake_case_fn_t   | `typedef void (*foo_fn_t)(void *, int);`
+Function pointer typedef | snake_case_fn     | `typedef void (*foo_fn)(void *, int);`
 Struct members           | snake_case        | `texture.width`, `color.r`
 Functions                | snake_case        | `init_window()`, `load_image_from_memory()`
 Functions params         | snake_case        | `width`, `height`
