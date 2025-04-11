@@ -24,7 +24,7 @@ _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_V
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(negate)(_VEC2_TYPE v));
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(div)(_VEC2_TYPE a, _VEC2_TYPE b));
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(transform)(_VEC2_TYPE v, _MAT4_TYPE m));
-_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(lerp)(_VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t));
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(lerp)(_VEC2_TYPE a, _VEC2_TYPE b, double t));
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(reflect)(_VEC2_TYPE v, _VEC2_TYPE normal));
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(min)(_VEC2_TYPE a, _VEC2_TYPE b));
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(max)(_VEC2_TYPE a, _VEC2_TYPE b));
@@ -188,12 +188,12 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(transform)(_VEC2_TYPE v, _MAT4_TYPE 
 
 // Calculate linear interpolation between two vectors
 _VEC2_FUNC_IMPL(
-_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(lerp)(_VEC2_TYPE a, _VEC2_TYPE b, _BASE_TYPE t)
+_FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(lerp)(_VEC2_TYPE a, _VEC2_TYPE b, double t)
 {
     _VEC2_TYPE result = { 0 };
 
-    result.x = a.x + t * (b.x - a.x);
-    result.y = a.y + t * (b.y - a.y);
+    result.x = _STATIC_CAST(_BASE_TYPE, a.x + t * (b.x - a.x));
+    result.y = _STATIC_CAST(_BASE_TYPE, a.y + t * (b.y - a.y));
 
     return result;
 })

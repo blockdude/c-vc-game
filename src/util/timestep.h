@@ -19,7 +19,7 @@
 #endif
 
 #ifndef TIMESTEP_CAPTURE_COUNT
-#define TIMESTEP_CAPTURE_COUNT 512
+#define TIMESTEP_CAPTURE_COUNT 60
 #endif
 
 #define _TIMESTEP_TEMPLATE \
@@ -68,6 +68,11 @@ _TIMESTEP_FUNC_TEMPLATE_SET_RATE(struct timestep_fixed, timestep_fixed);
 static const struct timestep       TIMESTEP_##_rate##HZ       = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate }; \
 static const struct timestep_fixed TIMESTEP_FIXED_##_rate##HZ = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate };
 
+_TIMESTEP_PRESET(5);
+_TIMESTEP_PRESET(10);
+_TIMESTEP_PRESET(15);
+_TIMESTEP_PRESET(20);
+_TIMESTEP_PRESET(25);
 _TIMESTEP_PRESET(30);
 _TIMESTEP_PRESET(35);
 _TIMESTEP_PRESET(40);

@@ -21,6 +21,7 @@
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define SIGN(v) (((v) > 0) - ((v) < 0))
 
 #define CLAMP(v, mn, mx) MAX(mn, MIN(mx, v))
 
