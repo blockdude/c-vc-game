@@ -3,7 +3,7 @@
 #include "../math/vec3.h"
 #include "../math/mat4.h"
 
-void camera_init(struct camera *const self, const int type)
+void camera_init(struct camera *self, int type)
 {
     *self = (struct camera){ 0 };
 
@@ -15,55 +15,55 @@ void camera_init(struct camera *const self, const int type)
     self->zoom   = 1.0f;
 }
 
-void camera_move(struct camera *const self, const struct vec3 direction, const float dist)
+void camera_move(struct camera *self, struct vec3 direction, float dist)
 {
-    const struct vec3 move = vec3_scale(vec3_normalize(direction), dist);
+    struct vec3 move = vec3_scale(vec3_normalize(direction), dist);
     self->eye = vec3_add(self->eye, move);
     self->target = vec3_add(self->target, move);
 }
 
-void camera_forward(struct camera *const self, const float dist)
+void camera_forward(struct camera *self, float dist)
 {
     struct vec3 direction = vec3_sub(self->target, self->eye);
     direction = vec3_normalize(direction);
 
-    const struct vec3 move = vec3_scale(direction, dist);
+    struct vec3 move = vec3_scale(direction, dist);
     self->eye = vec3_add(self->eye, move);
     self->target = vec3_add(self->target, move);
 }
 
-void camera_up(struct camera *const self, const float dist)
+void camera_up(struct camera *self, float dist)
 {
     struct vec3 direction = self->up;
     direction = vec3_normalize(direction);
 
-    const struct vec3 move = vec3_scale(direction, dist);
+    struct vec3 move = vec3_scale(direction, dist);
     self->eye = vec3_add(self->eye, move);
     self->target = vec3_add(self->target, move);
 }
 
-void camera_right(struct camera *const self, const float dist)
+void camera_right(struct camera *self, float dist)
 {
     struct vec3 forward = vec3_sub(self->target, self->eye);
     forward = vec3_normalize(forward);
 
-    const struct vec3 up = vec3_normalize(self->up);
+    struct vec3 up = vec3_normalize(self->up);
 
     struct vec3 direction = vec3_cross(forward, up);
     direction = vec3_normalize(direction);
 
-    const struct vec3 move = vec3_scale(direction, dist);
+    struct vec3 move = vec3_scale(direction, dist);
 
     self->eye = vec3_add(self->eye, move);
     self->target = vec3_add(self->target, move);
 }
 
-void camera_pitch(struct camera *const self, const float angle)
+void camera_pitch(struct camera *self, float angle)
 {
     struct vec3 forward = vec3_sub(self->target, self->eye);
     forward = vec3_normalize(forward);
 
-    const struct vec3 up = vec3_normalize(self->up);
+    struct vec3 up = vec3_normalize(self->up);
 
     // right axis
     struct vec3 axis = vec3_cross(forward, up);
@@ -76,10 +76,10 @@ void camera_pitch(struct camera *const self, const float angle)
     self->target = vec3_add(self->eye, direction);
 }
 
-void camera_yaw(struct camera *const self, const float angle)
+void camera_yaw(struct camera *self, float angle)
 {
     // up axis
-    const struct vec3 axis = vec3_normalize(self->up);
+    struct vec3 axis = vec3_normalize(self->up);
 
     struct vec3 direction = vec3_sub(self->target, self->eye);
     direction = vec3_rotate_around_axis(direction, axis, angle);
@@ -87,7 +87,7 @@ void camera_yaw(struct camera *const self, const float angle)
     self->target = vec3_add(self->eye, direction);
 }
 
-void camera_roll(struct camera *const self, float angle)
+void camera_roll(struct camera *self, float angle)
 {
     // forward axis
     struct vec3 axis = vec3_sub(self->target, self->eye);
@@ -100,7 +100,7 @@ void camera_roll(struct camera *const self, float angle)
     self->target = vec3_add(self->eye, direction);
 }
 
-struct mat4 camera_proj(const struct camera *const self, const float aspect, const float near, const float far)
+struct mat4 camera_proj(const struct camera *self, float aspect, float near, float far)
 {
     if (self->type == ORTHOGRAPHIC)
     {
@@ -117,7 +117,7 @@ struct mat4 camera_proj(const struct camera *const self, const float aspect, con
     return mat4_identity();
 }
 
-struct mat4 camera_view(const struct camera *const self)
+struct mat4 camera_view(const struct camera *self)
 {
     return mat4_lookat(self->eye, self->target, self->up);
 }

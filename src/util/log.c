@@ -52,7 +52,7 @@ static const char *const level_colors[] = {
 #endif
 
 
-static void stdout_callback(struct log_event *const ev)
+static void stdout_callback(struct log_event *ev)
 {
     char buf[16];
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
@@ -98,7 +98,7 @@ static void stdout_callback(struct log_event *const ev)
 }
 
 
-static void file_callback(struct log_event *const ev)
+static void file_callback(struct log_event *ev)
 {
     char buf[64];
     buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
@@ -124,32 +124,32 @@ static void unlock(void)
 }
 
 
-const char *log_level_string(const int level)
+const char *log_level_string(int level)
 {
     return level_strings[level];
 }
 
 
-void log_set_lock(const log_lock_fn fn, void *const udata)
+void log_set_lock(log_lock_fn fn, void *udata)
 {
     L.lock = fn;
     L.udata = udata;
 }
 
 
-void log_set_level(const int level)
+void log_set_level(int level)
 {
     L.level = level;
 }
 
 
-void log_set_quiet(const bool enable)
+void log_set_quiet(bool enable)
 {
     L.quiet = enable;
 }
 
 
-int log_add_callback(const log_log_fn fn, void *const udata, const int level)
+int log_add_callback(log_log_fn fn, void *udata, int level)
 {
     for (int i = 0; i < MAX_CALLBACKS; i++)
     {
@@ -163,13 +163,13 @@ int log_add_callback(const log_log_fn fn, void *const udata, const int level)
 }
 
 
-int log_add_fp(FILE *const fp, const int level)
+int log_add_fp(FILE *fp, int level)
 {
     return log_add_callback(file_callback, fp, level);
 }
 
 
-static void init_event(struct log_event *const ev, void *const udata)
+static void init_event(struct log_event *ev, void *udata)
 {
     if (!ev->time)
     {
@@ -180,7 +180,7 @@ static void init_event(struct log_event *const ev, void *const udata)
 }
 
 
-void log_log(const int level, const char *const file, const int line, const char *const fmt, ...)
+void log_log(int level, const char *file, int line, const char *fmt, ...)
 {
     struct log_event ev = {
         .fmt = fmt,
@@ -201,7 +201,7 @@ void log_log(const int level, const char *const file, const int line, const char
 
     for (int i = 0; i < MAX_CALLBACKS && L.callbacks[i].fn; i++)
     {
-        const struct callback *const cb = &L.callbacks[i];
+        struct callback *cb = &L.callbacks[i];
         if (level >= cb->level)
         {
             init_event(&ev, cb->udata);

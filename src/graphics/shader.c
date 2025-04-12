@@ -14,8 +14,8 @@
 
 static inline char *shader_get_log(
     const GLint handle,
-    void (*const getlog)(GLuint, GLsizei, GLsizei *, GLchar *),
-    void (*const getiv)(GLuint, GLenum, GLint *))
+    void (*getlog)(GLuint, GLsizei, GLsizei *, GLchar *),
+    void (*getiv)(GLuint, GLenum, GLint *))
 {
     GLint loglen = 0;
     getiv(handle, GL_INFO_LOG_LENGTH, &loglen);
@@ -23,13 +23,13 @@ static inline char *shader_get_log(
     if (loglen <= 1)
         return NULL;
 
-    char *const logtext = malloc(loglen * sizeof(*logtext));
+    char *logtext = malloc(loglen * sizeof(*logtext));
     getlog(handle, loglen, NULL, logtext);
 
     return logtext;
 }
 
-static char *shader_load_text(const char *const path, size_t *const out_len)
+static char *shader_load_text(const char *path, size_t *out_len)
 {
     FILE *f = NULL;
     char *text = NULL;
@@ -61,7 +61,7 @@ static char *shader_load_text(const char *const path, size_t *const out_len)
     return text;
 }
 
-static inline GLuint shader_compile_text(const char *const text, const size_t len, const GLenum type)
+static inline GLuint shader_compile_text(const char *text, size_t len, GLenum type)
 {
     // create and compile shader
     const GLuint handle = glCreateShader(type);
@@ -72,8 +72,8 @@ static inline GLuint shader_compile_text(const char *const text, const size_t le
 }
 
 static inline GLint shader_get_status(
-    const GLuint handle, const GLenum pname,
-    void (*const getiv)(GLuint, GLenum, GLint *))
+    GLuint handle, GLenum pname,
+    void (*getiv)(GLuint, GLenum, GLint *))
 {
     GLint status = 0;
     getiv(handle, pname, &status);
@@ -81,11 +81,11 @@ static inline GLint shader_get_status(
 }
 
 static inline void shader_log_status(
-    const GLuint handle, const char *const prefix, const char *const path_a, const char *const path_b,
-    void (*const getlog)(GLuint, GLsizei, GLsizei *, GLchar *),
-    void (*const getiv)(GLuint, GLenum, GLint *))
+    GLuint handle, const char *prefix, const char *path_a, const char *path_b,
+    void (*getlog)(GLuint, GLsizei, GLsizei *, GLchar *),
+    void (*getiv)(GLuint, GLenum, GLint *))
 {
-    char *const logtext = shader_get_log(handle, getlog, getiv);
+    char *logtext = shader_get_log(handle, getlog, getiv);
 
     char path[VCP_MAX_STRING_LEN] = { 0 };
     if (path_a) snprintf(path, VCP_MAX_STRING_LEN, " [ %s ]", path_a);
@@ -100,7 +100,7 @@ static inline void shader_log_status(
     free(logtext);
 }
 
-static inline GLuint shader_link_program(const GLuint vs, const GLuint fs)
+static inline GLuint shader_link_program(GLuint vs, GLuint fs)
 {
     const GLuint handle = glCreateProgram();
 
@@ -126,7 +126,7 @@ static inline GLuint shader_link_program(const GLuint vs, const GLuint fs)
     return handle;
 }
 
-static inline int shader_build_text(struct shader *const self, const char *const vstext, const size_t vslen, const char *const fstext, const size_t fslen, const char *const vspath, const char *const fspath)
+static inline int shader_build_text(struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen, const char *vspath, const char *fspath)
 {
     *self = (struct shader){ 0 };
 
@@ -173,20 +173,20 @@ static inline int shader_build_text(struct shader *const self, const char *const
     return SHADER_SUCCESS;
 }
 
-struct shader shader_load(const char *const vstext, const char *const fstext)
+struct shader shader_load(const char *vstext, const char *fstext)
 {
     struct shader result = { 0 };
     result.status = shader_build_text(&result, vstext, strlen(vstext), fstext, strlen(fstext), NULL, NULL);
     return result;
 }
 
-struct shader shader_loadf(const char *const vspath, const char *const fspath)
+struct shader shader_loadf(const char *vspath, const char *fspath)
 {
     struct shader result = { 0 };
     size_t vslen = 0;
     size_t fslen = 0;
-    char *const vstext = shader_load_text(vspath, &vslen);
-    char *const fstext = shader_load_text(fspath, &fslen);
+    char *vstext = shader_load_text(vspath, &vslen);
+    char *fstext = shader_load_text(fspath, &fslen);
 
     if (!vstext || !fstext)
     {
@@ -202,59 +202,59 @@ struct shader shader_loadf(const char *const vspath, const char *const fspath)
     return result;
 }
 
-void shader_free(const struct shader self)
+void shader_free(struct shader self)
 {
     glDeleteProgram(self.handle);
 }
 
-void shader_bind(const struct shader self)
+void shader_bind(struct shader self)
 {
     glUseProgram(self.handle);
 }
 
-void shader_uniform_mat4(const struct shader self, const char *const name, const struct mat4 m)
+void shader_uniform_mat4(struct shader self, const char *name, struct mat4 m)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniformMatrix4fv(idx, 1, GL_FALSE, mat4_flatten(m).m);
 }
 
-void shader_uniform_float(const struct shader self, const char *const name, const float f)
+void shader_uniform_float(struct shader self, const char *name, float f)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform1f(idx, f);
 }
 
-void shader_uniform_vec2(const struct shader self, const char *const name, const struct vec2 v)
+void shader_uniform_vec2(struct shader self, const char *name, struct vec2 v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform2f(idx, v.x, v.y);
 }
 
-void shader_uniform_vec3(const struct shader self, const char *const name, const struct vec3 v)
+void shader_uniform_vec3(struct shader self, const char *name, struct vec3 v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform3f(idx, v.x, v.y, v.z);
 }
 
-void shader_uniform_vec4(const struct shader self, const char *const name, const struct vec4 v)
+void shader_uniform_vec4(struct shader self, const char *name, struct vec4 v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform4f(idx, v.x, v.y, v.z, v.w);
 }
 
-void shader_uniform_int(const struct shader self, const char *const name, const int v)
+void shader_uniform_int(struct shader self, const char *name, int v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform1i(idx, v);
 }
 
-void shader_uniform_uint(const struct shader self, const char *const name, const unsigned int v)
+void shader_uniform_uint(struct shader self, const char *name, unsigned int v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);

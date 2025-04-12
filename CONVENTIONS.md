@@ -34,6 +34,7 @@ Other conventions:
  - Type modifiers always go before the type
  - Type qualifiers always go before the type and/or type modifiers, obviously excluding type qualifiers for pointers which must go on the right of the pointer
  - Storage class specifiers are always specified before any type qualifiers, type modifiers, and/or type
+ - Try and follow const correctness but not for function parameters
  - Casts should have not be followed by a space:
 ```c
 int foo = 10;
@@ -60,50 +61,15 @@ void foo(void)
     // do something
 }
 
-void bar(const int b)
+void bar(int b)
 {
     // do something else
 }
 ```
- - Function prototypes should specify pointer parameters as const if the function does not modify data:
+ - Function prototypes should specify pointer parameters as const if the function does not modify data (readonly):
 ```c
 extern void foo(const char *in, char *out); // "in" will not be modified
 extern void bar(char *data); // "data" will be modified
-```
- - Function implementations should specify all their parameters as const:
-```c
-// We don't specify "const" in the prototype because
-// it is an implementation detail that is useless for
-// the caller.
-extern void bar(int a);
-extern void foo(const char *in, char *out);
-
-// Here we specify "const" because in the
-// implementation, we will not modify "a" anywhere in
-// the function. Note: this is valid C as both the
-// prototype and the implementation still maintain
-// the same signature.
-void bar(const int a)
-{
-    // the value of a will not change through out this function
-}
-
-// The parameter does not have to be specified with "const".
-// Here "a" is not constant so we can assume a is modified
-// within the implementation.
-void bar(int a)
-{
-    // the value of "a" is assumed to change at least once through out this function
-}
-
-// The same will apply to pointers for example in this
-// implementation we know now that "in" won't ever be reassigned
-// throughout the function.
-void foo(const char *const in, char *const out)
-{
-    // "in" will not be modified and the "in" pointer will not point to different memory
-    // the "out" pointer will never point to different memory
-}
 ```
  - All statements within parenthesis or brakets should NOT have a space:
 ```c

@@ -6,7 +6,7 @@ struct
     u32 flags;
 } g_platform_state = { 0 };
 
-int platform_init(const u32 flags)
+int platform_init(u32 flags)
 {
     g_platform_state.flags = flags;
 
@@ -16,24 +16,16 @@ int platform_init(const u32 flags)
         SDL_VERSIONNUM_MICRO(SDL_VERSION));
 
     if (HASFLAG(flags, TIMER))
-    {
         time_init();
-    }
 
     if (HASFLAG(flags, INPUT))
-    {
         input_init();
-    }
 
     if (HASFLAG(flags, AUDIO))
-    {
         audio_init();
-    }
 
     if (HASFLAG(flags, WINDOW))
-    {
         window_init();
-    }
 
     return 0;
 }

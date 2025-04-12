@@ -32,21 +32,21 @@
 #define NORMALIZE(x, min, max) (((x) - (min)) / ((max) - (min)))
 
 #define _MATH_FUNC_TEMPLATE_INT_DIVRND(T, _name) \
-static inline T _name##_divrnd(const T n, const T d) { return ((n < 0) == (d < 0)) ? ((n + d / 2) / d) : ((n - d / 2) / d); }
+static inline T _name##_divrnd(T n, T d) { return ((n < 0) == (d < 0)) ? ((n + d / 2) / d) : ((n - d / 2) / d); }
 
 _MATH_FUNC_TEMPLATE_INT_DIVRND(int, int);
 _MATH_FUNC_TEMPLATE_INT_DIVRND(i32, int32);
 _MATH_FUNC_TEMPLATE_INT_DIVRND(i64, int64);
 
 #define _MATH_FUNC_TEMPLATE_INT_DIVFLR(T, _name) \
-static inline T _name##_divflr(const T n, const T d) { return (n / d) - (n < 0); }
+static inline T _name##_divflr(T n, T d) { return (n / d) - (n < 0); }
 
 _MATH_FUNC_TEMPLATE_INT_DIVFLR(int, int);
 _MATH_FUNC_TEMPLATE_INT_DIVFLR(i32, int32);
 _MATH_FUNC_TEMPLATE_INT_DIVFLR(i64, int64);
 
 #define _MATH_FUNC_TEMPLATE_FLOAT_EQUALS(T, _name, _abs_fn, _max_fn) \
-static inline int _name##_equals(const T a, const T b, const T epsilon) { return (_abs_fn(a - b)) <= (epsilon * _max_fn(1.0f, _max_fn(_abs_fn(a), _abs_fn(b)))); }
+static inline int _name##_equals(T a, T b, T epsilon) { return (_abs_fn(a - b)) <= (epsilon * _max_fn(1.0f, _max_fn(_abs_fn(a), _abs_fn(b)))); }
 
 _MATH_FUNC_TEMPLATE_FLOAT_EQUALS(float, float, fabsf, fmaxf);
 _MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f32, float32, fabsf, fmaxf);

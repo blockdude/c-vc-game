@@ -3,7 +3,7 @@
 
 #include "../util/types.h"
 
-static inline u32 rgba8888_to_uint32(const u8 r, const u8 g, const u8 b, const u8 a)
+static inline u32 rgba8888_to_uint32(u8 r, u8 g, u8 b, u8 a)
 {
     u32 result = 0;
     result = (result | r) << 24;
@@ -13,7 +13,7 @@ static inline u32 rgba8888_to_uint32(const u8 r, const u8 g, const u8 b, const u
     return result;
 }
 
-static inline struct colorf colorf_mix(const struct colorf a, const struct colorf b, const float ratio)
+static inline struct colorf colorf_mix(struct colorf a, struct colorf b, float ratio)
 {
     struct colorf result = { 0 };
     result.r = a.r * ratio + b.r * (1.0f - ratio);
@@ -23,7 +23,7 @@ static inline struct colorf colorf_mix(const struct colorf a, const struct color
     return result;
 }
 
-static inline struct colorf colorf_blend(const struct colorf a, const struct colorf b)
+static inline struct colorf colorf_blend(struct colorf a, struct colorf b)
 {
     struct colorf result = { 0 };
     result.r = a.r * b.r;

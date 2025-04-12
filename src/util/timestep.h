@@ -59,7 +59,7 @@ struct timestep _TIMESTEP_TEMPLATE;
 struct timestep_fixed _TIMESTEP_TEMPLATE;
 
 #define _TIMESTEP_FUNC_TEMPLATE_SET_RATE(T, _name) \
-static inline void _name##_set_rate(T *const ts, const int rate) { ts->target_delta = rate <= 0 ? 0.0 : 1.0 / rate; ts->target_rate = rate <= 0 ? 0 : rate; }
+static inline void _name##_set_rate(T *ts, int rate) { ts->target_delta = rate <= 0 ? 0.0 : 1.0 / rate; ts->target_rate = rate <= 0 ? 0 : rate; }
 
 _TIMESTEP_FUNC_TEMPLATE_SET_RATE(struct timestep, timestep);
 _TIMESTEP_FUNC_TEMPLATE_SET_RATE(struct timestep_fixed, timestep_fixed);
@@ -97,12 +97,12 @@ _TIMESTEP_PRESET(360);
 #define TIMESTEP_FIXED_TICK(_ts, _dt) \
     for (_timestep_fixed_prefix(_ts, _dt); _timestep_fixed_can_proc(_ts); _timestep_fixed_postfix(_ts))
 
-static inline int _timestep_compute_rate(const i64 n, const f64 d)
+static inline int _timestep_compute_rate(i64 n, f64 d)
 {
     return ((n < 0) == (d < 0)) ? (int)((n + d / 2) / d) : (int)((n - d / 2) / d);
 }
 
-static inline void _timestep_fixed_prefix(struct timestep_fixed *const timestep, const f64 delta_time)
+static inline void _timestep_fixed_prefix(struct timestep_fixed *timestep, f64 delta_time)
 {
     timestep->delta += delta_time;
 
@@ -123,31 +123,31 @@ static inline void _timestep_fixed_prefix(struct timestep_fixed *const timestep,
     timestep->avg = _timestep_compute_rate(timestep->count, timestep->elapsed);
 }
 
-static inline bool _timestep_fixed_can_proc(struct timestep_fixed *const timestep)
+static inline bool _timestep_fixed_can_proc(struct timestep_fixed *timestep)
 {
     return ((timestep->target_delta > 0.0) && (timestep->target_delta <= timestep->delta));
 }
 
-static inline void _timestep_fixed_postfix(struct timestep_fixed *const timestep)
+static inline void _timestep_fixed_postfix(struct timestep_fixed *timestep)
 {
     timestep->count += 1;
     timestep->delta -= timestep->target_delta;
     timestep->elapsed += timestep->target_delta;
 }
 
-static inline bool _timestep_can_proc(struct timestep *const timestep)
+static inline bool _timestep_can_proc(struct timestep *timestep)
 {
     VCP_UNUSED_VAR(timestep);
     return true;
 }
 
-static inline void _timestep_prefix(struct timestep *const timestep)
+static inline void _timestep_prefix(struct timestep *timestep)
 {
     timestep->current = TIMESTEP_TIME_NOW();
     timestep->previous = timestep->current;
 }
 
-static inline void _timestep_postfix(struct timestep *const timestep)
+static inline void _timestep_postfix(struct timestep *timestep)
 {
     timestep->current = TIMESTEP_TIME_NOW();
     timestep->delta = timestep->current - timestep->previous;
@@ -200,7 +200,7 @@ somefunction();
 timestep_tick( &timestep );
 printf( "somefunction() took %f seconds to run", timestep.delta );
 */
-static inline bool timestep_tick(struct timestep *const timestep)
+static inline bool timestep_tick(struct timestep *timestep)
 {
     /*
     * this function should mimic a for loop.
@@ -256,7 +256,7 @@ while ( timestep_tick( &timestep ) )
     }
 }
 */
-static inline bool timestep_fixed_tick(struct timestep_fixed *const timestep, const f64 delta_time)
+static inline bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time)
 {
     /*
     * this function should mimic a for loop.
