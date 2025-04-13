@@ -1,14 +1,6 @@
 #ifndef VCP_PLATFORM_H
 #define VCP_PLATFORM_H
 
-#ifndef TIMESTEP_TIME_NOW
-#define TIMESTEP_TIME_NOW time_now_s
-#endif
-
-#ifndef TIMESTEP_TIME_WAIT
-#define TIMESTEP_TIME_WAIT time_wait_s
-#endif
-
 #include "graphics/shader.h"
 #include "graphics/vao.h"
 #include "graphics/vbo.h"

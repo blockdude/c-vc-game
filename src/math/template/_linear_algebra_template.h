@@ -621,7 +621,7 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(perpendicular)(_VEC3_TYPE v)
 _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(center)(_VEC3_TYPE a, _VEC3_TYPE b)
 {
-    _VEC3_TYPE result = { _LITERAL(0.0) };
+    _VEC3_TYPE result = { 0 };
 
     result.x = (a.x + b.x) / _LITERAL(2.0);
     result.y = (a.y + b.y) / _LITERAL(2.0);

@@ -280,6 +280,11 @@ void window_set_flags(u32 flags, bool state)
     if (g_win_state.initialized == false)
         return;
 
+    if (HASFLAG(flags, WINDOW_RESIZABLE))
+    {
+        SDL_SetWindowResizable(g_win_ctx.handle, state);
+    }
+
     if (HASFLAG(flags, WINDOW_RELATIVE_MOUSE))
     {
         SDL_WarpMouseInWindow(g_win_ctx.handle, g_win_state.width / 2.0f, g_win_state.height / 2.0f);

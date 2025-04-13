@@ -43,8 +43,11 @@ set(platform_sources
 	"src/system/time.c"
 	"src/system/window.c"
 	"src/system/allocator.c"
+	"src/util/timestep.c"
 	"src/util/camera.c"
 	"src/util/log.c")
+
+set_source_files_properties(${platform_sources} ${platform_headers} PROPERTIES LANGUAGE C)
 
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON)
@@ -56,3 +59,4 @@ project(platform C)
 add_library(platform STATIC ${platform_sources} ${glad_sources})
 target_include_directories(platform PUBLIC ${platform_include} ${glad_include})
 target_link_libraries(platform PUBLIC SDL3::SDL3)
+set_property(TARGET platform PROPERTY C_STANDARD 17)

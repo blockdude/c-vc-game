@@ -10,25 +10,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifndef TIMESTEP_TIME_NOW
-#error "define TIMESTEP_TIME_NOW"
-#endif
-
-#ifndef TIMESTEP_TIME_WAIT
-#error "define TIMESTEP_TIME_WAIT"
-#endif
-
 #ifndef TIMESTEP_CAPTURE_COUNT
 #define TIMESTEP_CAPTURE_COUNT 60
 #endif
 
 #define _TIMESTEP_TEMPLATE \
 {                                           \
-    int rate;                               \
-    int avg;                                \
+    f64 rate;                               \
+    f64 avg;                                \
     f64 delta;                              \
     f64 target_delta;                       \
-    int target_rate;                        \
+    f64 target_rate;                        \
     u64 count;                              \
                                             \
     f64 elapsed;                            \
@@ -58,131 +50,6 @@
 struct timestep _TIMESTEP_TEMPLATE;
 struct timestep_fixed _TIMESTEP_TEMPLATE;
 
-#define _TIMESTEP_FUNC_TEMPLATE_SET_RATE(T, _name) \
-static inline void _name##_set_rate(T *ts, int rate) { ts->target_delta = rate <= 0 ? 0.0 : 1.0 / rate; ts->target_rate = rate <= 0 ? 0 : rate; }
-
-_TIMESTEP_FUNC_TEMPLATE_SET_RATE(struct timestep, timestep);
-_TIMESTEP_FUNC_TEMPLATE_SET_RATE(struct timestep_fixed, timestep_fixed);
-
-#define _TIMESTEP_PRESET(_rate) \
-static const struct timestep       TIMESTEP_##_rate##HZ       = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate }; \
-static const struct timestep_fixed TIMESTEP_FIXED_##_rate##HZ = { .target_delta = 1.0 / _rate##.0, .target_rate = _rate };
-
-_TIMESTEP_PRESET(5);
-_TIMESTEP_PRESET(10);
-_TIMESTEP_PRESET(15);
-_TIMESTEP_PRESET(20);
-_TIMESTEP_PRESET(25);
-_TIMESTEP_PRESET(30);
-_TIMESTEP_PRESET(35);
-_TIMESTEP_PRESET(40);
-_TIMESTEP_PRESET(45);
-_TIMESTEP_PRESET(50);
-_TIMESTEP_PRESET(55);
-_TIMESTEP_PRESET(60);
-_TIMESTEP_PRESET(120);
-_TIMESTEP_PRESET(144);
-_TIMESTEP_PRESET(240);
-_TIMESTEP_PRESET(360);
-
-#define TIMESTEP_TICK_WHILE(_ts, _cnd) \
-    for (_timestep_prefix(_ts); (_cnd) && _timestep_can_proc(_ts); _timestep_postfix(_ts))
-
-#define TIMESTEP_TICK(_ts) \
-    for (_timestep_prefix(_ts); _timestep_can_proc(_ts); _timestep_postfix(_ts))
-
-#define TIMESTEP_FIXED_TICK_WHILE(_ts, _dt, _cnd) \
-    for (_timestep_fixed_prefix(_ts, _dt); (_cnd) && _timestep_fixed_can_proc(_ts); _timestep_fixed_postfix(_ts))
-
-#define TIMESTEP_FIXED_TICK(_ts, _dt) \
-    for (_timestep_fixed_prefix(_ts, _dt); _timestep_fixed_can_proc(_ts); _timestep_fixed_postfix(_ts))
-
-static inline int _timestep_compute_rate(i64 n, f64 d)
-{
-    return ((n < 0) == (d < 0)) ? (int)((n + d / 2) / d) : (int)((n - d / 2) / d);
-}
-
-static inline void _timestep_fixed_prefix(struct timestep_fixed *timestep, f64 delta_time)
-{
-    timestep->delta += delta_time;
-
-    const int index = (timestep->_snapshot.index + 1) % TIMESTEP_CAPTURE_COUNT;
-    timestep->_snapshot.index = index;
-
-    timestep->_snapshot.elapsed -= timestep->_snapshot.record[index].delta;
-    timestep->_snapshot.record[index].delta = delta_time;
-    timestep->_snapshot.elapsed += timestep->_snapshot.record[index].delta;
-
-    timestep->_snapshot.count -= timestep->_snapshot.record[index].count;
-    timestep->_snapshot.record[index].count = timestep->count - timestep->_snapshot.last;
-    timestep->_snapshot.count += timestep->_snapshot.record[index].count;
-
-    timestep->_snapshot.last = timestep->count;
-
-    timestep->rate = _timestep_compute_rate(timestep->_snapshot.count, timestep->_snapshot.elapsed);
-    timestep->avg = _timestep_compute_rate(timestep->count, timestep->elapsed);
-}
-
-static inline bool _timestep_fixed_can_proc(struct timestep_fixed *timestep)
-{
-    return ((timestep->target_delta > 0.0) && (timestep->target_delta <= timestep->delta));
-}
-
-static inline void _timestep_fixed_postfix(struct timestep_fixed *timestep)
-{
-    timestep->count += 1;
-    timestep->delta -= timestep->target_delta;
-    timestep->elapsed += timestep->target_delta;
-}
-
-static inline bool _timestep_can_proc(struct timestep *timestep)
-{
-    VCP_UNUSED_VAR(timestep);
-    return true;
-}
-
-static inline void _timestep_prefix(struct timestep *timestep)
-{
-    timestep->current = TIMESTEP_TIME_NOW();
-    timestep->previous = timestep->current;
-}
-
-static inline void _timestep_postfix(struct timestep *timestep)
-{
-    timestep->current = TIMESTEP_TIME_NOW();
-    timestep->delta = timestep->current - timestep->previous;
-    timestep->previous = timestep->current;
-
-    // apply fps cap
-    if (timestep->delta < timestep->target_delta)
-    {
-        TIMESTEP_TIME_WAIT(timestep->target_delta - timestep->delta);
-        timestep->current = TIMESTEP_TIME_NOW();
-        timestep->delta += timestep->current - timestep->previous;
-        timestep->previous = timestep->current;
-    }
-
-    timestep->elapsed += timestep->delta;
-    timestep->count += 1;
-
-    // calculate the average fps over TIMESTEP_CAPTURE_COUNT frames
-    const int index = (timestep->_snapshot.index + 1) % TIMESTEP_CAPTURE_COUNT;
-    timestep->_snapshot.index = index;
-
-    timestep->_snapshot.elapsed -= timestep->_snapshot.record[index].delta;
-    timestep->_snapshot.record[index].delta = timestep->delta;
-    timestep->_snapshot.elapsed += timestep->_snapshot.record[index].delta;
-
-    timestep->_snapshot.count -= timestep->_snapshot.record[index].count;
-    timestep->_snapshot.record[index].count = timestep->count - timestep->_snapshot.last;
-    timestep->_snapshot.count += timestep->_snapshot.record[index].count;
-
-    timestep->_snapshot.last = timestep->count;
-
-    timestep->rate = _timestep_compute_rate(timestep->_snapshot.count, timestep->_snapshot.elapsed);
-    timestep->avg = _timestep_compute_rate(timestep->count, timestep->elapsed);
-}
-
 /*
 This function updates the state of a timestep, recording
 time of each iteration and the frequency of updates.
@@ -200,44 +67,9 @@ somefunction();
 timestep_tick( &timestep );
 printf( "somefunction() took %f seconds to run", timestep.delta );
 */
-static inline bool timestep_tick(struct timestep *timestep)
-{
-    /*
-    * this function should mimic a for loop.
-    * for ( initalization; condition; update );
-    */
-
-    /*
-    * initalization
-    */
-    if (timestep->_state.looping == false)
-    {
-        _timestep_prefix(timestep);
-        timestep->_state.looping = true;
-    }
-
-    /*
-    * update
-    */
-    else
-    {
-        _timestep_postfix(timestep);
-    }
-
-    /*
-    * condition
-    */
-    if (_timestep_can_proc(timestep))
-    {
-        return true;
-    }
-
-    // if timestep_fixed_can_proc returns false then
-    // we have broken out of the loop and should
-    // reset our state.
-    timestep->_state.looping = false;
-    return false;
-}
+extern bool timestep_tick(struct timestep *timestep);
+extern void timestep_set_rate(struct timestep *timestep, f64 rate);
+extern struct timestep timestep_create(f64 rate);
 
 /*
 This function updates the state of a timestep, recording
@@ -246,8 +78,7 @@ time of each iteration and the frequency of updates.
 fixed timestep is used if you want updates to be
 decoupled from the refresh rate of the computer.
 
-This function should be used inside a within a
-variable timestep loop. ex:
+This function should be used inside a timestep. EX:
 while ( timestep_tick( &timestep ) )
 {
     while ( timestep_fixed_tick( &fixed_timestep, timestep.delta ) )
@@ -256,43 +87,8 @@ while ( timestep_tick( &timestep ) )
     }
 }
 */
-static inline bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time)
-{
-    /*
-    * this function should mimic a for loop.
-    * for ( initalization; condition; update );
-    */
-
-    /*
-    * initalization
-    */
-    if (timestep->_state.looping == false)
-    {
-        _timestep_fixed_prefix(timestep, delta_time);
-        timestep->_state.looping = true;
-    }
-
-    /*
-    * update
-    */
-    else
-    {
-        _timestep_fixed_postfix(timestep);
-    }
-
-    /*
-    * condition
-    */
-    if (_timestep_fixed_can_proc(timestep))
-    {
-        return true;
-    }
-
-    // if timestep_fixed_can_proc returns false then
-    // we have broken out of the loop and should
-    // reset our state.
-    timestep->_state.looping = false;
-    return false;
-}
+extern bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time);
+extern void timestep_fixed_set_rate(struct timestep_fixed *timestep, f64 rate);
+extern struct timestep_fixed timestep_fixed_create(f64 rate);
 
 #endif
