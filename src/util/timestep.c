@@ -11,7 +11,7 @@
 
 static inline f64 compute_rate(u64 n, f64 d)
 {
-    return ((n < 0) == (d < 0)) ? (f64)((n + d / 2) / d) : (f64)((n - d / 2) / d);
+    return (f64)(u64)((n + d / 2) / d);
 }
 
 // ==============================
