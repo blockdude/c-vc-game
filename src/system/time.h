@@ -1,11 +1,17 @@
 #ifndef VCP_TIME_H
 #define VCP_TIME_H
 
-#include "../common.h"
+#include "../vcp_common.h"
+#include "../util/types.h"
 
-#define TIME_NS_PER_S  1000000000
-#define TIME_NS_PER_MS 1000000
-#define TIME_NS_PER_US 1000
+#define TIME_TICKS_PER_S  1000000000
+#define TIME_TICKS_PER_MS 1000000
+#define TIME_TICKS_PER_US 1000
+#define TIME_TICKS_PER_NS 1
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int time_init(void);
 extern void time_deinit(void);
@@ -31,5 +37,9 @@ extern f64 time_ttos(u64 ticks);
 extern f64 time_ttoms(u64 ticks);
 extern f64 time_ttous(u64 ticks);
 extern f64 time_ttons(u64 ticks);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

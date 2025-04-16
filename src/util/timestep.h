@@ -6,9 +6,8 @@
  * TS_SLEEP expects a function that takes in seconds and sleeps the calling thread for that amount of seconds
  */
 
-#include "../common.h"
-#include <stdint.h>
-#include <stdbool.h>
+#include "../vcp_common.h"
+#include "types.h"
 
 #ifndef TIMESTEP_CAPTURE_COUNT
 #define TIMESTEP_CAPTURE_COUNT 60
@@ -50,6 +49,10 @@
 struct timestep _TIMESTEP_TEMPLATE;
 struct timestep_fixed _TIMESTEP_TEMPLATE;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 This function updates the state of a timestep, recording
 time of each iteration and the frequency of updates.
@@ -90,5 +93,9 @@ while ( timestep_tick( &timestep ) )
 extern bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time);
 extern void timestep_fixed_set_rate(struct timestep_fixed *timestep, f64 rate);
 extern struct timestep_fixed timestep_fixed_create(f64 rate);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

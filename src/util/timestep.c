@@ -24,9 +24,8 @@ static inline f64 compute_rate(u64 n, f64 d)
 // TIMESTEP
 // ==============================
 
-static inline bool _timestep_can_proc(struct timestep *timestep)
+static inline bool _timestep_can_proc(struct timestep *_)
 {
-    VCP_UNUSED_VAR(timestep);
     return true;
 }
 
@@ -114,13 +113,13 @@ bool timestep_tick(struct timestep *timestep)
 void timestep_set_rate(struct timestep *timestep, f64 rate)
 {
     timestep->target_delta = rate <= 0 ? 0.0 : 1.0 / rate;
-    timestep->target_rate = rate <= 0 ? 0 : rate;
+    timestep->target_rate = rate;
 }
 
 struct timestep timestep_create(f64 rate)
 {
     struct timestep result = {
-        .target_delta = 1.0 / rate,
+        .target_delta = rate <= 0 ? 0.0 : 1.0 / rate,
         .target_rate = rate
     };
 

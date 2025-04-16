@@ -25,6 +25,10 @@ struct camera
     float zoom;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void camera_init(struct camera *camera, int type);
 extern void camera_move(struct camera *camera, struct vec3 direction, float dist);
 extern void camera_forward(struct camera *camera, float dist);
@@ -35,5 +39,9 @@ extern void camera_yaw(struct camera *camera, float angle);
 extern void camera_roll(struct camera *camera, float angle);
 extern struct mat4 camera_proj(const struct camera *camera, float aspect, float near, float far);
 extern struct mat4 camera_view(const struct camera *camera);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

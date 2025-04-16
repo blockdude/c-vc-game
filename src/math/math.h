@@ -1,8 +1,9 @@
 #ifndef VCP_MATH_H
 #define VCP_MATH_H
 
-#include <math.h>
+#include "../vcp_common.h"
 #include "../util/types.h"
+#include <math.h>
 
 #ifdef WIN32
 

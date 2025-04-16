@@ -1,7 +1,7 @@
 #ifndef VCP_INPUT_H
 #define VCP_INPUT_H
 
-#include "../common.h"
+#include "../vcp_common.h"
 #include "../util/types.h"
 
 enum input_key
@@ -101,6 +101,10 @@ struct keystate
     bool repeated : 1;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int input_init(void);
 extern void input_deinit(void);
 extern void input_poll_events(void);
@@ -112,5 +116,9 @@ extern bool input_mouse_moved(void);
 extern struct vec2 input_mouse_pos(void);
 extern struct vec2 input_mouse_delta(void);
 extern struct vec2 input_mouse_scroll(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

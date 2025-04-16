@@ -1,5 +1,5 @@
-#ifndef TYPE_CAST_H
-#define TYPE_CAST_H
+#ifndef VCP_TYPECAST_H
+#define VCP_TYPECAST_H
 
 #include "types.h"
 

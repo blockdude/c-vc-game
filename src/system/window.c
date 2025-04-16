@@ -1,8 +1,10 @@
 #include "window.h"
 #include "../util/log.h"
-
 #include <SDL3/SDL.h>
+
+#ifdef VCP_WINDOW_OPENGL
 #include <glad/gl.h>
+#endif
 
 static struct
 {
@@ -44,30 +46,30 @@ int window_init(void)
         goto cleanup;
     }
 
-    SDL_WindowFlags flags = 0;
+    SDL_WindowFlags sdl_window_flags = 0;
 
 #ifdef VCP_WINDOW_OPENGL
-    flags = SDL_WINDOW_OPENGL;
+    sdl_window_flags = SDL_WINDOW_OPENGL;
 #endif
 
-    if (HASFLAG(g_win_state.flags, WINDOW_RESIZABLE))
+    if (g_win_state.flags & WINDOW_RESIZABLE)
     {
-        flags |= SDL_WINDOW_RESIZABLE;
+        sdl_window_flags |= SDL_WINDOW_RESIZABLE;
     }
 
-    if (HASFLAG(g_win_state.flags, WINDOW_FULLSCREEN))
+    if (g_win_state.flags & WINDOW_FULLSCREEN)
     {
-        flags |= SDL_WINDOW_FULLSCREEN;
+        sdl_window_flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    if (HASFLAG(g_win_state.flags, WINDOW_HIGHDPI))
+    if (g_win_state.flags & WINDOW_HIGHDPI)
     {
-        flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
+        sdl_window_flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
     }
 
-    if (HASFLAG(g_win_state.flags, WINDOW_RELATIVE_MOUSE))
+    if (g_win_state.flags & WINDOW_RELATIVE_MOUSE)
     {
-        flags |= SDL_WINDOW_MOUSE_RELATIVE_MODE;
+        sdl_window_flags |= SDL_WINDOW_MOUSE_RELATIVE_MODE;
     }
 
 #ifdef VCP_WINDOW_OPENGL
@@ -79,7 +81,7 @@ int window_init(void)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 #endif
 
-    g_win_ctx.handle = SDL_CreateWindow(g_win_state.title, g_win_state.width, g_win_state.height, flags);
+    g_win_ctx.handle = SDL_CreateWindow(g_win_state.title, g_win_state.width, g_win_state.height, sdl_window_flags);
     if (g_win_ctx.handle == NULL)
     {
         log_warn("Failed to initialize system. Unable to create SDL window: %s", SDL_GetError());
@@ -280,30 +282,30 @@ void window_set_flags(u32 flags, bool state)
     if (g_win_state.initialized == false)
         return;
 
-    if (HASFLAG(flags, WINDOW_RESIZABLE))
+    if (flags & WINDOW_RESIZABLE)
     {
         SDL_SetWindowResizable(g_win_ctx.handle, state);
     }
 
-    if (HASFLAG(flags, WINDOW_RELATIVE_MOUSE))
+    if (flags & WINDOW_RELATIVE_MOUSE)
     {
         SDL_WarpMouseInWindow(g_win_ctx.handle, g_win_state.width / 2.0f, g_win_state.height / 2.0f);
         SDL_SetWindowRelativeMouseMode(g_win_ctx.handle, state);
     }
 
-    if (HASFLAG(flags, WINDOW_VSYNC))
+    if (flags & WINDOW_VSYNC)
     {
 #ifdef VCP_WINDOW_OPENGL
         SDL_GL_SetSwapInterval(state ? 1 : 0);
 #endif
     }
 
-    if (HASFLAG(flags, WINDOW_FULLSCREEN))
+    if (flags & WINDOW_FULLSCREEN)
     {
         SDL_SetWindowFullscreen(g_win_ctx.handle, state);
     }
 
-    if (HASFLAG(flags, WINDOW_HIGHDPI))
+    if (flags & WINDOW_HIGHDPI)
     {
         log_warn("Unable to toggle WINDOW_HIGHDPI: Set flag before window initialization.");
     }
@@ -342,9 +344,10 @@ void window_disable_flags(u32 flags)
  * -----------------------------
  */
 
-void _window_notify(int type, int w, int h)
+// input.c will notify on some certain events if needed
+void window_event_notify(int type, int w, int h)
 {
-    if (type == _WINDOW_NOTIFY_RESIZE)
+    if (type == 0)
     {
         g_win_state.width = w;
         g_win_state.height = h;
@@ -355,7 +358,7 @@ void _window_notify(int type, int w, int h)
 #endif
     }
 
-    if (type == _WINDOW_NOTIFY_CLOSE)
+    if (type == 1)
     {
         g_win_state.keep_open = false;
     }

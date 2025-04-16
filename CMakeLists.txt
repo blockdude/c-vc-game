@@ -22,18 +22,17 @@ set(platform_headers
 	"src/system/input.h"
 	"src/system/time.h"
 	"src/system/window.h"
-	"src/system/allocator.h"
 	"src/util/timestep.h"
 	"src/util/camera.h"
 	"src/util/log.h"
 	"src/util/types.h"
 	"src/util/tcast.h"
-	"src/common.h"
-	"src/version.h"
-	"src/platform.h")
+	"src/platform.h"
+	"src/vcp.h"
+	"src/vcp_common.h"
+	"src/vcp_version.h")
 
 set(platform_sources
-	"src/platform.c"
 	"src/math/math.c"
 	"src/graphics/shader.c"
 	"src/graphics/vao.c"
@@ -42,10 +41,10 @@ set(platform_sources
 	"src/system/input.c"
 	"src/system/time.c"
 	"src/system/window.c"
-	"src/system/allocator.c"
 	"src/util/timestep.c"
 	"src/util/camera.c"
-	"src/util/log.c")
+	"src/util/log.c"
+	"src/platform.c")
 
 set_source_files_properties(${platform_sources} ${platform_headers} PROPERTIES LANGUAGE C)
 

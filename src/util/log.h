@@ -8,7 +8,7 @@
 #ifndef VCP_LOG_H
 #define VCP_LOG_H
 
-#include "../common.h"
+#include "../vcp_common.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -47,6 +47,10 @@ enum log_level
 #define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 #define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern const char *log_level_string(int level);
 extern void log_set_lock(log_lock_fn fn, void *udata);
 extern void log_set_level(int level);
@@ -54,5 +58,9 @@ extern void log_set_quiet(bool enable);
 extern int log_add_callback(log_log_fn fn, void *udata, int level);
 extern int log_add_fp(FILE *fp, int level);
 extern void log_log(int level, const char *file, int line, const char *fmt, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

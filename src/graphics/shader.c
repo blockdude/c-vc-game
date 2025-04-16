@@ -1,16 +1,15 @@
 #include "shader.h"
+#include "../util/log.h"
+#include "../math/math.h"
+#include "../math/vec2.h"
+#include "../math/vec3.h"
+#include "../math/vec4.h"
+#include "../math/mat4.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
-#include <util/log.h>
-#include <math/math.h>
-#include <math/vec2.h>
-#include <math/vec3.h>
-#include <math/vec4.h>
-#include <math/mat4.h>
 
 static inline char *shader_get_log(
     const GLint handle,

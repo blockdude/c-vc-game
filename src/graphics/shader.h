@@ -19,6 +19,10 @@ struct shader
     int status;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern struct shader shader_loadf(const char *vspath, const char *fspath);
 extern struct shader shader_load(const char *vstext, const char *fstext);
 extern void shader_free(struct shader self);
@@ -30,5 +34,9 @@ extern void shader_uniform_vec3(struct shader self, const char *name, struct vec
 extern void shader_uniform_vec4(struct shader self, const char *name, struct vec4 v);
 extern void shader_uniform_int(struct shader self, const char *name, int v);
 extern void shader_uniform_uint(struct shader self, const char *name, unsigned int v);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

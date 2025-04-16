@@ -1,18 +1,21 @@
 #ifndef VCP_WINDOW_H
 #define VCP_WINDOW_H
 
-#include "../common.h"
-#include "../util/bitflag.h"
+#include "../vcp_common.h"
 #include "../util/types.h"
 
 enum window_flags
 {
-    WINDOW_RELATIVE_MOUSE = BITFLAG(0),
-    WINDOW_VSYNC          = BITFLAG(1),
-    WINDOW_FULLSCREEN     = BITFLAG(2),
-    WINDOW_RESIZABLE      = BITFLAG(3),
-    WINDOW_HIGHDPI        = BITFLAG(4)
+    WINDOW_RELATIVE_MOUSE = 0x01,
+    WINDOW_VSYNC          = 0x02,
+    WINDOW_FULLSCREEN     = 0x04,
+    WINDOW_RESIZABLE      = 0x08,
+    WINDOW_HIGHDPI        = 0x10
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int window_init(void);
 extern void window_deinit(void);
@@ -33,10 +36,8 @@ extern void window_toggle_flags(u32 flags);
 extern void window_enable_flags(u32 flags);
 extern void window_disable_flags(u32 flags);
 
-// INTERNAL USE
-// used for input.c to notify window on certain events
-#define _WINDOW_NOTIFY_RESIZE 0
-#define _WINDOW_NOTIFY_CLOSE 1
-extern void _window_notify(int type, int w, int h);
+#ifdef __cplusplus
+}
+#endif
 
 #endif
