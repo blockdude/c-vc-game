@@ -24,6 +24,17 @@ int platform_init(u32 flags)
         SDL_VERSIONNUM_MINOR(SDL_VERSION),
         SDL_VERSIONNUM_MICRO(SDL_VERSION));
 
+    SDL_malloc_func sdl_malloc;
+    SDL_calloc_func sdl_calloc;
+    SDL_realloc_func sdl_realloc;
+    SDL_free_func sdl_free;
+    SDL_GetMemoryFunctions(&sdl_malloc, &sdl_calloc, &sdl_realloc, &sdl_free);
+
+    g_platform_state.malloc = sdl_malloc;
+    g_platform_state.calloc = sdl_calloc;
+    g_platform_state.realloc = sdl_realloc;
+    g_platform_state.dealloc = sdl_free;
+
     if (flags & PLATFORM_TIMER)
         time_init();
 
