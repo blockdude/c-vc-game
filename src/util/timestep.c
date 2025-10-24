@@ -24,9 +24,9 @@ static inline f64 compute_rate(u64 n, f64 d)
 // TIMESTEP
 // ==============================
 
-static inline bool _timestep_can_proc(struct timestep *_)
+static inline bool _timestep_can_proc(struct timestep *timestep)
 {
-    return true;
+    return timestep->target_delta > 0.0;
 }
 
 static inline void _timestep_prefix(struct timestep *timestep)
