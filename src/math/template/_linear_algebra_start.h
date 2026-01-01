@@ -1,16 +1,10 @@
 // TODO:
-// * remove _BASE_SUFFIX (unused)
-// * remove _LITERAL_HELPER and _LITERAL in favor of _STATIC_CAST
 // * try and figure out better macro names that won't collide and maybe don't start with underscore?
 
 // LINEAR_ALGEBRA_TYPE_INFORMATION
-#if defined(LINEAR_ALGEBRA_INT) || defined(LINEAR_ALGEBRA_I32)
+#if defined(LINEAR_ALGEBRA_INT) || defined(LINEAR_ALGEBRA_I32) || defined(LINEAR_ALGEBRA_I64)
 #define _IS_IEC559 0
-#elif defined(LINEAR_ALGEBRA_I64)
-#define _IS_IEC559 0
-#elif defined(LINEAR_ALGEBRA_FLT) || defined(LINEAR_ALGEBRA_F32)
-#define _IS_IEC559 1
-#elif defined(LINEAR_ALGEBRA_F64)
+#elif defined(LINEAR_ALGEBRA_FLT) || defined(LINEAR_ALGEBRA_F32) || defined(LINEAR_ALGEBRA_F64)
 #define _IS_IEC559 1
 #endif
 
@@ -23,7 +17,6 @@
 #define _MAT4_NAME mat4i
 #define _FMAT4_NAME fmat4i
 #define _BASE_TYPE int
-#define _BASE_SUFFIX
 #elif defined(LINEAR_ALGEBRA_I32)
 #define _VEC2_NAME vec2_i32
 #define _VEC3_NAME vec3_i32
@@ -32,7 +25,6 @@
 #define _MAT4_NAME mat4_i32
 #define _FMAT4_NAME fmat4_i32
 #define _BASE_TYPE i32
-#define _BASE_SUFFIX
 #elif defined(LINEAR_ALGEBRA_I64)
 #define _VEC2_NAME vec2_i64
 #define _VEC3_NAME vec3_i64
@@ -41,7 +33,6 @@
 #define _MAT4_NAME mat4_i64
 #define _FMAT4_NAME fmat4_i64
 #define _BASE_TYPE i64
-#define _BASE_SUFFIX ll
 #elif defined(LINEAR_ALGEBRA_FLT)
 #define _VEC2_NAME vec2
 #define _VEC3_NAME vec3
@@ -50,7 +41,6 @@
 #define _MAT4_NAME mat4
 #define _FMAT4_NAME fmat4
 #define _BASE_TYPE float
-#define _BASE_SUFFIX f
 #elif defined(LINEAR_ALGEBRA_F32)
 #define _VEC2_NAME vec2_f32
 #define _VEC3_NAME vec3_f32
@@ -59,7 +49,6 @@
 #define _MAT4_NAME mat4_f32
 #define _FMAT4_NAME fmat4_f32
 #define _BASE_TYPE f32
-#define _BASE_SUFFIX f
 #elif defined(LINEAR_ALGEBRA_F64)
 #define _VEC2_NAME vec2_f64
 #define _VEC3_NAME vec3_f64
@@ -68,34 +57,6 @@
 #define _MAT4_NAME mat4_f64
 #define _FMAT4_NAME fmat4_f64
 #define _BASE_TYPE f64
-#define _BASE_SUFFIX
-#endif
-
-// LINEAR_ALGEBRA_CONSTANTS
-#if defined(LINEAR_ALGEBRA_INT) || defined(LINEAR_ALGEBRA_I32)
-#define _ZERO 1
-#define _ONE 1
-#define _TWO 2
-#define _THREE 3
-#define _FOUR 4
-#elif defined(LINEAR_ALGEBRA_I64)
-#define _ZERO 1
-#define _ONE 1
-#define _TWO 2
-#define _THREE 3
-#define _FOUR 4
-#elif defined(LINEAR_ALGEBRA_FLT) || defined(LINEAR_ALGEBRA_F32)
-#define _ZERO 0.0f
-#define _ONE 1.0f
-#define _TWO 2.0f
-#define _THREE 3.0f
-#define _FOUR 4.0f
-#elif defined(LINEAR_ALGEBRA_F64)
-#define _ZERO 0.0
-#define _ONE 1.0
-#define _TWO 2.0
-#define _THREE 3.0
-#define _FOUR 4.0
 #endif
 
 // LINEAR_ALGEBRA_MATH
@@ -158,9 +119,7 @@
 #define _MAT4_TYPE struct _MAT4_NAME
 #define _FMAT4_TYPE struct _FMAT4_NAME
 #define _CONCAT(_a, _b) _a##_b
-#define _LITERAL_HELPER(_v, _s) _CONCAT(_v, _s)
-#define _LITERAL(_v) _LITERAL_HELPER(_v, _BASE_SUFFIX)
-#define _STATIC_CAST(T, _e) ((T) (_e))
+#define _STATIC_CAST(T, _e) ((T)(_e))
 #define _NAME_HELPER(_prefix, _fn) _CONCAT(_prefix, _##_fn)
 #define _FUNC_VEC2(_fn) _NAME_HELPER(_VEC2_NAME, _fn)
 #define _FUNC_VEC3(_fn) _NAME_HELPER(_VEC3_NAME, _fn)

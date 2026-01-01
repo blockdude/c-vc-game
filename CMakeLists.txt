@@ -54,7 +54,7 @@ set(SDL_TEST_LIBRARY OFF)
 set(SDL_TEST OFF)
 add_subdirectory(extern/sdl EXCLUDE_FROM_ALL)
 
-project(platform C)
+project(platform LANGUAGES C VERSION "0.0.0.0")
 add_library(platform STATIC ${platform_sources} ${glad_sources})
 target_include_directories(platform PUBLIC ${platform_include} ${glad_include})
 target_link_libraries(platform PUBLIC SDL3::SDL3)

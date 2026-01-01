@@ -510,9 +510,9 @@ _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(zero)(void)
 {
     _VEC3_TYPE result = {
-        _LITERAL(0.0),
-        _LITERAL(0.0),
-        _LITERAL(0.0)
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0)
     };
 
     return result;
@@ -523,9 +523,9 @@ _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(one)(void)
 {
     _VEC3_TYPE result = {
-        _LITERAL(1.0),
-        _LITERAL(1.0),
-        _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1),
+        _STATIC_CAST(_BASE_TYPE, 1),
+        _STATIC_CAST(_BASE_TYPE, 1)
     };
 
     return result;
@@ -594,18 +594,30 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(perpendicular)(_VEC3_TYPE v)
     _VEC3_TYPE result = { 0 };
 
     _BASE_TYPE min = _ABS(v.x);
-    _VEC3_TYPE cardinal_axis = { _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0) };
+    _VEC3_TYPE cardinal_axis = {
+        _STATIC_CAST(_BASE_TYPE, 1),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0)
+    };
 
     if (_ABS(v.y) < min)
     {
         min = _ABS(v.y);
-        _VEC3_TYPE tmp = { _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0) };
+        _VEC3_TYPE tmp = {
+            _STATIC_CAST(_BASE_TYPE, 0),
+            _STATIC_CAST(_BASE_TYPE, 1),
+            _STATIC_CAST(_BASE_TYPE, 0)
+        };
         cardinal_axis = tmp;
     }
 
     if (_ABS(v.z) < min)
     {
-        _VEC3_TYPE tmp = { _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0) };
+        _VEC3_TYPE tmp = {
+            _STATIC_CAST(_BASE_TYPE, 0),
+            _STATIC_CAST(_BASE_TYPE, 0),
+            _STATIC_CAST(_BASE_TYPE, 1)
+        };
         cardinal_axis = tmp;
     }
 
@@ -623,9 +635,9 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(center)(_VEC3_TYPE a, _VEC3_TYPE b)
 {
     _VEC3_TYPE result = { 0 };
 
-    result.x = (a.x + b.x) / _LITERAL(2.0);
-    result.y = (a.y + b.y) / _LITERAL(2.0);
-    result.z = (a.z + b.z) / _LITERAL(2.0);
+    result.x = (a.x + b.x) / _STATIC_CAST(_BASE_TYPE, 2);
+    result.y = (a.y + b.y) / _STATIC_CAST(_BASE_TYPE, 2);
+    result.z = (a.z + b.z) / _STATIC_CAST(_BASE_TYPE, 2);
 
     return result;
 })
@@ -658,7 +670,7 @@ _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC3(dot)(_VEC3_TYPE a, _VEC3_TYPE b)
 _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC3(dist)(_VEC3_TYPE a, _VEC3_TYPE b)
 {
-    _BASE_TYPE result = _LITERAL(0.0);
+    _BASE_TYPE result = _STATIC_CAST(_BASE_TYPE, 0);
 
     _BASE_TYPE dx = b.x - a.x;
     _BASE_TYPE dy = b.y - a.y;
@@ -672,7 +684,7 @@ _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC3(dist)(_VEC3_TYPE a, _VEC3_TYPE b)
 _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC3(dist_sq)(_VEC3_TYPE a, _VEC3_TYPE b)
 {
-    _BASE_TYPE result = _LITERAL(0.0);
+    _BASE_TYPE result = _STATIC_CAST(_BASE_TYPE, 0);
 
     _BASE_TYPE dx = b.x - a.x;
     _BASE_TYPE dy = b.y - a.y;
@@ -686,7 +698,7 @@ _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC3(dist_sq)(_VEC3_TYPE a, _VEC3_TYPE b)
 _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC3(angle)(_VEC3_TYPE a, _VEC3_TYPE b)
 {
-    _BASE_TYPE result = _LITERAL(0.0);
+    _BASE_TYPE result = _STATIC_CAST(_BASE_TYPE, 0);
 
     _VEC3_TYPE cross = { a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x };
     _BASE_TYPE len = _SQRT(cross.x * cross.x + cross.y * cross.y + cross.z * cross.z);
@@ -719,9 +731,9 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(normalize)(_VEC3_TYPE v)
     _VEC3_TYPE result = { 0 };
 
     _BASE_TYPE len = _SQRT(v.x * v.x + v.y * v.y + v.z * v.z);
-    if (len > _LITERAL(0.0))
+    if (len > _STATIC_CAST(_BASE_TYPE, 0))
     {
-        _BASE_TYPE ilen = _LITERAL(1.0) / len;
+        _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
         result.x = v.x * ilen;
         result.y = v.y * ilen;
         result.z = v.z * ilen;
@@ -773,14 +785,14 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(reject)(_VEC3_TYPE a, _VEC3_TYPE b)
 _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC void _FUNC_CONV _FUNC_VEC3(ortho_normalize)(_VEC3_TYPE *a, _VEC3_TYPE *b)
 {
-    _BASE_TYPE len = _LITERAL(0.0);
-    _BASE_TYPE ilen = _LITERAL(0.0);
+    _BASE_TYPE len = _STATIC_CAST(_BASE_TYPE, 0);
+    _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 0);
 
     /* normalize(*a); */
     _VEC3_TYPE v = *a;
     len = _SQRT(v.x * v.x + v.y * v.y + v.z * v.z);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
     a->x *= ilen;
     a->y *= ilen;
     a->z *= ilen;
@@ -791,8 +803,8 @@ _FUNC_SPEC void _FUNC_CONV _FUNC_VEC3(ortho_normalize)(_VEC3_TYPE *a, _VEC3_TYPE
     /* normalize(an); */
     v = an;
     len = _SQRT(v.x * v.x + v.y * v.y + v.z * v.z);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
     an.x *= ilen;
     an.y *= ilen;
     an.z *= ilen;
@@ -826,7 +838,7 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(rotate)(_VEC3_TYPE v, _QUAT_TYPE q)
 {
     _VEC3_TYPE result = { 0 };
 
-    const _BASE_TYPE two = _LITERAL(2.0);
+    const _BASE_TYPE two = _STATIC_CAST(_BASE_TYPE, 2);
     result.x = v.x * (q.x * q.x + q.w * q.w - q.y * q.y - q.z * q.z) + v.y * (two * q.x * q.y - two * q.w * q.z) + v.z * (two * q.x * q.z + two * q.w * q.y);
     result.y = v.x * (two * q.w * q.z + two * q.x * q.y) + v.y * (q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z) + v.z * (-two * q.w * q.x + two * q.y * q.z);
     result.z = v.x * (-two * q.w * q.y + two * q.x * q.z) + v.y * (two * q.w * q.x + two * q.y * q.z) + v.z * (q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z);
@@ -845,13 +857,13 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(rotate_around_axis)(_VEC3_TYPE v, _V
 
     /* vec3_f32_normalize(axis) */
     _BASE_TYPE len = _SQRT(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    _BASE_TYPE ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
     axis.x *= ilen;
     axis.y *= ilen;
     axis.z *= ilen;
 
-    angle /= _LITERAL(2.0);
+    angle /= _STATIC_CAST(_BASE_TYPE, 2);
     _BASE_TYPE a = _SIN(angle);
     _BASE_TYPE b = axis.x * a;
     _BASE_TYPE c = axis.y * a;
@@ -866,15 +878,15 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(rotate_around_axis)(_VEC3_TYPE v, _V
     _VEC3_TYPE wwv = { w.y * wv.z - w.z * wv.y, w.z * wv.x - w.x * wv.z, w.x * wv.y - w.y * wv.x };
 
     /* vec3_f32_scale(wv, 2 * a) */
-    a *= _LITERAL(2.0);
+    a *= _STATIC_CAST(_BASE_TYPE, 2);
     wv.x *= a;
     wv.y *= a;
     wv.z *= a;
 
     /* vec3_f32_scale(wwv, 2) */
-    wwv.x *= _LITERAL(2.0);
-    wwv.y *= _LITERAL(2.0);
-    wwv.z *= _LITERAL(2.0);
+    wwv.x *= _STATIC_CAST(_BASE_TYPE, 2);
+    wwv.y *= _STATIC_CAST(_BASE_TYPE, 2);
+    wwv.z *= _STATIC_CAST(_BASE_TYPE, 2);
 
     result.x += wv.x;
     result.y += wv.y;
@@ -898,7 +910,7 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(move_towards)(_VEC3_TYPE v, _VEC3_TY
     _BASE_TYPE dz = target.z - v.z;
     _BASE_TYPE value = (dx * dx) + (dy * dy) + (dz * dz);
 
-    if ((value == _LITERAL(0.0)) || ((max >= _LITERAL(0.0)) && (value <= max * max)))
+    if ((value == _STATIC_CAST(_BASE_TYPE, 0)) || ((max >= _STATIC_CAST(_BASE_TYPE, 0)) && (value <= max * max)))
         return target;
 
     _BASE_TYPE dist = _SQRT(value);
@@ -933,9 +945,9 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(cubic_hermite)(_VEC3_TYPE a, _VEC3_T
     _BASE_TYPE t2 = t * t;
     _BASE_TYPE t3 = t * t * t;
 
-    const _BASE_TYPE one = _LITERAL(1.0);
-    const _BASE_TYPE two = _LITERAL(2.0);
-    const _BASE_TYPE three = _LITERAL(3.0);
+    const _BASE_TYPE one = _STATIC_CAST(_BASE_TYPE, 1);
+    const _BASE_TYPE two = _STATIC_CAST(_BASE_TYPE, 2);
+    const _BASE_TYPE three = _STATIC_CAST(_BASE_TYPE, 3);
 
     result.x = (two * t3 - three * t2 + one) * a.x + (t3 - two * t2 + t) * tan_a.x + (-two * t3 + three * t2) * b.x + (t3 - t2) * tan_b.x;
     result.y = (two * t3 - three * t2 + one) * a.y + (t3 - two * t2 + t) * tan_a.y + (-two * t3 + three * t2) * b.y + (t3 - t2) * tan_b.y;
@@ -956,9 +968,9 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(reflect)(_VEC3_TYPE v, _VEC3_TYPE no
 
     _BASE_TYPE dot = (v.x * normal.x + v.y * normal.y + v.z * normal.z);
 
-    result.x = v.x - (_LITERAL(2.0) * normal.x) * dot;
-    result.y = v.y - (_LITERAL(2.0) * normal.y) * dot;
-    result.z = v.z - (_LITERAL(2.0) * normal.z) * dot;
+    result.x = v.x - (_STATIC_CAST(_BASE_TYPE, 2) * normal.x) * dot;
+    result.y = v.y - (_STATIC_CAST(_BASE_TYPE, 2) * normal.y) * dot;
+    result.z = v.z - (_STATIC_CAST(_BASE_TYPE, 2) * normal.z) * dot;
 
     return result;
 })
@@ -1009,7 +1021,7 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(barycenter)(_VEC3_TYPE p, _VEC3_TYPE
 
     result.y = (d11 * d20 - d01 * d21) / denom;
     result.z = (d00 * d21 - d01 * d20) / denom;
-    result.x = _LITERAL(1.0) - (result.z + result.y);
+    result.x = _STATIC_CAST(_BASE_TYPE, 1) - (result.z + result.y);
 
     return result;
 })
@@ -1062,7 +1074,7 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(unproject)(_VEC3_TYPE source, _MAT4_
     _BASE_TYPE b11 = a22 * a33 - a23 * a32;
 
     // Calculate the invert determinant (inlined to avoid double-caching)
-    _BASE_TYPE idet = _LITERAL(1.0) / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+    _BASE_TYPE idet = _STATIC_CAST(_BASE_TYPE, 1) / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
 
     _MAT4_TYPE view_proj_inv = {
         (a11 * b11 - a12 * b10 + a13 * b09) * idet,
@@ -1084,7 +1096,7 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(unproject)(_VEC3_TYPE source, _MAT4_
     };
 
     // Create quaternion from source point
-    _QUAT_TYPE quat = { source.x, source.y, source.z, _LITERAL(1.0) };
+    _QUAT_TYPE quat = { source.x, source.y, source.z, _STATIC_CAST(_BASE_TYPE, 1) };
 
     // Multiply quat point by unprojecte matrix
     _QUAT_TYPE qtransformed = {     // QuaternionTransform(quat, view_proj_inv)
@@ -1107,9 +1119,9 @@ _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(invert)(_VEC3_TYPE v)
 {
     _VEC3_TYPE result = {
-        _LITERAL(1.0) / v.x,
-        _LITERAL(1.0) / v.y,
-        _LITERAL(1.0) / v.z
+        _STATIC_CAST(_BASE_TYPE, 1) / v.x,
+        _STATIC_CAST(_BASE_TYPE, 1) / v.y,
+        _STATIC_CAST(_BASE_TYPE, 1) / v.z
     };
 
     return result;
@@ -1148,11 +1160,11 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(clamp_len)(_VEC3_TYPE v, _BASE_TYPE 
     _VEC3_TYPE result = v;
 
     _BASE_TYPE len = (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
-    if (len > _LITERAL(0.0))
+    if (len > _STATIC_CAST(_BASE_TYPE, 0))
     {
         len = _SQRT(len);
 
-        _BASE_TYPE scale = _LITERAL(1.0);    // By default, 1 as the neutral element.
+        _BASE_TYPE scale = _STATIC_CAST(_BASE_TYPE, 1);    // By default, 1 as the neutral element.
         if (len < min)
         {
             scale = min / len;
@@ -1175,9 +1187,9 @@ _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC int _FUNC_CONV _FUNC_VEC3(equals)(_VEC3_TYPE p, _VEC3_TYPE q, _BASE_TYPE epsilon)
 {
     int result =
-        ((_ABS(p.x - q.x)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.x), _ABS(q.x))))) &&
-        ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.y), _ABS(q.y))))) &&
-        ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.z), _ABS(q.z)))));
+        ((_ABS(p.x - q.x)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.x), _ABS(q.x))))) &&
+        ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.y), _ABS(q.y))))) &&
+        ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.z), _ABS(q.z)))));
 
     return result;
 })
@@ -1193,9 +1205,9 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(refract)(_VEC3_TYPE v, _VEC3_TYPE n,
     _VEC3_TYPE result = { 0 };
 
     _BASE_TYPE dot = v.x * n.x + v.y * n.y + v.z * n.z;
-    _BASE_TYPE d = _LITERAL(1.0) - r * r * (_LITERAL(1.0) - dot * dot);
+    _BASE_TYPE d = _STATIC_CAST(_BASE_TYPE, 1) - r * r * (_STATIC_CAST(_BASE_TYPE, 1) - dot * dot);
 
-    if (d >= _LITERAL(0.0))
+    if (d >= _STATIC_CAST(_BASE_TYPE, 0))
     {
         d = _SQRT(d);
         v.x = r * v.x - (r * dot + d) * n.x;
@@ -1251,10 +1263,10 @@ _VEC4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(zero)(void)
 {
     _VEC4_TYPE result = {
-        _LITERAL(0.0),
-        _LITERAL(0.0),
-        _LITERAL(0.0),
-        _LITERAL(0.0)
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0)
     };
 
     return result;
@@ -1264,10 +1276,10 @@ _VEC4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(one)(void)
 {
     _VEC4_TYPE result = {
-        _LITERAL(1.0),
-        _LITERAL(1.0),
-        _LITERAL(1.0),
-        _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1),
+        _STATIC_CAST(_BASE_TYPE, 1),
+        _STATIC_CAST(_BASE_TYPE, 1),
+        _STATIC_CAST(_BASE_TYPE, 1)
     };
 
     return result;
@@ -1404,9 +1416,9 @@ _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(normalize)(_VEC4_TYPE v)
     _VEC4_TYPE result = { 0 };
     _BASE_TYPE len = _SQRT((v.x * v.x) + (v.y * v.y) + (v.z * v.z) + (v.w * v.w));
 
-    if (len > _LITERAL(0.0))
+    if (len > _STATIC_CAST(_BASE_TYPE, 0))
     {
-        _BASE_TYPE ilen = _LITERAL(1.0) / len;
+        _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
         result.x = v.x * ilen;
         result.y = v.y * ilen;
         result.z = v.z * ilen;
@@ -1470,7 +1482,7 @@ _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(move_towards)(_VEC4_TYPE v, _VEC4_TY
     _BASE_TYPE dw = target.w - v.w;
     _BASE_TYPE value = (dx * dx) + (dy * dy) + (dz * dz) + (dw * dw);
 
-    if ((value == _LITERAL(0.0)) || ((max >= _LITERAL(0.0)) && (value <= max * max)))
+    if ((value == _STATIC_CAST(_BASE_TYPE, 0)) || ((max >= _STATIC_CAST(_BASE_TYPE, 0)) && (value <= max * max)))
         return target;
 
     _BASE_TYPE dist = _SQRT(value);
@@ -1488,10 +1500,10 @@ _VEC4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(invert)(_VEC4_TYPE v)
 {
     _VEC4_TYPE result = {
-        _LITERAL(1.0) / v.x,
-        _LITERAL(1.0) / v.y,
-        _LITERAL(1.0) / v.z,
-        _LITERAL(1.0) / v.w
+        _STATIC_CAST(_BASE_TYPE, 1) / v.x,
+        _STATIC_CAST(_BASE_TYPE, 1) / v.y,
+        _STATIC_CAST(_BASE_TYPE, 1) / v.z,
+        _STATIC_CAST(_BASE_TYPE, 1) / v.w
     };
 
     return result;
@@ -1502,10 +1514,10 @@ _VEC4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC int _FUNC_CONV _FUNC_VEC4(equals)(_VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon)
 {
     int result =
-        ((_ABS(p.x - q.x)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.x), _ABS(q.x))))) &&
-        ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.y), _ABS(q.y))))) &&
-        ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.z), _ABS(q.z))))) &&
-        ((_ABS(p.w - q.w)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.w), _ABS(q.w)))));
+        ((_ABS(p.x - q.x)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.x), _ABS(q.x))))) &&
+        ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.y), _ABS(q.y))))) &&
+        ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.z), _ABS(q.z))))) &&
+        ((_ABS(p.w - q.w)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.w), _ABS(q.w)))));
 
     return result;
 })
@@ -1588,10 +1600,10 @@ _QUAT_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(identity)(void)
 {
     _QUAT_TYPE result = {
-        _LITERAL(0.0),
-        _LITERAL(0.0),
-        _LITERAL(0.0),
-        _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 1)
     };
 
     return result;
@@ -1612,8 +1624,8 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(normalize)(_QUAT_TYPE q)
     _QUAT_TYPE result = { 0 };
 
     _BASE_TYPE len = _SQRT(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    _BASE_TYPE ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
 
     result.x = q.x * ilen;
     result.y = q.y * ilen;
@@ -1631,9 +1643,9 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(invert)(_QUAT_TYPE q)
 
     _BASE_TYPE len = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
 
-    if (len != _LITERAL(0.0))
+    if (len != _STATIC_CAST(_BASE_TYPE, 0))
     {
-        _BASE_TYPE ilen = _LITERAL(1.0) / len;
+        _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
 
         result.x *= -ilen;
         result.y *= -ilen;
@@ -1712,8 +1724,8 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(nlerp)(_QUAT_TYPE p, _QUAT_TYPE q, _
     /* quat_f32_Normalize(n); */
     _QUAT_TYPE n = result;
     _BASE_TYPE len = _SQRT(n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    _BASE_TYPE ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
 
     result.x = n.x * ilen;
     result.y = n.y * ilen;
@@ -1731,29 +1743,29 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(slerp)(_QUAT_TYPE p, _QUAT_TYPE q, _
 
     _BASE_TYPE cos_half_theta = p.x * q.x + p.y * q.y + p.z * q.z + p.w * q.w;
 
-    if (cos_half_theta < _LITERAL(0.0))
+    if (cos_half_theta < _STATIC_CAST(_BASE_TYPE, 0))
     {
         q.x = -q.x; q.y = -q.y; q.z = -q.z; q.w = -q.w;
         cos_half_theta = -cos_half_theta;
     }
 
-    if (_ABS(cos_half_theta) >= _LITERAL(1.0)) result = p;
-    else if (cos_half_theta > _LITERAL(0.95)) result = _FUNC_QUAT(nlerp)(p, q, t);
+    if (_ABS(cos_half_theta) >= _STATIC_CAST(_BASE_TYPE, 1)) result = p;
+    else if (cos_half_theta > _STATIC_CAST(_BASE_TYPE, 0.95)) result = _FUNC_QUAT(nlerp)(p, q, t);
     else
     {
         _BASE_TYPE half_theta = _ACOS(cos_half_theta);
-        _BASE_TYPE sin_half_theta = _SQRT(_LITERAL(1.0) - cos_half_theta * cos_half_theta);
+        _BASE_TYPE sin_half_theta = _SQRT(_STATIC_CAST(_BASE_TYPE, 1) - cos_half_theta * cos_half_theta);
 
         if (_ABS(sin_half_theta) < epsilon)
         {
-            result.x = (p.x * _LITERAL(0.5) + q.x * _LITERAL(0.5));
-            result.y = (p.y * _LITERAL(0.5) + q.y * _LITERAL(0.5));
-            result.z = (p.z * _LITERAL(0.5) + q.z * _LITERAL(0.5));
-            result.w = (p.w * _LITERAL(0.5) + q.w * _LITERAL(0.5));
+            result.x = (p.x * _STATIC_CAST(_BASE_TYPE, 0.5) + q.x * _STATIC_CAST(_BASE_TYPE, 0.5));
+            result.y = (p.y * _STATIC_CAST(_BASE_TYPE, 0.5) + q.y * _STATIC_CAST(_BASE_TYPE, 0.5));
+            result.z = (p.z * _STATIC_CAST(_BASE_TYPE, 0.5) + q.z * _STATIC_CAST(_BASE_TYPE, 0.5));
+            result.w = (p.w * _STATIC_CAST(_BASE_TYPE, 0.5) + q.w * _STATIC_CAST(_BASE_TYPE, 0.5));
         }
         else
         {
-            _BASE_TYPE ratio_a = _SIN((_LITERAL(1.0) - t) * half_theta) / sin_half_theta;
+            _BASE_TYPE ratio_a = _SIN((_STATIC_CAST(_BASE_TYPE, 1) - t) * half_theta) / sin_half_theta;
             _BASE_TYPE ratio_b = _SIN(t * half_theta) / sin_half_theta;
 
             result.x = (p.x * ratio_a + q.x * ratio_b);
@@ -1773,9 +1785,9 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(cubic_hermite_spline)(_QUAT_TYPE p, 
 {
     _BASE_TYPE t2 = t * t;
     _BASE_TYPE t3 = t2 * t;
-    _BASE_TYPE h00 = _LITERAL(2.0) * t3 - _LITERAL(3.0) * t2 + _LITERAL(1.0);
-    _BASE_TYPE h10 = t3 - _LITERAL(2.0) * t2 + t;
-    _BASE_TYPE h01 = _LITERAL(-2.0) * t3 + _LITERAL(3.0) * t2;
+    _BASE_TYPE h00 = _STATIC_CAST(_BASE_TYPE, 2) * t3 - _STATIC_CAST(_BASE_TYPE, 3) * t2 + _STATIC_CAST(_BASE_TYPE, 1);
+    _BASE_TYPE h10 = t3 - _STATIC_CAST(_BASE_TYPE, 2) * t2 + t;
+    _BASE_TYPE h01 = _STATIC_CAST(_BASE_TYPE, -2) * t3 + _STATIC_CAST(_BASE_TYPE, 3) * t2;
     _BASE_TYPE h11 = t3 - t2;
 
     _QUAT_TYPE p0 = _FUNC_QUAT(scale)(p, h00);
@@ -1805,14 +1817,14 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(from_vec3)(_VEC3_TYPE p, _VEC3_TYPE 
     result.x = cross.x;
     result.y = cross.y;
     result.z = cross.z;
-    result.w = _LITERAL(1.0) + dot;
+    result.w = _STATIC_CAST(_BASE_TYPE, 1) + dot;
 
     // _QUAT_TYPENormalize(n);
     // NOTE: Normalize q essentially nlerp the original and identity q 0.5
     _QUAT_TYPE n = result;
     _BASE_TYPE len = _SQRT(n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    _BASE_TYPE ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
 
     result.x = n.x * ilen;
     result.y = n.y * ilen;
@@ -1854,8 +1866,8 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(from_mat4)(_MAT4_TYPE m)
         biggest_idx = 3;
     }
 
-    _BASE_TYPE biggest_val = _SQRT(four_biggest_sq_sub_one + _LITERAL(1.0)) * _LITERAL(0.5);
-    _BASE_TYPE mult = _LITERAL(0.25) / biggest_val;
+    _BASE_TYPE biggest_val = _SQRT(four_biggest_sq_sub_one + _STATIC_CAST(_BASE_TYPE, 1)) * _STATIC_CAST(_BASE_TYPE, 0.5);
+    _BASE_TYPE mult = _STATIC_CAST(_BASE_TYPE, 0.25) / biggest_val;
 
     switch (biggest_idx)
     {
@@ -1893,10 +1905,10 @@ _QUAT_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_QUAT(to_mat4)(_QUAT_TYPE q)
 {
     _MAT4_TYPE result = {
-        _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     }; // MatrixIdentity()
 
     _BASE_TYPE a2 = q.x * q.x;
@@ -1909,17 +1921,17 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_QUAT(to_mat4)(_QUAT_TYPE q)
     _BASE_TYPE bd = q.w * q.y;
     _BASE_TYPE cd = q.w * q.z;
 
-    result.m00 = _LITERAL(1.0) - _LITERAL(2.0) * (b2 + c2);
-    result.m10 = _LITERAL(2.0) * (ab + cd);
-    result.m20 = _LITERAL(2.0) * (ac - bd);
+    result.m00 = _STATIC_CAST(_BASE_TYPE, 1) - _STATIC_CAST(_BASE_TYPE, 2) * (b2 + c2);
+    result.m10 = _STATIC_CAST(_BASE_TYPE, 2) * (ab + cd);
+    result.m20 = _STATIC_CAST(_BASE_TYPE, 2) * (ac - bd);
 
-    result.m01 = _LITERAL(2.0) * (ab - cd);
-    result.m11 = _LITERAL(1.0) - _LITERAL(2.0) * (a2 + c2);
-    result.m21 = _LITERAL(2.0) * (bc + ad);
+    result.m01 = _STATIC_CAST(_BASE_TYPE, 2) * (ab - cd);
+    result.m11 = _STATIC_CAST(_BASE_TYPE, 1) - _STATIC_CAST(_BASE_TYPE, 2) * (a2 + c2);
+    result.m21 = _STATIC_CAST(_BASE_TYPE, 2) * (bc + ad);
 
-    result.m02 = _LITERAL(2.0) * (ac + bd);
-    result.m12 = _LITERAL(2.0) * (bc - ad);
-    result.m22 = _LITERAL(1.0) - _LITERAL(2.0) * (a2 + b2);
+    result.m02 = _STATIC_CAST(_BASE_TYPE, 2) * (ac + bd);
+    result.m12 = _STATIC_CAST(_BASE_TYPE, 2) * (bc - ad);
+    result.m22 = _STATIC_CAST(_BASE_TYPE, 1) - _STATIC_CAST(_BASE_TYPE, 2) * (a2 + b2);
 
     return result;
 })
@@ -1930,25 +1942,25 @@ _QUAT_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(from_axis_angle)(_VEC3_TYPE axis, _BASE_TYPE angle)
 {
     _QUAT_TYPE result = {
-        _LITERAL(0.0),
-        _LITERAL(0.0),
-        _LITERAL(0.0),
-        _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 1)
     };
 
     _BASE_TYPE axislen = _SQRT(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
 
-    if (axislen != _LITERAL(0.0))
+    if (axislen != _STATIC_CAST(_BASE_TYPE, 0))
     {
-        angle *= _LITERAL(0.5);
+        angle *= _STATIC_CAST(_BASE_TYPE, 0.5);
 
-        _BASE_TYPE len = _LITERAL(0.0);
-        _BASE_TYPE ilen = _LITERAL(0.0);
+        _BASE_TYPE len = _STATIC_CAST(_BASE_TYPE, 0);
+        _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 0);
 
         // Vector3Normalize(axis)
         len = axislen;
-        if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-        ilen = _LITERAL(1.0) / len;
+        if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+        ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
         axis.x *= ilen;
         axis.y *= ilen;
         axis.z *= ilen;
@@ -1964,8 +1976,8 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(from_axis_angle)(_VEC3_TYPE axis, _B
         // _QUAT_TYPENormalize(q);
         _QUAT_TYPE q = result;
         len = _SQRT(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
-        if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-        ilen = _LITERAL(1.0) / len;
+        if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+        ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
         result.x = q.x * ilen;
         result.y = q.y * ilen;
         result.z = q.z * ilen;
@@ -1979,12 +1991,12 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(from_axis_angle)(_VEC3_TYPE axis, _B
 _QUAT_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC void _FUNC_CONV _FUNC_QUAT(to_axis_angle)(_QUAT_TYPE q, _BASE_TYPE epsilon, _VEC3_TYPE *out_axis, _BASE_TYPE *out_angle)
 {
-    if (_ABS(q.w) > _LITERAL(1.0))
+    if (_ABS(q.w) > _STATIC_CAST(_BASE_TYPE, 1))
     {
         // _QUAT_TYPENormalize(q);
         _BASE_TYPE len = _SQRT(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
-        if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-        _BASE_TYPE ilen = _LITERAL(1.0) / len;
+        if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+        _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
 
         q.x = q.x * ilen;
         q.y = q.y * ilen;
@@ -1992,9 +2004,9 @@ _FUNC_SPEC void _FUNC_CONV _FUNC_QUAT(to_axis_angle)(_QUAT_TYPE q, _BASE_TYPE ep
         q.w = q.w * ilen;
     }
 
-    _VEC3_TYPE res_axis = { _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0) };
-    _BASE_TYPE res_angle = _LITERAL(2.0) * _ACOS(q.w);
-    _BASE_TYPE den = _SQRT(_LITERAL(1.0) - q.w * q.w);
+    _VEC3_TYPE res_axis = { _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0) };
+    _BASE_TYPE res_angle = _STATIC_CAST(_BASE_TYPE, 2) * _ACOS(q.w);
+    _BASE_TYPE den = _SQRT(_STATIC_CAST(_BASE_TYPE, 1) - q.w * q.w);
 
     if (den > epsilon)
     {
@@ -2006,7 +2018,7 @@ _FUNC_SPEC void _FUNC_CONV _FUNC_QUAT(to_axis_angle)(_QUAT_TYPE q, _BASE_TYPE ep
     {
         // This occurs when the angle is zero.
         // Not a problem: just set an arbitrary normalized axis.
-        res_axis.x = _LITERAL(1.0);
+        res_axis.x = _STATIC_CAST(_BASE_TYPE, 1);
     }
 
     *out_axis = res_axis;
@@ -2020,12 +2032,12 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(from_euler)(_BASE_TYPE pitch, _BASE_
 {
     _QUAT_TYPE result = { 0 };
 
-    _BASE_TYPE x0 = _COS(pitch * _LITERAL(0.5));
-    _BASE_TYPE x1 = _SIN(pitch * _LITERAL(0.5));
-    _BASE_TYPE y0 = _COS(yaw * _LITERAL(0.5));
-    _BASE_TYPE y1 = _SIN(yaw * _LITERAL(0.5));
-    _BASE_TYPE z0 = _COS(roll * _LITERAL(0.5));
-    _BASE_TYPE z1 = _SIN(roll * _LITERAL(0.5));
+    _BASE_TYPE x0 = _COS(pitch * _STATIC_CAST(_BASE_TYPE, 0.5));
+    _BASE_TYPE x1 = _SIN(pitch * _STATIC_CAST(_BASE_TYPE, 0.5));
+    _BASE_TYPE y0 = _COS(yaw * _STATIC_CAST(_BASE_TYPE, 0.5));
+    _BASE_TYPE y1 = _SIN(yaw * _STATIC_CAST(_BASE_TYPE, 0.5));
+    _BASE_TYPE z0 = _COS(roll * _STATIC_CAST(_BASE_TYPE, 0.5));
+    _BASE_TYPE z1 = _SIN(roll * _STATIC_CAST(_BASE_TYPE, 0.5));
 
     result.x = x1 * y0 * z0 - x0 * y1 * z1;
     result.y = x0 * y1 * z0 + x1 * y0 * z1;
@@ -2043,19 +2055,19 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_QUAT(to_euler)(_QUAT_TYPE q)
     _VEC3_TYPE result = { 0 };
 
     // Roll (x-axis rotation)
-    _BASE_TYPE x0 = _LITERAL(2.0) * (q.w * q.x + q.y * q.z);
-    _BASE_TYPE x1 = _LITERAL(1.0) - _LITERAL(2.0) * (q.x * q.x + q.y * q.y);
+    _BASE_TYPE x0 = _STATIC_CAST(_BASE_TYPE, 2) * (q.w * q.x + q.y * q.z);
+    _BASE_TYPE x1 = _STATIC_CAST(_BASE_TYPE, 1) - _STATIC_CAST(_BASE_TYPE, 2) * (q.x * q.x + q.y * q.y);
     result.x = _ATAN2(x0, x1);
 
     // Pitch (y-axis rotation)
-    _BASE_TYPE y0 = _LITERAL(2.0) * (q.w * q.y - q.z * q.x);
-    y0 = y0 > _LITERAL(1.0) ? _LITERAL(1.0) : y0;
-    y0 = y0 < _LITERAL(-1.0) ? _LITERAL(-1.0) : y0;
+    _BASE_TYPE y0 = _STATIC_CAST(_BASE_TYPE, 2) * (q.w * q.y - q.z * q.x);
+    y0 = y0 > _STATIC_CAST(_BASE_TYPE, 1) ? _STATIC_CAST(_BASE_TYPE, 1) : y0;
+    y0 = y0 < _STATIC_CAST(_BASE_TYPE, -1) ? _STATIC_CAST(_BASE_TYPE, -1) : y0;
     result.y = _ASIN(y0);
 
     // Yaw (z-axis rotation)
-    _BASE_TYPE z0 = _LITERAL(2.0) * (q.w * q.z + q.x * q.y);
-    _BASE_TYPE z1 = _LITERAL(1.0) - _LITERAL(2.0) * (q.y * q.y + q.z * q.z);
+    _BASE_TYPE z0 = _STATIC_CAST(_BASE_TYPE, 2) * (q.w * q.z + q.x * q.y);
+    _BASE_TYPE z1 = _STATIC_CAST(_BASE_TYPE, 1) - _STATIC_CAST(_BASE_TYPE, 2) * (q.y * q.y + q.z * q.z);
     result.z = _ATAN2(z0, z1);
 
     return result;
@@ -2080,15 +2092,15 @@ _QUAT_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC int _FUNC_CONV _FUNC_QUAT(equals)(_QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon)
 {
     int result =
-        (((_ABS(p.x - q.x)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.x), _ABS(q.x))))) &&
-          ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.y), _ABS(q.y))))) &&
-          ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.z), _ABS(q.z))))) &&
-          ((_ABS(p.w - q.w)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.w), _ABS(q.w)))))) ||
+        (((_ABS(p.x - q.x)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.x), _ABS(q.x))))) &&
+          ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.y), _ABS(q.y))))) &&
+          ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.z), _ABS(q.z))))) &&
+          ((_ABS(p.w - q.w)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.w), _ABS(q.w)))))) ||
 
-        (((_ABS(p.x + q.x)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.x), _ABS(q.x))))) &&
-          ((_ABS(p.y + q.y)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.y), _ABS(q.y))))) &&
-          ((_ABS(p.z + q.z)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.z), _ABS(q.z))))) &&
-          ((_ABS(p.w + q.w)) <= (epsilon * _MAX(_LITERAL(1.0), _MAX(_ABS(p.w), _ABS(q.w))))));
+        (((_ABS(p.x + q.x)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.x), _ABS(q.x))))) &&
+          ((_ABS(p.y + q.y)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.y), _ABS(q.y))))) &&
+          ((_ABS(p.z + q.z)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.z), _ABS(q.z))))) &&
+          ((_ABS(p.w + q.w)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.w), _ABS(q.w))))));
 
     return result;
 })
@@ -2136,7 +2148,7 @@ _MAT4_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _FMAT4_TYPE _FUNC_CONV _FUNC_
 _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_MAT4(det)(_MAT4_TYPE m)
 {
-    _BASE_TYPE result = _LITERAL(0.0);
+    _BASE_TYPE result = _STATIC_CAST(_BASE_TYPE, 0);
 
     // Cache the matrix values (speed optimization)
     _BASE_TYPE a00 = m.m00, a01 = m.m10, a02 = m.m20, a03 = m.m30;
@@ -2215,7 +2227,7 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(invert)(_MAT4_TYPE m)
     _BASE_TYPE b11 = a22 * a33 - a23 * a32;
 
     // Calculate the invert determinant (inlined to avoid double-caching)
-    _BASE_TYPE idet = _LITERAL(1.0) / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+    _BASE_TYPE idet = _STATIC_CAST(_BASE_TYPE, 1) / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
 
     result.m00 = (a11 * b11 - a12 * b10 + a13 * b09) * idet;
     result.m10 = (-a01 * b11 + a02 * b10 - a03 * b09) * idet;
@@ -2242,10 +2254,10 @@ _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(identity)(void)
 {
     _MAT4_TYPE result = {
-        _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     };
 
     return result;
@@ -2337,10 +2349,10 @@ _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(translate)(_VEC3_TYPE v)
 {
     _MAT4_TYPE result = {
-        _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0), v.x,
-        _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0), v.y,
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0), v.z,
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), v.x,
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), v.y,
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), v.z,
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     };
 
     return result;
@@ -2356,9 +2368,9 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(rotate)(_VEC3_TYPE axis, _BASE_TYPE 
     _BASE_TYPE x = axis.x, y = axis.y, z = axis.z;
     _BASE_TYPE len = x * x + y * y + z * z;
 
-    if ((len != _LITERAL(1.0)) && (len != _LITERAL(0.0)))
+    if ((len != _STATIC_CAST(_BASE_TYPE, 1)) && (len != _STATIC_CAST(_BASE_TYPE, 0)))
     {
-        _BASE_TYPE ilen = _LITERAL(1.0) / _SQRT(len);
+        _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 1) / _SQRT(len);
         x *= ilen;
         y *= ilen;
         z *= ilen;
@@ -2366,27 +2378,27 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(rotate)(_VEC3_TYPE axis, _BASE_TYPE 
 
     _BASE_TYPE s = _SIN(angle);
     _BASE_TYPE c = _COS(angle);
-    _BASE_TYPE t = _LITERAL(1.0) - c;
+    _BASE_TYPE t = _STATIC_CAST(_BASE_TYPE, 1) - c;
 
     result.m00 = x * x * t + c;
     result.m10 = y * x * t + z * s;
     result.m20 = z * x * t - y * s;
-    result.m30 = _LITERAL(0.0);
+    result.m30 = _STATIC_CAST(_BASE_TYPE, 0);
 
     result.m01 = x * y * t - z * s;
     result.m11 = y * y * t + c;
     result.m21 = z * y * t + x * s;
-    result.m31 = _LITERAL(0.0);
+    result.m31 = _STATIC_CAST(_BASE_TYPE, 0);
 
     result.m02 = x * z * t + y * s;
     result.m12 = y * z * t - x * s;
     result.m22 = z * z * t + c;
-    result.m32 = _LITERAL(0.0);
+    result.m32 = _STATIC_CAST(_BASE_TYPE, 0);
 
-    result.m03 = _LITERAL(0.0);
-    result.m13 = _LITERAL(0.0);
-    result.m23 = _LITERAL(0.0);
-    result.m33 = _LITERAL(1.0);
+    result.m03 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m13 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m23 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m33 = _STATIC_CAST(_BASE_TYPE, 1);
 
     return result;
 })
@@ -2397,10 +2409,10 @@ _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(rotate_x)(_BASE_TYPE angle)
 {
     _MAT4_TYPE result = {
-        _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     }; // MatrixIdentity()
 
     _BASE_TYPE c = _COS(angle);
@@ -2420,10 +2432,10 @@ _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(rotate_y)(_BASE_TYPE angle)
 {
     _MAT4_TYPE result = {
-        _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     }; // MatrixIdentity()
 
     _BASE_TYPE c = _COS(angle);
@@ -2443,10 +2455,10 @@ _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(rotate_z)(_BASE_TYPE angle)
 {
     _MAT4_TYPE result = {
-        _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     }; // MatrixIdentity()
 
     _BASE_TYPE c = _COS(angle);
@@ -2467,10 +2479,10 @@ _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(rotate_xyz)(_VEC3_TYPE angle)
 {
     _MAT4_TYPE result = {
-        _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     }; // MatrixIdentity()
 
     _BASE_TYPE cosz = _COS(-angle.z);
@@ -2512,22 +2524,22 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(rotate_zyx)(_VEC3_TYPE angle)
     result.m00 = cosz * cosy;
     result.m01 = cosz * siny * sinx - cosx * sinz;
     result.m02 = sinz * sinx + cosz * cosx * siny;
-    result.m03 = _LITERAL(0.0);
+    result.m03 = _STATIC_CAST(_BASE_TYPE, 0);
 
     result.m10 = cosy * sinz;
     result.m11 = cosz * cosx + sinz * siny * sinx;
     result.m12 = cosx * sinz * siny - cosz * sinx;
-    result.m13 = _LITERAL(0.0);
+    result.m13 = _STATIC_CAST(_BASE_TYPE, 0);
 
     result.m20 = -siny;
     result.m21 = cosy * sinx;
     result.m22 = cosy * cosx;
-    result.m23 = _LITERAL(0.0);
+    result.m23 = _STATIC_CAST(_BASE_TYPE, 0);
 
-    result.m30 = _LITERAL(0.0);
-    result.m31 = _LITERAL(0.0);
-    result.m32 = _LITERAL(0.0);
-    result.m33 = _LITERAL(1.0);
+    result.m30 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m31 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m32 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m33 = _STATIC_CAST(_BASE_TYPE, 1);
 
     return result;
 })
@@ -2537,10 +2549,10 @@ _MAT4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(scale)(_VEC3_TYPE v)
 {
     _MAT4_TYPE result = {
-        v.x,             _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), v.y,             _LITERAL(0.0), _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), v.z,             _LITERAL(0.0),
-        _LITERAL(0.0), _LITERAL(0.0), _LITERAL(0.0), _LITERAL(1.0)
+        v.x,             _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), v.y,             _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), v.z,             _STATIC_CAST(_BASE_TYPE, 0),
+        _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 1)
     };
 
     return result;
@@ -2556,25 +2568,25 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(frustum)(_BASE_TYPE left, _BASE_TYPE
     _BASE_TYPE tb = top - bottom;
     _BASE_TYPE fn = far - near;
 
-    result.m00 = (near * _LITERAL(2.0)) / rl;
-    result.m10 = _LITERAL(0.0);
-    result.m20 = _LITERAL(0.0);
-    result.m30 = _LITERAL(0.0);
+    result.m00 = (near * _STATIC_CAST(_BASE_TYPE, 2)) / rl;
+    result.m10 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m20 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m30 = _STATIC_CAST(_BASE_TYPE, 0);
 
-    result.m01 = _LITERAL(0.0);
-    result.m11 = (near * _LITERAL(2.0)) / tb;
-    result.m21 = _LITERAL(0.0);
-    result.m31 = _LITERAL(0.0);
+    result.m01 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m11 = (near * _STATIC_CAST(_BASE_TYPE, 2)) / tb;
+    result.m21 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m31 = _STATIC_CAST(_BASE_TYPE, 0);
 
     result.m02 = (right + left) / rl;
     result.m12 = (top + bottom) / tb;
     result.m22 = -(far + near) / fn;
-    result.m32 = _LITERAL(-1.0);
+    result.m32 = _STATIC_CAST(_BASE_TYPE, -1);
 
-    result.m03 = _LITERAL(0.0);
-    result.m13 = _LITERAL(0.0);
-    result.m23 = -(far * near * _LITERAL(2.0)) / fn;
-    result.m33 = _LITERAL(0.0);
+    result.m03 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m13 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m23 = -(far * near * _STATIC_CAST(_BASE_TYPE, 2)) / fn;
+    result.m33 = _STATIC_CAST(_BASE_TYPE, 0);
 
     return result;
 })
@@ -2586,7 +2598,7 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(perspective)(_BASE_TYPE fovy, _BASE_
 {
     _MAT4_TYPE result = { 0 };
 
-    _BASE_TYPE top = near * _TAN(fovy * _LITERAL(0.5));
+    _BASE_TYPE top = near * _TAN(fovy * _STATIC_CAST(_BASE_TYPE, 0.5));
     _BASE_TYPE bottom = -top;
     _BASE_TYPE right = top * aspect;
     _BASE_TYPE left = -right;
@@ -2596,13 +2608,13 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(perspective)(_BASE_TYPE fovy, _BASE_
     _BASE_TYPE tb = top - bottom;
     _BASE_TYPE fn = far - near;
 
-    result.m00 = (near * _LITERAL(2.0)) / rl;
-    result.m11 = (near * _LITERAL(2.0)) / tb;
+    result.m00 = (near * _STATIC_CAST(_BASE_TYPE, 2)) / rl;
+    result.m11 = (near * _STATIC_CAST(_BASE_TYPE, 2)) / tb;
     result.m02 = (right + left) / rl;
     result.m12 = (top + bottom) / tb;
     result.m22 = -(far + near) / fn;
-    result.m32 = _LITERAL(-1.0);
-    result.m23 = -(far * near * _LITERAL(2.0)) / fn;
+    result.m32 = _STATIC_CAST(_BASE_TYPE, -1);
+    result.m23 = -(far * near * _STATIC_CAST(_BASE_TYPE, 2)) / fn;
 
     return result;
 })
@@ -2617,22 +2629,22 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(ortho)(_BASE_TYPE left, _BASE_TYPE r
     _BASE_TYPE tb = top - bottom;
     _BASE_TYPE fn = far - near;
 
-    result.m00 = _LITERAL(2.0) / rl;
-    result.m10 = _LITERAL(0.0);
-    result.m20 = _LITERAL(0.0);
-    result.m30 = _LITERAL(0.0);
-    result.m01 = _LITERAL(0.0);
-    result.m11 = _LITERAL(2.0) / tb;
-    result.m21 = _LITERAL(0.0);
-    result.m31 = _LITERAL(0.0);
-    result.m02 = _LITERAL(0.0);
-    result.m12 = _LITERAL(0.0);
-    result.m22 = _LITERAL(-2.0) / fn;
-    result.m32 = _LITERAL(0.0);
+    result.m00 = _STATIC_CAST(_BASE_TYPE, 2) / rl;
+    result.m10 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m20 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m30 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m01 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m11 = _STATIC_CAST(_BASE_TYPE, 2) / tb;
+    result.m21 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m31 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m02 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m12 = _STATIC_CAST(_BASE_TYPE, 0);
+    result.m22 = _STATIC_CAST(_BASE_TYPE, -2) / fn;
+    result.m32 = _STATIC_CAST(_BASE_TYPE, 0);
     result.m03 = -(left + right) / rl;
     result.m13 = -(top + bottom) / tb;
     result.m23 = -(far + near) / fn;
-    result.m33 = _LITERAL(1.0);
+    result.m33 = _STATIC_CAST(_BASE_TYPE, 1);
 
     return result;
 })
@@ -2643,8 +2655,8 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(lookat)(_VEC3_TYPE eye, _VEC3_TYPE t
 {
     _MAT4_TYPE result = { 0 };
 
-    _BASE_TYPE len = _LITERAL(0.0);
-    _BASE_TYPE ilen = _LITERAL(0.0);
+    _BASE_TYPE len = _STATIC_CAST(_BASE_TYPE, 0);
+    _BASE_TYPE ilen = _STATIC_CAST(_BASE_TYPE, 0);
 
     // Vector3Subtract(eye, target)
     _VEC3_TYPE vz = { eye.x - target.x, eye.y - target.y, eye.z - target.z };
@@ -2652,8 +2664,8 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(lookat)(_VEC3_TYPE eye, _VEC3_TYPE t
     // Vector3Normalize(vz)
     _VEC3_TYPE v = vz;
     len = _SQRT(v.x * v.x + v.y * v.y + v.z * v.z);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
     vz.x *= ilen;
     vz.y *= ilen;
     vz.z *= ilen;
@@ -2664,8 +2676,8 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(lookat)(_VEC3_TYPE eye, _VEC3_TYPE t
     // Vector3Normalize(x)
     v = vx;
     len = _SQRT(v.x * v.x + v.y * v.y + v.z * v.z);
-    if (len == _LITERAL(0.0)) len = _LITERAL(1.0);
-    ilen = _LITERAL(1.0) / len;
+    if (len == _STATIC_CAST(_BASE_TYPE, 0)) len = _STATIC_CAST(_BASE_TYPE, 1);
+    ilen = _STATIC_CAST(_BASE_TYPE, 1) / len;
     vx.x *= ilen;
     vx.y *= ilen;
     vx.z *= ilen;
@@ -2676,19 +2688,19 @@ _FUNC_SPEC _MAT4_TYPE _FUNC_CONV _FUNC_MAT4(lookat)(_VEC3_TYPE eye, _VEC3_TYPE t
     result.m00 = vx.x;
     result.m10 = vy.x;
     result.m20 = vz.x;
-    result.m30 = _LITERAL(0.0);
+    result.m30 = _STATIC_CAST(_BASE_TYPE, 0);
     result.m01 = vx.y;
     result.m11 = vy.y;
     result.m21 = vz.y;
-    result.m31 = _LITERAL(0.0);
+    result.m31 = _STATIC_CAST(_BASE_TYPE, 0);
     result.m02 = vx.z;
     result.m12 = vy.z;
     result.m22 = vz.z;
-    result.m32 = _LITERAL(0.0);
+    result.m32 = _STATIC_CAST(_BASE_TYPE, 0);
     result.m03 = -(vx.x * eye.x + vx.y * eye.y + vx.z * eye.z);   // Vector3DotProduct(vx, eye)
     result.m13 = -(vy.x * eye.x + vy.y * eye.y + vy.z * eye.z);   // Vector3DotProduct(vy, eye)
     result.m23 = -(vz.x * eye.x + vz.y * eye.y + vz.z * eye.z);   // Vector3DotProduct(vz, eye)
-    result.m33 = _LITERAL(1.0);
+    result.m33 = _STATIC_CAST(_BASE_TYPE, 1);
 
     return result;
 })
@@ -2727,13 +2739,13 @@ _FUNC_SPEC void _FUNC_CONV _FUNC_MAT4(decompose)(_MAT4_TYPE m, _VEC3_TYPE *trans
     _BASE_TYPE scalez = _FUNC_VEC3(len)(ghi);
     _VEC3_TYPE s = { scalex, scaley, scalez };
 
-    if (det < _LITERAL(0.0)) s = _FUNC_VEC3(negate)(s);
+    if (det < _STATIC_CAST(_BASE_TYPE, 0)) s = _FUNC_VEC3(negate)(s);
 
     *scale = s;
 
     // Remove scale from the matrix if it is not close to zero
     _MAT4_TYPE clone = m;
-    if (!_FEQ(det, _LITERAL(0.0), _LITERAL(0.0001)))
+    if (!_FEQ(det, _STATIC_CAST(_BASE_TYPE, 0), _STATIC_CAST(_BASE_TYPE, 0.0001)))
     {
         clone.m00 /= s.x;
         clone.m11 /= s.y;

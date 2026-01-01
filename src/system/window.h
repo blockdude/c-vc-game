@@ -1,7 +1,7 @@
 #ifndef VCP_WINDOW_H
 #define VCP_WINDOW_H
 
-#include "../vcp_common.h"
+#include "vcp_common.h"
 #include "../util/types.h"
 
 enum window_flags
