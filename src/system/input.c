@@ -166,8 +166,6 @@ static struct
  * -----------------------------
  */
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-
 static inline bool input_text_active(void)
 {
     return SDL_TextInputActive((SDL_Window *)window_handle());
