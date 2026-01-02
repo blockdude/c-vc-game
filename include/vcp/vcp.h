@@ -2,11 +2,9 @@
 #define VCP_LIB_H
 
 #include <stdio.h>
-#include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <time.h>
 #include <math.h>
 #include <glad/gl.h>
 
