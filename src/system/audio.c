@@ -1,5 +1,4 @@
-#include "audio.h"
-#include "../util/log.h"
+#include <vcp/vcp.h>
 
 #include <SDL3/SDL.h>
 

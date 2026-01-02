@@ -1,5 +1,4 @@
-#include "../../util/types.h"
-#include "_linear_algebra_start.h"
+#include "linear_algebra_start.h"
 
 /*
  * =============================
@@ -2800,4 +2799,4 @@ _FUNC_SPEC _FMAT4_TYPE _FUNC_CONV _FUNC_MAT4(flatten)(_MAT4_TYPE m)
 
 
 // cleanup defined macros
-#include "_linear_algebra_end.h"
+#include "linear_algebra_end.h"

@@ -1,9 +1,4 @@
-#include "platform.h"
-#include "util/log.h"
-#include "system/audio.h"
-#include "system/input.h"
-#include "system/time.h"
-#include "system/window.h"
+#include <vcp/vcp.h>
 #include <SDL3/SDL.h>
 
 struct

@@ -1,4 +1,4 @@
-#include "vao.h"
+#include <vcp/vcp.h>
 
 struct vao vao_create(void)
 {

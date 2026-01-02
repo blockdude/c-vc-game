@@ -1,5 +1,4 @@
-#include "window.h"
-#include "../util/log.h"
+#include <vcp/vcp.h>
 #include <SDL3/SDL.h>
 
 #ifdef VCP_WINDOW_OPENGL

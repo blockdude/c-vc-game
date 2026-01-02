@@ -1,7 +1,4 @@
-#include "camera.h"
-#include "../math/math.h"
-#include "../math/vec3.h"
-#include "../math/mat4.h"
+#include <vcp/vcp.h>
 
 void camera_init(struct camera *self, int type)
 {

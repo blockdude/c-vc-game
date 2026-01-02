@@ -7,13 +7,6 @@
 #undef _MAT4_NAME
 #undef _FMAT4_NAME
 #undef _BASE_TYPE
-#undef _BASE_SUFFIX
-
-#undef _ZERO
-#undef _ONE
-#undef _TWO
-#undef _THREE
-#undef _FOUR
 
 #undef _FEQ
 #undef _SIN
@@ -35,8 +28,6 @@
 #undef _FMAT4_TYPE
 
 #undef _CONCAT
-#undef _LITERAL_HELPER
-#undef _LITERAL
 #undef _STATIC_CAST
 #undef _NAME_HELPER
 #undef _FUNC_VEC2

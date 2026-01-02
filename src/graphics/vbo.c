@@ -1,4 +1,4 @@
-#include "vbo.h"
+#include <vcp/vcp.h>
 
 struct vbo vbo_create(GLint type, bool dyn)
 {
