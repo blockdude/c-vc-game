@@ -23,18 +23,34 @@ static inline f64 compute_rate(u64 n, f64 d)
 // TIMESTEP
 // ==============================
 
-static inline bool _timestep_can_proc(struct timestep *timestep)
+struct Timestep timestep_create(f64 rate)
+{
+    struct Timestep result = {
+        .target_delta = rate <= 0 ? 0.0 : 1.0 / rate,
+        .target_rate = rate
+    };
+
+    return result;
+}
+
+void timestep_set_rate(struct Timestep *timestep, f64 rate)
+{
+    timestep->target_delta = rate <= 0 ? 0.0 : 1.0 / rate;
+    timestep->target_rate = rate;
+}
+
+static inline bool _timestep_can_proc(struct Timestep *timestep)
 {
     return timestep->target_delta > 0.0;
 }
 
-static inline void _timestep_prefix(struct timestep *timestep)
+static inline void _timestep_prefix(struct Timestep *timestep)
 {
     timestep->current = TIMESTEP_TIME_NOW();
     timestep->previous = timestep->current;
 }
 
-static inline void _timestep_postfix(struct timestep *timestep)
+static inline void _timestep_postfix(struct Timestep *timestep)
 {
     timestep->current = TIMESTEP_TIME_NOW();
     timestep->delta = timestep->current - timestep->previous;
@@ -70,7 +86,7 @@ static inline void _timestep_postfix(struct timestep *timestep)
     timestep->avg = compute_rate(timestep->count, timestep->elapsed);
 }
 
-bool timestep_tick(struct timestep *timestep)
+bool timestep_tick(struct Timestep *timestep)
 {
     /*
     * this function should mimic a for loop.
@@ -102,27 +118,11 @@ bool timestep_tick(struct timestep *timestep)
         return true;
     }
 
-    // if timestep_fixed_can_proc returns false then
+    // if fixedstep_can_proc returns false then
     // we have broken out of the loop and should
     // reset our state.
     timestep->_state.looping = false;
     return false;
-}
-
-void timestep_set_rate(struct timestep *timestep, f64 rate)
-{
-    timestep->target_delta = rate <= 0 ? 0.0 : 1.0 / rate;
-    timestep->target_rate = rate;
-}
-
-struct timestep timestep_create(f64 rate)
-{
-    struct timestep result = {
-        .target_delta = rate <= 0 ? 0.0 : 1.0 / rate,
-        .target_rate = rate
-    };
-
-    return result;
 }
 
 // ==============================
@@ -135,7 +135,7 @@ struct timestep timestep_create(f64 rate)
 // TIMESTEP_FIXED
 // ==============================
 
-static inline void _timestep_fixed_prefix(struct timestep_fixed *timestep, f64 delta_time)
+static inline void _fixedstep_prefix(struct Timestep *timestep, f64 delta_time)
 {
     timestep->delta += delta_time;
 
@@ -156,19 +156,19 @@ static inline void _timestep_fixed_prefix(struct timestep_fixed *timestep, f64 d
     timestep->avg = compute_rate(timestep->count, timestep->elapsed);
 }
 
-static inline bool _timestep_fixed_can_proc(struct timestep_fixed *timestep)
+static inline bool _fixedstep_can_proc(struct Timestep *timestep)
 {
     return ((timestep->target_delta > 0.0) && (timestep->target_delta <= timestep->delta));
 }
 
-static inline void _timestep_fixed_postfix(struct timestep_fixed *timestep)
+static inline void _fixedstep_postfix(struct Timestep *timestep)
 {
     timestep->count += 1;
     timestep->delta -= timestep->target_delta;
     timestep->elapsed += timestep->target_delta;
 }
 
-bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time)
+bool fixedstep_tick(struct Timestep *timestep, f64 delta_time)
 {
     /*
     * this function should mimic a for loop.
@@ -180,7 +180,7 @@ bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time)
     */
     if (timestep->_state.looping == false)
     {
-        _timestep_fixed_prefix(timestep, delta_time);
+        _fixedstep_prefix(timestep, delta_time);
         timestep->_state.looping = true;
     }
 
@@ -189,38 +189,22 @@ bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time)
     */
     else
     {
-        _timestep_fixed_postfix(timestep);
+        _fixedstep_postfix(timestep);
     }
 
     /*
     * condition
     */
-    if (_timestep_fixed_can_proc(timestep))
+    if (_fixedstep_can_proc(timestep))
     {
         return true;
     }
 
-    // if timestep_fixed_can_proc returns false then
+    // if fixedstep_can_proc returns false then
     // we have broken out of the loop and should
     // reset our state.
     timestep->_state.looping = false;
     return false;
-}
-
-void timestep_fixed_set_rate(struct timestep_fixed *timestep, f64 rate)
-{
-    timestep->target_delta = rate <= 0 ? 0.0 : 1.0 / rate;
-    timestep->target_rate = rate <= 0 ? 0 : rate;
-}
-
-struct timestep_fixed timestep_fixed_create(f64 rate)
-{
-    struct timestep_fixed result = {
-        .target_delta = 1.0 / rate,
-        .target_rate = rate
-    };
-
-    return result;
 }
 
 // ==============================

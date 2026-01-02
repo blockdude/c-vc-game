@@ -1,11 +1,17 @@
 #undef _IS_IEC559
 
-#undef _VEC2_NAME
-#undef _VEC3_NAME
-#undef _VEC4_NAME
-#undef _QUAT_NAME
-#undef _MAT4_NAME
-#undef _FMAT4_NAME
+#undef _VEC2_TYPE_NAME
+#undef _VEC3_TYPE_NAME
+#undef _VEC4_TYPE_NAME
+#undef _QUAT_TYPE_NAME
+#undef _MAT4_TYPE_NAME
+#undef _FMAT4_TYPE_NAME
+#undef _VEC2_FN_NAME
+#undef _VEC3_FN_NAME
+#undef _VEC4_FN_NAME
+#undef _QUAT_FN_NAME
+#undef _MAT4_FN_NAME
+#undef _FMAT4_FN_NAME
 #undef _BASE_TYPE
 
 #undef _FEQ

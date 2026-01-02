@@ -143,13 +143,13 @@ static const int btnmap[] = {
 static struct
 {
     bool         	initialized;
-    struct keystate k_state[K_COUNT];
-    struct keystate m_state[B_COUNT];
+    struct Keystate k_state[K_COUNT];
+    struct Keystate m_state[B_COUNT];
     bool         	m_moved;
-    struct vec2     m_wheel;
-    struct vec2     m_pos_rel;
-    struct vec2     m_pos_global;
-    struct vec2     m_pos_delta;
+    struct Vec2     m_wheel;
+    struct Vec2     m_pos_rel;
+    struct Vec2     m_pos_global;
+    struct Vec2     m_pos_delta;
     bool            e_quit;
 
     int             text_input_ref_count;
@@ -411,13 +411,13 @@ int input_text(char *buffer, size_t buffer_size)
     return MIN(result, (int)buffer_size - 1);
 }
 
-struct keystate input_keystate(int key)
+struct Keystate input_keystate(int key)
 {
     assert((key >= 0) && (key < K_COUNT));
     return g_input_state.k_state[key];
 }
 
-struct keystate input_btnstate(int btn)
+struct Keystate input_btnstate(int btn)
 {
     assert((btn >= 0) && (btn < B_COUNT));
     return g_input_state.m_state[btn];
@@ -428,17 +428,17 @@ bool input_mouse_moved(void)
     return g_input_state.m_moved;
 }
 
-struct vec2 input_mouse_pos(void)
+struct Vec2 input_mouse_pos(void)
 {
     return g_input_state.m_pos_rel;
 }
 
-struct vec2 input_mouse_delta(void)
+struct Vec2 input_mouse_delta(void)
 {
     return g_input_state.m_pos_delta;
 }
 
-struct vec2 input_mouse_scroll(void)
+struct Vec2 input_mouse_scroll(void)
 {
     return g_input_state.m_wheel;
 }

@@ -48,55 +48,55 @@ typedef double f64;
 #define _VEC3_TEMPLATE(T)  { T x, y, z; }
 #define _VEC4_TEMPLATE(T)  { T x, y, z, w; }
 #define _QUAT_TEMPLATE(T)  { T x, y, z, w; }
-#define _FMAT4_TEMPLATE(T) { T m[ 16 ];}
+#define _FMAT4_TEMPLATE(T) { T m[16];}
 #define _MAT4_TEMPLATE(T)  { T m00, m01, m02, m03; \
                              T m10, m11, m12, m13; \
                              T m20, m21, m22, m23; \
                              T m30, m31, m32, m33; }
 
-struct extent     _EXTENT_TEMPLATE(int);
-struct extentf    _EXTENT_TEMPLATE(float);
-struct extent_i32 _EXTENT_TEMPLATE(i32);
-struct extent_i64 _EXTENT_TEMPLATE(i64);
-struct extent_f32 _EXTENT_TEMPLATE(f32);
-struct extent_f64 _EXTENT_TEMPLATE(f64);
+struct Extent       _EXTENT_TEMPLATE(int);
+struct ExtentF      _EXTENT_TEMPLATE(float);
+struct ExtentI32    _EXTENT_TEMPLATE(i32);
+struct ExtentI64    _EXTENT_TEMPLATE(i64);
+struct ExtentF32    _EXTENT_TEMPLATE(f32);
+struct ExtentF64    _EXTENT_TEMPLATE(f64);
 
-struct line          _LINE_TEMPLATE(float);
-struct point         _POINT_TEMPLATE(float);
-struct circle        _CIRCLE_TEMPLATE(float);
-struct triangle      _TRIANGLE_TEMPLATE(float);
-struct rectangle     _RECTANGLE_TEMPLATE(float);
+struct Line         _LINE_TEMPLATE(float);
+struct LineI32      _LINE_TEMPLATE(i32);
+struct LineI64      _LINE_TEMPLATE(i64);
+struct LineF32      _LINE_TEMPLATE(f32);
+struct LineF64      _LINE_TEMPLATE(f64);
 
-struct line_i32      _LINE_TEMPLATE(i32);
-struct point_i32     _POINT_TEMPLATE(i32);
-struct circle_i32    _CIRCLE_TEMPLATE(i32);
-struct triangle_i32  _TRIANGLE_TEMPLATE(i32);
-struct rectangle_i32 _RECTANGLE_TEMPLATE(i32);
+struct Point        _POINT_TEMPLATE(float);
+struct PointI32     _POINT_TEMPLATE(i32);
+struct PointI64     _POINT_TEMPLATE(i64);
+struct PointF32     _POINT_TEMPLATE(f32);
+struct PointF64     _POINT_TEMPLATE(f64);
 
-struct line_i64      _LINE_TEMPLATE(i64);
-struct point_i64     _POINT_TEMPLATE(i64);
-struct circle_i64    _CIRCLE_TEMPLATE(i64);
-struct triangle_i64  _TRIANGLE_TEMPLATE(i64);
-struct rectangle_i64 _RECTANGLE_TEMPLATE(i64);
+struct Circle       _CIRCLE_TEMPLATE(float);
+struct CircleI32    _CIRCLE_TEMPLATE(i32);
+struct CircleI64    _CIRCLE_TEMPLATE(i64);
+struct CircleF32    _CIRCLE_TEMPLATE(f32);
+struct CircleF64    _CIRCLE_TEMPLATE(f64);
 
-struct line_f32      _LINE_TEMPLATE(f32);
-struct point_f32     _POINT_TEMPLATE(f32);
-struct circle_f32    _CIRCLE_TEMPLATE(f32);
-struct triangle_f32  _TRIANGLE_TEMPLATE(f32);
-struct rectangle_f32 _RECTANGLE_TEMPLATE(f32);
+struct Triangle     _TRIANGLE_TEMPLATE(float);
+struct TriangleI32  _TRIANGLE_TEMPLATE(i32);
+struct TriangleI64  _TRIANGLE_TEMPLATE(i64);
+struct TriangleF32  _TRIANGLE_TEMPLATE(f32);
+struct TriangleF64  _TRIANGLE_TEMPLATE(f64);
 
-struct line_f64      _LINE_TEMPLATE(f64);
-struct point_f64     _POINT_TEMPLATE(f64);
-struct circle_f64    _CIRCLE_TEMPLATE(f64);
-struct triangle_f64  _TRIANGLE_TEMPLATE(f64);
-struct rectangle_f64 _RECTANGLE_TEMPLATE(f64);
+struct Rectangle    _RECTANGLE_TEMPLATE(float);
+struct RectangleI32 _RECTANGLE_TEMPLATE(i32);
+struct RectangleI64 _RECTANGLE_TEMPLATE(i64);
+struct RectangleF32 _RECTANGLE_TEMPLATE(f32);
+struct RectangleF64 _RECTANGLE_TEMPLATE(f64);
 
-struct color     _COLOR_TEMPLATE(u8);
-struct colorf    _COLOR_TEMPLATE(float);
-struct color_u8  _COLOR_TEMPLATE(u8);
-struct color_u16 _COLOR_TEMPLATE(u16);
-struct color_f32 _COLOR_TEMPLATE(f32);
-struct color_f64 _COLOR_TEMPLATE(f64);
+struct Color     _COLOR_TEMPLATE(u8);
+struct ColorF    _COLOR_TEMPLATE(float);
+struct ColorU8   _COLOR_TEMPLATE(u8);
+struct ColorU16  _COLOR_TEMPLATE(u16);
+struct ColorF32  _COLOR_TEMPLATE(f32);
+struct ColorF64  _COLOR_TEMPLATE(f64);
 
 /*
  * Memory layout of matrix is row major.
@@ -109,47 +109,47 @@ struct color_f64 _COLOR_TEMPLATE(f64);
  *	   { m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33 }
  */
 
-struct vec2 _VEC2_TEMPLATE(float);
-struct vec3 _VEC3_TEMPLATE(float);
-struct vec4 _VEC4_TEMPLATE(float);
-struct quat _QUAT_TEMPLATE(float);
-struct mat4 _MAT4_TEMPLATE(float);
-struct fmat4 _FMAT4_TEMPLATE(float);
+struct Vec2 _VEC2_TEMPLATE(float);
+struct Vec3 _VEC3_TEMPLATE(float);
+struct Vec4 _VEC4_TEMPLATE(float);
+struct Quat _QUAT_TEMPLATE(float);
+struct Mat4 _MAT4_TEMPLATE(float);
+struct FMat4 _FMAT4_TEMPLATE(float);
 
-struct vec2i _VEC2_TEMPLATE(int);
-struct vec3i _VEC3_TEMPLATE(int);
-struct vec4i _VEC4_TEMPLATE(int);
-struct quati _QUAT_TEMPLATE(int);
-struct mat4i _MAT4_TEMPLATE(int);
-struct fmat4i _FMAT4_TEMPLATE(int);
+struct Vec2I _VEC2_TEMPLATE(int);
+struct Vec3I _VEC3_TEMPLATE(int);
+struct Vec4I _VEC4_TEMPLATE(int);
+struct QuatI _QUAT_TEMPLATE(int);
+struct Mat4I _MAT4_TEMPLATE(int);
+struct FMat4I _FMAT4_TEMPLATE(int);
 
-struct vec2_i32 _VEC2_TEMPLATE(i32);
-struct vec3_i32 _VEC3_TEMPLATE(i32);
-struct vec4_i32 _VEC4_TEMPLATE(i32);
-struct quat_i32 _QUAT_TEMPLATE(i32);
-struct mat4_i32 _MAT4_TEMPLATE(i32);
-struct fmat4_i32 _FMAT4_TEMPLATE(i32);
+struct Vec2I32 _VEC2_TEMPLATE(i32);
+struct Vec3I32 _VEC3_TEMPLATE(i32);
+struct Vec4I32 _VEC4_TEMPLATE(i32);
+struct QuatI32 _QUAT_TEMPLATE(i32);
+struct Mat4I32 _MAT4_TEMPLATE(i32);
+struct FMat4I32 _FMAT4_TEMPLATE(i32);
 
-struct vec2_i64 _VEC2_TEMPLATE(i64);
-struct vec3_i64 _VEC3_TEMPLATE(i64);
-struct vec4_i64 _VEC4_TEMPLATE(i64);
-struct quat_i64 _QUAT_TEMPLATE(i64);
-struct mat4_i64 _MAT4_TEMPLATE(i64);
-struct fmat4_i64 _FMAT4_TEMPLATE(i64);
+struct Vec2I64 _VEC2_TEMPLATE(i64);
+struct Vec3I64 _VEC3_TEMPLATE(i64);
+struct Vec4I64 _VEC4_TEMPLATE(i64);
+struct QuatI64 _QUAT_TEMPLATE(i64);
+struct Mat4I64 _MAT4_TEMPLATE(i64);
+struct FMat4I64 _FMAT4_TEMPLATE(i64);
 
-struct vec2_f32 _VEC2_TEMPLATE(f32);
-struct vec3_f32 _VEC3_TEMPLATE(f32);
-struct vec4_f32 _VEC4_TEMPLATE(f32);
-struct quat_f32 _QUAT_TEMPLATE(f32);
-struct mat4_f32 _MAT4_TEMPLATE(f32);
-struct fmat4_f32 _FMAT4_TEMPLATE(f32);
+struct Vec2F32 _VEC2_TEMPLATE(f32);
+struct Vec3F32 _VEC3_TEMPLATE(f32);
+struct Vec4F32 _VEC4_TEMPLATE(f32);
+struct QuatF32 _QUAT_TEMPLATE(f32);
+struct Mat4F32 _MAT4_TEMPLATE(f32);
+struct FMat4F32 _FMAT4_TEMPLATE(f32);
 
-struct vec2_f64 _VEC2_TEMPLATE(f64);
-struct vec3_f64 _VEC3_TEMPLATE(f64);
-struct vec4_f64 _VEC4_TEMPLATE(f64);
-struct quat_f64 _QUAT_TEMPLATE(f64);
-struct mat4_f64 _MAT4_TEMPLATE(f64);
-struct fmat4_f64 _FMAT4_TEMPLATE(f64);
+struct Vec2F64 _VEC2_TEMPLATE(f64);
+struct Vec3F64 _VEC3_TEMPLATE(f64);
+struct Vec4F64 _VEC4_TEMPLATE(f64);
+struct QuatF64 _QUAT_TEMPLATE(f64);
+struct Mat4F64 _MAT4_TEMPLATE(f64);
+struct FMat4F64 _FMAT4_TEMPLATE(f64);
 
 #undef _EXTENT_TEMPLATE
 #undef _LINE_TEMPLATE
@@ -242,9 +242,9 @@ static inline u32 rgba8888_to_uint32(u8 r, u8 g, u8 b, u8 a)
     return result;
 }
 
-static inline struct colorf colorf_mix(struct colorf a, struct colorf b, float ratio)
+static inline struct ColorF colorf_mix(struct ColorF a, struct ColorF b, float ratio)
 {
-    struct colorf result;
+    struct ColorF result;
     result.r = a.r * ratio + b.r * (1.0f - ratio);
     result.g = a.g * ratio + b.g * (1.0f - ratio);
     result.b = a.b * ratio + b.b * (1.0f - ratio);
@@ -252,9 +252,9 @@ static inline struct colorf colorf_mix(struct colorf a, struct colorf b, float r
     return result;
 }
 
-static inline struct colorf colorf_blend(struct colorf a, struct colorf b)
+static inline struct ColorF colorf_blend(struct ColorF a, struct ColorF b)
 {
-    struct colorf result;
+    struct ColorF result;
     result.r = a.r * b.r;
     result.g = a.g * b.g;
     result.b = a.b * b.b;
@@ -271,32 +271,31 @@ static inline struct colorf colorf_blend(struct colorf a, struct colorf b)
 // COLORS
 // -----------------------------
 
-static const struct color COLOR_LIGHTGRAY = { 200, 200, 200, 255 };
-static const struct color COLOR_GRAY = { 130, 130, 130, 255 };
-static const struct color COLOR_DARKGRAY = { 80, 80, 80, 255 };
-static const struct color COLOR_YELLOW = { 253, 249, 0, 255 };
-static const struct color COLOR_GOLD = { 255, 203, 0, 255 };
-static const struct color COLOR_ORANGE = { 255, 161, 0, 255 };
-static const struct color COLOR_PINK = { 255, 109, 194, 255 };
-static const struct color COLOR_RED = { 230, 41, 55, 255 };
-static const struct color COLOR_MAROON = { 190, 33, 55, 255 };
-static const struct color COLOR_GREEN = { 0, 228, 48, 255 };
-static const struct color COLOR_LIME = { 0, 158, 47, 255 };
-static const struct color COLOR_DARKGREEN = { 0, 117, 44, 255 };
-static const struct color COLOR_SKYBLUE = { 102, 191, 255, 255 };
-static const struct color COLOR_BLUE = { 0, 121, 241, 255 };
-static const struct color COLOR_DARKBLUE = { 0, 82, 172, 255 };
-static const struct color COLOR_PURPLE = { 200, 122, 255, 255 };
-static const struct color COLOR_VIOLET = { 135, 60, 190, 255 };
-static const struct color COLOR_DARKPURPLE = { 112, 31, 126, 255 };
-static const struct color COLOR_BEIGE = { 211, 176, 131, 255 };
-static const struct color COLOR_BROWN = { 127, 106, 79, 255 };
-static const struct color COLOR_DARKBROWN = { 76, 63, 47, 255 };
-
-static const struct color COLOR_WHITE = { 255, 255, 255, 255 };
-static const struct color COLOR_BLACK = { 0, 0, 0, 255 };
-static const struct color COLOR_BLANK = { 0, 0, 0, 0 };
-static const struct color COLOR_MAGENTA = { 255, 0, 255, 255 };
+static const struct Color COLOR_LIGHTGRAY = { 200, 200, 200, 255 };
+static const struct Color COLOR_GRAY = { 130, 130, 130, 255 };
+static const struct Color COLOR_DARKGRAY = { 80, 80, 80, 255 };
+static const struct Color COLOR_YELLOW = { 253, 249, 0, 255 };
+static const struct Color COLOR_GOLD = { 255, 203, 0, 255 };
+static const struct Color COLOR_ORANGE = { 255, 161, 0, 255 };
+static const struct Color COLOR_PINK = { 255, 109, 194, 255 };
+static const struct Color COLOR_RED = { 230, 41, 55, 255 };
+static const struct Color COLOR_MAROON = { 190, 33, 55, 255 };
+static const struct Color COLOR_GREEN = { 0, 228, 48, 255 };
+static const struct Color COLOR_LIME = { 0, 158, 47, 255 };
+static const struct Color COLOR_DARKGREEN = { 0, 117, 44, 255 };
+static const struct Color COLOR_SKYBLUE = { 102, 191, 255, 255 };
+static const struct Color COLOR_BLUE = { 0, 121, 241, 255 };
+static const struct Color COLOR_DARKBLUE = { 0, 82, 172, 255 };
+static const struct Color COLOR_PURPLE = { 200, 122, 255, 255 };
+static const struct Color COLOR_VIOLET = { 135, 60, 190, 255 };
+static const struct Color COLOR_DARKPURPLE = { 112, 31, 126, 255 };
+static const struct Color COLOR_BEIGE = { 211, 176, 131, 255 };
+static const struct Color COLOR_BROWN = { 127, 106, 79, 255 };
+static const struct Color COLOR_DARKBROWN = { 76, 63, 47, 255 };
+static const struct Color COLOR_WHITE = { 255, 255, 255, 255 };
+static const struct Color COLOR_BLACK = { 0, 0, 0, 255 };
+static const struct Color COLOR_BLANK = { 0, 0, 0, 0 };
+static const struct Color COLOR_MAGENTA = { 255, 0, 255, 255 };
 
 // =============================
 
@@ -308,94 +307,94 @@ static const struct color COLOR_MAGENTA = { 255, 0, 255, 255 };
 // -----------------------------
 
 #define _VEC2_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct vec2     name##_to_vec2    (T a) { const struct vec2     b = { (float)a.x, (float)a.y }; return b; } \
-static inline struct vec2i    name##_to_vec2i   (T a) { const struct vec2i    b = {   (int)a.x,   (int)a.y }; return b; } \
-static inline struct vec2_i32 name##_to_vec2_i32(T a) { const struct vec2_i32 b = {   (i32)a.x,   (i32)a.y }; return b; } \
-static inline struct vec2_i64 name##_to_vec2_i64(T a) { const struct vec2_i64 b = {   (i64)a.x,   (i64)a.y }; return b; } \
-static inline struct vec2_f32 name##_to_vec2_f32(T a) { const struct vec2_f32 b = {   (f32)a.x,   (f32)a.y }; return b; } \
-static inline struct vec2_f64 name##_to_vec2_f64(T a) { const struct vec2_f64 b = {   (f64)a.x,   (f64)a.y }; return b; }
+static inline struct Vec2    name##_to_vec2   (T a) { const struct Vec2    b = { (float)a.x, (float)a.y }; return b; } \
+static inline struct Vec2I   name##_to_vec2i  (T a) { const struct Vec2I   b = {   (int)a.x,   (int)a.y }; return b; } \
+static inline struct Vec2I32 name##_to_vec2i32(T a) { const struct Vec2I32 b = {   (i32)a.x,   (i32)a.y }; return b; } \
+static inline struct Vec2I64 name##_to_vec2i64(T a) { const struct Vec2I64 b = {   (i64)a.x,   (i64)a.y }; return b; } \
+static inline struct Vec2F32 name##_to_vec2f32(T a) { const struct Vec2F32 b = {   (f32)a.x,   (f32)a.y }; return b; } \
+static inline struct Vec2F64 name##_to_vec2f64(T a) { const struct Vec2F64 b = {   (f64)a.x,   (f64)a.y }; return b; }
 
-_VEC2_FUNC_TEMPLATE_CAST(struct vec2, vec2);
-_VEC2_FUNC_TEMPLATE_CAST(struct vec2i, vec2i);
-_VEC2_FUNC_TEMPLATE_CAST(struct vec2_i32, vec2_i32);
-_VEC2_FUNC_TEMPLATE_CAST(struct vec2_i64, vec2_i64);
-_VEC2_FUNC_TEMPLATE_CAST(struct vec2_f32, vec2_f32);
-_VEC2_FUNC_TEMPLATE_CAST(struct vec2_f64, vec2_f64);
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2,    vec2);
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I,   vec2i);
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I32, vec2i32);
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I64, vec2i64);
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2F32, vec2f32);
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2F64, vec2f64);
 
 #define _VEC3_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct vec3     name##_to_vec3    (T a) { const struct vec3     b = { (float)a.x, (float)a.y, (float)a.z }; return b; } \
-static inline struct vec3i    name##_to_vec3i   (T a) { const struct vec3i    b = {   (int)a.x,   (int)a.y,   (int)a.z }; return b; } \
-static inline struct vec3_i32 name##_to_vec3_i32(T a) { const struct vec3_i32 b = {   (i32)a.x,   (i32)a.y,   (i32)a.z }; return b; } \
-static inline struct vec3_i64 name##_to_vec3_i64(T a) { const struct vec3_i64 b = {   (i64)a.x,   (i64)a.y,   (i64)a.z }; return b; } \
-static inline struct vec3_f32 name##_to_vec3_f32(T a) { const struct vec3_f32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z }; return b; } \
-static inline struct vec3_f64 name##_to_vec3_f64(T a) { const struct vec3_f64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z }; return b; }
+static inline struct Vec3    name##_to_vec3   (T a) { const struct Vec3    b = { (float)a.x, (float)a.y, (float)a.z }; return b; } \
+static inline struct Vec3I   name##_to_vec3i  (T a) { const struct Vec3I   b = {   (int)a.x,   (int)a.y,   (int)a.z }; return b; } \
+static inline struct Vec3I32 name##_to_vec3i32(T a) { const struct Vec3I32 b = {   (i32)a.x,   (i32)a.y,   (i32)a.z }; return b; } \
+static inline struct Vec3I64 name##_to_vec3i64(T a) { const struct Vec3I64 b = {   (i64)a.x,   (i64)a.y,   (i64)a.z }; return b; } \
+static inline struct Vec3F32 name##_to_vec3f32(T a) { const struct Vec3F32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z }; return b; } \
+static inline struct Vec3F64 name##_to_vec3f64(T a) { const struct Vec3F64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z }; return b; }
 
-_VEC3_FUNC_TEMPLATE_CAST(struct vec3, vec3);
-_VEC3_FUNC_TEMPLATE_CAST(struct vec3i, vec3i);
-_VEC3_FUNC_TEMPLATE_CAST(struct vec3_i32, vec3_i32);
-_VEC3_FUNC_TEMPLATE_CAST(struct vec3_i64, vec3_i64);
-_VEC3_FUNC_TEMPLATE_CAST(struct vec3_f32, vec3_f32);
-_VEC3_FUNC_TEMPLATE_CAST(struct vec3_f64, vec3_f64);
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3,    vec3);
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I,   vec3i);
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I32, vec3i32);
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I64, vec3i64);
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3F32, vec3f32);
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3F64, vec3f64);
 
 #define _VEC4_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct vec4     name##_to_vec4    (T a) { const struct vec4     b = { (float)a.x, (float)a.y, (float)a.z, (float)a.w }; return b; } \
-static inline struct vec4i    name##_to_vec4i   (T a) { const struct vec4i    b = {   (int)a.x,   (int)a.y,   (int)a.z,   (int)a.w }; return b; } \
-static inline struct vec4_i32 name##_to_vec4_i32(T a) { const struct vec4_i32 b = {   (i32)a.x,   (i32)a.y,   (i32)a.z,   (i32)a.w }; return b; } \
-static inline struct vec4_i64 name##_to_vec4_i64(T a) { const struct vec4_i64 b = {   (i64)a.x,   (i64)a.y,   (i64)a.z,   (i64)a.w }; return b; } \
-static inline struct vec4_f32 name##_to_vec4_f32(T a) { const struct vec4_f32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z,   (f32)a.w }; return b; } \
-static inline struct vec4_f64 name##_to_vec4_f64(T a) { const struct vec4_f64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z,   (f64)a.w }; return b; }
+static inline struct Vec4    name##_to_vec4   (T a) { const struct Vec4    b = { (float)a.x, (float)a.y, (float)a.z, (float)a.w }; return b; } \
+static inline struct Vec4I   name##_to_vec4i  (T a) { const struct Vec4I   b = {   (int)a.x,   (int)a.y,   (int)a.z,   (int)a.w }; return b; } \
+static inline struct Vec4I32 name##_to_vec4i32(T a) { const struct Vec4I32 b = {   (i32)a.x,   (i32)a.y,   (i32)a.z,   (i32)a.w }; return b; } \
+static inline struct Vec4I64 name##_to_vec4i64(T a) { const struct Vec4I64 b = {   (i64)a.x,   (i64)a.y,   (i64)a.z,   (i64)a.w }; return b; } \
+static inline struct Vec4F32 name##_to_vec4f32(T a) { const struct Vec4F32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z,   (f32)a.w }; return b; } \
+static inline struct Vec4F64 name##_to_vec4f64(T a) { const struct Vec4F64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z,   (f64)a.w }; return b; }
 
-_VEC4_FUNC_TEMPLATE_CAST(struct vec4, vec4);
-_VEC4_FUNC_TEMPLATE_CAST(struct vec4i, vec4i);
-_VEC4_FUNC_TEMPLATE_CAST(struct vec4_i32, vec4_i32);
-_VEC4_FUNC_TEMPLATE_CAST(struct vec4_i64, vec4_i64);
-_VEC4_FUNC_TEMPLATE_CAST(struct vec4_f32, vec4_f32);
-_VEC4_FUNC_TEMPLATE_CAST(struct vec4_f64, vec4_f64);
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4,    vec4);
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I,   vec4i);
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I32, vec4i32);
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I64, vec4i64);
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4F32, vec4f32);
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4F64, vec4f64);
 
 #define _QUAT_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct quat     name##_to_quat    (T a) { const struct quat     b = { (float)a.x, (float)a.y, (float)a.z, (float)a.w }; return b; } \
-static inline struct quati    name##_to_quati   (T a) { const struct quati    b = {   (int)a.x,   (int)a.y,   (int)a.z,   (int)a.w }; return b; } \
-static inline struct quat_i32 name##_to_quat_i32(T a) { const struct quat_i32 b = {   (i32)a.x,   (i32)a.y,   (i32)a.z,   (i32)a.w }; return b; } \
-static inline struct quat_i64 name##_to_quat_i64(T a) { const struct quat_i64 b = {   (i64)a.x,   (i64)a.y,   (i64)a.z,   (i64)a.w }; return b; } \
-static inline struct quat_f32 name##_to_quat_f32(T a) { const struct quat_f32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z,   (f32)a.w }; return b; } \
-static inline struct quat_f64 name##_to_quat_f64(T a) { const struct quat_f64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z,   (f64)a.w }; return b; }
+static inline struct Quat    name##_to_quat   (T a) { const struct Quat    b = { (float)a.x, (float)a.y, (float)a.z, (float)a.w }; return b; } \
+static inline struct QuatI   name##_to_quati  (T a) { const struct QuatI   b = {   (int)a.x,   (int)a.y,   (int)a.z,   (int)a.w }; return b; } \
+static inline struct QuatI32 name##_to_quati32(T a) { const struct QuatI32 b = {   (i32)a.x,   (i32)a.y,   (i32)a.z,   (i32)a.w }; return b; } \
+static inline struct QuatI64 name##_to_quati64(T a) { const struct QuatI64 b = {   (i64)a.x,   (i64)a.y,   (i64)a.z,   (i64)a.w }; return b; } \
+static inline struct QuatF32 name##_to_quatf32(T a) { const struct QuatF32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z,   (f32)a.w }; return b; } \
+static inline struct QuatF64 name##_to_quatf64(T a) { const struct QuatF64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z,   (f64)a.w }; return b; }
 
-_QUAT_FUNC_TEMPLATE_CAST(struct quat, quat);
-_QUAT_FUNC_TEMPLATE_CAST(struct quati, quati);
-_QUAT_FUNC_TEMPLATE_CAST(struct quat_i32, quat_i32);
-_QUAT_FUNC_TEMPLATE_CAST(struct quat_i64, quat_i64);
-_QUAT_FUNC_TEMPLATE_CAST(struct quat_f32, quat_f32);
-_QUAT_FUNC_TEMPLATE_CAST(struct quat_f64, quat_f64);
+_QUAT_FUNC_TEMPLATE_CAST(struct Quat,    quat);
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatI,   quati);
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatI32, quati32);
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatI64, quati64);
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatF32, quatf32);
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatF64, quatf64);
 
 #define _MAT4_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct mat4     name##_to_mat4    (T a) { const struct mat4     b = { (float)a.m00, (float)a.m01, (float)a.m02, (float)a.m03, (float)a.m10, (float)a.m11, (float)a.m12, (float)a.m13, (float)a.m20, (float)a.m21, (float)a.m22, (float)a.m23, (float)a.m30, (float)a.m31, (float)a.m32, (float)a.m33 }; return b; } \
-static inline struct mat4i    name##_to_mat4i   (T a) { const struct mat4i    b = {   (int)a.m00,   (int)a.m01,   (int)a.m02,   (int)a.m03,   (int)a.m10,   (int)a.m11,   (int)a.m12,   (int)a.m13,   (int)a.m20,   (int)a.m21,   (int)a.m22,   (int)a.m23,   (int)a.m30,   (int)a.m31,   (int)a.m32,   (int)a.m33 }; return b; } \
-static inline struct mat4_i32 name##_to_mat4_i32(T a) { const struct mat4_i32 b = {   (i32)a.m00,   (i32)a.m01,   (i32)a.m02,   (i32)a.m03,   (i32)a.m10,   (i32)a.m11,   (i32)a.m12,   (i32)a.m13,   (i32)a.m20,   (i32)a.m21,   (i32)a.m22,   (i32)a.m23,   (i32)a.m30,   (i32)a.m31,   (i32)a.m32,   (i32)a.m33 }; return b; } \
-static inline struct mat4_i64 name##_to_mat4_i64(T a) { const struct mat4_i64 b = {   (i64)a.m00,   (i64)a.m01,   (i64)a.m02,   (i64)a.m03,   (i64)a.m10,   (i64)a.m11,   (i64)a.m12,   (i64)a.m13,   (i64)a.m20,   (i64)a.m21,   (i64)a.m22,   (i64)a.m23,   (i64)a.m30,   (i64)a.m31,   (i64)a.m32,   (i64)a.m33 }; return b; } \
-static inline struct mat4_f32 name##_to_mat4_f32(T a) { const struct mat4_f32 b = {   (f32)a.m00,   (f32)a.m01,   (f32)a.m02,   (f32)a.m03,   (f32)a.m10,   (f32)a.m11,   (f32)a.m12,   (f32)a.m13,   (f32)a.m20,   (f32)a.m21,   (f32)a.m22,   (f32)a.m23,   (f32)a.m30,   (f32)a.m31,   (f32)a.m32,   (f32)a.m33 }; return b; } \
-static inline struct mat4_f64 name##_to_mat4_f64(T a) { const struct mat4_f64 b = {   (f64)a.m00,   (f64)a.m01,   (f64)a.m02,   (f64)a.m03,   (f64)a.m10,   (f64)a.m11,   (f64)a.m12,   (f64)a.m13,   (f64)a.m20,   (f64)a.m21,   (f64)a.m22,   (f64)a.m23,   (f64)a.m30,   (f64)a.m31,   (f64)a.m32,   (f64)a.m33 }; return b; }
+static inline struct Mat4    name##_to_mat4   (T a) { const struct Mat4     b = { (float)a.m00, (float)a.m01, (float)a.m02, (float)a.m03, (float)a.m10, (float)a.m11, (float)a.m12, (float)a.m13, (float)a.m20, (float)a.m21, (float)a.m22, (float)a.m23, (float)a.m30, (float)a.m31, (float)a.m32, (float)a.m33 }; return b; } \
+static inline struct Mat4I   name##_to_mat4i  (T a) { const struct Mat4I    b = {   (int)a.m00,   (int)a.m01,   (int)a.m02,   (int)a.m03,   (int)a.m10,   (int)a.m11,   (int)a.m12,   (int)a.m13,   (int)a.m20,   (int)a.m21,   (int)a.m22,   (int)a.m23,   (int)a.m30,   (int)a.m31,   (int)a.m32,   (int)a.m33 }; return b; } \
+static inline struct Mat4I32 name##_to_mat4i32(T a) { const struct Mat4I32 b = {   (i32)a.m00,   (i32)a.m01,   (i32)a.m02,   (i32)a.m03,   (i32)a.m10,   (i32)a.m11,   (i32)a.m12,   (i32)a.m13,   (i32)a.m20,   (i32)a.m21,   (i32)a.m22,   (i32)a.m23,   (i32)a.m30,   (i32)a.m31,   (i32)a.m32,   (i32)a.m33 }; return b; } \
+static inline struct Mat4I64 name##_to_mat4i64(T a) { const struct Mat4I64 b = {   (i64)a.m00,   (i64)a.m01,   (i64)a.m02,   (i64)a.m03,   (i64)a.m10,   (i64)a.m11,   (i64)a.m12,   (i64)a.m13,   (i64)a.m20,   (i64)a.m21,   (i64)a.m22,   (i64)a.m23,   (i64)a.m30,   (i64)a.m31,   (i64)a.m32,   (i64)a.m33 }; return b; } \
+static inline struct Mat4F32 name##_to_mat4f32(T a) { const struct Mat4F32 b = {   (f32)a.m00,   (f32)a.m01,   (f32)a.m02,   (f32)a.m03,   (f32)a.m10,   (f32)a.m11,   (f32)a.m12,   (f32)a.m13,   (f32)a.m20,   (f32)a.m21,   (f32)a.m22,   (f32)a.m23,   (f32)a.m30,   (f32)a.m31,   (f32)a.m32,   (f32)a.m33 }; return b; } \
+static inline struct Mat4F64 name##_to_mat4f64(T a) { const struct Mat4F64 b = {   (f64)a.m00,   (f64)a.m01,   (f64)a.m02,   (f64)a.m03,   (f64)a.m10,   (f64)a.m11,   (f64)a.m12,   (f64)a.m13,   (f64)a.m20,   (f64)a.m21,   (f64)a.m22,   (f64)a.m23,   (f64)a.m30,   (f64)a.m31,   (f64)a.m32,   (f64)a.m33 }; return b; }
 
-_MAT4_FUNC_TEMPLATE_CAST(struct mat4, mat4);
-_MAT4_FUNC_TEMPLATE_CAST(struct mat4i, mat4i);
-_MAT4_FUNC_TEMPLATE_CAST(struct mat4_i32, mat4_i32);
-_MAT4_FUNC_TEMPLATE_CAST(struct mat4_i64, mat4_i64);
-_MAT4_FUNC_TEMPLATE_CAST(struct mat4_f32, mat4_f32);
-_MAT4_FUNC_TEMPLATE_CAST(struct mat4_f64, mat4_f64);
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4,    mat4);
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I,   mat4i);
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I32, mat4i32);
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I64, mat4i64);
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4F32, mat4f32);
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4F64, mat4f64);
 
 #define _FMAT4_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct fmat4     name##_to_fmat4    (T a) { const struct fmat4     b = { (float)a.m[0], (float)a.m[1], (float)a.m[2], (float)a.m[3], (float)a.m[4], (float)a.m[5], (float)a.m[6], (float)a.m[7], (float)a.m[8], (float)a.m[9], (float)a.m[10], (float)a.m[11], (float)a.m[12], (float)a.m[13], (float)a.m[14], (float)a.m[15] }; return b; } \
-static inline struct fmat4i    name##_to_fmat4i   (T a) { const struct fmat4i    b = {   (int)a.m[0],   (int)a.m[1],   (int)a.m[2],   (int)a.m[3],   (int)a.m[4],   (int)a.m[5],   (int)a.m[6],   (int)a.m[7],   (int)a.m[8],   (int)a.m[9],   (int)a.m[10],   (int)a.m[11],   (int)a.m[12],   (int)a.m[13],   (int)a.m[14],   (int)a.m[15] }; return b; } \
-static inline struct fmat4_i32 name##_to_fmat4_i32(T a) { const struct fmat4_i32 b = {   (i32)a.m[0],   (i32)a.m[1],   (i32)a.m[2],   (i32)a.m[3],   (i32)a.m[4],   (i32)a.m[5],   (i32)a.m[6],   (i32)a.m[7],   (i32)a.m[8],   (i32)a.m[9],   (i32)a.m[10],   (i32)a.m[11],   (i32)a.m[12],   (i32)a.m[13],   (i32)a.m[14],   (i32)a.m[15] }; return b; } \
-static inline struct fmat4_i64 name##_to_fmat4_i64(T a) { const struct fmat4_i64 b = {   (i64)a.m[0],   (i64)a.m[1],   (i64)a.m[2],   (i64)a.m[3],   (i64)a.m[4],   (i64)a.m[5],   (i64)a.m[6],   (i64)a.m[7],   (i64)a.m[8],   (i64)a.m[9],   (i64)a.m[10],   (i64)a.m[11],   (i64)a.m[12],   (i64)a.m[13],   (i64)a.m[14],   (i64)a.m[15] }; return b; } \
-static inline struct fmat4_f32 name##_to_fmat4_f32(T a) { const struct fmat4_f32 b = {   (f32)a.m[0],   (f32)a.m[1],   (f32)a.m[2],   (f32)a.m[3],   (f32)a.m[4],   (f32)a.m[5],   (f32)a.m[6],   (f32)a.m[7],   (f32)a.m[8],   (f32)a.m[9],   (f32)a.m[10],   (f32)a.m[11],   (f32)a.m[12],   (f32)a.m[13],   (f32)a.m[14],   (f32)a.m[15] }; return b; } \
-static inline struct fmat4_f64 name##_to_fmat4_f64(T a) { const struct fmat4_f64 b = {   (f64)a.m[0],   (f64)a.m[1],   (f64)a.m[2],   (f64)a.m[3],   (f64)a.m[4],   (f64)a.m[5],   (f64)a.m[6],   (f64)a.m[7],   (f64)a.m[8],   (f64)a.m[9],   (f64)a.m[10],   (f64)a.m[11],   (f64)a.m[12],   (f64)a.m[13],   (f64)a.m[14],   (f64)a.m[15] }; return b; }
+static inline struct FMat4    name##_to_fmat4   (T a) { const struct FMat4    b = { (float)a.m[0], (float)a.m[1], (float)a.m[2], (float)a.m[3], (float)a.m[4], (float)a.m[5], (float)a.m[6], (float)a.m[7], (float)a.m[8], (float)a.m[9], (float)a.m[10], (float)a.m[11], (float)a.m[12], (float)a.m[13], (float)a.m[14], (float)a.m[15] }; return b; } \
+static inline struct FMat4I   name##_to_fmat4i  (T a) { const struct FMat4I   b = {   (int)a.m[0],   (int)a.m[1],   (int)a.m[2],   (int)a.m[3],   (int)a.m[4],   (int)a.m[5],   (int)a.m[6],   (int)a.m[7],   (int)a.m[8],   (int)a.m[9],   (int)a.m[10],   (int)a.m[11],   (int)a.m[12],   (int)a.m[13],   (int)a.m[14],   (int)a.m[15] }; return b; } \
+static inline struct FMat4I32 name##_to_fmat4i32(T a) { const struct FMat4I32 b = {   (i32)a.m[0],   (i32)a.m[1],   (i32)a.m[2],   (i32)a.m[3],   (i32)a.m[4],   (i32)a.m[5],   (i32)a.m[6],   (i32)a.m[7],   (i32)a.m[8],   (i32)a.m[9],   (i32)a.m[10],   (i32)a.m[11],   (i32)a.m[12],   (i32)a.m[13],   (i32)a.m[14],   (i32)a.m[15] }; return b; } \
+static inline struct FMat4I64 name##_to_fmat4i64(T a) { const struct FMat4I64 b = {   (i64)a.m[0],   (i64)a.m[1],   (i64)a.m[2],   (i64)a.m[3],   (i64)a.m[4],   (i64)a.m[5],   (i64)a.m[6],   (i64)a.m[7],   (i64)a.m[8],   (i64)a.m[9],   (i64)a.m[10],   (i64)a.m[11],   (i64)a.m[12],   (i64)a.m[13],   (i64)a.m[14],   (i64)a.m[15] }; return b; } \
+static inline struct FMat4F32 name##_to_fmat4f32(T a) { const struct FMat4F32 b = {   (f32)a.m[0],   (f32)a.m[1],   (f32)a.m[2],   (f32)a.m[3],   (f32)a.m[4],   (f32)a.m[5],   (f32)a.m[6],   (f32)a.m[7],   (f32)a.m[8],   (f32)a.m[9],   (f32)a.m[10],   (f32)a.m[11],   (f32)a.m[12],   (f32)a.m[13],   (f32)a.m[14],   (f32)a.m[15] }; return b; } \
+static inline struct FMat4F64 name##_to_fmat4f64(T a) { const struct FMat4F64 b = {   (f64)a.m[0],   (f64)a.m[1],   (f64)a.m[2],   (f64)a.m[3],   (f64)a.m[4],   (f64)a.m[5],   (f64)a.m[6],   (f64)a.m[7],   (f64)a.m[8],   (f64)a.m[9],   (f64)a.m[10],   (f64)a.m[11],   (f64)a.m[12],   (f64)a.m[13],   (f64)a.m[14],   (f64)a.m[15] }; return b; }
 
-_FMAT4_FUNC_TEMPLATE_CAST(struct fmat4, fmat4);
-_FMAT4_FUNC_TEMPLATE_CAST(struct fmat4i, fmat4i);
-_FMAT4_FUNC_TEMPLATE_CAST(struct fmat4_i32, fmat4_i32);
-_FMAT4_FUNC_TEMPLATE_CAST(struct fmat4_i64, fmat4_i64);
-_FMAT4_FUNC_TEMPLATE_CAST(struct fmat4_f32, fmat4_f32);
-_FMAT4_FUNC_TEMPLATE_CAST(struct fmat4_f64, fmat4_f64);
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4,    fmat4);
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I,   fmat4i);
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I32, fmat4i32);
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I64, fmat4i64);
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F32, fmat4f32);
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F64, fmat4f64);
 
 #undef _VEC2_FUNC_TEMPLATE_CAST
 #undef _VEC3_FUNC_TEMPLATE_CAST
@@ -417,45 +416,41 @@ _FMAT4_FUNC_TEMPLATE_CAST(struct fmat4_f64, fmat4_f64);
 #define TIMESTEP_CAPTURE_COUNT 60
 #endif
 
-#define _TIMESTEP_TEMPLATE \
-{                                           \
-    f64 rate;                               \
-    f64 avg;                                \
-    f64 delta;                              \
-    f64 target_delta;                       \
-    f64 target_rate;                        \
-    u64 count;                              \
-                                            \
-    f64 elapsed;                            \
-    f64 current;                            \
-    f64 previous;                           \
-                                            \
-    struct                                  \
-    {                                       \
-        f64 elapsed;                        \
-        u64 count;                          \
-        u64 last;                           \
-        int index;                          \
-                                            \
-        struct                              \
-        {                                   \
-            f64 delta;                      \
-            u64 count;                      \
-        } record[TIMESTEP_CAPTURE_COUNT];   \
-    } _snapshot;                            \
-                                            \
-    struct                                  \
-    {                                       \
-        bool looping;                       \
-    } _state;                               \
-}
+struct Timestep
+{
+    f64 rate;
+    f64 avg;
+    f64 delta;
+    f64 target_delta;
+    f64 target_rate;
+    u64 count;
 
-struct timestep _TIMESTEP_TEMPLATE;
-struct timestep_fixed _TIMESTEP_TEMPLATE;
-#undef _TIMESTEP_TEMPLATE
+    f64 elapsed;
+    f64 current;
+    f64 previous;
+
+    struct
+    {
+        f64 elapsed;
+        u64 count;
+        u64 last;
+        int index;
+
+        struct
+        {
+            f64 delta;
+            u64 count;
+        } record[TIMESTEP_CAPTURE_COUNT];
+    } _snapshot;
+
+    struct
+    {
+        bool looping;
+    } _state;
+};
 
 /*
-This function updates the state of a timestep, recording
+The timestep_tick function updates the state of a timestep, recording
 time of each iteration and the frequency of updates.
 
 This function should be used inside a while loop. ex:
@@ -471,29 +466,36 @@ somefunction();
 timestep_tick( &timestep );
 printf( "somefunction() took %f seconds to run", timestep.delta );
 */
-extern bool timestep_tick(struct timestep *timestep);
-extern void timestep_set_rate(struct timestep *timestep, f64 rate);
-extern struct timestep timestep_create(f64 rate);
 
 /*
-This function updates the state of a timestep, recording
+The fixedstep_tick function updates the state of a timestep, recording
 time of each iteration and the frequency of updates.
 
-fixed timestep is used if you want updates to be
-decoupled from the refresh rate of the computer.
+fixed timestep is used if you want updates to happen at
+a fixed rate such as with physics engines
 
 This function should be used inside a timestep. EX:
-while ( timestep_tick( &timestep ) )
+
+>
+struct Timestep timestep, fixed_timestep;
+timestep = timestep_create(240);
+fixed_timestep = timestep_create(20);
+while (timestep_tick(&timestep))
 {
-    while ( fixedstep_tick( &fixed_timestep, timestep.delta ) )
+    while (fixedstep_tick(&fixed_timestep, timestep.delta))
     {
         physics_tick();
     }
 }
+<
+
+the outter variable timestep will try and update at 240hz
+the inner (fixed) timestep will maintain a 20hz update rate
 */
-extern bool timestep_fixed_tick(struct timestep_fixed *timestep, f64 delta_time);
-extern void timestep_fixed_set_rate(struct timestep_fixed *timestep, f64 rate);
-extern struct timestep_fixed timestep_fixed_create(f64 rate);
+extern struct Timestep timestep_create(f64 rate);
+extern void timestep_set_rate(struct Timestep *timestep, f64 rate);
+extern bool timestep_tick(struct Timestep *timestep);
+extern bool fixedstep_tick(struct Timestep *timestep, f64 delta_time);
 
 // =============================
 
@@ -504,7 +506,7 @@ extern struct timestep_fixed timestep_fixed_create(f64 rate);
 // LOGGING
 // -----------------------------
 
-struct log_event
+struct LogEvent
 {
     va_list ap;
     const char *fmt;
@@ -515,10 +517,10 @@ struct log_event
     int level;
 };
 
-typedef void (*log_log_fn)(struct log_event *ev);
-typedef void (*log_lock_fn)(bool lock, void *udata);
+typedef void (*LogLogFn)(struct LogEvent *ev);
+typedef void (*LogLockFn)(bool lock, void *udata);
 
-enum log_level
+enum LogLevel
 {
     LOG_TRACE,
     LOG_DEBUG,
@@ -536,10 +538,10 @@ enum log_level
 #define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
 
 extern const char *log_level_string(int level);
-extern void log_set_lock(log_lock_fn fn, void *udata);
+extern void log_set_lock(LogLockFn fn, void *udata);
 extern void log_set_level(int level);
 extern void log_set_quiet(bool enable);
-extern int log_add_callback(log_log_fn fn, void *udata, int level);
+extern int log_add_callback(LogLogFn fn, void *udata, int level);
 extern int log_add_fp(FILE *fp, int level);
 extern void log_log(int level, const char *file, int line, const char *fmt, ...);
 
@@ -552,12 +554,7 @@ extern void log_log(int level, const char *file, int line, const char *fmt, ...)
 // MAIN INTERFACE FOR INITIALIZATION
 // -----------------------------
 
-typedef void *(*platform_malloc_fn)(size_t);
-typedef void *(*platform_calloc_fn)(size_t, size_t);
-typedef void *(*platform_realloc_fn)(void *, size_t);
-typedef void (*platform_dealloc_fn)(void *);
-
-enum platform_init_flags
+enum PlatformFlag
 {
     PLATFORM_WINDOW = 0x01,
     PLATFORM_INPUT = 0x02,
@@ -568,12 +565,6 @@ enum platform_init_flags
 
 extern int platform_init(u32 flags);
 extern void platform_deinit(void);
-extern int platform_set_allocator(platform_malloc_fn malloc, platform_calloc_fn calloc, platform_realloc_fn realloc, platform_dealloc_fn dealloc);
-extern void platform_get_allocator(platform_malloc_fn *malloc, platform_calloc_fn *calloc, platform_realloc_fn *realloc, platform_dealloc_fn *dealloc);
-extern void *platform_malloc(size_t size);
-extern void *platform_calloc(size_t count, size_t size);
-extern void *platform_realloc(void *mem, size_t size);
-extern void platform_dealloc(void *mem);
 
 // =============================
 
@@ -623,7 +614,7 @@ extern f64 time_ttons(u64 ticks);
 // WINDOW
 // -----------------------------
 
-enum window_flags
+enum WindowFlag
 {
     WINDOW_RELATIVE_MOUSE = 0x01,
     WINDOW_VSYNC = 0x02,
@@ -636,7 +627,7 @@ extern int window_init(void);
 extern void window_deinit(void);
 extern void window_swap_buffer(void);
 extern bool window_keep_open(void);
-extern struct extent window_size(void);
+extern struct Extent window_size(void);
 extern int window_width(void);
 extern int window_height(void);
 extern float window_aspect(void);
@@ -660,7 +651,7 @@ extern void window_disable_flags(u32 flags);
 // INPUT
 // -----------------------------
 
-enum input_key
+enum InputKey
 {
     K_FIRST = 0,
 
@@ -735,7 +726,7 @@ enum input_key
     K_LAST = K_RMETA
 };
 
-enum input_btn
+enum InputButton
 {
     B_FIRST = 0,
 
@@ -749,7 +740,7 @@ enum input_btn
     B_LAST = B_COUNT - 1
 };
 
-struct keystate
+struct Keystate
 {
     bool down : 1;
     bool pressed : 1;
@@ -762,12 +753,12 @@ extern void input_deinit(void);
 extern void input_poll_events(void);
 extern int input_quit_event(void);
 extern int input_text(char *buffer, size_t buffer_size);
-extern struct keystate input_keystate(int key);
-extern struct keystate input_btnstate(int btn);
+extern struct Keystate input_keystate(int key);
+extern struct Keystate input_btnstate(int btn);
 extern bool input_mouse_moved(void);
-extern struct vec2 input_mouse_pos(void);
-extern struct vec2 input_mouse_delta(void);
-extern struct vec2 input_mouse_scroll(void);
+extern struct Vec2 input_mouse_pos(void);
+extern struct Vec2 input_mouse_delta(void);
+extern struct Vec2 input_mouse_scroll(void);
 
 // =============================
 
@@ -790,20 +781,20 @@ extern void audio_deinit(void);
 // CAMERA
 // -----------------------------
 
-enum camera_type
+enum CameraType
 {
     PERSPECTIVE,
     ORTHOGRAPHIC
 };
 
-struct camera
+struct Camera
 {
     // projection type
     int type;
 
-    struct vec3 eye;	/* camera position */
-    struct vec3 target;	/* lookat position */
-    struct vec3 up;		/* camera tilt     */
+    struct Vec3 eye;	/* camera position */
+    struct Vec3 target;	/* lookat position */
+    struct Vec3 up;		/* camera tilt     */
 
     // perspective - controls the Y field of view
     float fov;
@@ -812,16 +803,16 @@ struct camera
     float zoom;
 };
 
-extern void camera_init(struct camera *camera, int type);
-extern void camera_move(struct camera *camera, struct vec3 direction, float dist);
-extern void camera_forward(struct camera *camera, float dist);
-extern void camera_up(struct camera *camera, float dist);
-extern void camera_right(struct camera *camera, float dist);
-extern void camera_pitch(struct camera *camera, float angle);
-extern void camera_yaw(struct camera *camera, float angle);
-extern void camera_roll(struct camera *camera, float angle);
-extern struct mat4 camera_proj(const struct camera *camera, float aspect, float near, float far);
-extern struct mat4 camera_view(const struct camera *camera);
+extern void camera_init(struct Camera *camera, int type);
+extern void camera_move(struct Camera *camera, struct Vec3 direction, float dist);
+extern void camera_forward(struct Camera *camera, float dist);
+extern void camera_up(struct Camera *camera, float dist);
+extern void camera_right(struct Camera *camera, float dist);
+extern void camera_pitch(struct Camera *camera, float angle);
+extern void camera_yaw(struct Camera *camera, float angle);
+extern void camera_roll(struct Camera *camera, float angle);
+extern struct Mat4 camera_proj(const struct Camera *camera, float aspect, float near, float far);
+extern struct Mat4 camera_view(const struct Camera *camera);
 
 // =============================
 
@@ -832,25 +823,25 @@ extern struct mat4 camera_view(const struct camera *camera);
 // OPENGL STUFF
 // -----------------------------
 
-struct vbo
+struct VBO
 {
     GLuint handle;
     GLint type;
     bool dyn;
 };
 
-struct vao
+struct VAO
 {
     GLuint handle;
 };
 
-struct shader
+struct Shader
 {
     GLuint handle;
     int status;
 };
 
-enum shader_status
+enum ShaderStatus
 {
     SHADER_SUCCESS = 0,
     SHADER_VS_COMPILE_ERROR = 1,
@@ -859,26 +850,26 @@ enum shader_status
     SHADER_INVALID_FILE_PATH = 4,
 };
 
-extern struct vbo vbo_create(GLint type, bool dyn);
-extern void vbo_free(struct vbo self);
-extern void vbo_bind(struct vbo self);
-extern void vbo_buff(struct vbo self, const void *data, size_t n);
+extern struct VBO vbo_create(GLint type, bool dyn);
+extern void vbo_free(struct VBO self);
+extern void vbo_bind(struct VBO self);
+extern void vbo_buff(struct VBO self, const void *data, size_t n);
 //void vbo_sub_buff(void *data, size_t offset, size_t n);
-extern struct vao vao_create(void);
-extern void vao_free(struct vao self);
-extern void vao_bind(struct vao self);
-extern void vao_attr(struct vao self, struct vbo vbo, GLuint index, GLint size, GLenum type, GLsizei stride, size_t offset);
-extern struct shader shader_loadf(const char *vspath, const char *fspath);
-extern struct shader shader_load(const char *vstext, const char *fstext);
-extern void shader_free(struct shader self);
-extern void shader_bind(struct shader self);
-extern void shader_uniform_mat4(struct shader self, const char *name, struct mat4 m);
-extern void shader_uniform_float(struct shader self, const char *name, float f);
-extern void shader_uniform_vec2(struct shader self, const char *name, struct vec2 v);
-extern void shader_uniform_vec3(struct shader self, const char *name, struct vec3 v);
-extern void shader_uniform_vec4(struct shader self, const char *name, struct vec4 v);
-extern void shader_uniform_int(struct shader self, const char *name, int v);
-extern void shader_uniform_uint(struct shader self, const char *name, unsigned int v);
+extern struct VAO vao_create(void);
+extern void vao_free(struct VAO self);
+extern void vao_bind(struct VAO self);
+extern void vao_attr(struct VAO self, struct VBO vbo, GLuint index, GLint size, GLenum type, GLsizei stride, size_t offset);
+extern struct Shader shader_loadf(const char *vspath, const char *fspath);
+extern struct Shader shader_load(const char *vstext, const char *fstext);
+extern void shader_free(struct Shader self);
+extern void shader_bind(struct Shader self);
+extern void shader_uniform_mat4(struct Shader self, const char *name, struct Mat4 m);
+extern void shader_uniform_float(struct Shader self, const char *name, float f);
+extern void shader_uniform_vec2(struct Shader self, const char *name, struct Vec2 v);
+extern void shader_uniform_vec3(struct Shader self, const char *name, struct Vec3 v);
+extern void shader_uniform_vec4(struct Shader self, const char *name, struct Vec4 v);
+extern void shader_uniform_int(struct Shader self, const char *name, int v);
+extern void shader_uniform_uint(struct Shader self, const char *name, unsigned int v);
 
 // =============================
 

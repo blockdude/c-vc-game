@@ -118,9 +118,9 @@ static inline GLuint shader_link_program(GLuint vs, GLuint fs)
     return handle;
 }
 
-static inline int shader_build_text(struct shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen, const char *vspath, const char *fspath)
+static inline int shader_build_text(struct Shader *self, const char *vstext, size_t vslen, const char *fstext, size_t fslen, const char *vspath, const char *fspath)
 {
-    *self = (struct shader){ 0 };
+    *self = (struct Shader){ 0 };
 
     const GLuint vs_handle = shader_compile_text(vstext, vslen, GL_VERTEX_SHADER);
     const GLuint fs_handle = shader_compile_text(fstext, fslen, GL_FRAGMENT_SHADER);
@@ -165,16 +165,16 @@ static inline int shader_build_text(struct shader *self, const char *vstext, siz
     return SHADER_SUCCESS;
 }
 
-struct shader shader_load(const char *vstext, const char *fstext)
+struct Shader shader_load(const char *vstext, const char *fstext)
 {
-    struct shader result = { 0 };
+    struct Shader result = { 0 };
     result.status = shader_build_text(&result, vstext, strlen(vstext), fstext, strlen(fstext), NULL, NULL);
     return result;
 }
 
-struct shader shader_loadf(const char *vspath, const char *fspath)
+struct Shader shader_loadf(const char *vspath, const char *fspath)
 {
-    struct shader result = { 0 };
+    struct Shader result = { 0 };
     size_t vslen = 0;
     size_t fslen = 0;
     char *vstext = shader_load_text(vspath, &vslen);
@@ -194,59 +194,59 @@ struct shader shader_loadf(const char *vspath, const char *fspath)
     return result;
 }
 
-void shader_free(struct shader self)
+void shader_free(struct Shader self)
 {
     glDeleteProgram(self.handle);
 }
 
-void shader_bind(struct shader self)
+void shader_bind(struct Shader self)
 {
     glUseProgram(self.handle);
 }
 
-void shader_uniform_mat4(struct shader self, const char *name, struct mat4 m)
+void shader_uniform_mat4(struct Shader self, const char *name, struct Mat4 m)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniformMatrix4fv(idx, 1, GL_FALSE, mat4_flatten(m).m);
 }
 
-void shader_uniform_float(struct shader self, const char *name, float f)
+void shader_uniform_float(struct Shader self, const char *name, float f)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform1f(idx, f);
 }
 
-void shader_uniform_vec2(struct shader self, const char *name, struct vec2 v)
+void shader_uniform_vec2(struct Shader self, const char *name, struct Vec2 v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform2f(idx, v.x, v.y);
 }
 
-void shader_uniform_vec3(struct shader self, const char *name, struct vec3 v)
+void shader_uniform_vec3(struct Shader self, const char *name, struct Vec3 v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform3f(idx, v.x, v.y, v.z);
 }
 
-void shader_uniform_vec4(struct shader self, const char *name, struct vec4 v)
+void shader_uniform_vec4(struct Shader self, const char *name, struct Vec4 v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform4f(idx, v.x, v.y, v.z, v.w);
 }
 
-void shader_uniform_int(struct shader self, const char *name, int v)
+void shader_uniform_int(struct Shader self, const char *name, int v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);
     glUniform1i(idx, v);
 }
 
-void shader_uniform_uint(struct shader self, const char *name, unsigned int v)
+void shader_uniform_uint(struct Shader self, const char *name, unsigned int v)
 {
     const GLint idx = glGetUniformLocation(self.handle, name);
     if (idx < 0) log_warn("Unable to uniform variable: %s", name);

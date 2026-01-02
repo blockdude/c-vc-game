@@ -1,8 +1,8 @@
 #include <vcp/vcp.h>
 
-struct vbo vbo_create(GLint type, bool dyn)
+struct VBO vbo_create(GLint type, bool dyn)
 {
-    struct vbo self = {
+    struct VBO self = {
         .type = type,
         .dyn = dyn
     };
@@ -12,17 +12,17 @@ struct vbo vbo_create(GLint type, bool dyn)
     return self;
 }
 
-void vbo_free(struct vbo self)
+void vbo_free(struct VBO self)
 {
     glDeleteBuffers(1, &self.handle);
 }
 
-void vbo_bind(struct vbo self)
+void vbo_bind(struct VBO self)
 {
     glBindBuffer(self.type, self.handle);
 }
 
-void vbo_buff(struct vbo self, const void *data, size_t n)
+void vbo_buff(struct VBO self, const void *data, size_t n)
 {
     vbo_bind(self);
     glBufferData(self.type, n, data, self.dyn ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);

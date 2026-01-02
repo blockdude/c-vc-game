@@ -10,52 +10,88 @@
 
 // LINEAR_ALGEBRA_TYPES_AND_FIXES
 #if defined(LINEAR_ALGEBRA_INT)
-#define _VEC2_NAME vec2i
-#define _VEC3_NAME vec3i
-#define _VEC4_NAME vec4i
-#define _QUAT_NAME quati
-#define _MAT4_NAME mat4i
-#define _FMAT4_NAME fmat4i
+#define _VEC2_TYPE_NAME Vec2I
+#define _VEC3_TYPE_NAME Vec3I
+#define _VEC4_TYPE_NAME Vec4I
+#define _QUAT_TYPE_NAME QuatI
+#define _MAT4_TYPE_NAME Mat4I
+#define _FMAT4_TYPE_NAME FMat4I
+#define _VEC2_FN_NAME vec2i
+#define _VEC3_FN_NAME vec3i
+#define _VEC4_FN_NAME vec4i
+#define _QUAT_FN_NAME quati
+#define _MAT4_FN_NAME mat4i
+#define _FMAT4_FN_NAME fmat4i
 #define _BASE_TYPE int
 #elif defined(LINEAR_ALGEBRA_I32)
-#define _VEC2_NAME vec2_i32
-#define _VEC3_NAME vec3_i32
-#define _VEC4_NAME vec4_i32
-#define _QUAT_NAME quat_i32
-#define _MAT4_NAME mat4_i32
-#define _FMAT4_NAME fmat4_i32
+#define _VEC2_TYPE_NAME Vec2I32
+#define _VEC3_TYPE_NAME Vec3I32
+#define _VEC4_TYPE_NAME Vec4I32
+#define _QUAT_TYPE_NAME QuatI32
+#define _MAT4_TYPE_NAME Mat4I32
+#define _FMAT4_TYPE_NAME FMat4I32
+#define _VEC2_FN_NAME vec2i32
+#define _VEC3_FN_NAME vec3i32
+#define _VEC4_FN_NAME vec4i32
+#define _QUAT_FN_NAME quati32
+#define _MAT4_FN_NAME mat4i32
+#define _FMAT4_FN_NAME fmat4i32
 #define _BASE_TYPE i32
 #elif defined(LINEAR_ALGEBRA_I64)
-#define _VEC2_NAME vec2_i64
-#define _VEC3_NAME vec3_i64
-#define _VEC4_NAME vec4_i64
-#define _QUAT_NAME quat_i64
-#define _MAT4_NAME mat4_i64
-#define _FMAT4_NAME fmat4_i64
+#define _VEC2_TYPE_NAME Vec2I64
+#define _VEC3_TYPE_NAME Vec3I64
+#define _VEC4_TYPE_NAME Vec4I64
+#define _QUAT_TYPE_NAME QuatI64
+#define _MAT4_TYPE_NAME Mat4I64
+#define _FMAT4_TYPE_NAME FMat4I64
+#define _VEC2_FN_NAME vec2i64
+#define _VEC3_FN_NAME vec3i64
+#define _VEC4_FN_NAME vec4i64
+#define _QUAT_FN_NAME quati64
+#define _MAT4_FN_NAME mat4i64
+#define _FMAT4_FN_NAME fmat4i64
 #define _BASE_TYPE i64
 #elif defined(LINEAR_ALGEBRA_FLT)
-#define _VEC2_NAME vec2
-#define _VEC3_NAME vec3
-#define _VEC4_NAME vec4
-#define _QUAT_NAME quat
-#define _MAT4_NAME mat4
-#define _FMAT4_NAME fmat4
+#define _VEC2_TYPE_NAME Vec2
+#define _VEC3_TYPE_NAME Vec3
+#define _VEC4_TYPE_NAME Vec4
+#define _QUAT_TYPE_NAME Quat
+#define _MAT4_TYPE_NAME Mat4
+#define _FMAT4_TYPE_NAME FMat4
+#define _VEC2_FN_NAME vec2
+#define _VEC3_FN_NAME vec3
+#define _VEC4_FN_NAME vec4
+#define _QUAT_FN_NAME quat
+#define _MAT4_FN_NAME mat4
+#define _FMAT4_FN_NAME fmat4
 #define _BASE_TYPE float
 #elif defined(LINEAR_ALGEBRA_F32)
-#define _VEC2_NAME vec2_f32
-#define _VEC3_NAME vec3_f32
-#define _VEC4_NAME vec4_f32
-#define _QUAT_NAME quat_f32
-#define _MAT4_NAME mat4_f32
-#define _FMAT4_NAME fmat4_f32
+#define _VEC2_TYPE_NAME Vec2F32
+#define _VEC3_TYPE_NAME Vec3F32
+#define _VEC4_TYPE_NAME Vec4F32
+#define _QUAT_TYPE_NAME QuatF32
+#define _MAT4_TYPE_NAME Mat4F32
+#define _FMAT4_TYPE_NAME FMat4F32
+#define _VEC2_FN_NAME vec2f32
+#define _VEC3_FN_NAME vec3f32
+#define _VEC4_FN_NAME vec4f32
+#define _QUAT_FN_NAME quatf32
+#define _MAT4_FN_NAME mat4f32
+#define _FMAT4_FN_NAME fmat4f32
 #define _BASE_TYPE f32
 #elif defined(LINEAR_ALGEBRA_F64)
-#define _VEC2_NAME vec2_f64
-#define _VEC3_NAME vec3_f64
-#define _VEC4_NAME vec4_f64
-#define _QUAT_NAME quat_f64
-#define _MAT4_NAME mat4_f64
-#define _FMAT4_NAME fmat4_f64
+#define _VEC2_TYPE_NAME Vec2F64
+#define _VEC3_TYPE_NAME Vec3F64
+#define _VEC4_TYPE_NAME Vec4F64
+#define _QUAT_TYPE_NAME QuatF64
+#define _MAT4_TYPE_NAME Mat4F64
+#define _FMAT4_TYPE_NAME FMat4F64
+#define _VEC2_FN_NAME vec2f64
+#define _VEC3_FN_NAME vec3f64
+#define _VEC4_FN_NAME vec4f64
+#define _QUAT_FN_NAME quatf64
+#define _MAT4_FN_NAME mat4f64
+#define _FMAT4_FN_NAME fmat4f64
 #define _BASE_TYPE f64
 #endif
 
@@ -123,21 +159,21 @@
 #define LINEAR_ALGEBRA_MAT4_HEADER
 #endif
 
-#define _VEC2_TYPE struct _VEC2_NAME
-#define _VEC3_TYPE struct _VEC3_NAME
-#define _VEC4_TYPE struct _VEC4_NAME
-#define _QUAT_TYPE struct _QUAT_NAME
-#define _MAT4_TYPE struct _MAT4_NAME
-#define _FMAT4_TYPE struct _FMAT4_NAME
+#define _VEC2_TYPE struct _VEC2_TYPE_NAME
+#define _VEC3_TYPE struct _VEC3_TYPE_NAME
+#define _VEC4_TYPE struct _VEC4_TYPE_NAME
+#define _QUAT_TYPE struct _QUAT_TYPE_NAME
+#define _MAT4_TYPE struct _MAT4_TYPE_NAME
+#define _FMAT4_TYPE struct _FMAT4_TYPE_NAME
 #define _CONCAT(_a, _b) _a##_b
 #define _STATIC_CAST(T, _e) ((T)(_e))
 #define _NAME_HELPER(_prefix, _fn) _CONCAT(_prefix, _##_fn)
-#define _FUNC_VEC2(_fn) _NAME_HELPER(_VEC2_NAME, _fn)
-#define _FUNC_VEC3(_fn) _NAME_HELPER(_VEC3_NAME, _fn)
-#define _FUNC_VEC4(_fn) _NAME_HELPER(_VEC4_NAME, _fn)
-#define _FUNC_QUAT(_fn) _NAME_HELPER(_QUAT_NAME, _fn)
-#define _FUNC_MAT4(_fn) _NAME_HELPER(_MAT4_NAME, _fn)
-#define _FUNC_FMAT4(_fn) _NAME_HELPER(_FMAT4_NAME, _fn)
+#define _FUNC_VEC2(_fn) _NAME_HELPER(_VEC2_FN_NAME, _fn)
+#define _FUNC_VEC3(_fn) _NAME_HELPER(_VEC3_FN_NAME, _fn)
+#define _FUNC_VEC4(_fn) _NAME_HELPER(_VEC4_FN_NAME, _fn)
+#define _FUNC_QUAT(_fn) _NAME_HELPER(_QUAT_FN_NAME, _fn)
+#define _FUNC_MAT4(_fn) _NAME_HELPER(_MAT4_FN_NAME, _fn)
+#define _FUNC_FMAT4(_fn) _NAME_HELPER(_FMAT4_FN_NAME, _fn)
 #define _FUNC_SPEC
 #define _FUNC_CONV
 

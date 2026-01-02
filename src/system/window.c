@@ -196,9 +196,9 @@ bool window_keep_open(void)
     return g_win_state.keep_open;
 }
 
-struct extent window_size(void)
+struct Extent window_size(void)
 {
-    struct extent result = {
+    struct Extent result = {
         g_win_state.width,
         g_win_state.height
     };

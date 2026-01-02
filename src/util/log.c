@@ -26,9 +26,9 @@
 
 #define MAX_CALLBACKS 32
 
-struct callback
+struct Callback
 {
-    log_log_fn fn;
+    LogLogFn fn;
     void *udata;
     int level;
 };
@@ -36,10 +36,10 @@ struct callback
 static struct
 {
     void *udata;
-    log_lock_fn lock;
+    LogLockFn lock;
     int level;
     bool quiet;
-    struct callback callbacks[MAX_CALLBACKS];
+    struct Callback callbacks[MAX_CALLBACKS];
 } L;
 
 
@@ -54,7 +54,7 @@ static const char *const level_colors[] = {
 #endif
 
 
-static void stdout_callback(struct log_event *ev)
+static void stdout_callback(struct LogEvent *ev)
 {
     char buf[16];
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
@@ -100,7 +100,7 @@ static void stdout_callback(struct log_event *ev)
 }
 
 
-static void file_callback(struct log_event *ev)
+static void file_callback(struct LogEvent *ev)
 {
     char buf[64];
     buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
@@ -132,7 +132,7 @@ const char *log_level_string(int level)
 }
 
 
-void log_set_lock(log_lock_fn fn, void *udata)
+void log_set_lock(LogLockFn fn, void *udata)
 {
     L.lock = fn;
     L.udata = udata;
@@ -151,13 +151,13 @@ void log_set_quiet(bool enable)
 }
 
 
-int log_add_callback(log_log_fn fn, void *udata, int level)
+int log_add_callback(LogLogFn fn, void *udata, int level)
 {
     for (int i = 0; i < MAX_CALLBACKS; i++)
     {
         if (!L.callbacks[i].fn)
         {
-            L.callbacks[i] = (struct callback){ fn, udata, level };
+            L.callbacks[i] = (struct Callback){ fn, udata, level };
             return 0;
         }
     }
@@ -171,7 +171,7 @@ int log_add_fp(FILE *fp, int level)
 }
 
 
-static void init_event(struct log_event *ev, void *udata)
+static void init_event(struct LogEvent *ev, void *udata)
 {
     if (!ev->time)
     {
@@ -184,7 +184,7 @@ static void init_event(struct log_event *ev, void *udata)
 
 void log_log(int level, const char *file, int line, const char *fmt, ...)
 {
-    struct log_event ev = {
+    struct LogEvent ev = {
         .fmt = fmt,
         .file = file,
         .line = line,
@@ -203,7 +203,7 @@ void log_log(int level, const char *file, int line, const char *fmt, ...)
 
     for (int i = 0; i < MAX_CALLBACKS && L.callbacks[i].fn; i++)
     {
-        struct callback *cb = &L.callbacks[i];
+        struct Callback *cb = &L.callbacks[i];
         if (level >= cb->level)
         {
             init_event(&ev, cb->udata);
