@@ -1,11 +1,7 @@
 #include <vcp/vcp.h>
 #include <assert.h>
 #include <SDL3/SDL.h>
-
-// grab a couple functions from window.c
-extern u32 window_id(void);
-extern void *window_handle(void);
-extern void window_event_notify(int type, int w, int h);
+#include "window.h"
 
 static const int keymap[SDL_SCANCODE_COUNT] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
@@ -269,7 +265,7 @@ void input_poll_events(void)
         // note: SDL_EVENT_QUIT does not provide a windowID
         if (event.type == SDL_EVENT_QUIT)
         {
-            window_event_notify(1, 0, 0);
+            window_request_close();
             g_input_state.e_quit = true;
             return;
         }
@@ -281,13 +277,13 @@ void input_poll_events(void)
         {
         case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 
-            window_event_notify(1, 0, 0);
+            window_request_close();
 
             break;
 
         case SDL_EVENT_WINDOW_RESIZED:
 
-            window_event_notify(0, event.window.data1, event.window.data2);
+            window_update_view_port(event.window.data1, event.window.data2);
 
             break;
 

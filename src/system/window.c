@@ -196,6 +196,11 @@ bool window_keep_open(void)
     return g_win_state.keep_open;
 }
 
+void window_request_close(void)
+{
+    g_win_state.keep_open = false;
+}
+
 struct Extent window_size(void)
 {
     struct Extent result = {
@@ -229,6 +234,11 @@ const char *window_title(void)
 u32 window_flags(void)
 {
     return g_win_state.flags;
+}
+
+bool window_flag_state(u32 flag)
+{
+    return (g_win_state.flags & flag) == flag;
 }
 
 u32 window_id(void)
@@ -343,24 +353,15 @@ void window_disable_flags(u32 flags)
  * -----------------------------
  */
 
-// input.c will notify on some certain events if needed
-void window_event_notify(int type, int w, int h)
+void window_update_view_port(int w, int h)
 {
-    if (type == 0)
-    {
-        g_win_state.width = w;
-        g_win_state.height = h;
-        g_win_state.aspect = (float)w / h;
+    g_win_state.width = w;
+    g_win_state.height = h;
+    g_win_state.aspect = (float)w / h;
 
 #ifdef VCP_WINDOW_OPENGL
-        glViewport(0, 0, w, h);
+    glViewport(0, 0, w, h);
 #endif
-    }
-
-    if (type == 1)
-    {
-        g_win_state.keep_open = false;
-    }
 }
 
 /*
