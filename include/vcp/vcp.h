@@ -171,6 +171,41 @@ struct FMat4F64 _FMAT4_TEMPLATE(f64);
 
 // =============================
 // -----------------------------
+// COLORS
+// -----------------------------
+
+static const struct Color COLOR_LIGHTGRAY = { 200, 200, 200, 255 };
+static const struct Color COLOR_GRAY = { 130, 130, 130, 255 };
+static const struct Color COLOR_DARKGRAY = { 80, 80, 80, 255 };
+static const struct Color COLOR_YELLOW = { 253, 249, 0, 255 };
+static const struct Color COLOR_GOLD = { 255, 203, 0, 255 };
+static const struct Color COLOR_ORANGE = { 255, 161, 0, 255 };
+static const struct Color COLOR_PINK = { 255, 109, 194, 255 };
+static const struct Color COLOR_RED = { 230, 41, 55, 255 };
+static const struct Color COLOR_MAROON = { 190, 33, 55, 255 };
+static const struct Color COLOR_GREEN = { 0, 228, 48, 255 };
+static const struct Color COLOR_LIME = { 0, 158, 47, 255 };
+static const struct Color COLOR_DARKGREEN = { 0, 117, 44, 255 };
+static const struct Color COLOR_SKYBLUE = { 102, 191, 255, 255 };
+static const struct Color COLOR_BLUE = { 0, 121, 241, 255 };
+static const struct Color COLOR_DARKBLUE = { 0, 82, 172, 255 };
+static const struct Color COLOR_PURPLE = { 200, 122, 255, 255 };
+static const struct Color COLOR_VIOLET = { 135, 60, 190, 255 };
+static const struct Color COLOR_DARKPURPLE = { 112, 31, 126, 255 };
+static const struct Color COLOR_BEIGE = { 211, 176, 131, 255 };
+static const struct Color COLOR_BROWN = { 127, 106, 79, 255 };
+static const struct Color COLOR_DARKBROWN = { 76, 63, 47, 255 };
+static const struct Color COLOR_WHITE = { 255, 255, 255, 255 };
+static const struct Color COLOR_BLACK = { 0, 0, 0, 255 };
+static const struct Color COLOR_BLANK = { 0, 0, 0, 0 };
+static const struct Color COLOR_MAGENTA = { 255, 0, 255, 255 };
+
+// =============================
+
+
+
+// =============================
+// -----------------------------
 // MATH
 // -----------------------------
 
@@ -261,41 +296,6 @@ static inline struct ColorF colorf_blend(struct ColorF a, struct ColorF b)
     result.a = a.a * b.a;
     return result;
 }
-
-// =============================
-
-
-
-// =============================
-// -----------------------------
-// COLORS
-// -----------------------------
-
-static const struct Color COLOR_LIGHTGRAY = { 200, 200, 200, 255 };
-static const struct Color COLOR_GRAY = { 130, 130, 130, 255 };
-static const struct Color COLOR_DARKGRAY = { 80, 80, 80, 255 };
-static const struct Color COLOR_YELLOW = { 253, 249, 0, 255 };
-static const struct Color COLOR_GOLD = { 255, 203, 0, 255 };
-static const struct Color COLOR_ORANGE = { 255, 161, 0, 255 };
-static const struct Color COLOR_PINK = { 255, 109, 194, 255 };
-static const struct Color COLOR_RED = { 230, 41, 55, 255 };
-static const struct Color COLOR_MAROON = { 190, 33, 55, 255 };
-static const struct Color COLOR_GREEN = { 0, 228, 48, 255 };
-static const struct Color COLOR_LIME = { 0, 158, 47, 255 };
-static const struct Color COLOR_DARKGREEN = { 0, 117, 44, 255 };
-static const struct Color COLOR_SKYBLUE = { 102, 191, 255, 255 };
-static const struct Color COLOR_BLUE = { 0, 121, 241, 255 };
-static const struct Color COLOR_DARKBLUE = { 0, 82, 172, 255 };
-static const struct Color COLOR_PURPLE = { 200, 122, 255, 255 };
-static const struct Color COLOR_VIOLET = { 135, 60, 190, 255 };
-static const struct Color COLOR_DARKPURPLE = { 112, 31, 126, 255 };
-static const struct Color COLOR_BEIGE = { 211, 176, 131, 255 };
-static const struct Color COLOR_BROWN = { 127, 106, 79, 255 };
-static const struct Color COLOR_DARKBROWN = { 76, 63, 47, 255 };
-static const struct Color COLOR_WHITE = { 255, 255, 255, 255 };
-static const struct Color COLOR_BLACK = { 0, 0, 0, 255 };
-static const struct Color COLOR_BLANK = { 0, 0, 0, 0 };
-static const struct Color COLOR_MAGENTA = { 255, 0, 255, 255 };
 
 // =============================
 
