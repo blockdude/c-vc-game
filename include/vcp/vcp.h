@@ -412,41 +412,26 @@ _FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F64, fmat4f64);
 // TIMESTEP
 // -----------------------------
 
-#ifndef TIMESTEP_CAPTURE_COUNT
-#define TIMESTEP_CAPTURE_COUNT 60
-#endif
-
 struct Timestep
 {
-    f64 rate;
-    f64 avg;
+    f64 rate;      // 1 / delta
+    f64 ravg_rate; // running average
+    f64 mavg_rate; // moving average
     f64 delta;
     f64 target_delta;
     f64 target_rate;
     u64 count;
-
     f64 elapsed;
-    f64 current;
-    f64 previous;
 
     struct
     {
-        f64 elapsed;
         u64 count;
-        u64 last;
-        int index;
-
-        struct
-        {
-            f64 delta;
-            u64 count;
-        } record[TIMESTEP_CAPTURE_COUNT];
-    } _snapshot;
-
-    struct
-    {
+        f64 elapsed;
+        f64 timer;
+        f64 current_time;
+        f64 previous_time;
         bool looping;
-    } _state;
+    } _private;
 };
 
 /*
