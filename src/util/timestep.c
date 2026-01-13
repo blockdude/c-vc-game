@@ -7,11 +7,21 @@
 // by default, timestep time units are in seconds
 #define TIMESTEP_TIME_NOW time_now_s
 #define TIMESTEP_TIME_WAIT time_wait_s
-#define STIFFNESS 0.1
 
 static inline f64 compute_rate(u64 n, f64 d)
 {
     return (f64)(u64)((n + d / 2) / d);
+}
+
+static inline f64 stiffness(f64 dt)
+{
+    if (dt > 0.012) // 60fps
+        return 0.1;
+    if (dt > 0.004) // 240fps
+        return 0.01;
+    if (dt > 0.001) // 500fps
+        return 0.001;
+    return 0.0001;
 }
 
 // ==============================
@@ -39,7 +49,7 @@ struct Timestep timestep_create(f64 rate)
 
 void timestep_set_rate(struct Timestep *timestep, f64 rate)
 {
-    timestep->target_delta = rate <= 0 ? 0.0 : 1.0 / rate;
+    timestep->target_delta = rate <= 0.0 ? 0.0 : 1.0 / rate;
     timestep->target_rate = rate;
 }
 
@@ -72,9 +82,18 @@ static inline void _timestep_postfix(struct Timestep *timestep)
     timestep->elapsed += timestep->delta;
     timestep->count += 1;
 
+    if (timestep->_private.timer >= 1.0)
+    {
+        timestep->ps_rate = timestep->count - timestep->_private.ps_count;
+        timestep->_private.ps_count = timestep->count;
+        timestep->_private.timer = 0;
+    }
+
+    f64 s = stiffness(timestep->delta);
     timestep->rate = 1.0 / timestep->delta;
-    timestep->mavg_rate = (timestep->rate * STIFFNESS) + (timestep->mavg_rate * (1.0 - STIFFNESS));
     timestep->ravg_rate = timestep->count / timestep->elapsed;
+    timestep->mavg_rate = (timestep->rate * s) + (timestep->mavg_rate * (1.0 - s));
+    timestep->_private.timer += timestep->delta;
 }
 
 bool timestep_tick(struct Timestep *timestep)
@@ -128,10 +147,30 @@ bool timestep_tick(struct Timestep *timestep)
 
 static inline void _fixedstep_prefix(struct Timestep *timestep, f64 delta_time)
 {
-    timestep->_private.count = 0;
-    timestep->_private.timer += delta_time;
-    timestep->_private.elapsed += delta_time;
+    //if (timestep->_private.timer >= 1.0)
+    //{
+    //    timestep->rate = timestep->_private.count;
+    //    timestep->_private.timer = 0;
+    //    timestep->_private.count = 0;
+    //}
+
+    if (timestep->_private.timer >= 1.0)
+    {
+        timestep->ps_rate = timestep->count - timestep->_private.ps_count;
+        timestep->_private.ps_count = timestep->count;
+        timestep->_private.timer = 0;
+    }
+
+    f64 s = stiffness(delta_time);
+    timestep->rate = delta_time > 0 ? timestep->_private.count / delta_time : 0;
+    timestep->ravg_rate = timestep->count / timestep->_private.elapsed;
+    timestep->mavg_rate = (timestep->rate * s) + (timestep->mavg_rate * (1.0 - s));
+
     timestep->delta += delta_time;
+    timestep->_private.elapsed += delta_time;
+    timestep->_private.timer += delta_time;
+    timestep->_private.count = 0;
+    
 }
 
 static inline bool _fixedstep_can_proc(struct Timestep *timestep)
@@ -144,15 +183,7 @@ static inline void _fixedstep_postfix(struct Timestep *timestep)
     timestep->count += 1;
     timestep->delta -= timestep->target_delta;
     timestep->elapsed += timestep->target_delta;
-
     timestep->_private.count += 1;
-    if (!_fixedstep_can_proc(timestep))
-    {
-        timestep->rate = timestep->_private.count / timestep->_private.timer;
-        timestep->ravg_rate = timestep->count / timestep->_private.elapsed;
-        timestep->mavg_rate = (timestep->rate * STIFFNESS) + (timestep->mavg_rate * (1.0 - STIFFNESS));
-        timestep->_private.timer = 0;
-    }
 }
 
 bool fixedstep_tick(struct Timestep *timestep, f64 delta_time)

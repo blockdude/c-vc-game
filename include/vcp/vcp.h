@@ -414,9 +414,10 @@ _FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F64, fmat4f64);
 
 struct Timestep
 {
-    f64 rate;      // 1 / delta
-    f64 ravg_rate; // running average
-    f64 mavg_rate; // moving average
+    f64 rate;      // current rate this frame
+    f64 ravg_rate; // running average of rate
+    f64 mavg_rate; // moving average of rate
+    u64 ps_rate;   // rate that updates once a second
     f64 delta;
     f64 target_delta;
     f64 target_rate;
@@ -425,58 +426,16 @@ struct Timestep
 
     struct
     {
+        u64 ps_count;
+        f64 timer;
         u64 count;
         f64 elapsed;
-        f64 timer;
         f64 current_time;
         f64 previous_time;
         bool looping;
     } _private;
 };
 
-/*
-The timestep_tick function updates the state of a timestep, recording
-time of each iteration and the frequency of updates.
-
-This function should be used inside a while loop. ex:
-while ( timestep_tick( &timestep ) );
-
-However this does not have to be used in a while loop
-and can be used as a fancy timer system.
-
-EXAMPLE:
-
-timestep_tick( &timestep );
-somefunction();
-timestep_tick( &timestep );
-printf( "somefunction() took %f seconds to run", timestep.delta );
-*/
-
-/*
-The fixedstep_tick function updates the state of a timestep, recording
-time of each iteration and the frequency of updates.
-
-fixed timestep is used if you want updates to happen at
-a fixed rate such as with physics engines
-
-This function should be used inside a timestep. EX:
-
->
-struct Timestep timestep, fixed_timestep;
-timestep = timestep_create(240);
-fixed_timestep = timestep_create(20);
-while (timestep_tick(&timestep))
-{
-    while (fixedstep_tick(&fixed_timestep, timestep.delta))
-    {
-        physics_tick();
-    }
-}
-<
-
-the outter variable timestep will try and update at 240hz
-the inner (fixed) timestep will maintain a 20hz update rate
-*/
 extern struct Timestep timestep_create(f64 rate);
 extern void timestep_set_rate(struct Timestep *timestep, f64 rate);
 extern bool timestep_tick(struct Timestep *timestep);
