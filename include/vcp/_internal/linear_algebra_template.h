@@ -263,7 +263,7 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(clamp_val)(_VEC2_TYPE v, _BASE_TYPE 
 
 // Check whether two given vectors are almost equal
 _VEC2_FUNC_IMPL_FLOAT_RESTRICTED(
-_FUNC_SPEC int _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon)
+_FUNC_SPEC bool _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon)
 {
     static_assert(_IS_IEC559 == true, "equals must use floating point vectors");
 
