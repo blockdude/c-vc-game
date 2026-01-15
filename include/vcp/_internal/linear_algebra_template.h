@@ -29,7 +29,7 @@ _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_V
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(max)(_VEC2_TYPE a, _VEC2_TYPE b));
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(clamp)(_VEC2_TYPE v, _VEC2_TYPE min, _VEC2_TYPE max));
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(clamp_val)(_VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max));
-_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon));
+_VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC bool       _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q, _BASE_TYPE epsilon));
 _VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(angle)(_VEC2_TYPE a, _VEC2_TYPE b));
 _VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(line_angle)(_VEC2_TYPE start, _VEC2_TYPE end));
 _VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(normalize)(_VEC2_TYPE v));
@@ -38,7 +38,7 @@ _VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_V
 _VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(invert)(_VEC2_TYPE v));
 _VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(clamp_len)(_VEC2_TYPE v, _BASE_TYPE min, _BASE_TYPE max));
 _VEC2_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(refract)(_VEC2_TYPE v, _VEC2_TYPE n, _BASE_TYPE r));
-_VEC2_FUNC_DECL_INT_RESTRICTED  (extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q));
+_VEC2_FUNC_DECL_INT_RESTRICTED  (extern _FUNC_SPEC bool       _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q));
 
 /* Vector2 with components value 0 */
 _VEC2_FUNC_IMPL(
@@ -436,11 +436,11 @@ _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(refract)(_VEC2_TYPE v, _VEC2_TYPE n,
 
 /* Check whether two given integer vectors are equal */
 _VEC2_FUNC_IMPL_INT_RESTRICTED(
-_FUNC_SPEC int _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q)
+_FUNC_SPEC bool _FUNC_CONV _FUNC_VEC2(equals)(_VEC2_TYPE p, _VEC2_TYPE q)
 {
     static_assert(_IS_IEC559 == false, "vec2i_equals must use integer based vectors");
 
-    int result =
+    bool result =
         (p.x == q.x) &&
         (p.y == q.y);
 
@@ -501,7 +501,7 @@ _VEC3_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_V
 _VEC3_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(clamp)(_VEC3_TYPE v, _VEC3_TYPE min, _VEC3_TYPE max));
 _VEC3_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(clamp_val)(_VEC3_TYPE v, _BASE_TYPE min, _BASE_TYPE max));
 _VEC3_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(clamp_len)(_VEC3_TYPE v, _BASE_TYPE min, _BASE_TYPE max));
-_VEC3_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC3(equals)(_VEC3_TYPE p, _VEC3_TYPE q, _BASE_TYPE epsilon));
+_VEC3_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC bool       _FUNC_CONV _FUNC_VEC3(equals)(_VEC3_TYPE p, _VEC3_TYPE q, _BASE_TYPE epsilon));
 _VEC3_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(refract)(_VEC3_TYPE v, _VEC3_TYPE n, _BASE_TYPE r));
 
 // Vector with components value 0.0f
@@ -1183,9 +1183,9 @@ _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_VEC3(clamp_len)(_VEC3_TYPE v, _BASE_TYPE 
 
 // Check whether two given vectors are almost equal
 _VEC3_FUNC_IMPL_FLOAT_RESTRICTED(
-_FUNC_SPEC int _FUNC_CONV _FUNC_VEC3(equals)(_VEC3_TYPE p, _VEC3_TYPE q, _BASE_TYPE epsilon)
+_FUNC_SPEC bool _FUNC_CONV _FUNC_VEC3(equals)(_VEC3_TYPE p, _VEC3_TYPE q, _BASE_TYPE epsilon)
 {
-    int result =
+    bool result =
         ((_ABS(p.x - q.x)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.x), _ABS(q.x))))) &&
         ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.y), _ABS(q.y))))) &&
         ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.z), _ABS(q.z)))));
@@ -1256,7 +1256,7 @@ _VEC4_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_V
 _VEC4_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(lerp)(_VEC4_TYPE a, _VEC4_TYPE b, _BASE_TYPE t));
 _VEC4_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(move_towards)(_VEC4_TYPE v, _VEC4_TYPE target, _BASE_TYPE max));
 _VEC4_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(invert)(_VEC4_TYPE v));
-_VEC4_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC int        _FUNC_CONV _FUNC_VEC4(equals)(_VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon));
+_VEC4_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC bool       _FUNC_CONV _FUNC_VEC4(equals)(_VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon));
 
 _VEC4_FUNC_IMPL_FLOAT_RESTRICTED(
 _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(zero)(void)
@@ -1510,9 +1510,9 @@ _FUNC_SPEC _VEC4_TYPE _FUNC_CONV _FUNC_VEC4(invert)(_VEC4_TYPE v)
 
 // Check whether two given vectors are almost equal
 _VEC4_FUNC_IMPL_FLOAT_RESTRICTED(
-_FUNC_SPEC int _FUNC_CONV _FUNC_VEC4(equals)(_VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon)
+_FUNC_SPEC bool _FUNC_CONV _FUNC_VEC4(equals)(_VEC4_TYPE p, _VEC4_TYPE q, _BASE_TYPE epsilon)
 {
-    int result =
+    bool result =
         ((_ABS(p.x - q.x)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.x), _ABS(q.x))))) &&
         ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.y), _ABS(q.y))))) &&
         ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.z), _ABS(q.z))))) &&
@@ -1560,7 +1560,7 @@ _QUAT_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC void       _FUNC_CONV _FUNC_Q
 _QUAT_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(from_euler)(_BASE_TYPE pitch, _BASE_TYPE yaw, _BASE_TYPE roll));
 _QUAT_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _VEC3_TYPE _FUNC_CONV _FUNC_QUAT(to_euler)(_QUAT_TYPE q));
 _QUAT_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(transform)(_QUAT_TYPE q, _MAT4_TYPE m));
-_QUAT_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC int        _FUNC_CONV _FUNC_QUAT(equals)(_QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon));
+_QUAT_FUNC_DECL_FLOAT_RESTRICTED(extern _FUNC_SPEC bool       _FUNC_CONV _FUNC_QUAT(equals)(_QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon));
 
 // Add two quaternions
 _QUAT_FUNC_IMPL_FLOAT_RESTRICTED(
@@ -2088,9 +2088,9 @@ _FUNC_SPEC _QUAT_TYPE _FUNC_CONV _FUNC_QUAT(transform)(_QUAT_TYPE q, _MAT4_TYPE 
 
 // Check whether two given quaternions are almost equal
 _QUAT_FUNC_IMPL_FLOAT_RESTRICTED(
-_FUNC_SPEC int _FUNC_CONV _FUNC_QUAT(equals)(_QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon)
+_FUNC_SPEC bool _FUNC_CONV _FUNC_QUAT(equals)(_QUAT_TYPE p, _QUAT_TYPE q, _BASE_TYPE epsilon)
 {
-    int result =
+    bool result =
         (((_ABS(p.x - q.x)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.x), _ABS(q.x))))) &&
           ((_ABS(p.y - q.y)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.y), _ABS(q.y))))) &&
           ((_ABS(p.z - q.z)) <= (epsilon * _MAX(_STATIC_CAST(_BASE_TYPE, 1), _MAX(_ABS(p.z), _ABS(q.z))))) &&
