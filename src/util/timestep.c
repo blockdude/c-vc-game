@@ -19,9 +19,9 @@ static inline f64 stiffness(f64 dt)
         return 0.1;
     if (dt > 0.004) // 240fps
         return 0.01;
-    if (dt > 0.001) // 500fps
+    if (dt > 0.0004) // 2000fps
         return 0.001;
-    return 0.0001;
+    return 0.0001; // 2000+
 }
 
 // ==============================
