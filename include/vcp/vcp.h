@@ -249,23 +249,23 @@ static const struct Color COLOR_MAGENTA = { 255, 0, 255, 255 };
 #define _MATH_FUNC_TEMPLATE_INT_DIVRND(T, _name) \
 static inline T _name##_divrnd(T n, T d) { return ((n < 0) == (d < 0)) ? ((n + d / 2) / d) : ((n - d / 2) / d); }
 
-_MATH_FUNC_TEMPLATE_INT_DIVRND(int, int);
-_MATH_FUNC_TEMPLATE_INT_DIVRND(i32, int32);
-_MATH_FUNC_TEMPLATE_INT_DIVRND(i64, int64);
+_MATH_FUNC_TEMPLATE_INT_DIVRND(int, int)
+_MATH_FUNC_TEMPLATE_INT_DIVRND(i32, int32)
+_MATH_FUNC_TEMPLATE_INT_DIVRND(i64, int64)
 
 #define _MATH_FUNC_TEMPLATE_INT_DIVFLR(T, _name) \
 static inline T _name##_divflr(T n, T d) { return (n / d) - (n < 0); }
 
-_MATH_FUNC_TEMPLATE_INT_DIVFLR(int, int);
-_MATH_FUNC_TEMPLATE_INT_DIVFLR(i32, int32);
-_MATH_FUNC_TEMPLATE_INT_DIVFLR(i64, int64);
+_MATH_FUNC_TEMPLATE_INT_DIVFLR(int, int)
+_MATH_FUNC_TEMPLATE_INT_DIVFLR(i32, int32)
+_MATH_FUNC_TEMPLATE_INT_DIVFLR(i64, int64)
 
 #define _MATH_FUNC_TEMPLATE_FLOAT_EQUALS(T, _name, _abs_fn, _max_fn) \
 static inline int _name##_equals(T a, T b, T epsilon) { return (_abs_fn(a - b)) <= (epsilon * _max_fn(1.0f, _max_fn(_abs_fn(a), _abs_fn(b)))); }
 
-_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(float, float, fabsf, fmaxf);
-_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f32, float32, fabsf, fmaxf);
-_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f64, float64, fabs, fmax);
+_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(float, float, fabsf, fmaxf)
+_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f32, float32, fabsf, fmaxf)
+_MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f64, float64, fabs, fmax)
 
 static inline u32 rgba8888_to_uint32(u8 r, u8 g, u8 b, u8 a)
 {
@@ -314,12 +314,12 @@ static inline struct Vec2I64 name##_to_vec2i64(T a) { const struct Vec2I64 b = {
 static inline struct Vec2F32 name##_to_vec2f32(T a) { const struct Vec2F32 b = {   (f32)a.x,   (f32)a.y }; return b; } \
 static inline struct Vec2F64 name##_to_vec2f64(T a) { const struct Vec2F64 b = {   (f64)a.x,   (f64)a.y }; return b; }
 
-_VEC2_FUNC_TEMPLATE_CAST(struct Vec2,    vec2);
-_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I,   vec2i);
-_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I32, vec2i32);
-_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I64, vec2i64);
-_VEC2_FUNC_TEMPLATE_CAST(struct Vec2F32, vec2f32);
-_VEC2_FUNC_TEMPLATE_CAST(struct Vec2F64, vec2f64);
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2,    vec2)
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I,   vec2i)
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I32, vec2i32)
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2I64, vec2i64)
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2F32, vec2f32)
+_VEC2_FUNC_TEMPLATE_CAST(struct Vec2F64, vec2f64)
 
 #define _VEC3_FUNC_TEMPLATE_CAST(T, name) \
 static inline struct Vec3    name##_to_vec3   (T a) { const struct Vec3    b = { (float)a.x, (float)a.y, (float)a.z }; return b; } \
@@ -329,12 +329,12 @@ static inline struct Vec3I64 name##_to_vec3i64(T a) { const struct Vec3I64 b = {
 static inline struct Vec3F32 name##_to_vec3f32(T a) { const struct Vec3F32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z }; return b; } \
 static inline struct Vec3F64 name##_to_vec3f64(T a) { const struct Vec3F64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z }; return b; }
 
-_VEC3_FUNC_TEMPLATE_CAST(struct Vec3,    vec3);
-_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I,   vec3i);
-_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I32, vec3i32);
-_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I64, vec3i64);
-_VEC3_FUNC_TEMPLATE_CAST(struct Vec3F32, vec3f32);
-_VEC3_FUNC_TEMPLATE_CAST(struct Vec3F64, vec3f64);
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3,    vec3)
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I,   vec3i)
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I32, vec3i32)
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3I64, vec3i64)
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3F32, vec3f32)
+_VEC3_FUNC_TEMPLATE_CAST(struct Vec3F64, vec3f64)
 
 #define _VEC4_FUNC_TEMPLATE_CAST(T, name) \
 static inline struct Vec4    name##_to_vec4   (T a) { const struct Vec4    b = { (float)a.x, (float)a.y, (float)a.z, (float)a.w }; return b; } \
@@ -344,12 +344,12 @@ static inline struct Vec4I64 name##_to_vec4i64(T a) { const struct Vec4I64 b = {
 static inline struct Vec4F32 name##_to_vec4f32(T a) { const struct Vec4F32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z,   (f32)a.w }; return b; } \
 static inline struct Vec4F64 name##_to_vec4f64(T a) { const struct Vec4F64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z,   (f64)a.w }; return b; }
 
-_VEC4_FUNC_TEMPLATE_CAST(struct Vec4,    vec4);
-_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I,   vec4i);
-_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I32, vec4i32);
-_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I64, vec4i64);
-_VEC4_FUNC_TEMPLATE_CAST(struct Vec4F32, vec4f32);
-_VEC4_FUNC_TEMPLATE_CAST(struct Vec4F64, vec4f64);
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4,    vec4)
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I,   vec4i)
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I32, vec4i32)
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4I64, vec4i64)
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4F32, vec4f32)
+_VEC4_FUNC_TEMPLATE_CAST(struct Vec4F64, vec4f64)
 
 #define _QUAT_FUNC_TEMPLATE_CAST(T, name) \
 static inline struct Quat    name##_to_quat   (T a) { const struct Quat    b = { (float)a.x, (float)a.y, (float)a.z, (float)a.w }; return b; } \
@@ -359,42 +359,42 @@ static inline struct QuatI64 name##_to_quati64(T a) { const struct QuatI64 b = {
 static inline struct QuatF32 name##_to_quatf32(T a) { const struct QuatF32 b = {   (f32)a.x,   (f32)a.y,   (f32)a.z,   (f32)a.w }; return b; } \
 static inline struct QuatF64 name##_to_quatf64(T a) { const struct QuatF64 b = {   (f64)a.x,   (f64)a.y,   (f64)a.z,   (f64)a.w }; return b; }
 
-_QUAT_FUNC_TEMPLATE_CAST(struct Quat,    quat);
-_QUAT_FUNC_TEMPLATE_CAST(struct QuatI,   quati);
-_QUAT_FUNC_TEMPLATE_CAST(struct QuatI32, quati32);
-_QUAT_FUNC_TEMPLATE_CAST(struct QuatI64, quati64);
-_QUAT_FUNC_TEMPLATE_CAST(struct QuatF32, quatf32);
-_QUAT_FUNC_TEMPLATE_CAST(struct QuatF64, quatf64);
+_QUAT_FUNC_TEMPLATE_CAST(struct Quat,    quat)
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatI,   quati)
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatI32, quati32)
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatI64, quati64)
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatF32, quatf32)
+_QUAT_FUNC_TEMPLATE_CAST(struct QuatF64, quatf64)
 
 #define _MAT4_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct Mat4    name##_to_mat4   (T a) { const struct Mat4     b = { (float)a.m00, (float)a.m01, (float)a.m02, (float)a.m03, (float)a.m10, (float)a.m11, (float)a.m12, (float)a.m13, (float)a.m20, (float)a.m21, (float)a.m22, (float)a.m23, (float)a.m30, (float)a.m31, (float)a.m32, (float)a.m33 }; return b; } \
-static inline struct Mat4I   name##_to_mat4i  (T a) { const struct Mat4I    b = {   (int)a.m00,   (int)a.m01,   (int)a.m02,   (int)a.m03,   (int)a.m10,   (int)a.m11,   (int)a.m12,   (int)a.m13,   (int)a.m20,   (int)a.m21,   (int)a.m22,   (int)a.m23,   (int)a.m30,   (int)a.m31,   (int)a.m32,   (int)a.m33 }; return b; } \
+static inline struct Mat4    name##_to_mat4   (T a) { const struct Mat4    b = { (float)a.m00, (float)a.m01, (float)a.m02, (float)a.m03, (float)a.m10, (float)a.m11, (float)a.m12, (float)a.m13, (float)a.m20, (float)a.m21, (float)a.m22, (float)a.m23, (float)a.m30, (float)a.m31, (float)a.m32, (float)a.m33 }; return b; } \
+static inline struct Mat4I   name##_to_mat4i  (T a) { const struct Mat4I   b = {   (int)a.m00,   (int)a.m01,   (int)a.m02,   (int)a.m03,   (int)a.m10,   (int)a.m11,   (int)a.m12,   (int)a.m13,   (int)a.m20,   (int)a.m21,   (int)a.m22,   (int)a.m23,   (int)a.m30,   (int)a.m31,   (int)a.m32,   (int)a.m33 }; return b; } \
 static inline struct Mat4I32 name##_to_mat4i32(T a) { const struct Mat4I32 b = {   (i32)a.m00,   (i32)a.m01,   (i32)a.m02,   (i32)a.m03,   (i32)a.m10,   (i32)a.m11,   (i32)a.m12,   (i32)a.m13,   (i32)a.m20,   (i32)a.m21,   (i32)a.m22,   (i32)a.m23,   (i32)a.m30,   (i32)a.m31,   (i32)a.m32,   (i32)a.m33 }; return b; } \
 static inline struct Mat4I64 name##_to_mat4i64(T a) { const struct Mat4I64 b = {   (i64)a.m00,   (i64)a.m01,   (i64)a.m02,   (i64)a.m03,   (i64)a.m10,   (i64)a.m11,   (i64)a.m12,   (i64)a.m13,   (i64)a.m20,   (i64)a.m21,   (i64)a.m22,   (i64)a.m23,   (i64)a.m30,   (i64)a.m31,   (i64)a.m32,   (i64)a.m33 }; return b; } \
 static inline struct Mat4F32 name##_to_mat4f32(T a) { const struct Mat4F32 b = {   (f32)a.m00,   (f32)a.m01,   (f32)a.m02,   (f32)a.m03,   (f32)a.m10,   (f32)a.m11,   (f32)a.m12,   (f32)a.m13,   (f32)a.m20,   (f32)a.m21,   (f32)a.m22,   (f32)a.m23,   (f32)a.m30,   (f32)a.m31,   (f32)a.m32,   (f32)a.m33 }; return b; } \
 static inline struct Mat4F64 name##_to_mat4f64(T a) { const struct Mat4F64 b = {   (f64)a.m00,   (f64)a.m01,   (f64)a.m02,   (f64)a.m03,   (f64)a.m10,   (f64)a.m11,   (f64)a.m12,   (f64)a.m13,   (f64)a.m20,   (f64)a.m21,   (f64)a.m22,   (f64)a.m23,   (f64)a.m30,   (f64)a.m31,   (f64)a.m32,   (f64)a.m33 }; return b; }
 
-_MAT4_FUNC_TEMPLATE_CAST(struct Mat4,    mat4);
-_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I,   mat4i);
-_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I32, mat4i32);
-_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I64, mat4i64);
-_MAT4_FUNC_TEMPLATE_CAST(struct Mat4F32, mat4f32);
-_MAT4_FUNC_TEMPLATE_CAST(struct Mat4F64, mat4f64);
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4,    mat4)
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I,   mat4i)
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I32, mat4i32)
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4I64, mat4i64)
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4F32, mat4f32)
+_MAT4_FUNC_TEMPLATE_CAST(struct Mat4F64, mat4f64)
 
 #define _FMAT4_FUNC_TEMPLATE_CAST(T, name) \
-static inline struct FMat4    name##_to_fmat4   (T a) { const struct FMat4    b = { (float)a.m[0], (float)a.m[1], (float)a.m[2], (float)a.m[3], (float)a.m[4], (float)a.m[5], (float)a.m[6], (float)a.m[7], (float)a.m[8], (float)a.m[9], (float)a.m[10], (float)a.m[11], (float)a.m[12], (float)a.m[13], (float)a.m[14], (float)a.m[15] }; return b; } \
-static inline struct FMat4I   name##_to_fmat4i  (T a) { const struct FMat4I   b = {   (int)a.m[0],   (int)a.m[1],   (int)a.m[2],   (int)a.m[3],   (int)a.m[4],   (int)a.m[5],   (int)a.m[6],   (int)a.m[7],   (int)a.m[8],   (int)a.m[9],   (int)a.m[10],   (int)a.m[11],   (int)a.m[12],   (int)a.m[13],   (int)a.m[14],   (int)a.m[15] }; return b; } \
-static inline struct FMat4I32 name##_to_fmat4i32(T a) { const struct FMat4I32 b = {   (i32)a.m[0],   (i32)a.m[1],   (i32)a.m[2],   (i32)a.m[3],   (i32)a.m[4],   (i32)a.m[5],   (i32)a.m[6],   (i32)a.m[7],   (i32)a.m[8],   (i32)a.m[9],   (i32)a.m[10],   (i32)a.m[11],   (i32)a.m[12],   (i32)a.m[13],   (i32)a.m[14],   (i32)a.m[15] }; return b; } \
-static inline struct FMat4I64 name##_to_fmat4i64(T a) { const struct FMat4I64 b = {   (i64)a.m[0],   (i64)a.m[1],   (i64)a.m[2],   (i64)a.m[3],   (i64)a.m[4],   (i64)a.m[5],   (i64)a.m[6],   (i64)a.m[7],   (i64)a.m[8],   (i64)a.m[9],   (i64)a.m[10],   (i64)a.m[11],   (i64)a.m[12],   (i64)a.m[13],   (i64)a.m[14],   (i64)a.m[15] }; return b; } \
-static inline struct FMat4F32 name##_to_fmat4f32(T a) { const struct FMat4F32 b = {   (f32)a.m[0],   (f32)a.m[1],   (f32)a.m[2],   (f32)a.m[3],   (f32)a.m[4],   (f32)a.m[5],   (f32)a.m[6],   (f32)a.m[7],   (f32)a.m[8],   (f32)a.m[9],   (f32)a.m[10],   (f32)a.m[11],   (f32)a.m[12],   (f32)a.m[13],   (f32)a.m[14],   (f32)a.m[15] }; return b; } \
-static inline struct FMat4F64 name##_to_fmat4f64(T a) { const struct FMat4F64 b = {   (f64)a.m[0],   (f64)a.m[1],   (f64)a.m[2],   (f64)a.m[3],   (f64)a.m[4],   (f64)a.m[5],   (f64)a.m[6],   (f64)a.m[7],   (f64)a.m[8],   (f64)a.m[9],   (f64)a.m[10],   (f64)a.m[11],   (f64)a.m[12],   (f64)a.m[13],   (f64)a.m[14],   (f64)a.m[15] }; return b; }
+static inline struct FMat4    name##_to_fmat4   (T a) { const struct FMat4    b = {{ (float)a.m[0], (float)a.m[1], (float)a.m[2], (float)a.m[3], (float)a.m[4], (float)a.m[5], (float)a.m[6], (float)a.m[7], (float)a.m[8], (float)a.m[9], (float)a.m[10], (float)a.m[11], (float)a.m[12], (float)a.m[13], (float)a.m[14], (float)a.m[15] }}; return b; } \
+static inline struct FMat4I   name##_to_fmat4i  (T a) { const struct FMat4I   b = {{   (int)a.m[0],   (int)a.m[1],   (int)a.m[2],   (int)a.m[3],   (int)a.m[4],   (int)a.m[5],   (int)a.m[6],   (int)a.m[7],   (int)a.m[8],   (int)a.m[9],   (int)a.m[10],   (int)a.m[11],   (int)a.m[12],   (int)a.m[13],   (int)a.m[14],   (int)a.m[15] }}; return b; } \
+static inline struct FMat4I32 name##_to_fmat4i32(T a) { const struct FMat4I32 b = {{   (i32)a.m[0],   (i32)a.m[1],   (i32)a.m[2],   (i32)a.m[3],   (i32)a.m[4],   (i32)a.m[5],   (i32)a.m[6],   (i32)a.m[7],   (i32)a.m[8],   (i32)a.m[9],   (i32)a.m[10],   (i32)a.m[11],   (i32)a.m[12],   (i32)a.m[13],   (i32)a.m[14],   (i32)a.m[15] }}; return b; } \
+static inline struct FMat4I64 name##_to_fmat4i64(T a) { const struct FMat4I64 b = {{   (i64)a.m[0],   (i64)a.m[1],   (i64)a.m[2],   (i64)a.m[3],   (i64)a.m[4],   (i64)a.m[5],   (i64)a.m[6],   (i64)a.m[7],   (i64)a.m[8],   (i64)a.m[9],   (i64)a.m[10],   (i64)a.m[11],   (i64)a.m[12],   (i64)a.m[13],   (i64)a.m[14],   (i64)a.m[15] }}; return b; } \
+static inline struct FMat4F32 name##_to_fmat4f32(T a) { const struct FMat4F32 b = {{   (f32)a.m[0],   (f32)a.m[1],   (f32)a.m[2],   (f32)a.m[3],   (f32)a.m[4],   (f32)a.m[5],   (f32)a.m[6],   (f32)a.m[7],   (f32)a.m[8],   (f32)a.m[9],   (f32)a.m[10],   (f32)a.m[11],   (f32)a.m[12],   (f32)a.m[13],   (f32)a.m[14],   (f32)a.m[15] }}; return b; } \
+static inline struct FMat4F64 name##_to_fmat4f64(T a) { const struct FMat4F64 b = {{   (f64)a.m[0],   (f64)a.m[1],   (f64)a.m[2],   (f64)a.m[3],   (f64)a.m[4],   (f64)a.m[5],   (f64)a.m[6],   (f64)a.m[7],   (f64)a.m[8],   (f64)a.m[9],   (f64)a.m[10],   (f64)a.m[11],   (f64)a.m[12],   (f64)a.m[13],   (f64)a.m[14],   (f64)a.m[15] }}; return b; }
 
-_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4,    fmat4);
-_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I,   fmat4i);
-_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I32, fmat4i32);
-_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I64, fmat4i64);
-_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F32, fmat4f32);
-_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F64, fmat4f64);
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4,    fmat4)
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I,   fmat4i)
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I32, fmat4i32)
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4I64, fmat4i64)
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F32, fmat4f32)
+_FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F64, fmat4f64)
 
 #undef _VEC2_FUNC_TEMPLATE_CAST
 #undef _VEC3_FUNC_TEMPLATE_CAST
