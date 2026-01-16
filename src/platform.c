@@ -10,10 +10,11 @@ int platform_init(u32 flags)
 {
     g_platform_state.flags = flags;
 
-    log_info("SDL Version : %d.%d.%d",
-        SDL_VERSIONNUM_MAJOR(SDL_VERSION),
-        SDL_VERSIONNUM_MINOR(SDL_VERSION),
-        SDL_VERSIONNUM_MICRO(SDL_VERSION));
+    log_info("Platform: %s", SDL_GetPlatform());
+    log_info("SDL Version: %d.%d.%d",
+        SDL_VERSIONNUM_MAJOR(SDL_GetVersion()),
+        SDL_VERSIONNUM_MINOR(SDL_GetVersion()),
+        SDL_VERSIONNUM_MICRO(SDL_GetVersion()));
 
     if (flags & PLATFORM_TIMER)
         time_init();

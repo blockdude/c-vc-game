@@ -51,25 +51,10 @@ int window_init(void)
     sdl_window_flags = SDL_WINDOW_OPENGL;
 #endif
 
-    if (g_win_state.flags & WINDOW_RESIZABLE)
-    {
-        sdl_window_flags |= SDL_WINDOW_RESIZABLE;
-    }
-
-    if (g_win_state.flags & WINDOW_FULLSCREEN)
-    {
-        sdl_window_flags |= SDL_WINDOW_FULLSCREEN;
-    }
-
-    if (g_win_state.flags & WINDOW_HIGHDPI)
-    {
-        sdl_window_flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
-    }
-
-    if (g_win_state.flags & WINDOW_RELATIVE_MOUSE)
-    {
-        sdl_window_flags |= SDL_WINDOW_MOUSE_RELATIVE_MODE;
-    }
+    sdl_window_flags |= (g_win_state.flags & WINDOW_RESIZABLE) ? SDL_WINDOW_RESIZABLE : 0;
+    sdl_window_flags |= (g_win_state.flags & WINDOW_FULLSCREEN) ? SDL_WINDOW_FULLSCREEN : 0;
+    sdl_window_flags |= (g_win_state.flags & WINDOW_HIGHDPI) ? SDL_WINDOW_HIGH_PIXEL_DENSITY : 0;
+    sdl_window_flags |= (g_win_state.flags & WINDOW_RELATIVE_MOUSE) ? SDL_WINDOW_MOUSE_RELATIVE_MODE : 0;
 
 #ifdef VCP_WINDOW_OPENGL
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -101,20 +86,18 @@ int window_init(void)
         goto cleanup;
     }
 
-    SDL_GL_SetSwapInterval(HASFLAG(g_win_state.flags, WINDOW_VSYNC) ? 1 : 0);
+    SDL_GL_SetSwapInterval((g_win_state.flags & WINDOW_VSYNC) ? 1 : 0);
 #endif
 
     g_win_state.id = SDL_GetWindowID(g_win_ctx.handle);
     g_win_state.initialized = true;
     g_win_state.keep_open = true;
 
-    log_info("Window ID   : %u", g_win_state.id);
-
 #ifdef VCP_WINDOW_OPENGL
-    log_info("Vendor      : %s", glGetString(GL_VENDOR));
-    log_info("Renderer    : %s", glGetString(GL_RENDERER));
-    log_info("GL Version  : %s", glGetString(GL_VERSION));
-    log_info("SL Version  : %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    log_info("Vendor: %s", glGetString(GL_VENDOR));
+    log_info("Renderer: %s", glGetString(GL_RENDERER));
+    log_info("GL Version: %s", glGetString(GL_VERSION));
+    log_info("SL Version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 #endif
 
     return 0;
