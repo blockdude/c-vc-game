@@ -117,7 +117,7 @@
 #define _SQRT sqrtf
 #define _ABS fabsf
 #define _MIN fminf
-#define _MAX fminf
+#define _MAX fmaxf
 #elif defined(LINEAR_ALGEBRA_F64)
 #define _FEQ _la_f64_equals
 #define _SIN sin
@@ -129,7 +129,7 @@
 #define _SQRT sqrt
 #define _ABS fabs
 #define _MIN fmin
-#define _MAX fmin
+#define _MAX fmax
 #endif
 
 // IF NO SPECIFIC IMPLEMENTATION IS DEFINED THEN DEFINE ALL OF THEM

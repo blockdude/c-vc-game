@@ -16,6 +16,7 @@ _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_V
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(len)(_VEC2_TYPE v);)
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(len_sq)(_VEC2_TYPE v);)
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(dot)(_VEC2_TYPE a, _VEC2_TYPE b);)
+_VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(cross)(_VEC2_TYPE a, _VEC2_TYPE b);)
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(dist)(_VEC2_TYPE a, _VEC2_TYPE b);)
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(dist_sq)(_VEC2_TYPE a, _VEC2_TYPE b);)
 _VEC2_FUNC_DECL                 (extern _FUNC_SPEC _VEC2_TYPE _FUNC_CONV _FUNC_VEC2(scale)(_VEC2_TYPE v, _BASE_TYPE scale);)
@@ -117,6 +118,14 @@ _VEC2_FUNC_IMPL(
 _FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(dot)(_VEC2_TYPE a, _VEC2_TYPE b)
 {
     _BASE_TYPE result = (a.x * b.x) + (a.y * b.y);
+    return result;
+})
+
+// Calculate two vectors cross product
+_VEC2_FUNC_IMPL(
+_FUNC_SPEC _BASE_TYPE _FUNC_CONV _FUNC_VEC2(cross)(_VEC2_TYPE a, _VEC2_TYPE b)
+{
+    _BASE_TYPE result = (a.x * b.y) - (a.y * b.x);
     return result;
 })
 
