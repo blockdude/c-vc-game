@@ -414,10 +414,10 @@ _FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F64, fmat4f64)
 
 struct Timestep
 {
-    f64 rate;      // current rate this frame
-    f64 ravg_rate; // running average of rate
-    f64 mavg_rate; // moving average of rate
-    u64 ps_rate;   // rate that updates once a second
+    u64 rate;
+    f64 instant_rate;
+    f64 running_average_rate;
+    f64 moving_average_rate;
     f64 delta;
     f64 target_delta;
     f64 target_rate;
@@ -426,12 +426,18 @@ struct Timestep
 
     struct
     {
-        u64 ps_count;
-        f64 timer;
-        u64 count;
+        // for fixedstep
+        f64 delta;
+        u64 instant_count;
         f64 elapsed;
+
+        // for timestep
         f64 current_time;
         f64 previous_time;
+
+        // for both
+        f64 timer;
+        u64 count;
         bool looping;
     } _private;
 };
