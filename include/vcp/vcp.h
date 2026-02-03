@@ -709,6 +709,8 @@ extern struct Keystate input_keystate(int key);
 extern struct Keystate input_btnstate(int btn);
 extern bool input_mouse_moved(void);
 extern struct Vec2 input_mouse_pos(void);
+extern struct Vec2 input_mouse_global_pos(void);
+extern struct Vec2 input_mouse_motion_pos(void); // position from last mouse motion
 extern struct Vec2 input_mouse_delta(void);
 extern struct Vec2 input_mouse_scroll(void);
 

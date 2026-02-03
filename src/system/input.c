@@ -426,6 +426,20 @@ bool input_mouse_moved(void)
 
 struct Vec2 input_mouse_pos(void)
 {
+    struct Vec2 res;
+    SDL_GetMouseState(&res.x, &res.y);
+    return res;
+}
+
+struct Vec2 input_mouse_global_pos(void)
+{
+    struct Vec2 res;
+    SDL_GetGlobalMouseState(&res.x, &res.y);
+    return res;
+}
+
+struct Vec2 input_mosue_motion_pos(void)
+{
     return g_input_state.m_pos_rel;
 }
 
