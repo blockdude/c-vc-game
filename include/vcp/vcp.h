@@ -682,11 +682,13 @@ enum InputButton
 {
     B_FIRST = 0,
 
-    B_LEFT = 0,
-    B_RIGHT = 1,
-    B_MIDDLE = 2,
-    B_FORWARD = 3,
-    B_BACK = 4,
+    B_NONE = 0,
+
+    B_LEFT = 1,
+    B_RIGHT = 2,
+    B_MIDDLE = 3,
+    B_FORWARD = 4,
+    B_BACK = 5,
 
     B_COUNT,
     B_LAST = B_COUNT - 1
@@ -703,8 +705,16 @@ struct Keystate
 extern int input_init(void);
 extern void input_deinit(void);
 extern void input_poll_events(void);
-extern int input_quit_event(void);
-extern int input_text(char *buffer, size_t buffer_size);
+extern bool input_quit_event(void);
+extern int input_text_size(void);
+extern char input_text(int i);
+extern int input_text_buffer(char *buffer, size_t buffer_size);
+extern int input_key_size(void);
+extern int input_btn_size(void);
+extern enum InputKey input_key(int i);
+extern enum InputButton input_btn(int i);
+extern int input_key_buffer(int *buffer, size_t buffer_size);
+extern int input_btn_buffer(int *buffer, size_t buffer_size);
 extern struct Keystate input_keystate(int key);
 extern struct Keystate input_btnstate(int btn);
 extern bool input_mouse_moved(void);

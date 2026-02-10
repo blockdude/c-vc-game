@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include "window.h"
 
+#define INPUT_HISTORY_LEN 64
+
 static const int keymap[SDL_SCANCODE_COUNT] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
 
@@ -148,6 +150,11 @@ static struct
     struct Vec2     m_pos_delta;
     bool            e_quit;
 
+    int             k_history_count;
+    int             m_history_count;
+    int             k_history[INPUT_HISTORY_LEN];
+    int             m_history[INPUT_HISTORY_LEN];
+
     int             text_input_ref_count;
     int             text_buffer_count;
     char            text_buffer[VCP_MAX_STRING_LEN];
@@ -247,6 +254,10 @@ void input_poll_events(void)
         input_text_end();
     }
 
+    // reset history count
+    g_input_state.k_history_count = 0;
+    g_input_state.m_history_count = 0;
+
     // reset text input
     memset(g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN);
     g_input_state.text_buffer_count = 0;
@@ -291,6 +302,8 @@ void input_poll_events(void)
 
             g_input_state.k_state[keymap[event.key.scancode]].pressed = true;
             g_input_state.k_state[keymap[event.key.scancode]].down = true;
+            g_input_state.k_history[g_input_state.k_history_count] = keymap[event.key.scancode];
+            g_input_state.k_history_count += (g_input_state.k_history_count < INPUT_HISTORY_LEN);
 
             break;
 
@@ -305,6 +318,8 @@ void input_poll_events(void)
 
             g_input_state.m_state[btnmap[event.button.button]].pressed = true;
             g_input_state.m_state[btnmap[event.button.button]].down = true;
+            g_input_state.m_history[g_input_state.m_history_count] = btnmap[event.button.button];
+            g_input_state.m_history_count += (g_input_state.m_history_count < INPUT_HISTORY_LEN);
 
             break;
 
@@ -355,12 +370,32 @@ void input_poll_events(void)
  * -----------------------------
  */
 
-int input_quit_event(void)
+bool input_quit_event(void)
 {
     return g_input_state.e_quit;
 }
 
-int input_text(char *buffer, size_t buffer_size)
+int input_text_size(void)
+{
+    return g_input_state.text_buffer_count;
+}
+
+char input_text(int i)
+{
+    g_input_state.text_input_ref_count += 1;
+    if (!input_text_active())
+    {
+        input_text_start();
+        return '\0';
+    }
+
+    if (i < 0 || i >= g_input_state.text_buffer_count)
+        return '\0';
+
+    return g_input_state.text_buffer[i];
+}
+
+int input_text_buffer(char *buffer, size_t buffer_size)
 {
     /*
     * I don't know if this is a good way to do it.
@@ -393,11 +428,14 @@ int input_text(char *buffer, size_t buffer_size)
     * the buffer excluding the null character. So
     * it should only ever return buffer_size - 1
     * at most. The output buffer should always be
-    * null terminated.
+    * null terminated. If the buffer is NULL then
+    * return the minimum size the buffer can be
+    * to fully contain the text minus the null
+    * character.
     */
 
     if ((buffer == NULL) || (buffer_size <= 0))
-        return 0;
+        return g_input_state.text_buffer_count;
 
     g_input_state.text_input_ref_count += 1;
     if (!input_text_active())
@@ -405,6 +443,52 @@ int input_text(char *buffer, size_t buffer_size)
 
     const int result = snprintf(buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer);
     return MIN(result, (int)buffer_size - 1);
+}
+
+int input_key_size(void)
+{
+    return g_input_state.k_history_count;
+}
+
+int input_btn_size(void)
+{
+    return g_input_state.m_history_count;
+}
+
+enum InputKey input_key(int i)
+{
+    if (i < 0 || i >= g_input_state.k_history_count)
+        return K_NONE;
+
+    return g_input_state.k_history[i];
+}
+
+enum InputButton input_btn(int i)
+{
+    if (i < 0 || i >= g_input_state.m_history_count)
+        return B_NONE;
+
+    return g_input_state.m_history[i];
+}
+
+int input_key_buffer(int *buffer, size_t buffer_size)
+{
+    if (buffer == NULL || buffer_size == 0)
+        return g_input_state.k_history_count;
+
+    const int count = MIN(g_input_state.k_history_count, buffer_size);
+    memcpy(buffer, g_input_state.k_history, sizeof(*buffer) * count);
+    return count;
+}
+
+int input_btn_buffer(int *buffer, size_t buffer_size)
+{
+    if (buffer == NULL || buffer_size == 0)
+        return g_input_state.m_history_count;
+
+    const int count = MIN(g_input_state.m_history_count, buffer_size);
+    memcpy(buffer, g_input_state.m_history, sizeof(*buffer) * count);
+    return count;
 }
 
 struct Keystate input_keystate(int key)
