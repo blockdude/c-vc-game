@@ -707,21 +707,23 @@ extern int input_init(void);
 extern void input_deinit(void);
 extern void input_poll_events(void);
 extern bool input_quit_event(void);
-extern int input_text_size(void);
-extern char input_text(int i);
-extern int input_text_buffer(char *buffer, size_t buffer_size);
-extern int input_key_size(void);
-extern int input_btn_size(void);
-extern enum InputKey input_key(int i);
-extern enum InputButton input_btn(int i);
-extern int input_key_buffer(enum InputKey *buffer, size_t buffer_size);
-extern int input_btn_buffer(enum InputButton *buffer, size_t buffer_size);
-extern struct InputState input_keystate(enum InputKey key);
-extern struct InputState input_btnstate(enum InputButton btn);
+extern int input_text_history_size(void);
+extern char input_text_history(int i);
+extern int input_text_history_buffer(char *buffer, size_t buffer_size);
+extern int input_key_history_size(void);
+extern int input_button_history_size(void);
+extern enum InputKey input_key_history(int i);
+extern enum InputButton input_button_history(int i);
+#define input_last_key_pressed() input_key_history(input_key_history_size() - 1)
+#define input_last_button_pressed() input_button_history(input_button_history_size() - 1)
+extern int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size);
+extern int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size);
+extern struct InputState input_key_state(enum InputKey key);
+extern struct InputState input_button_state(enum InputButton btn);
 extern bool input_mouse_moved(void);
-extern struct Vec2 input_mouse_pos(void);
-extern struct Vec2 input_mouse_global_pos(void);
-extern struct Vec2 input_mouse_motion_pos(void); // position from last mouse motion
+extern struct Vec2 input_mouse_position(void);
+extern struct Vec2 input_mouse_global_position(void);
+extern struct Vec2 input_mouse_motion_position(void); // position from last mouse motion
 extern struct Vec2 input_mouse_delta(void);
 extern struct Vec2 input_mouse_scroll(void);
 

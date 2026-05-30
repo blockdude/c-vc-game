@@ -375,12 +375,12 @@ bool input_quit_event(void)
     return g_input_state.e_quit;
 }
 
-int input_text_size(void)
+int input_text_history_size(void)
 {
     return g_input_state.text_buffer_count;
 }
 
-char input_text(int i)
+char input_text_history(int i)
 {
     g_input_state.text_input_ref_count += 1;
     if (!input_text_active())
@@ -395,7 +395,7 @@ char input_text(int i)
     return g_input_state.text_buffer[i];
 }
 
-int input_text_buffer(char *buffer, size_t buffer_size)
+int input_text_history_buffer(char *buffer, size_t buffer_size)
 {
     /*
     * I don't know if this is a good way to do it.
@@ -445,17 +445,17 @@ int input_text_buffer(char *buffer, size_t buffer_size)
     return MIN(result, (int)buffer_size - 1);
 }
 
-int input_key_size(void)
+int input_key_history_size(void)
 {
     return g_input_state.k_history_count;
 }
 
-int input_btn_size(void)
+int input_button_history_size(void)
 {
     return g_input_state.m_history_count;
 }
 
-enum InputKey input_key(int i)
+enum InputKey input_key_history(int i)
 {
     if (i < 0 || i >= g_input_state.k_history_count)
         return K_NONE;
@@ -463,7 +463,7 @@ enum InputKey input_key(int i)
     return g_input_state.k_history[i];
 }
 
-enum InputButton input_btn(int i)
+enum InputButton input_button_history(int i)
 {
     if (i < 0 || i >= g_input_state.m_history_count)
         return B_NONE;
@@ -471,7 +471,7 @@ enum InputButton input_btn(int i)
     return g_input_state.m_history[i];
 }
 
-int input_key_buffer(enum InputKey *buffer, size_t buffer_size)
+int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return g_input_state.k_history_count;
@@ -481,7 +481,7 @@ int input_key_buffer(enum InputKey *buffer, size_t buffer_size)
     return count;
 }
 
-int input_btn_buffer(enum InputButton *buffer, size_t buffer_size)
+int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return g_input_state.m_history_count;
@@ -491,16 +491,18 @@ int input_btn_buffer(enum InputButton *buffer, size_t buffer_size)
     return count;
 }
 
-struct InputState input_keystate(enum InputKey key)
+struct InputState input_key_state(enum InputKey key)
 {
-    assert((key >= 0) && (key < K_COUNT));
-    return g_input_state.k_state[key];
+    size_t index = (size_t)key;
+    assert((index >= 0) && (index < K_COUNT));
+    return g_input_state.k_state[index];
 }
 
-struct InputState input_btnstate(enum InputButton button)
+struct InputState input_button_state(enum InputButton button)
 {
-    assert((button >= 0) && (button < B_COUNT));
-    return g_input_state.m_state[button];
+    size_t index = (size_t)button;
+    assert((index >= 0) && (index < B_COUNT));
+    return g_input_state.m_state[index];
 }
 
 bool input_mouse_moved(void)
@@ -508,21 +510,21 @@ bool input_mouse_moved(void)
     return g_input_state.m_moved;
 }
 
-struct Vec2 input_mouse_pos(void)
+struct Vec2 input_mouse_position(void)
 {
     struct Vec2 res;
     SDL_GetMouseState(&res.x, &res.y);
     return res;
 }
 
-struct Vec2 input_mouse_global_pos(void)
+struct Vec2 input_mouse_global_position(void)
 {
     struct Vec2 res;
     SDL_GetGlobalMouseState(&res.x, &res.y);
     return res;
 }
 
-struct Vec2 input_mouse_motion_pos(void)
+struct Vec2 input_mouse_motion_position(void)
 {
     return g_input_state.m_pos_rel;
 }
