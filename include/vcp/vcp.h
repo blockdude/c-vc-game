@@ -24,6 +24,7 @@ extern "C" {
 // TYPES
 // -----------------------------
 
+
 typedef int8_t i8;
 typedef int16_t i16;
 typedef int32_t i32;
@@ -694,7 +695,7 @@ enum InputButton
     B_LAST = B_COUNT - 1
 };
 
-struct Keystate
+struct InputState
 {
     bool down : 1;
     bool pressed : 1;
@@ -713,10 +714,10 @@ extern int input_key_size(void);
 extern int input_btn_size(void);
 extern enum InputKey input_key(int i);
 extern enum InputButton input_btn(int i);
-extern int input_key_buffer(int *buffer, size_t buffer_size);
-extern int input_btn_buffer(int *buffer, size_t buffer_size);
-extern struct Keystate input_keystate(int key);
-extern struct Keystate input_btnstate(int btn);
+extern int input_key_buffer(enum InputKey *buffer, size_t buffer_size);
+extern int input_btn_buffer(enum InputButton *buffer, size_t buffer_size);
+extern struct InputState input_keystate(enum InputKey key);
+extern struct InputState input_btnstate(enum InputButton btn);
 extern bool input_mouse_moved(void);
 extern struct Vec2 input_mouse_pos(void);
 extern struct Vec2 input_mouse_global_pos(void);

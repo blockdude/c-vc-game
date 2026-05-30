@@ -1,7 +1,7 @@
 #include <vcp/vcp.h>
 #include <SDL3/SDL.h>
 
-struct
+static struct
 {
     u32 flags;
 } g_platform_state = { 0 };

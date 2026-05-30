@@ -5,7 +5,7 @@
 
 #define INPUT_HISTORY_LEN 64
 
-static const int keymap[SDL_SCANCODE_COUNT] = {
+static const enum InputKey key_map[SDL_SCANCODE_COUNT] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
 
     0, 0, 0,
@@ -129,7 +129,7 @@ static const int keymap[SDL_SCANCODE_COUNT] = {
     K_RMETA,          // SDL_SCANCODE_RGUI
 };
 
-static const int btnmap[] = {
+static const enum InputButton button_map[] = {
     0,
     B_LEFT,           // SDL_BUTTON_LEFT
     B_MIDDLE,         // SDL_BUTTON_MIDDLE
@@ -140,24 +140,24 @@ static const int btnmap[] = {
 
 static struct
 {
-    bool         	initialized;
-    struct Keystate k_state[K_COUNT];
-    struct Keystate m_state[B_COUNT];
-    bool         	m_moved;
-    struct Vec2     m_wheel;
-    struct Vec2     m_pos_rel;
-    struct Vec2     m_pos_global;
-    struct Vec2     m_pos_delta;
-    bool            e_quit;
+    bool         	    initialized;
+    struct InputState   k_state[K_COUNT];
+    struct InputState   m_state[B_COUNT];
+    bool         	    m_moved;
+    struct Vec2         m_wheel;
+    struct Vec2         m_pos_rel;
+    struct Vec2         m_pos_global;
+    struct Vec2         m_pos_delta;
+    bool                e_quit;
 
-    int             k_history_count;
-    int             m_history_count;
-    int             k_history[INPUT_HISTORY_LEN];
-    int             m_history[INPUT_HISTORY_LEN];
+    int                 k_history_count;
+    int                 m_history_count;
+    enum InputKey       k_history[INPUT_HISTORY_LEN];
+    enum InputButton    m_history[INPUT_HISTORY_LEN];
 
-    int             text_input_ref_count;
-    int             text_buffer_count;
-    char            text_buffer[VCP_MAX_STRING_LEN];
+    int                 text_input_ref_count;
+    int                 text_buffer_count;
+    char                text_buffer[VCP_MAX_STRING_LEN];
 } g_input_state = { 0 };
 
 
@@ -300,33 +300,33 @@ void input_poll_events(void)
 
         case SDL_EVENT_KEY_DOWN:
 
-            g_input_state.k_state[keymap[event.key.scancode]].pressed = true;
-            g_input_state.k_state[keymap[event.key.scancode]].down = true;
-            g_input_state.k_history[g_input_state.k_history_count] = keymap[event.key.scancode];
+            g_input_state.k_state[key_map[event.key.scancode]].pressed = true;
+            g_input_state.k_state[key_map[event.key.scancode]].down = true;
+            g_input_state.k_history[g_input_state.k_history_count] = key_map[event.key.scancode];
             g_input_state.k_history_count += (g_input_state.k_history_count < INPUT_HISTORY_LEN);
 
             break;
 
         case SDL_EVENT_KEY_UP:
 
-            g_input_state.k_state[keymap[event.key.scancode]].down = false;
-            g_input_state.k_state[keymap[event.key.scancode]].released = true;
+            g_input_state.k_state[key_map[event.key.scancode]].down = false;
+            g_input_state.k_state[key_map[event.key.scancode]].released = true;
 
             break;
 
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-            g_input_state.m_state[btnmap[event.button.button]].pressed = true;
-            g_input_state.m_state[btnmap[event.button.button]].down = true;
-            g_input_state.m_history[g_input_state.m_history_count] = btnmap[event.button.button];
+            g_input_state.m_state[button_map[event.button.button]].pressed = true;
+            g_input_state.m_state[button_map[event.button.button]].down = true;
+            g_input_state.m_history[g_input_state.m_history_count] = button_map[event.button.button];
             g_input_state.m_history_count += (g_input_state.m_history_count < INPUT_HISTORY_LEN);
 
             break;
 
         case SDL_EVENT_MOUSE_BUTTON_UP:
 
-            g_input_state.m_state[btnmap[event.button.button]].down = false;
-            g_input_state.m_state[btnmap[event.button.button]].released = true;
+            g_input_state.m_state[button_map[event.button.button]].down = false;
+            g_input_state.m_state[button_map[event.button.button]].released = true;
 
             break;
 
@@ -471,7 +471,7 @@ enum InputButton input_btn(int i)
     return g_input_state.m_history[i];
 }
 
-int input_key_buffer(int *buffer, size_t buffer_size)
+int input_key_buffer(enum InputKey *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return g_input_state.k_history_count;
@@ -481,7 +481,7 @@ int input_key_buffer(int *buffer, size_t buffer_size)
     return count;
 }
 
-int input_btn_buffer(int *buffer, size_t buffer_size)
+int input_btn_buffer(enum InputButton *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return g_input_state.m_history_count;
@@ -491,16 +491,16 @@ int input_btn_buffer(int *buffer, size_t buffer_size)
     return count;
 }
 
-struct Keystate input_keystate(int key)
+struct InputState input_keystate(enum InputKey key)
 {
     assert((key >= 0) && (key < K_COUNT));
     return g_input_state.k_state[key];
 }
 
-struct Keystate input_btnstate(int btn)
+struct InputState input_btnstate(enum InputButton button)
 {
-    assert((btn >= 0) && (btn < B_COUNT));
-    return g_input_state.m_state[btn];
+    assert((button >= 0) && (button < B_COUNT));
+    return g_input_state.m_state[button];
 }
 
 bool input_mouse_moved(void)
@@ -522,7 +522,7 @@ struct Vec2 input_mouse_global_pos(void)
     return res;
 }
 
-struct Vec2 input_mosue_motion_pos(void)
+struct Vec2 input_mouse_motion_pos(void)
 {
     return g_input_state.m_pos_rel;
 }
