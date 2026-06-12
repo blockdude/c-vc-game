@@ -8,11 +8,6 @@
 #define TIMESTEP_TIME_NOW time_now_s
 #define TIMESTEP_TIME_WAIT time_wait_s
 
-static inline f64 compute_rate(u64 n, f64 d)
-{
-    return (f64)(u64)((n + d / 2) / d);
-}
-
 static inline f64 stiffness(f64 dt)
 {
     if (dt > 0.012) // 60fps
@@ -54,18 +49,18 @@ void timestep_set_rate(struct Timestep *timestep, f64 rate)
     timestep->target_rate = rate;
 }
 
-static inline bool _timestep_can_proc(struct Timestep *timestep)
+static inline bool timestep_can_proc(struct Timestep *timestep)
 {
     return timestep->target_delta >= 0.0;
 }
 
-static inline void _timestep_prefix(struct Timestep *timestep)
+static inline void timestep_prefix(struct Timestep *timestep)
 {
     timestep->_private.current_time = TIMESTEP_TIME_NOW();
     timestep->_private.previous_time = timestep->_private.current_time;
 }
 
-static inline void _timestep_postfix(struct Timestep *timestep)
+static inline void timestep_postfix(struct Timestep *timestep)
 {
     timestep->_private.current_time = TIMESTEP_TIME_NOW();
     timestep->delta = timestep->_private.current_time - timestep->_private.previous_time;
@@ -109,7 +104,7 @@ bool timestep_tick(struct Timestep *timestep)
     */
     if (timestep->_private.looping == false)
     {
-        _timestep_prefix(timestep);
+        timestep_prefix(timestep);
         timestep->_private.looping = true;
     }
 
@@ -118,13 +113,13 @@ bool timestep_tick(struct Timestep *timestep)
     */
     else
     {
-        _timestep_postfix(timestep);
+        timestep_postfix(timestep);
     }
 
     /*
     * condition
     */
-    if (_timestep_can_proc(timestep))
+    if (timestep_can_proc(timestep))
     {
         return true;
     }
@@ -146,7 +141,7 @@ bool timestep_tick(struct Timestep *timestep)
 // TIMESTEP_FIXED
 // ==============================
 
-static inline void _fixedstep_prefix(struct Timestep *timestep, f64 delta_time)
+static inline void fixedstep_prefix(struct Timestep *timestep, f64 delta_time)
 {
     if (timestep->_private.timer >= 1.0)
     {
@@ -171,12 +166,12 @@ static inline void _fixedstep_prefix(struct Timestep *timestep, f64 delta_time)
     timestep->_private.instant_count = 0;
 }
 
-static inline bool _fixedstep_can_proc(struct Timestep *timestep)
+static inline bool fixedstep_can_proc(struct Timestep *timestep)
 {
     return (timestep->target_delta > 0.0) && (timestep->target_delta <= timestep->delta);
 }
 
-static inline void _fixedstep_postfix(struct Timestep *timestep)
+static inline void fixedstep_postfix(struct Timestep *timestep)
 {
     timestep->count += 1;
     timestep->delta -= timestep->target_delta;
@@ -196,7 +191,7 @@ bool fixedstep_tick(struct Timestep *timestep, f64 delta_time)
     */
     if (timestep->_private.looping == false)
     {
-        _fixedstep_prefix(timestep, delta_time);
+        fixedstep_prefix(timestep, delta_time);
         timestep->_private.looping = true;
     }
 
@@ -205,13 +200,13 @@ bool fixedstep_tick(struct Timestep *timestep, f64 delta_time)
     */
     else
     {
-        _fixedstep_postfix(timestep);
+        fixedstep_postfix(timestep);
     }
 
     /*
     * condition
     */
-    if (_fixedstep_can_proc(timestep))
+    if (fixedstep_can_proc(timestep))
     {
         return true;
     }
