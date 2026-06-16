@@ -1,22 +1,38 @@
-Created By: Anthony Cobb  
-Date Created: 2-17-22  
+# VCPlatform
 
-VCPlatform. A small wrapper/framework library built around SDL used for personal app and game development.
+A C17 static library wrapping SDL3 and OpenGL for game and app development.
 
-## TODO
-* Finish implementing util data structures ( not important )
-    - state machine
-    - linkedlist
-    - quadtree
-    - map
-* Redo dynamic array list to be less macro heavy
-* Cleanup kdtree to be more inlined with how I structure code now
-    - For kdtree I mainly want to just update it to make it clearer
-      and finish implimenting the rest of the funcitonality
-* Make a simple 2d graphics library with SDL renderer and one for opengl
-* Create a mesh_render function that renders the mesh after you
-  have uploaded it to the gpu so you don't have to call glDraw
-  directly.
-* Unit tests for math and util
-* Go through code and make everything const if we can
-    - I want the default variable to be const from now on
+## Dependencies
+
+Vendored in `extern/`:
+
+| Library | Purpose |
+|---------|---------|
+| [SDL3](https://github.com/libsdl-org/SDL) | Windowing, input, audio, timing |
+| [glad](https://glad.sh/) | OpenGL 4.6 core loader |
+| [stb](https://github.com/nothings/stb) | Image loading |
+| [tol](https://github.com/syoyo/tinyobjloader-c) | Tiny OBJ loader |
+
+## Build
+
+### CMake (primary, Windows)
+
+```sh
+cmake -S . -B build
+cmake --build build
+```
+
+## Modules
+
+| Module | Path | Description |
+|--------|------|-------------|
+| platform | `src/platform.c` | Init/deinit lifecycle |
+| window | `src/system/window.c` | SDL window + OpenGL context |
+| input | `src/system/input.c` | Keyboard, mouse, text input |
+| audio | `src/system/audio.c` | SDL audio output |
+| time | `src/system/time.c` | High-resolution timing |
+| math | `src/math/math.c` | Vec2/3/4, quat, mat4, shapes |
+| shader | `src/graphics/shader.c` | GLSL shader compilation/linking, VAO/VBO |
+| camera | `src/util/camera.c` | 3D camera (proj/view) |
+| timestep | `src/util/timestep.c` | Fixed/variable timestep |
+| log | `src/util/log.c` | Logging with callbacks |
