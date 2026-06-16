@@ -5,7 +5,7 @@ Code element             | Convention        | Example
 Defines                  | UPPER_SNAKE_CASE  | `#define PLATFORM_DESKTOP`
 Macros                   | UPPER_SNAKE_CASE  | `#define MIN(a, b) (((a) < (b)) ? (a) : (b))`
 Variables                | snake_case        | `int screen_width = 0;`, `float target_frame_time = 0.016f;`
-Local variables          | snake_case        | `struct vec2 player_position = { 0 };`
+Local variables          | snake_case        | `struct Vec2 player_position = { 0 };`
 Global variables         | g_snake_case      | `bool g_fullscreen = false;`
 Constants                | snake_case        | `const int max_value = 8;`
 Pointers                 | Type *pointer     | `int *array = NULL;`
@@ -14,19 +14,19 @@ Operators *              | value1 * value2   | `int product = value * 6;`
 Operators /              | value1 / value2   | `int division = value / 4;`
 Operators +              | value1 + value2   | `int sum = value + 10;`
 Operators -              | value1 - value2   | `int diff = value - 5;`
-Enum                     | snake_case        | `enum texture_format`
+Enum                     | PascalCase        | `enum TextureFormat`
 Enum members             | UPPER_SNAKE_CASE  | `PIXELFORMAT_UNCOMPRESSED_R8G8B8`
-Struct                   | snake_case        | `struct vec2_f32`, `struct material`
-Struct typedef           | snake_case_t      | `typedef struct texture { ... } texture_t;`
-Function pointer typedef | snake_case_fn     | `typedef void (*foo_fn)(void *, int);`
+Struct                   | PascalCase        | `struct Vec2F32`, `struct Material`
+Struct typedef           | PascalCase        | `typedef struct Texture { ... } Texture;`
+Function pointer typedef | PascalCaseFn      | `typedef void (*FooFn)(void *, int);`
 Struct members           | snake_case        | `texture.width`, `color.r`
 Functions                | snake_case        | `init_window()`, `load_image_from_memory()`
-Functions params         | snake_case        | `width`, `height`
+Functions params         | snake_case        | `window_width`, `window_height`
 Ternary Operator         | condition ? a : b | `printf("Value is 0: %s", value == 0 ? "yes" : "no");`
 
 Other conventions:
  - All defined variables default modifier should be const
- - All defined variables are ALWAYS initialized
+ - Avoid not initializing defined variables
  - Avoid typedef-ing structures and enums
  - Four spaces are used, instead of TABS
  - Trailing spaces are always avoided
@@ -34,26 +34,18 @@ Other conventions:
  - Type modifiers always go before the type
  - Type qualifiers always go before the type and/or type modifiers, obviously excluding type qualifiers for pointers which must go on the right of the pointer
  - Storage class specifiers are always specified before any type qualifiers, type modifiers, and/or type
- - Try and follow const correctness but not for function parameters
- - Casts should have not be followed by a space:
+ - Try and follow const correctness
+ - Casts should not be followed by a space:
 ```c
 int foo = 10;
 i32 val = (i32)foo;
 f32 bar = (f32)(foo / val);
 ```
- - Function prototypes and implementations with no parameters must put "void" as the parameter:
-```c
-extern void foo(void);
-void foo(void)
-{
-    // do something
-}
-```
- - Function prototypes always explicitly state extern:
+ - Function prototypes avoid explicitly stating extern:
 ```c
 // header.h
-extern void foo(void);
-extern void bar(int b);
+void foo(void);
+void bar(int b);
 
 // source.c
 void foo(void)
@@ -66,10 +58,18 @@ void bar(int b)
     // do something else
 }
 ```
+ - Function prototypes and implementations with no parameters must put "void" as the parameter:
+```c
+void foo(void);
+void foo(void)
+{
+    // do something
+}
+```
  - Function prototypes should specify pointer parameters as const if the function does not modify data (readonly):
 ```c
-extern void foo(const char *in, char *out); // "in" will not be modified
-extern void bar(char *data); // "data" will be modified
+void foo(const char *in, char *out); // "in" will not be modified
+void bar(char *data); // "data" will be modified
 ```
  - All statements within parenthesis or brakets should NOT have a space:
 ```c
@@ -141,13 +141,43 @@ void some_function(void)
    // TODO: Do something here!
 }
 
-struct foo_bar
+struct FooBar
 {
     int a;
     int b;
     char buffer[256];
 };
 ```
+
+## C++ Coding Style Conventions
+
+Code element             | Convention        | Example
+---                      | :---:             | ---
+Struct / Enum class      | PascalCase        | `struct Entity`, `enum struct ItemID : u16`
+Enum members             | UPPER_SNAKE_CASE  | `ItemID::STONE`, `TileLayer::TERRAIN`
+Functions / Methods      | snake_case        | `EntityPlayer::update()`
+Private members          | _snake_case       | `_state`, `_items`, `_move`
+Constants                | UPPER_SNAKE_CASE  | `COLOR_WHITE`, `TICKRATE`
+Pointers                 | Type *name        | `Entity *target`
+References               | Type &name        | `World &world`
+
+Other conventions:
+  - Never use the `class` keyword — always `struct`
+  - `override` on all overridden virtual methods; don't repeat `virtual`
+  - `const` methods when the function doesn't modify the object: `void draw() const`
+  - `constexpr` preferred over `#define` for constants
+  - Use `enum struct` (not `enum class`)
+  - `explicit` on single-argument constructors to prevent implicit conversions
+  - `nullptr` over `NULL` or `0` for null pointers
+  - Default member initializers preferred over constructor init lists: `Vec2 _move = vec2_zero()`
+  - RAII — avoid raw `new`/`delete`; use `std::unique_ptr`, containers, or stack allocation
+  - `auto` for range-based for loops and when the type is obvious from context
+  - No `using namespace std`; type aliases with `using` are acceptable
+  - Include order: own header first, then standard, then project headers (using quotes)
+  - Include guards: same as C — `#ifndef` / `#define` / `#endif`
+  - Access sections: `public:` / `protected:` / `private:` explicit where needed
+  - `= default` for explicitly-defaulted special member functions
+  - Avoid runtime exceptions (try / catch / throw)
 
 ## Files and Directories Naming Conventions
 
