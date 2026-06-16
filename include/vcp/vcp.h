@@ -401,10 +401,10 @@ struct Timestep
     } _private;
 };
 
-extern struct Timestep timestep_create(f64 rate);
-extern void timestep_set_rate(struct Timestep *timestep, f64 rate);
-extern bool timestep_tick(struct Timestep *timestep);
-extern bool fixedstep_tick(struct Timestep *timestep, f64 delta_time);
+struct Timestep timestep_create(f64 rate);
+void timestep_set_rate(struct Timestep *timestep, f64 rate);
+bool timestep_tick(struct Timestep *timestep);
+bool fixedstep_tick(struct Timestep *timestep, f64 delta_time);
 
 // =============================
 
@@ -446,13 +446,13 @@ enum LogLevel
 #define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 #define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
 
-extern const char *log_level_string(int level);
-extern void log_set_lock(LogLockFn fn, void *udata);
-extern void log_set_level(int level);
-extern void log_set_quiet(bool enable);
-extern int log_add_callback(LogLogFn fn, void *udata, int level);
-extern int log_add_fp(FILE *fp, int level);
-extern void log_log(int level, const char *file, int line, const char *fmt, ...);
+const char *log_level_string(int level);
+void log_set_lock(LogLockFn fn, void *udata);
+void log_set_level(int level);
+void log_set_quiet(bool enable);
+int log_add_callback(LogLogFn fn, void *udata, int level);
+int log_add_fp(FILE *fp, int level);
+void log_log(int level, const char *file, int line, const char *fmt, ...);
 
 // =============================
 
@@ -472,8 +472,8 @@ enum PlatformFlag
     PLATFORM_NETWORK = 0x10 // TODO?
 };
 
-extern int platform_init(u32 flags);
-extern void platform_deinit(void);
+int platform_init(u32 flags);
+void platform_deinit(void);
 
 // =============================
 
@@ -489,30 +489,30 @@ extern void platform_deinit(void);
 #define TIME_TICKS_PER_US 1000
 #define TIME_TICKS_PER_NS 1
 
-extern int time_init(void);
-extern void time_deinit(void);
+int time_init(void);
+void time_deinit(void);
 
-extern u64 time_now(void);
-extern f64 time_now_s(void);
-extern f64 time_now_ms(void);
-extern f64 time_now_us(void);
-extern f64 time_now_ns(void);
+u64 time_now(void);
+f64 time_now_s(void);
+f64 time_now_ms(void);
+f64 time_now_us(void);
+f64 time_now_ns(void);
 
-extern void time_wait(u64 ticks);
-extern void time_wait_s(f64 s);
-extern void time_wait_ms(f64 ms);
-extern void time_wait_us(f64 us);
-extern void time_wait_ns(f64 ns);
+void time_wait(u64 ticks);
+void time_wait_s(f64 s);
+void time_wait_ms(f64 ms);
+void time_wait_us(f64 us);
+void time_wait_ns(f64 ns);
 
-extern u64 time_stot(f64 s);
-extern u64 time_mstot(f64 ms);
-extern u64 time_ustot(f64 us);
-extern u64 time_nstot(f64 ns);
+u64 time_stot(f64 s);
+u64 time_mstot(f64 ms);
+u64 time_ustot(f64 us);
+u64 time_nstot(f64 ns);
 
-extern f64 time_ttos(u64 ticks);
-extern f64 time_ttoms(u64 ticks);
-extern f64 time_ttous(u64 ticks);
-extern f64 time_ttons(u64 ticks);
+f64 time_ttos(u64 ticks);
+f64 time_ttoms(u64 ticks);
+f64 time_ttous(u64 ticks);
+f64 time_ttons(u64 ticks);
 
 // =============================
 
@@ -532,26 +532,26 @@ enum WindowFlag
     WINDOW_HIGHDPI = 0x10
 };
 
-extern int window_init(void);
-extern void window_deinit(void);
-extern void window_swap_buffer(void);
-extern bool window_keep_open(void);
-extern void window_request_close(void);
-extern struct Extent window_size(void);
-extern int window_width(void);
-extern int window_height(void);
-extern float window_aspect(void);
-extern const char *window_title(void);
-extern u32 window_flags(void);
-extern bool window_flag_state(u32 flag);
-extern u32 window_id(void);
-extern void *window_handle(void);
-extern void window_set_size(int w, int h);
-extern void window_set_title(const char *title);
-extern void window_set_flags(u32 flags, bool state);
-extern void window_toggle_flags(u32 flags);
-extern void window_enable_flags(u32 flags);
-extern void window_disable_flags(u32 flags);
+int window_init(void);
+void window_deinit(void);
+void window_swap_buffer(void);
+bool window_keep_open(void);
+void window_request_close(void);
+struct Extent window_size(void);
+int window_width(void);
+int window_height(void);
+float window_aspect(void);
+const char *window_title(void);
+u32 window_flags(void);
+bool window_flag_state(u32 flag);
+u32 window_id(void);
+void *window_handle(void);
+void window_set_size(int w, int h);
+void window_set_title(const char *title);
+void window_set_flags(u32 flags, bool state);
+void window_toggle_flags(u32 flags);
+void window_enable_flags(u32 flags);
+void window_disable_flags(u32 flags);
 
 // =============================
 
@@ -661,29 +661,29 @@ struct InputState
     bool repeated : 1;
 };
 
-extern int input_init(void);
-extern void input_deinit(void);
-extern void input_poll_events(bool capture_text);
-extern bool input_quit_event(void);
-extern int input_text_history_size(void);
-extern char input_text_history(int i);
-extern int input_text_history_buffer(char *buffer, size_t buffer_size);
-extern int input_key_history_size(void);
-extern int input_button_history_size(void);
-extern enum InputKey input_key_history(int i);
-extern enum InputButton input_button_history(int i);
+int input_init(void);
+void input_deinit(void);
+void input_poll_events(bool capture_text);
+bool input_quit_event(void);
+int input_text_history_size(void);
+char input_text_history(int i);
+int input_text_history_buffer(char *buffer, size_t buffer_size);
+int input_key_history_size(void);
+int input_button_history_size(void);
+enum InputKey input_key_history(int i);
+enum InputButton input_button_history(int i);
 #define input_last_key_pressed() input_key_history(input_key_history_size() - 1)
 #define input_last_button_pressed() input_button_history(input_button_history_size() - 1)
-extern int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size);
-extern int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size);
-extern struct InputState input_key_state(enum InputKey key);
-extern struct InputState input_button_state(enum InputButton btn);
-extern bool input_mouse_moved(void);
-extern struct Vec2 input_mouse_position(void);
-extern struct Vec2 input_mouse_global_position(void);
-extern struct Vec2 input_mouse_motion_position(void); // position from last mouse motion
-extern struct Vec2 input_mouse_delta(void);
-extern struct Vec2 input_mouse_scroll(void);
+int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size);
+int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size);
+struct InputState input_key_state(enum InputKey key);
+struct InputState input_button_state(enum InputButton btn);
+bool input_mouse_moved(void);
+struct Vec2 input_mouse_position(void);
+struct Vec2 input_mouse_global_position(void);
+struct Vec2 input_mouse_motion_position(void); // position from last mouse motion
+struct Vec2 input_mouse_delta(void);
+struct Vec2 input_mouse_scroll(void);
 
 // =============================
 
@@ -694,8 +694,8 @@ extern struct Vec2 input_mouse_scroll(void);
 // AUDIO (todo)
 // -----------------------------
 
-extern int audio_init(void);
-extern void audio_deinit(void);
+int audio_init(void);
+void audio_deinit(void);
 
 // =============================
 
@@ -728,16 +728,16 @@ struct Camera
     float zoom;
 };
 
-extern void camera_init(struct Camera *camera, int type);
-extern void camera_move(struct Camera *camera, struct Vec3 direction, float dist);
-extern void camera_forward(struct Camera *camera, float dist);
-extern void camera_up(struct Camera *camera, float dist);
-extern void camera_right(struct Camera *camera, float dist);
-extern void camera_pitch(struct Camera *camera, float angle);
-extern void camera_yaw(struct Camera *camera, float angle);
-extern void camera_roll(struct Camera *camera, float angle);
-extern struct Mat4 camera_proj(const struct Camera *camera, float aspect, float near, float far);
-extern struct Mat4 camera_view(const struct Camera *camera);
+void camera_init(struct Camera *camera, int type);
+void camera_move(struct Camera *camera, struct Vec3 direction, float dist);
+void camera_forward(struct Camera *camera, float dist);
+void camera_up(struct Camera *camera, float dist);
+void camera_right(struct Camera *camera, float dist);
+void camera_pitch(struct Camera *camera, float angle);
+void camera_yaw(struct Camera *camera, float angle);
+void camera_roll(struct Camera *camera, float angle);
+struct Mat4 camera_proj(const struct Camera *camera, float aspect, float near, float far);
+struct Mat4 camera_view(const struct Camera *camera);
 
 // =============================
 

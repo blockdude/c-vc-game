@@ -31,25 +31,25 @@ enum ShaderStatus
     SHADER_INVALID_FILE_PATH = 4,
 };
 
-extern struct VBO vbo_create(GLint type, bool dyn);
-extern void vbo_free(struct VBO self);
-extern void vbo_bind(struct VBO self);
-extern void vbo_buff(struct VBO self, const void *data, size_t n);
+struct VBO vbo_create(GLint type, bool dyn);
+void vbo_free(struct VBO self);
+void vbo_bind(struct VBO self);
+void vbo_buff(struct VBO self, const void *data, size_t n);
 //void vbo_sub_buff(void *data, size_t offset, size_t n);
-extern struct VAO vao_create(void);
-extern void vao_free(struct VAO self);
-extern void vao_bind(struct VAO self);
-extern void vao_attr(struct VAO self, struct VBO vbo, GLuint index, GLint size, GLenum type, GLsizei stride, size_t offset);
-extern struct Shader shader_loadf(const char *vspath, const char *fspath);
-extern struct Shader shader_load(const char *vstext, const char *fstext);
-extern void shader_free(struct Shader self);
-extern void shader_bind(struct Shader self);
-extern void shader_uniform_mat4(struct Shader self, const char *name, struct Mat4 m);
-extern void shader_uniform_float(struct Shader self, const char *name, float f);
-extern void shader_uniform_vec2(struct Shader self, const char *name, struct Vec2 v);
-extern void shader_uniform_vec3(struct Shader self, const char *name, struct Vec3 v);
-extern void shader_uniform_vec4(struct Shader self, const char *name, struct Vec4 v);
-extern void shader_uniform_int(struct Shader self, const char *name, int v);
-extern void shader_uniform_uint(struct Shader self, const char *name, unsigned int v);
+struct VAO vao_create(void);
+void vao_free(struct VAO self);
+void vao_bind(struct VAO self);
+void vao_attr(struct VAO self, struct VBO vbo, GLuint index, GLint size, GLenum type, GLsizei stride, size_t offset);
+struct Shader shader_loadf(const char *vspath, const char *fspath);
+struct Shader shader_load(const char *vstext, const char *fstext);
+void shader_free(struct Shader self);
+void shader_bind(struct Shader self);
+void shader_uniform_mat4(struct Shader self, const char *name, struct Mat4 m);
+void shader_uniform_float(struct Shader self, const char *name, float f);
+void shader_uniform_vec2(struct Shader self, const char *name, struct Vec2 v);
+void shader_uniform_vec3(struct Shader self, const char *name, struct Vec3 v);
+void shader_uniform_vec4(struct Shader self, const char *name, struct Vec4 v);
+void shader_uniform_int(struct Shader self, const char *name, int v);
+void shader_uniform_uint(struct Shader self, const char *name, unsigned int v);
 
 #endif
