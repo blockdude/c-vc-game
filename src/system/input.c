@@ -157,7 +157,7 @@ static struct
 
     int                 text_buffer_count;
     char                text_buffer[VCP_MAX_STRING_LEN];
-} g_input_state = { 0 };
+} state = { 0 };
 
 
 
@@ -176,18 +176,18 @@ int input_init(void)
         return -1;
     }
 
-    memset(&g_input_state, 0, sizeof(g_input_state));
-    g_input_state.initialized = true;
+    memset(&state, 0, sizeof(state));
+    state.initialized = true;
     return 0;
 }
 
 void input_deinit(void)
 {
-    if (g_input_state.initialized == false)
+    if (state.initialized == false)
         return;
 
     SDL_QuitSubSystem(SDL_INIT_EVENTS);
-    g_input_state.initialized = false;
+    state.initialized = false;
 }
 
 /*
@@ -221,31 +221,31 @@ void input_poll_events(bool capture_text)
     // reset keys
     for (int i = 0; i < K_COUNT; i++)
     {
-        g_input_state.k_state[i].pressed = false;
-        g_input_state.k_state[i].released = false;
+        state.k_state[i].pressed = false;
+        state.k_state[i].released = false;
     }
 
     // reset mouse buttons
     for (int i = 0; i < B_COUNT; i++)
     {
-        g_input_state.m_state[i].pressed = false;
-        g_input_state.m_state[i].released = false;
+        state.m_state[i].pressed = false;
+        state.m_state[i].released = false;
     }
 
     // reset history count
-    g_input_state.k_history_count = 0;
-    g_input_state.m_history_count = 0;
+    state.k_history_count = 0;
+    state.m_history_count = 0;
 
     // reset text input
-    memset(g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN);
-    g_input_state.text_buffer_count = 0;
+    memset(state.text_buffer, 0, VCP_MAX_STRING_LEN);
+    state.text_buffer_count = 0;
 
     // reset mouse events
-    g_input_state.m_moved = false;
-    g_input_state.m_wheel.x = 0;
-    g_input_state.m_wheel.y = 0;
-    g_input_state.m_pos_delta.x = 0;
-    g_input_state.m_pos_delta.y = 0;
+    state.m_moved = false;
+    state.m_wheel.x = 0;
+    state.m_wheel.y = 0;
+    state.m_pos_delta.x = 0;
+    state.m_pos_delta.y = 0;
 
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -254,7 +254,7 @@ void input_poll_events(bool capture_text)
         if (event.type == SDL_EVENT_QUIT)
         {
             window_request_close();
-            g_input_state.e_quit = true;
+            state.e_quit = true;
             return;
         }
 
@@ -277,57 +277,57 @@ void input_poll_events(bool capture_text)
 
         case SDL_EVENT_KEY_DOWN:
 
-            g_input_state.k_state[key_map[event.key.scancode]].pressed = true;
-            g_input_state.k_state[key_map[event.key.scancode]].down = true;
-            g_input_state.k_history[g_input_state.k_history_count] = key_map[event.key.scancode];
-            g_input_state.k_history_count += (g_input_state.k_history_count < INPUT_HISTORY_LEN);
+            state.k_state[key_map[event.key.scancode]].pressed = true;
+            state.k_state[key_map[event.key.scancode]].down = true;
+            state.k_history[state.k_history_count] = key_map[event.key.scancode];
+            state.k_history_count += (state.k_history_count < INPUT_HISTORY_LEN);
 
             break;
 
         case SDL_EVENT_KEY_UP:
 
-            g_input_state.k_state[key_map[event.key.scancode]].down = false;
-            g_input_state.k_state[key_map[event.key.scancode]].released = true;
+            state.k_state[key_map[event.key.scancode]].down = false;
+            state.k_state[key_map[event.key.scancode]].released = true;
 
             break;
 
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
 
-            g_input_state.m_state[button_map[event.button.button]].pressed = true;
-            g_input_state.m_state[button_map[event.button.button]].down = true;
-            g_input_state.m_history[g_input_state.m_history_count] = button_map[event.button.button];
-            g_input_state.m_history_count += (g_input_state.m_history_count < INPUT_HISTORY_LEN);
+            state.m_state[button_map[event.button.button]].pressed = true;
+            state.m_state[button_map[event.button.button]].down = true;
+            state.m_history[state.m_history_count] = button_map[event.button.button];
+            state.m_history_count += (state.m_history_count < INPUT_HISTORY_LEN);
 
             break;
 
         case SDL_EVENT_MOUSE_BUTTON_UP:
 
-            g_input_state.m_state[button_map[event.button.button]].down = false;
-            g_input_state.m_state[button_map[event.button.button]].released = true;
+            state.m_state[button_map[event.button.button]].down = false;
+            state.m_state[button_map[event.button.button]].released = true;
 
             break;
 
         case SDL_EVENT_MOUSE_WHEEL:
 
-            g_input_state.m_wheel.x += event.wheel.x;
-            g_input_state.m_wheel.y += event.wheel.y;
+            state.m_wheel.x += event.wheel.x;
+            state.m_wheel.y += event.wheel.y;
 
             break;
 
         case SDL_EVENT_MOUSE_MOTION:
 
-            g_input_state.m_pos_rel.x = event.motion.x;
-            g_input_state.m_pos_rel.y = event.motion.y;
-            g_input_state.m_pos_delta.x += event.motion.xrel;
-            g_input_state.m_pos_delta.y += event.motion.yrel;
-            g_input_state.m_moved = true;
+            state.m_pos_rel.x = event.motion.x;
+            state.m_pos_rel.y = event.motion.y;
+            state.m_pos_delta.x += event.motion.xrel;
+            state.m_pos_delta.y += event.motion.yrel;
+            state.m_moved = true;
 
             break;
 
         case SDL_EVENT_TEXT_INPUT:
 
-            g_input_state.text_buffer_count += snprintf(&g_input_state.text_buffer[g_input_state.text_buffer_count], VCP_MAX_STRING_LEN - g_input_state.text_buffer_count, "%s", event.text.text);
-            g_input_state.text_buffer_count = MIN(g_input_state.text_buffer_count, VCP_MAX_STRING_LEN - 1);
+            state.text_buffer_count += snprintf(&state.text_buffer[state.text_buffer_count], VCP_MAX_STRING_LEN - state.text_buffer_count, "%s", event.text.text);
+            state.text_buffer_count = MIN(state.text_buffer_count, VCP_MAX_STRING_LEN - 1);
 
             break;
         }
@@ -349,20 +349,20 @@ void input_poll_events(bool capture_text)
 
 bool input_quit_event(void)
 {
-    return g_input_state.e_quit;
+    return state.e_quit;
 }
 
 int input_text_history_size(void)
 {
-    return g_input_state.text_buffer_count;
+    return state.text_buffer_count;
 }
 
 char input_text_history(int i)
 {
-    if (i < 0 || i >= g_input_state.text_buffer_count)
+    if (i < 0 || i >= state.text_buffer_count)
         return '\0';
 
-    return g_input_state.text_buffer[i];
+    return state.text_buffer[i];
 }
 
 int input_text_history_buffer(char *buffer, size_t buffer_size)
@@ -379,55 +379,55 @@ int input_text_history_buffer(char *buffer, size_t buffer_size)
     */
 
     if ((buffer == NULL) || (buffer_size <= 0))
-        return g_input_state.text_buffer_count;
+        return state.text_buffer_count;
 
-    const int result = snprintf(buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer);
+    const int result = snprintf(buffer, buffer_size, "%.*s", state.text_buffer_count, state.text_buffer);
     return MIN(result, (int)buffer_size - 1);
 }
 
 int input_key_history_size(void)
 {
-    return g_input_state.k_history_count;
+    return state.k_history_count;
 }
 
 int input_button_history_size(void)
 {
-    return g_input_state.m_history_count;
+    return state.m_history_count;
 }
 
 enum InputKey input_key_history(int i)
 {
-    if (i < 0 || i >= g_input_state.k_history_count)
+    if (i < 0 || i >= state.k_history_count)
         return K_NONE;
 
-    return g_input_state.k_history[i];
+    return state.k_history[i];
 }
 
 enum InputButton input_button_history(int i)
 {
-    if (i < 0 || i >= g_input_state.m_history_count)
+    if (i < 0 || i >= state.m_history_count)
         return B_NONE;
 
-    return g_input_state.m_history[i];
+    return state.m_history[i];
 }
 
 int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
-        return g_input_state.k_history_count;
+        return state.k_history_count;
 
-    const int count = MIN(g_input_state.k_history_count, buffer_size);
-    memcpy(buffer, g_input_state.k_history, sizeof(*buffer) * count);
+    const int count = MIN(state.k_history_count, buffer_size);
+    memcpy(buffer, state.k_history, sizeof(*buffer) * count);
     return count;
 }
 
 int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
-        return g_input_state.m_history_count;
+        return state.m_history_count;
 
-    const int count = MIN(g_input_state.m_history_count, buffer_size);
-    memcpy(buffer, g_input_state.m_history, sizeof(*buffer) * count);
+    const int count = MIN(state.m_history_count, buffer_size);
+    memcpy(buffer, state.m_history, sizeof(*buffer) * count);
     return count;
 }
 
@@ -435,19 +435,19 @@ struct InputState input_key_state(enum InputKey key)
 {
     size_t index = (size_t)key;
     assert((index >= 0) && (index < K_COUNT));
-    return g_input_state.k_state[index];
+    return state.k_state[index];
 }
 
 struct InputState input_button_state(enum InputButton button)
 {
     size_t index = (size_t)button;
     assert((index >= 0) && (index < B_COUNT));
-    return g_input_state.m_state[index];
+    return state.m_state[index];
 }
 
 bool input_mouse_moved(void)
 {
-    return g_input_state.m_moved;
+    return state.m_moved;
 }
 
 struct Vec2 input_mouse_position(void)
@@ -466,17 +466,17 @@ struct Vec2 input_mouse_global_position(void)
 
 struct Vec2 input_mouse_motion_position(void)
 {
-    return g_input_state.m_pos_rel;
+    return state.m_pos_rel;
 }
 
 struct Vec2 input_mouse_delta(void)
 {
-    return g_input_state.m_pos_delta;
+    return state.m_pos_delta;
 }
 
 struct Vec2 input_mouse_scroll(void)
 {
-    return g_input_state.m_wheel;
+    return state.m_wheel;
 }
 
 /*

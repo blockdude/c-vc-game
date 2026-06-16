@@ -4,7 +4,7 @@
 static struct
 {
     bool initialized;
-} g_audio_state = { 0 };
+} state = { 0 };
 
 /*
  * =============================
@@ -21,17 +21,17 @@ int audio_init(void)
         return -1;
     }
 
-    g_audio_state.initialized = true;
+    state.initialized = true;
     return 0;
 }
 
 void audio_deinit(void)
 {
-    if (g_audio_state.initialized == false)
+    if (state.initialized == false)
         return;
 
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
-    g_audio_state.initialized = false;
+    state.initialized = false;
 }
 
 /*

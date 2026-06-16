@@ -4,11 +4,11 @@
 static struct
 {
     u32 flags;
-} g_platform_state = { 0 };
+} state = { 0 };
 
 int platform_init(u32 flags)
 {
-    g_platform_state.flags = flags;
+    state.flags = flags;
 
     log_info("Platform: %s", SDL_GetPlatform());
     log_info("SDL Version: %d.%d.%d",
@@ -38,5 +38,5 @@ void platform_deinit(void)
     audio_deinit();
     window_deinit();
     SDL_Quit();
-    g_platform_state.flags = 0;
+    state.flags = 0;
 }

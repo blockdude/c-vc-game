@@ -4,7 +4,7 @@
 static struct
 {
     bool initialized;
-} g_timer_state = { 0 };
+} state = { 0 };
 
 /*
  * =============================
@@ -15,16 +15,16 @@ static struct
 
 int time_init(void)
 {
-    g_timer_state.initialized = true;
+    state.initialized = true;
     return 0;
 }
 
 void time_deinit(void)
 {
-    if (g_timer_state.initialized == false)
+    if (state.initialized == false)
         return;
 
-    g_timer_state.initialized = false;
+    state.initialized = false;
 }
 
 /*
