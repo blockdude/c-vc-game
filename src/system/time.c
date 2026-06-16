@@ -84,9 +84,7 @@ f64 time_now_ns(void)
 
 void time_wait(u64 ticks)
 {
-    const u64 stop_time = time_now() + ticks;
-    SDL_Delay((Uint32)((ticks - (u64)(ticks * 0.1)) / 1000000));
-    while (time_now() < stop_time);
+    SDL_DelayPrecise(ticks);
 }
 
 void time_wait_s(f64 s)

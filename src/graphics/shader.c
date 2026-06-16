@@ -1,3 +1,5 @@
+#include "shader.h"
+
 #include <vcp/vcp.h>
 #include <stdio.h>
 #include <stdlib.h>

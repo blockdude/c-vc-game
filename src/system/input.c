@@ -155,38 +155,9 @@ static struct
     enum InputKey       k_history[INPUT_HISTORY_LEN];
     enum InputButton    m_history[INPUT_HISTORY_LEN];
 
-    int                 text_input_ref_count;
     int                 text_buffer_count;
     char                text_buffer[VCP_MAX_STRING_LEN];
 } g_input_state = { 0 };
-
-
-
-/*
- * =============================
- * -----------------------------
- * INTERNAL UTILITY
- * -----------------------------
- */
-
-static inline bool input_text_active(void)
-{
-    return SDL_TextInputActive((SDL_Window *)window_handle());
-}
-
-static inline bool input_text_start(void)
-{
-    return SDL_StartTextInput((SDL_Window *)window_handle());
-}
-
-static inline bool input_text_end(void)
-{
-    return SDL_StopTextInput((SDL_Window *)window_handle());
-}
-
-/*
- * =============================
- */
 
 
 
@@ -232,8 +203,21 @@ void input_deinit(void)
  * -----------------------------
  */
 
-void input_poll_events(void)
+void input_poll_events(bool capture_text)
 {
+    SDL_Window *window = (SDL_Window *)window_handle();
+    bool is_capture_text_active = SDL_TextInputActive(window);
+
+    // handle text input
+    if (capture_text && !is_capture_text_active)
+    {
+        SDL_StartTextInput(window);
+    }
+    else if (!capture_text && is_capture_text_active)
+    {
+        SDL_StopTextInput(window);
+    }
+
     // reset keys
     for (int i = 0; i < K_COUNT; i++)
     {
@@ -248,12 +232,6 @@ void input_poll_events(void)
         g_input_state.m_state[i].released = false;
     }
 
-    // stop text input if we can
-    if (g_input_state.text_input_ref_count <= 0 && input_text_active())
-    {
-        input_text_end();
-    }
-
     // reset history count
     g_input_state.k_history_count = 0;
     g_input_state.m_history_count = 0;
@@ -261,7 +239,6 @@ void input_poll_events(void)
     // reset text input
     memset(g_input_state.text_buffer, 0, VCP_MAX_STRING_LEN);
     g_input_state.text_buffer_count = 0;
-    g_input_state.text_input_ref_count = 0;
 
     // reset mouse events
     g_input_state.m_moved = false;
@@ -349,7 +326,7 @@ void input_poll_events(void)
 
         case SDL_EVENT_TEXT_INPUT:
 
-            g_input_state.text_buffer_count += snprintf(&g_input_state.text_buffer[g_input_state.text_buffer_count], VCP_MAX_STRING_LEN, "%s", event.text.text);
+            g_input_state.text_buffer_count += snprintf(&g_input_state.text_buffer[g_input_state.text_buffer_count], VCP_MAX_STRING_LEN - g_input_state.text_buffer_count, "%s", event.text.text);
             g_input_state.text_buffer_count = MIN(g_input_state.text_buffer_count, VCP_MAX_STRING_LEN - 1);
 
             break;
@@ -382,13 +359,6 @@ int input_text_history_size(void)
 
 char input_text_history(int i)
 {
-    g_input_state.text_input_ref_count += 1;
-    if (!input_text_active())
-    {
-        input_text_start();
-        return '\0';
-    }
-
     if (i < 0 || i >= g_input_state.text_buffer_count)
         return '\0';
 
@@ -398,32 +368,6 @@ char input_text_history(int i)
 int input_text_history_buffer(char *buffer, size_t buffer_size)
 {
     /*
-    * I don't know if this is a good way to do it.
-    * I would rather input_text_active be true
-    * at startup rather than be true after a call
-    * to this function.
-    *
-    * When this is called for the first time, the
-    * buffer will always be empty and this will
-    * return zero. So text input can only be
-    * retrieved after this has been called once
-    * before input_poll_events then after
-    * input_poll_events. It has no relation to
-    * keystates. If a keystate is pressed or down
-    * there is no garentee that this will fill
-    * the buffer with that keystate.
-    *
-    * This feels hacky but I guess it is fine for
-    * now. Actually now that im thinking about it
-    * it may be good that it does not capture
-    * text input in the frame that this is
-    * called.
-    *
-    * Note: consider putting input_text_start and
-    * input_text_end in the public api so it
-    * would basically act as a wrapper of the sdl
-    * functions.
-    * 
     * Returns: the number of characters copied to
     * the buffer excluding the null character. So
     * it should only ever return buffer_size - 1
@@ -436,10 +380,6 @@ int input_text_history_buffer(char *buffer, size_t buffer_size)
 
     if ((buffer == NULL) || (buffer_size <= 0))
         return g_input_state.text_buffer_count;
-
-    g_input_state.text_input_ref_count += 1;
-    if (!input_text_active())
-        return input_text_start() ? 0 : -1;
 
     const int result = snprintf(buffer, buffer_size, "%.*s", g_input_state.text_buffer_count, g_input_state.text_buffer);
     return MIN(result, (int)buffer_size - 1);

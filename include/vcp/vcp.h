@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
-#include <glad/gl.h>
 
 #define VCP_MAX_STRING_LEN 128
 #define VCP_VERSION_MAJOR 0
@@ -94,7 +93,6 @@ struct RectangleF64 _RECTANGLE_TEMPLATE(f64);
 
 struct Color     _COLOR_TEMPLATE(u8);
 struct ColorF    _COLOR_TEMPLATE(float);
-struct ColorU8   _COLOR_TEMPLATE(u8);
 struct ColorU16  _COLOR_TEMPLATE(u16);
 struct ColorF32  _COLOR_TEMPLATE(f32);
 struct ColorF64  _COLOR_TEMPLATE(f64);
@@ -177,7 +175,7 @@ struct FMat4F64 _FMAT4_TEMPLATE(f64);
 
 #include "_internal/linear_algebra.h"
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 
 #undef MIN
 #undef MAX
@@ -235,12 +233,7 @@ _MATH_FUNC_TEMPLATE_FLOAT_EQUALS(f64, float64, fabs, fmax)
 
 static inline u32 rgba8888_to_uint32(u8 r, u8 g, u8 b, u8 a)
 {
-    u32 result = 0;
-    result = (result | r) << 24;
-    result = (result | g) << 16;
-    result = (result | b) << 8;
-    result = (result | a) << 0;
-    return result;
+    return ((u32)r << 24) | ((u32)g << 16) | ((u32)b << 8) | (u32)a;
 }
 
 static inline struct ColorF colorf_mix(struct ColorF a, struct ColorF b, float ratio)
@@ -670,7 +663,7 @@ struct InputState
 
 extern int input_init(void);
 extern void input_deinit(void);
-extern void input_poll_events(void);
+extern void input_poll_events(bool capture_text);
 extern bool input_quit_event(void);
 extern int input_text_history_size(void);
 extern char input_text_history(int i);
@@ -745,63 +738,6 @@ extern void camera_yaw(struct Camera *camera, float angle);
 extern void camera_roll(struct Camera *camera, float angle);
 extern struct Mat4 camera_proj(const struct Camera *camera, float aspect, float near, float far);
 extern struct Mat4 camera_view(const struct Camera *camera);
-
-// =============================
-
-
-
-// =============================
-// -----------------------------
-// OPENGL STUFF
-// -----------------------------
-
-struct VBO
-{
-    GLuint handle;
-    GLint type;
-    bool dyn;
-};
-
-struct VAO
-{
-    GLuint handle;
-};
-
-struct Shader
-{
-    GLuint handle;
-    int status;
-};
-
-enum ShaderStatus
-{
-    SHADER_SUCCESS = 0,
-    SHADER_VS_COMPILE_ERROR = 1,
-    SHADER_FS_COMPILE_ERROR = 2,
-    SHADER_PROGRAM_LINKING_ERROR = 3,
-    SHADER_INVALID_FILE_PATH = 4,
-};
-
-extern struct VBO vbo_create(GLint type, bool dyn);
-extern void vbo_free(struct VBO self);
-extern void vbo_bind(struct VBO self);
-extern void vbo_buff(struct VBO self, const void *data, size_t n);
-//void vbo_sub_buff(void *data, size_t offset, size_t n);
-extern struct VAO vao_create(void);
-extern void vao_free(struct VAO self);
-extern void vao_bind(struct VAO self);
-extern void vao_attr(struct VAO self, struct VBO vbo, GLuint index, GLint size, GLenum type, GLsizei stride, size_t offset);
-extern struct Shader shader_loadf(const char *vspath, const char *fspath);
-extern struct Shader shader_load(const char *vstext, const char *fstext);
-extern void shader_free(struct Shader self);
-extern void shader_bind(struct Shader self);
-extern void shader_uniform_mat4(struct Shader self, const char *name, struct Mat4 m);
-extern void shader_uniform_float(struct Shader self, const char *name, float f);
-extern void shader_uniform_vec2(struct Shader self, const char *name, struct Vec2 v);
-extern void shader_uniform_vec3(struct Shader self, const char *name, struct Vec3 v);
-extern void shader_uniform_vec4(struct Shader self, const char *name, struct Vec4 v);
-extern void shader_uniform_int(struct Shader self, const char *name, int v);
-extern void shader_uniform_uint(struct Shader self, const char *name, unsigned int v);
 
 // =============================
 

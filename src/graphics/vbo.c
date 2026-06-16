@@ -1,4 +1,4 @@
-#include <vcp/vcp.h>
+#include "shader.h"
 
 struct VBO vbo_create(GLint type, bool dyn)
 {
