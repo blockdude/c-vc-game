@@ -40,7 +40,7 @@ static struct
     int level;
     bool quiet;
     struct Callback callbacks[MAX_CALLBACKS];
-} L;
+} state;
 
 
 static const char *const level_strings[] = {
@@ -116,13 +116,13 @@ static void file_callback(struct LogEvent *ev)
 
 static void lock(void)
 {
-    if (L.lock) { L.lock(true, L.udata); }
+    if (state.lock) { state.lock(true, state.udata); }
 }
 
 
 static void unlock(void)
 {
-    if (L.lock) { L.lock(false, L.udata); }
+    if (state.lock) { state.lock(false, state.udata); }
 }
 
 
@@ -134,20 +134,20 @@ const char *log_level_string(int level)
 
 void log_set_lock(LogLockFn fn, void *udata)
 {
-    L.lock = fn;
-    L.udata = udata;
+    state.lock = fn;
+    state.udata = udata;
 }
 
 
 void log_set_level(int level)
 {
-    L.level = level;
+    state.level = level;
 }
 
 
 void log_set_quiet(bool enable)
 {
-    L.quiet = enable;
+    state.quiet = enable;
 }
 
 
@@ -155,9 +155,9 @@ int log_add_callback(LogLogFn fn, void *udata, int level)
 {
     for (int i = 0; i < MAX_CALLBACKS; i++)
     {
-        if (!L.callbacks[i].fn)
+        if (!state.callbacks[i].fn)
         {
-            L.callbacks[i] = (struct Callback){ fn, udata, level };
+            state.callbacks[i] = (struct Callback){ fn, udata, level };
             return 0;
         }
     }
@@ -193,7 +193,7 @@ void log_log(int level, const char *file, int line, const char *fmt, ...)
 
     lock();
 
-    if (!L.quiet && level >= L.level)
+    if (!state.quiet && level >= state.level)
     {
         init_event(&ev, stderr);
         va_start(ev.ap, fmt);
@@ -201,9 +201,9 @@ void log_log(int level, const char *file, int line, const char *fmt, ...)
         va_end(ev.ap);
     }
 
-    for (int i = 0; i < MAX_CALLBACKS && L.callbacks[i].fn; i++)
+    for (int i = 0; i < MAX_CALLBACKS && state.callbacks[i].fn; i++)
     {
-        struct Callback *cb = &L.callbacks[i];
+        struct Callback *cb = &state.callbacks[i];
         if (level >= cb->level)
         {
             init_event(&ev, cb->udata);
