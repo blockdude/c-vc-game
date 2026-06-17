@@ -41,11 +41,11 @@ set_property(TARGET platform PROPERTY C_STANDARD 17)
 include(CTest)
 
 add_executable(test-platform
-	"test/test-all.c"
+	"tests/test-all.c"
 )
 target_include_directories(test-platform PRIVATE
 	${platform_include}
-	"test"
+	"tests"
 )
 target_link_libraries(test-platform PRIVATE
 	platform
