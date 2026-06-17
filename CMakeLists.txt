@@ -36,3 +36,20 @@ add_library(platform STATIC ${platform_sources} ${glad_sources})
 target_include_directories(platform PUBLIC ${platform_include} ${glad_include})
 target_link_libraries(platform PUBLIC SDL3::SDL3)
 set_property(TARGET platform PROPERTY C_STANDARD 17)
+
+# --- Tests ---
+include(CTest)
+
+add_executable(test-platform
+	"test/test-all.c"
+)
+target_include_directories(test-platform PRIVATE
+	${platform_include}
+	"test"
+)
+target_link_libraries(test-platform PRIVATE
+	platform
+	SDL3::SDL3
+)
+set_property(TARGET test-platform PROPERTY C_STANDARD 17)
+add_test(NAME test-platform COMMAND test-platform)

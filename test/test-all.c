@@ -1,8 +1,9 @@
 #undef INSTANTIATE_MAIN
-#include "test-kdtree.c"
-#include "test-list.c"
-#include "test-mesh.c"
-#include "test-util.c"
+#include "test-vec2.c"
+#include "test-vec3.c"
+#include "test-mat4.c"
+#include "test-quat.c"
+#include "test-timestep.c"
 #define INSTANTIATE_MAIN
 
 #ifdef INSTANTIATE_MAIN
