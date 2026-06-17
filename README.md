@@ -4,7 +4,7 @@ A C17 static library wrapping SDL3 and OpenGL for game and app development.
 
 ## Dependencies
 
-Vendored in `extern/`:
+External modules in `extern/`:
 
 | Library | Purpose |
 |---------|---------|
