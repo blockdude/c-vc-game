@@ -12,6 +12,7 @@ Vendored in `extern/`:
 | [glad](https://glad.sh/) | OpenGL 4.6 core loader |
 | [stb](https://github.com/nothings/stb) | Image loading |
 | [tol](https://github.com/syoyo/tinyobjloader-c) | Tiny OBJ loader |
+| [utest](https://github.com/sheredom/utest.h) | Unit test framework (in `test/`) |
 
 ## Build
 
