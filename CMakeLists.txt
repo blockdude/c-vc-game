@@ -10,7 +10,7 @@ set(platform_include "include")
 set(platform_headers
 	"include/vcp/vcp.h")
 
-set(stb_source "${CMAKE_CURRENT_BINARY_DIR}/generated/stb.c")
+set(stb_source "${CMAKE_CURRENT_BINARY_DIR}/generated/stb.generated.c")
 file(WRITE ${stb_source}
 	"#define STB_IMAGE_IMPLEMENTATION\n"     "#include \"stb_image.h\"\n"
 	"#define STB_PERLIN_IMPLEMENTATION\n"    "#include \"stb_perlin.h\"\n"
