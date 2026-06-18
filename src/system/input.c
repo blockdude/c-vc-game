@@ -445,6 +445,16 @@ struct InputState input_button_state(enum InputButton button)
     return state.m_state[index];
 }
 
+void input_warp_mouse(float x, float y)
+{
+    SDL_WarpMouseInWindow(window_handle(), x, y);
+}
+
+void input_warp_mouse_global(float x, float y)
+{
+    SDL_WarpMouseGlobal(x, y);
+}
+
 bool input_mouse_moved(void)
 {
     return state.m_moved;

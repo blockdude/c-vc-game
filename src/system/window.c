@@ -276,7 +276,6 @@ void window_set_flags(u32 flags, bool enabled)
 
     if (flags & WINDOW_RELATIVE_MOUSE)
     {
-        SDL_WarpMouseInWindow(state.handle, state.width / 2.0f, state.height / 2.0f);
         SDL_SetWindowRelativeMouseMode(state.handle, enabled);
     }
 

@@ -678,6 +678,8 @@ int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size);
 int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size);
 struct InputState input_key_state(enum InputKey key);
 struct InputState input_button_state(enum InputButton btn);
+void input_warp_mouse(float x, float y); // moves mouse to position in window
+void input_warp_mouse_global(float x, float y);
 bool input_mouse_moved(void);
 struct Vec2 input_mouse_position(void);
 struct Vec2 input_mouse_global_position(void);
