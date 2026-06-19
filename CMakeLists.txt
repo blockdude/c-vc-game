@@ -24,6 +24,7 @@ set(platform_sources
 	"src/time.c"
 	"src/window.c"
 	"src/timestep.c"
+	"src/clock.c"
 	"src/log.c"
 	"src/platform.c")
 

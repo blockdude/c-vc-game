@@ -412,6 +412,55 @@ bool fixedstep_tick(struct Timestep *timestep, f64 delta_time);
 
 // =============================
 // -----------------------------
+// CLOCK
+// -----------------------------
+
+struct FrameClock
+{
+    f64 delta;
+    f64 interval;
+    f64 now;
+    f64 last;
+};
+
+struct FixedClock
+{
+    f64 accumulator;
+    f64 interval;
+};
+
+struct ClockStats
+{
+    u64 count;
+    u64 rate;
+    f64 elapsed;
+    f64 instant_rate;
+    f64 running_average_rate;
+    f64 moving_average_rate;
+    f64 timer;
+    u64 timer_count;
+};
+
+struct FrameClock frame_clock_create(f64 rate);
+void frame_clock_start(struct FrameClock *fc);
+void frame_clock_wait(struct FrameClock *fc);
+void frame_clock_tick(struct FrameClock *fc);
+void frame_clock_set_rate(struct FrameClock *fc, f64 rate);
+
+struct FixedClock fixed_clock_create(f64 rate);
+void fixed_clock_accumulate(struct FixedClock *sc, f64 dt);
+bool fixed_clock_consume(struct FixedClock *sc);
+f64 fixed_clock_alpha(struct FixedClock *sc);
+
+void clock_stats_sample_frame(struct ClockStats *s, struct FrameClock *fc);
+void clock_stats_sample_step(struct ClockStats *s, struct FixedClock *sc, int ticks);
+
+// =============================
+
+
+
+// =============================
+// -----------------------------
 // LOGGING
 // -----------------------------
 
