@@ -9,11 +9,11 @@ struct FrameClock frame_clock_create(f64 rate)
 
 void frame_clock_start(struct FrameClock *fc)
 {
-    fc->last = fc->now;
-    fc->now = time_now_s();
+    fc->last += fc->delta;
+    f64 now = time_now_s();
     if (fc->last == 0.0)
-        fc->last = fc->now;
-    fc->delta = fc->now - fc->last;
+        fc->last = now;
+    fc->delta = now - fc->last;
 }
 
 void frame_clock_wait(struct FrameClock *fc)
@@ -21,8 +21,7 @@ void frame_clock_wait(struct FrameClock *fc)
     if (fc->delta < fc->interval)
     {
         time_wait_s(fc->interval - fc->delta);
-        fc->now = time_now_s();
-        fc->delta = fc->now - fc->last;
+        fc->delta = time_now_s() - fc->last;
     }
 }
 

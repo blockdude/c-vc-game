@@ -374,7 +374,6 @@ struct FrameClock
 {
     f64 delta;
     f64 interval;
-    f64 now;
     f64 last;
 };
 
