@@ -448,6 +448,7 @@ void frame_clock_tick(struct FrameClock *fc);
 void frame_clock_set_rate(struct FrameClock *fc, f64 rate);
 
 struct FixedClock fixed_clock_create(f64 rate);
+void fixed_clock_set_rate(struct FixedClock *sc, f64 rate);
 void fixed_clock_accumulate(struct FixedClock *sc, f64 dt);
 bool fixed_clock_consume(struct FixedClock *sc);
 f64 fixed_clock_alpha(struct FixedClock *sc);

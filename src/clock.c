@@ -44,6 +44,11 @@ struct FixedClock fixed_clock_create(f64 rate)
     return sc;
 }
 
+void fixed_clock_set_rate(struct FixedClock *sc, f64 rate)
+{
+    sc->interval = (rate > 0.0) ? 1.0 / rate : 1.0 / 60.0;
+}
+
 void fixed_clock_accumulate(struct FixedClock *sc, f64 dt)
 {
     sc->accumulator += dt;
