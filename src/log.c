@@ -28,7 +28,7 @@
 
 struct Callback
 {
-    LogLogFn fn;
+    LogCallbackFn fn;
     void *udata;
     int level;
 };
@@ -151,7 +151,7 @@ void log_set_quiet(bool enable)
 }
 
 
-int log_add_callback(LogLogFn fn, void *udata, int level)
+int log_add_callback(LogCallbackFn fn, void *udata, int level)
 {
     for (int i = 0; i < MAX_CALLBACKS; i++)
     {
