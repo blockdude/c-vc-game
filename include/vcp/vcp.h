@@ -453,8 +453,8 @@ void fixed_clock_accumulate(struct FixedClock *sc, f64 dt);
 bool fixed_clock_consume(struct FixedClock *sc);
 f64 fixed_clock_alpha(struct FixedClock *sc);
 
-void clock_stats_sample_frame(struct ClockStats *s, struct FrameClock *fc);
-void clock_stats_sample_step(struct ClockStats *s, struct FixedClock *sc, int ticks);
+void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc);
+void clock_stats_sample_step(struct ClockStats *s, const struct FixedClock *sc, int ticks);
 
 // =============================
 

@@ -69,7 +69,7 @@ f64 fixed_clock_alpha(struct FixedClock *sc)
     return sc->accumulator / sc->interval;
 }
 
-void clock_stats_sample_frame(struct ClockStats *s, struct FrameClock *fc)
+void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc)
 {
     if (!s || !fc)
         return;
@@ -96,7 +96,7 @@ void clock_stats_sample_frame(struct ClockStats *s, struct FrameClock *fc)
     s->moving_average_rate = (s->instant_rate * stiff) + (s->moving_average_rate * (1.0 - stiff));
 }
 
-void clock_stats_sample_step(struct ClockStats *s, struct FixedClock *sc, int ticks)
+void clock_stats_sample_step(struct ClockStats *s, const struct FixedClock *sc, int ticks)
 {
     if (!s || !sc || ticks <= 0)
         return;
