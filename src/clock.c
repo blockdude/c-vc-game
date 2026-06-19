@@ -69,42 +69,12 @@ f64 fixed_clock_alpha(struct FixedClock *sc)
     return sc->accumulator / sc->interval;
 }
 
-void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc)
+static inline void
+clock_stats_update(struct ClockStats *s, u64 count, f64 elapsed, f64 instant_rate)
 {
-    if (!s || !fc)
-        return;
-
-    s->count++;
-    s->elapsed += fc->delta;
-    s->instant_rate = 1.0 / fc->delta;
-
-    s->timer += fc->delta;
-    if (s->timer >= 1.0)
-    {
-        s->rate = s->count - s->timer_count;
-        s->timer_count = s->count;
-        s->timer = 0;
-    }
-
-    s->running_average_rate = s->elapsed > 0.0 ? s->count / s->elapsed : 0.0;
-
-    f64 stiff = (fc->delta > 0.012) ? 0.1
-              : (fc->delta > 0.004) ? 0.01
-              : (fc->delta > 0.0004) ? 0.001
-              : 0.0001;
-
-    s->moving_average_rate = (s->instant_rate * stiff) + (s->moving_average_rate * (1.0 - stiff));
-}
-
-void clock_stats_sample_step(struct ClockStats *s, const struct FixedClock *sc, int ticks)
-{
-    if (!s || !sc || ticks <= 0)
-        return;
-
-    f64 elapsed = sc->interval * ticks;
-    s->count += ticks;
-    s->elapsed += elapsed;
-    s->instant_rate = 1.0 / sc->interval;
+    s->count      += count;
+    s->elapsed    += elapsed;
+    s->instant_rate = instant_rate;
 
     s->timer += elapsed;
     if (s->timer >= 1.0)
@@ -114,12 +84,31 @@ void clock_stats_sample_step(struct ClockStats *s, const struct FixedClock *sc, 
         s->timer = 0;
     }
 
-    s->running_average_rate = s->elapsed > 0.0 ? s->count / s->elapsed : 0.0;
+    s->running_average_rate = s->elapsed > 0.0
+        ? (f64)s->count / s->elapsed
+        : 0.0;
 
-    f64 stiff = (sc->interval > 0.012) ? 0.1
-              : (sc->interval > 0.004) ? 0.01
-              : (sc->interval > 0.0004) ? 0.001
+    f64 stiff = (elapsed > 0.012) ? 0.1
+              : (elapsed > 0.004) ? 0.01
+              : (elapsed > 0.0004) ? 0.001
               : 0.0001;
 
-    s->moving_average_rate = (s->instant_rate * stiff) + (s->moving_average_rate * (1.0 - stiff));
+    s->moving_average_rate = (s->instant_rate * stiff)
+                           + (s->moving_average_rate * (1.0 - stiff));
+}
+
+void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc)
+{
+    if (!s || !fc)
+        return;
+
+    clock_stats_update(s, 1, fc->delta, 1.0 / fc->delta);
+}
+
+void clock_stats_sample_fixed(struct ClockStats *s, const struct FixedClock *sc, u64 ticks)
+{
+    if (!s || !sc || ticks == 0)
+        return;
+
+    clock_stats_update(s, ticks, sc->interval * (f64)ticks, 1.0 / sc->interval);
 }

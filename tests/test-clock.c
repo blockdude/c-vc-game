@@ -139,17 +139,17 @@ UTEST(clock, clock_stats_sample_frame)
     EXPECT_TRUE(s.instant_rate > 0.0);
 }
 
-UTEST(clock, clock_stats_sample_step)
+UTEST(clock, clock_stats_sample_fixed)
 {
     struct FixedClock fc = fixed_clock_create(60.0);
     struct ClockStats s = { 0 };
 
     fixed_clock_accumulate(&fc, 1.0 / 60.0);
-    int ticks = 0;
+    u64 ticks = 0;
     while (fixed_clock_consume(&fc))
         ticks++;
 
-    clock_stats_sample_step(&s, &fc, ticks);
+    clock_stats_sample_fixed(&s, &fc, ticks);
 
     EXPECT_EQ(s.count, 1);
     EXPECT_TRUE(s.instant_rate > 0.0);
