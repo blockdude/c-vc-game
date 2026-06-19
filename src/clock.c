@@ -69,8 +69,11 @@ f64 fixed_clock_alpha(struct FixedClock *sc)
 }
 
 static inline void
-clock_stats_update(struct ClockStats *s, u64 count, f64 elapsed, f64 instant_rate)
+clock_stats_update(struct ClockStats *s, u64 count, f64 delta)
 {
+    f64 elapsed = (f64)count * delta;
+    f64 instant_rate = 1.0 / delta;
+
     s->count      += count;
     s->elapsed    += elapsed;
     s->instant_rate = instant_rate;
@@ -101,7 +104,7 @@ void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc)
     if (!s || !fc)
         return;
 
-    clock_stats_update(s, 1, fc->delta, 1.0 / fc->delta);
+    clock_stats_update(s, 1, fc->delta);
 }
 
 void clock_stats_sample_fixed(struct ClockStats *s, const struct FixedClock *sc, u64 ticks)
@@ -109,5 +112,5 @@ void clock_stats_sample_fixed(struct ClockStats *s, const struct FixedClock *sc,
     if (!s || !sc || ticks == 0)
         return;
 
-    clock_stats_update(s, ticks, sc->interval * (f64)ticks, 1.0 / sc->interval);
+    clock_stats_update(s, ticks, sc->interval);
 }
