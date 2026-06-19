@@ -74,57 +74,6 @@ UTEST(clock, fixed_alpha)
     EXPECT_TRUE(fabs(fixed_clock_alpha(&fc) - 0.5) < 0.0001);
 }
 
-UTEST(clock, no_wait_delta_matches_timestep)
-{
-    struct Timestep ts = timestep_create(0.0);
-    struct FrameClock fc = frame_clock_create(0.0);
-
-    /* both clocks skip the first frame (no delta), so warm up first */
-    timestep_tick(&ts);
-    frame_clock_tick(&fc);
-
-    for (int i = 0; i < 100; i++)
-    {
-        timestep_tick(&ts);
-        frame_clock_tick(&fc);
-        EXPECT_TRUE(fabs(ts.delta - fc.delta) < 0.001);
-    }
-}
-
-UTEST(clock, fixedstep_matches_fixedclock)
-{
-    f64 deltas[200];
-    struct FrameClock measure = frame_clock_create(0.0);
-
-    for (int i = 0; i < 200; i++)
-    {
-        frame_clock_tick(&measure);
-        deltas[i] = measure.delta;
-    }
-
-    struct Timestep ts = timestep_create(60);
-    int old_ticks = 0;
-    for (int i = 0; i < 200; i++)
-    {
-        while (fixedstep_tick(&ts, deltas[i]))
-            old_ticks++;
-    }
-    f64 old_residual = ts.target_delta > 0.0 ? ts.delta / ts.target_delta : 0.0;
-
-    struct FixedClock fc = fixed_clock_create(60);
-    int new_ticks = 0;
-    for (int i = 0; i < 200; i++)
-    {
-        fixed_clock_accumulate(&fc, deltas[i]);
-        while (fixed_clock_consume(&fc))
-            new_ticks++;
-    }
-    f64 new_residual = fixed_clock_alpha(&fc);
-
-    EXPECT_EQ(old_ticks, new_ticks);
-    EXPECT_TRUE(fabs(old_residual - new_residual) < 0.001);
-}
-
 UTEST(clock, clock_stats_sample_frame)
 {
     struct FrameClock fc = frame_clock_create(60.0);

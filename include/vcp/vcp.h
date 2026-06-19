@@ -367,51 +367,6 @@ _FMAT4_FUNC_TEMPLATE_CAST(struct FMat4F64, fmat4f64)
 
 
 // =============================
-// -----------------------------
-// TIMESTEP
-// -----------------------------
-
-struct Timestep
-{
-    u64 rate;
-    f64 instant_rate;
-    f64 running_average_rate;
-    f64 moving_average_rate;
-    f64 delta;
-    f64 target_delta;
-    f64 target_rate;
-    u64 count;
-    f64 elapsed;
-
-    struct
-    {
-        // for fixedstep
-        f64 delta;
-        u64 instant_count;
-        f64 elapsed;
-
-        // for timestep
-        f64 current_time;
-        f64 previous_time;
-
-        // for both
-        f64 timer;
-        u64 count;
-        bool looping;
-    } _private;
-};
-
-struct Timestep timestep_create(f64 rate);
-void timestep_set_rate(struct Timestep *timestep, f64 rate);
-bool timestep_tick(struct Timestep *timestep);
-bool fixedstep_tick(struct Timestep *timestep, f64 delta_time);
-
-// =============================
-
-
-
-// =============================
-// -----------------------------
 // CLOCK
 // -----------------------------
 

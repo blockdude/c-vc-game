@@ -23,7 +23,6 @@ set(platform_sources
 	"src/input.c"
 	"src/time.c"
 	"src/window.c"
-	"src/timestep.c"
 	"src/clock.c"
 	"src/log.c"
 	"src/platform.c")

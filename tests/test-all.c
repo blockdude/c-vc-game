@@ -3,7 +3,6 @@
 #include "test-vec3.c"
 #include "test-mat4.c"
 #include "test-quat.c"
-#include "test-timestep.c"
 #include "test-clock.c"
 #define INSTANTIATE_MAIN
 
