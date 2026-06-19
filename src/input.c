@@ -271,7 +271,7 @@ void input_poll_events(bool capture_text)
 
         case SDL_EVENT_WINDOW_RESIZED:
 
-            window_update_view_port(event.window.data1, event.window.data2);
+            window_update_viewport(event.window.data1, event.window.data2);
 
             break;
 

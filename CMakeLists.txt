@@ -18,17 +18,13 @@ file(WRITE ${stb_source}
 )
 
 set(platform_sources
-	"src/math/math.c"
-	"src/graphics/shader.c"
-	"src/graphics/vao.c"
-	"src/graphics/vbo.c"
-	"src/system/audio.c"
-	"src/system/input.c"
-	"src/system/time.c"
-	"src/system/window.c"
-	"src/util/timestep.c"
-	"src/util/camera.c"
-	"src/util/log.c"
+	"src/math.c"
+	"src/audio.c"
+	"src/input.c"
+	"src/time.c"
+	"src/window.c"
+	"src/timestep.c"
+	"src/log.c"
 	"src/platform.c")
 
 set_source_files_properties(${platform_sources} ${platform_headers} PROPERTIES LANGUAGE C)

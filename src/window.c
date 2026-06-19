@@ -330,7 +330,7 @@ void window_disable_flags(u32 flags)
  * -----------------------------
  */
 
-void window_update_view_port(int w, int h)
+void window_update_viewport(int w, int h)
 {
     state.width = w;
     state.height = h;

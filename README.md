@@ -28,12 +28,10 @@ cmake --build build
 | Module | Path | Description |
 |--------|------|-------------|
 | platform | `src/platform.c` | Init/deinit lifecycle |
-| window | `src/system/window.c` | SDL window + OpenGL context |
-| input | `src/system/input.c` | Keyboard, mouse, text input |
-| audio | `src/system/audio.c` | SDL audio output |
-| time | `src/system/time.c` | High-resolution timing |
-| math | `src/math/math.c` | Vec2/3/4, quat, mat4, shapes |
-| shader | `src/graphics/shader.c` | GLSL shader compilation/linking, VAO/VBO |
-| camera | `src/util/camera.c` | 3D camera (proj/view) |
-| timestep | `src/util/timestep.c` | Fixed/variable timestep |
-| log | `src/util/log.c` | Logging with callbacks |
+| window | `src/window.c` | SDL window + OpenGL context |
+| input | `src/input.c` | Keyboard, mouse, text input |
+| audio | `src/audio.c` | SDL audio output |
+| time | `src/time.c` | High-resolution timing |
+| math | `src/math.c` | Vec2/3/4, quat, mat4, shapes |
+| timestep | `src/timestep.c` | Fixed/variable timestep |
+| log | `src/log.c` | Logging with callbacks |

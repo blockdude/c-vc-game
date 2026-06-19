@@ -701,48 +701,6 @@ void audio_deinit(void);
 
 // =============================
 
-
-
-// =============================
-// -----------------------------
-// CAMERA
-// -----------------------------
-
-enum CameraType
-{
-    PERSPECTIVE,
-    ORTHOGRAPHIC
-};
-
-struct Camera
-{
-    // projection type
-    int type;
-
-    struct Vec3 eye;	/* camera position */
-    struct Vec3 target;	/* lookat position */
-    struct Vec3 up;		/* camera tilt     */
-
-    // perspective - controls the Y field of view
-    float fov;
-
-    // orthographic - controls the size of the near and far clipping planes
-    float zoom;
-};
-
-void camera_init(struct Camera *camera, int type);
-void camera_move(struct Camera *camera, struct Vec3 direction, float dist);
-void camera_forward(struct Camera *camera, float dist);
-void camera_up(struct Camera *camera, float dist);
-void camera_right(struct Camera *camera, float dist);
-void camera_pitch(struct Camera *camera, float angle);
-void camera_yaw(struct Camera *camera, float angle);
-void camera_roll(struct Camera *camera, float angle);
-struct Mat4 camera_proj(const struct Camera *camera, float aspect, float near, float far);
-struct Mat4 camera_view(const struct Camera *camera);
-
-// =============================
-
 #ifdef __cplusplus
 }
 #endif
