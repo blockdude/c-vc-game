@@ -105,8 +105,8 @@ struct RectangleI64 _RECTANGLE_TEMPLATE(i64);
 struct RectangleF32 _RECTANGLE_TEMPLATE(f32);
 struct RectangleF64 _RECTANGLE_TEMPLATE(f64);
 
-struct Color     _COLOR_TEMPLATE(u8);
-struct ColorF    _COLOR_TEMPLATE(float);
+struct Color     _COLOR_TEMPLATE(float);
+struct ColorU8   _COLOR_TEMPLATE(u8);
 struct ColorU16  _COLOR_TEMPLATE(u16);
 struct ColorF32  _COLOR_TEMPLATE(f32);
 struct ColorF64  _COLOR_TEMPLATE(f64);
@@ -250,9 +250,9 @@ static inline u32 rgba8888_to_uint32(u8 r, u8 g, u8 b, u8 a)
     return ((u32)r << 24) | ((u32)g << 16) | ((u32)b << 8) | (u32)a;
 }
 
-static inline struct ColorF colorf_mix(struct ColorF a, struct ColorF b, float ratio)
+static inline struct Color color_mix(struct Color a, struct Color b, float ratio)
 {
-    struct ColorF result;
+    struct Color result;
     result.r = a.r * ratio + b.r * (1.0f - ratio);
     result.g = a.g * ratio + b.g * (1.0f - ratio);
     result.b = a.b * ratio + b.b * (1.0f - ratio);
@@ -260,9 +260,9 @@ static inline struct ColorF colorf_mix(struct ColorF a, struct ColorF b, float r
     return result;
 }
 
-static inline struct ColorF colorf_blend(struct ColorF a, struct ColorF b)
+static inline struct Color color_blend(struct Color a, struct Color b)
 {
-    struct ColorF result;
+    struct Color result;
     result.r = a.r * b.r;
     result.g = a.g * b.g;
     result.b = a.b * b.b;
