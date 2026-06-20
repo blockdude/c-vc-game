@@ -41,6 +41,102 @@ target_include_directories(platform PUBLIC ${platform_include} ${glad_include} $
 target_link_libraries(platform PUBLIC SDL3::SDL3)
 set_property(TARGET platform PROPERTY C_STANDARD 17)
 
+# --- Version generation ---
+set(version_script "${CMAKE_CURRENT_BINARY_DIR}/generated/embed_version.cmake")
+set(version_c     "${CMAKE_CURRENT_BINARY_DIR}/generated/version.generated.c")
+
+file(WRITE ${version_script} [=[
+execute_process(
+    COMMAND git rev-list --count HEAD
+    WORKING_DIRECTORY ${SRC_DIR}
+    OUTPUT_VARIABLE BN OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${SRC_DIR}
+    OUTPUT_VARIABLE CM OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND git rev-parse HEAD
+    WORKING_DIRECTORY ${SRC_DIR}
+    OUTPUT_VARIABLE CM_FULL OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND git rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY ${SRC_DIR}
+    OUTPUT_VARIABLE BR OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND git describe --tags --always --dirty
+    WORKING_DIRECTORY ${SRC_DIR}
+    OUTPUT_VARIABLE TG OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND git describe --tags --long --always
+    WORKING_DIRECTORY ${SRC_DIR}
+    OUTPUT_VARIABLE TG_LONG OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND git log -1 --format=%ct
+    WORKING_DIRECTORY ${SRC_DIR}
+    OUTPUT_VARIABLE EP OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+set(ENV{SOURCE_DATE_EPOCH} ${EP})
+string(TIMESTAMP TS "%Y-%m-%dT%H:%M:%SZ" UTC)
+
+if(TG_LONG MATCHES "^v?([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g")
+    set(VERSION_MAJOR   ${CMAKE_MATCH_1})
+    set(VERSION_MINOR   ${CMAKE_MATCH_2})
+    set(VERSION_PATCH   ${CMAKE_MATCH_3})
+    set(VERSION_RELATIVE ${CMAKE_MATCH_4})
+else()
+    set(VERSION_MAJOR   0)
+    set(VERSION_MINOR   0)
+    set(VERSION_PATCH   0)
+    set(VERSION_RELATIVE 0)
+endif()
+
+if(TG MATCHES "-dirty$")
+    set(VERSION_DIRTY 1)
+else()
+    set(VERSION_DIRTY 0)
+endif()
+
+set(CONTENT
+"#include <stdbool.h>
+extern const int VCP_VERSION_MAJOR = ${VERSION_MAJOR};
+extern const int VCP_VERSION_MINOR = ${VERSION_MINOR};
+extern const int VCP_VERSION_PATCH = ${VERSION_PATCH};
+extern const int VCP_VERSION_BUILD = ${VERSION_RELATIVE};
+extern const int VCP_VERSION_BUILD_ABSOLUTE = ${BN};
+extern const bool VCP_VERSION_DIRTY = ${VERSION_DIRTY};
+extern const char* const VCP_VERSION_COMMIT = \"${CM}\";
+extern const char* const VCP_VERSION_COMMIT_FULL = \"${CM_FULL}\";
+extern const char* const VCP_VERSION_BRANCH = \"${BR}\";
+extern const char* const VCP_VERSION_TAG = \"${TG}\";
+extern const char* const VCP_VERSION_TIMESTAMP = \"${TS}\";
+extern const char* const VCP_VERSION_STRING = \"v${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH} (Build ${BN})\";
+extern const long long VCP_VERSION_EPOCH = ${EP};")
+
+if(EXISTS "${out}")
+    file(READ "${out}" OLD)
+    if(OLD STREQUAL CONTENT)
+        return()
+    endif()
+endif()
+file(WRITE "${out}" "${CONTENT}")
+]=])
+
+add_custom_target(generate_vcp_version ALL
+    COMMAND ${CMAKE_COMMAND} "-Dout=${version_c}" "-DSRC_DIR=${CMAKE_CURRENT_SOURCE_DIR}" -P ${version_script}
+    BYPRODUCTS ${version_c}
+    COMMENT "Generating version info..."
+)
+add_dependencies(platform generate_vcp_version)
+set_source_files_properties(${version_c} PROPERTIES GENERATED TRUE)
+target_sources(platform PRIVATE ${version_c})
+target_include_directories(platform PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
 # --- Tests ---
 include(CTest)
 

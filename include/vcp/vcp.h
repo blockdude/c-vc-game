@@ -8,15 +8,29 @@
 #include <math.h>
 
 #define VCP_MAX_STRING_LEN 128
-#define VCP_VERSION_MAJOR 0
-#define VCP_VERSION_MINOR 0
-#define VCP_VERSION_PATCH 0
-#define VCP_VERSION_PACKAGE 0
-#define VCP_VERSION "0.0.0.0"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// =============================
+// -----------------------------
+// VERSION (git-derived, generated at build time)
+// -----------------------------
+
+extern const int VCP_VERSION_MAJOR;
+extern const int VCP_VERSION_MINOR;
+extern const int VCP_VERSION_PATCH;
+extern const int VCP_VERSION_BUILD;
+extern const int VCP_VERSION_BUILD_ABSOLUTE;
+extern const bool VCP_VERSION_DIRTY;
+extern const char *const VCP_VERSION_COMMIT;
+extern const char *const VCP_VERSION_COMMIT_FULL;
+extern const char *const VCP_VERSION_BRANCH;
+extern const char *const VCP_VERSION_TAG;
+extern const char *const VCP_VERSION_TIMESTAMP;
+extern const char *const VCP_VERSION_STRING;
+extern const long long VCP_VERSION_EPOCH;
 
 // =============================
 // -----------------------------

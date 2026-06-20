@@ -16,6 +16,12 @@ int platform_init(u32 flags)
         SDL_VERSIONNUM_MINOR(SDL_GetVersion()),
         SDL_VERSIONNUM_MICRO(SDL_GetVersion()));
 
+    log_debug("VCP Version  : %s",   VCP_VERSION_TAG);
+    log_debug("VCP Timestamp: %s",   VCP_VERSION_TIMESTAMP);
+    log_debug("VCP Epoch    : %lld", VCP_VERSION_EPOCH);
+    log_debug("VCP Commit   : %s",   VCP_VERSION_COMMIT);
+    log_debug("VCP Build    : %d",   VCP_VERSION_BUILD_ABSOLUTE);
+
     if (flags & PLATFORM_TIMER)
         time_init();
 
