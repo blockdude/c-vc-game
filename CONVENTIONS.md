@@ -171,11 +171,19 @@ Other conventions:
   - `nullptr` over `NULL` or `0` for null pointers
   - Default member initializers preferred over constructor init lists: `Vec2 _move = vec2_zero()`
   - RAII — avoid raw `new`/`delete`; use `std::unique_ptr`, containers, or stack allocation
-  - `auto` for range-based for loops and when the type is obvious from context
+  - Avoid `auto` — only use it for range-based for loops or when the type is complex and otherwise unreadable
   - No `using namespace std`; type aliases with `using` are acceptable
-  - Include order: own header first, then standard, then project headers (using quotes)
+  - Include order: own header first (`""`), then standard library (`<>`), then external/vendored libraries (`<>`), then internal project headers (`""`).
+    - Own header: the `.h` matching the current `.cc` — always first, always quotes
+    - Standard library: `<memory>`, `<vector>`, `<cassert>`, `<string>`
+    - External/vendored: `<SDL3/SDL.h>`, `<stb_image.h>`, `<vcp/vcp.h>`
+    - Internal project: `"core/common.h"`, `"world/world.h"`, `"entity/entity.h"` — full path from the source root (`game/src/`), no `../` traversal
   - Include guards: same as C — `#ifndef` / `#define` / `#endif`
   - Access sections: `public:` / `protected:` / `private:` explicit where needed
+  - Member ordering: `public` first, then `protected`, then `private`. Readers care about the API; implementation details go last
+  - If a struct has no `private` or `protected` members, do not specify `public:` — it is implicit with `struct`
+  - If a struct has `private` or `protected` members, it must begin with `public:`
+  - `this->` required when accessing member variables or calling member functions inside methods
   - `= default` for explicitly-defaulted special member functions
   - Avoid runtime exceptions (try / catch / throw)
 

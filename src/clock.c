@@ -9,10 +9,8 @@ struct FrameClock frame_clock_create(f64 rate)
 
 void frame_clock_start(struct FrameClock *fc)
 {
-    fc->last += fc->delta;
     f64 now = time_now_s();
-    if (fc->last == 0.0)
-        fc->last = now;
+    fc->last = fc->last == 0.0 ? now : fc->last + fc->delta;
     fc->delta = now - fc->last;
 }
 
@@ -72,7 +70,7 @@ static inline void
 clock_stats_update(struct ClockStats *s, u64 count, f64 delta)
 {
     f64 elapsed = (f64)count * delta;
-    f64 instant_rate = 1.0 / delta;
+    f64 instant_rate = delta > 0.0 ? 1.0 / delta : 0.0;
 
     s->count      += count;
     s->elapsed    += elapsed;
@@ -86,17 +84,9 @@ clock_stats_update(struct ClockStats *s, u64 count, f64 delta)
         s->timer = 0;
     }
 
-    s->running_average_rate = s->elapsed > 0.0
-        ? (f64)s->count / s->elapsed
-        : 0.0;
-
-    f64 stiff = (elapsed > 0.012) ? 0.1
-              : (elapsed > 0.004) ? 0.01
-              : (elapsed > 0.0004) ? 0.001
-              : 0.0001;
-
-    s->moving_average_rate = (s->instant_rate * stiff)
-                           + (s->moving_average_rate * (1.0 - stiff));
+    f64 stiff = 1.0 - exp(-elapsed / 0.1);
+    s->running_average_rate = s->elapsed > 0.0 ? (f64)s->count / s->elapsed : 0.0;
+    s->moving_average_rate = (s->instant_rate * stiff) + (s->moving_average_rate * (1.0 - stiff));
 }
 
 void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc)
