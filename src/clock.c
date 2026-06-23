@@ -66,6 +66,12 @@ f64 fixed_clock_alpha(struct FixedClock *sc)
     return sc->accumulator / sc->interval;
 }
 
+static inline f64
+stiff_clamp(f64 v, f64 mn, f64 mx)
+{
+    return CLAMP(v, mn, mx);
+}
+
 static inline void
 clock_stats_update(struct ClockStats *s, u64 count, f64 delta)
 {
@@ -84,9 +90,39 @@ clock_stats_update(struct ClockStats *s, u64 count, f64 delta)
         s->timer = 0;
     }
 
-    f64 stiff = 1.0 - exp(-elapsed / 0.1);
+    const f64 stiff = stiff_clamp(s->ceil * pow(1.0 - exp(-elapsed / s->tau), s->power), 0.0, 1.0);
     s->running_average_rate = s->elapsed > 0.0 ? (f64)s->count / s->elapsed : 0.0;
     s->moving_average_rate = (s->instant_rate * stiff) + (s->moving_average_rate * (1.0 - stiff));
+}
+
+struct ClockStats clock_stats_create(f64 ceil, f64 tau, f64 power)
+{
+    struct ClockStats s = { 0 };
+    s.ceil = ceil;
+    s.tau = tau;
+    s.power = power;
+    return s;
+}
+
+struct ClockStats clock_stats_create_default(void)
+{
+    return clock_stats_create(1.08, 0.07, 1.50);
+}
+
+void clock_stats_reset(struct ClockStats *s)
+{
+    if (!s)
+        return;
+
+    f64 ceil  = s->ceil;
+    f64 tau   = s->tau;
+    f64 power = s->power;
+
+    *s = (struct ClockStats){ 0 };
+
+    s->ceil  = ceil;
+    s->tau   = tau;
+    s->power = power;
 }
 
 void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc)
