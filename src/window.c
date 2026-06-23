@@ -262,9 +262,14 @@ void window_set_size(int w, int h)
 
 void window_set_flags(u32 flags, bool enabled)
 {
-    state.flags = enabled ?
+    u32 check = enabled ?
         state.flags | flags :
         state.flags & ~flags;
+
+    if (state.flags == check)
+        return;
+
+    state.flags = check;
 
     if (state.initialized == false)
         return;
