@@ -401,9 +401,10 @@ struct ClockStats
     f64 ceil;
     f64 tau;
     f64 power;
+    f64 interval;
 
     u64 count;
-    u64 rate;
+    f64 rate;
     f64 elapsed;
     f64 instant_rate;
     f64 running_average_rate;
@@ -424,11 +425,11 @@ void fixed_clock_accumulate(struct FixedClock *sc, f64 dt);
 bool fixed_clock_consume(struct FixedClock *sc);
 f64 fixed_clock_alpha(struct FixedClock *sc);
 
-struct ClockStats clock_stats_create(f64 ceil, f64 tau, f64 power);
+struct ClockStats clock_stats_create(f64 ceil, f64 tau, f64 power, f64 interval);
 struct ClockStats clock_stats_create_default(void);
 void clock_stats_reset(struct ClockStats *s);
 void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc);
-void clock_stats_sample_fixed(struct ClockStats *s, const struct FixedClock *sc, u64 ticks);
+void clock_stats_sample_fixed(struct ClockStats *s, const struct FixedClock *sc, f64 delta, u64 ticks);
 
 // =============================
 
