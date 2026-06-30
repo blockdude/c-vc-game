@@ -86,6 +86,7 @@ clock_stats_update(struct ClockStats *s, u64 count, f64 delta)
     {
         u64 ticks = s->count - s->timer_count;
         s->rate = (f64)(ticks) / s->timer;
+        s->raw_rate = ticks;
         s->timer_count = s->count;
         s->timer -= s->interval;
     }

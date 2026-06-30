@@ -405,6 +405,7 @@ struct ClockStats
 
     u64 count;
     f64 rate;
+    u64 raw_rate;
     f64 elapsed;
     f64 instant_rate;
     f64 running_average_rate;
