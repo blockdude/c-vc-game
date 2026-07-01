@@ -1,5 +1,9 @@
 #include <vcp/vcp.h>
 
+// ==============
+// FrameClock
+// ==============
+
 struct FrameClock frame_clock_create(f64 rate)
 {
     struct FrameClock fc = { 0 };
@@ -34,6 +38,10 @@ void frame_clock_set_rate(struct FrameClock *fc, f64 rate)
     fc->interval = (rate > 0.0) ? 1.0 / rate : 0.0;
 }
 
+// ==============
+// FixedClock
+// ==============
+
 struct FixedClock fixed_clock_create(f64 rate)
 {
     struct FixedClock sc = { 0 };
@@ -66,16 +74,68 @@ f64 fixed_clock_alpha(struct FixedClock *sc)
     return sc->accumulator / sc->interval;
 }
 
+// ==============
+// ClockConfig
+// ==============
+
 struct ClockConfig clock_config_default(void)
 {
     struct ClockConfig config = {
-        .rise_alpha = 0.02,
-        .fall_alpha = 0.3,
+        .rise_alpha = 0.1,
+        .fall_alpha = 0.1,
         .interval = 1.0
     };
 
     return config;
 }
+
+struct ClockConfig clock_config_create(f64 delta, f64 time_constant)
+{
+    struct ClockConfig config = {
+        .rise_alpha = 1.0 - exp(-delta / time_constant),
+        .fall_alpha = 1.0 - exp(-delta / time_constant),
+        .interval = 1.0
+    };
+
+    return config;
+}
+
+void clock_config_set_alpha(struct ClockConfig *c, f64 alpha)
+{
+    if (!c)
+        return;
+
+    c->rise_alpha = alpha;
+    c->fall_alpha = alpha;
+}
+
+void clock_config_set_interval(struct ClockConfig *c, f64 interval)
+{
+    if (!c)
+        return;
+
+    c->interval = interval;
+}
+
+void clock_config_set_rise_alpha(struct ClockConfig *c, f64 rise_alpha)
+{
+    if (!c)
+        return;
+
+    c->rise_alpha = rise_alpha;
+}
+
+void clock_config_set_fall_alpha(struct ClockConfig *c, f64 fall_alpha)
+{
+    if (!c)
+        return;
+
+    c->fall_alpha = fall_alpha;
+}
+
+// ==============
+// ClockStats
+// ==============
 
 struct ClockStats clock_stats_create(void)
 {

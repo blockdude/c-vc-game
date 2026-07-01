@@ -429,6 +429,12 @@ bool fixed_clock_consume(struct FixedClock *sc);
 f64 fixed_clock_alpha(struct FixedClock *sc);
 
 struct ClockConfig clock_config_default(void);
+struct ClockConfig clock_config_create(f64 delta, f64 time_constant);
+void clock_config_set_alpha(struct ClockConfig *c, f64 alpha);
+void clock_config_set_interval(struct ClockConfig *c, f64 interval);
+void clock_config_set_rise_alpha(struct ClockConfig *c, f64 rise_alpha);
+void clock_config_set_fall_alpha(struct ClockConfig *c, f64 fall_alpha);
+
 struct ClockStats clock_stats_create(void);
 void clock_stats_reset(struct ClockStats *s);
 void clock_stats_sample(struct ClockStats *s, struct ClockConfig c, f64 delta, u64 ticks);
