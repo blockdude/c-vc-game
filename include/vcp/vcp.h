@@ -396,13 +396,15 @@ struct FixedClock
     f64 interval;
 };
 
+struct ClockConfig
+{
+    f64 rise_alpha;
+    f64 fall_alpha;
+    f64 interval;
+};
+
 struct ClockStats
 {
-    f64 ceil;
-    f64 tau;
-    f64 power;
-    f64 interval;
-
     u64 count;
     f64 rate;
     u64 raw_rate;
@@ -422,15 +424,14 @@ void frame_clock_set_rate(struct FrameClock *fc, f64 rate);
 
 struct FixedClock fixed_clock_create(f64 rate);
 void fixed_clock_set_rate(struct FixedClock *sc, f64 rate);
-void fixed_clock_accumulate(struct FixedClock *sc, f64 dt);
+void fixed_clock_accumulate(struct FixedClock *sc, f64 delta);
 bool fixed_clock_consume(struct FixedClock *sc);
 f64 fixed_clock_alpha(struct FixedClock *sc);
 
-struct ClockStats clock_stats_create(f64 ceil, f64 tau, f64 power, f64 interval);
-struct ClockStats clock_stats_create_default(void);
+struct ClockConfig clock_config_default(void);
+struct ClockStats clock_stats_create(void);
 void clock_stats_reset(struct ClockStats *s);
-void clock_stats_sample_frame(struct ClockStats *s, const struct FrameClock *fc);
-void clock_stats_sample_fixed(struct ClockStats *s, const struct FixedClock *sc, f64 delta, u64 ticks);
+void clock_stats_sample(struct ClockStats *s, struct ClockConfig c, f64 delta, u64 ticks);
 
 // =============================
 
