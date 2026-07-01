@@ -416,9 +416,9 @@ int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size)
     if (buffer == NULL || buffer_size == 0)
         return state.k_history_count;
 
-    const int count = MIN(state.k_history_count, buffer_size);
+    const size_t count = MIN((size_t)state.k_history_count, buffer_size);
     memcpy(buffer, state.k_history, sizeof(*buffer) * count);
-    return count;
+    return (int)count;
 }
 
 int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size)
@@ -426,9 +426,9 @@ int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size)
     if (buffer == NULL || buffer_size == 0)
         return state.m_history_count;
 
-    const int count = MIN(state.m_history_count, buffer_size);
+    const size_t count = MIN((size_t)state.m_history_count, buffer_size);
     memcpy(buffer, state.m_history, sizeof(*buffer) * count);
-    return count;
+    return (int)count;
 }
 
 struct InputState input_key_state(enum InputKey key)

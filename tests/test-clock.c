@@ -77,11 +77,12 @@ UTEST(clock, fixed_alpha)
 UTEST(clock, clock_stats_sample_frame)
 {
     struct FrameClock fc = frame_clock_create(60.0);
+    struct ClockConfig cfg = clock_config_default();
     struct ClockStats s = { 0 };
 
     frame_clock_tick(&fc);  /* first call: delta = 0 (last == 0 guard) */
     frame_clock_tick(&fc);  /* second call: delta > 0 */
-    clock_stats_sample_frame(&s, &fc);
+    clock_stats_sample(&s, cfg, fc.delta, 1);
 
     EXPECT_EQ(s.count, 1);
     EXPECT_TRUE(s.elapsed > 0.0);
@@ -91,6 +92,7 @@ UTEST(clock, clock_stats_sample_frame)
 UTEST(clock, clock_stats_sample_fixed)
 {
     struct FixedClock fc = fixed_clock_create(60.0);
+    struct ClockConfig cfg = clock_config_default();
     struct ClockStats s = { 0 };
 
     fixed_clock_accumulate(&fc, 1.0 / 60.0);
@@ -98,7 +100,7 @@ UTEST(clock, clock_stats_sample_fixed)
     while (fixed_clock_consume(&fc))
         ticks++;
 
-    clock_stats_sample_fixed(&s, &fc, ticks);
+    clock_stats_sample(&s, cfg, (f64)ticks * fc.interval, ticks);
 
     EXPECT_EQ(s.count, 1);
     EXPECT_TRUE(s.instant_rate > 0.0);

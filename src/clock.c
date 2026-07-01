@@ -165,9 +165,9 @@ void clock_stats_sample(struct ClockStats *s, struct ClockConfig c, f64 delta, u
     s->timer += delta;
     if (s->timer >= c.interval)
     {
-        u64 ticks = s->count - s->timer_count;
-        s->rate = (f64)(ticks) / s->timer;
-        s->raw_rate = ticks;
+        u64 rate = s->count - s->timer_count;
+        s->rate = (f64)rate / s->timer;
+        s->raw_rate = rate;
         s->timer_count = s->count;
         s->timer -= c.interval;
     }
