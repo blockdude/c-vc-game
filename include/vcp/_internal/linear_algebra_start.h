@@ -278,9 +278,9 @@
 #ifndef _LINEAR_ALGEBRA_INTERNAL
 #define _LINEAR_ALGEBRA_INTERNAL
 
-#include <stdint.h>
-#include <assert.h>
-#include <math.h>
+#include <cstdint>
+#include <cassert>
+#include <cmath>
 
 static inline i32 _la_i32_abs(i32 a)
 {

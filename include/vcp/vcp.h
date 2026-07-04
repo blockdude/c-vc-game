@@ -1,11 +1,11 @@
 #ifndef VCP_LIB_H
 #define VCP_LIB_H
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
+#include <cstdio>
+#include <cstddef>
+#include <cstdint>
 
-#include <math.h>
+#include <cmath>
 
 #define VCP_MAX_STRING_LEN 128
 

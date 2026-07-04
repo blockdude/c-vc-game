@@ -1,5 +1,5 @@
 #include <vcp/vcp.h>
-#include <assert.h>
+#include <cassert>
 #include <SDL3/SDL.h>
 #include "window.h"
 

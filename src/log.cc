@@ -21,8 +21,8 @@
  */
 
 #include <vcp/vcp.h>
-#include <time.h>
-#include <stdarg.h>
+#include <ctime>
+#include <cstdarg>
 
 #define MAX_CALLBACKS 32
 
