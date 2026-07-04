@@ -8,7 +8,7 @@
 static const enum InputKey key_map[SDL_SCANCODE_COUNT] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
 
-    0, 0, 0,
+    K_NONE, K_NONE, K_NONE,
 
     K_A,              // SDL_SCANCODE_A
     K_B,              // SDL_SCANCODE_B
@@ -59,65 +59,65 @@ static const enum InputKey key_map[SDL_SCANCODE_COUNT] = {
     K_RBRACKET,       // SDL_SCANCODE_RIGHTBRACKET
     K_BACKSLASH,      // SDL_SCANCODE_BACKSLASH
 
-    0,                // SDL_SCANCODE_NONUSHASH
-    0,                // SDL_SCANCODE_SEMICOLON
-    0,                // SDL_SCANCODE_APOSTROPHE
-    0,                // SDL_SCANCODE_GRAVE
-    0,                // SDL_SCANCODE_COMMA
-    0,                // SDL_SCANCODE_PERIOD
-    0,                // SDL_SCANCODE_SLASH
-    0,                // SDL_SCANCODE_CAPSLOCK
-    0,                // SDL_SCANCODE_F1
-    0,                // SDL_SCANCODE_F2
-    0,                // SDL_SCANCODE_F3
-    0,                // SDL_SCANCODE_F4
-    0,                // SDL_SCANCODE_F5
-    0,                // SDL_SCANCODE_F6
-    0,                // SDL_SCANCODE_F7
-    0,                // SDL_SCANCODE_F8
-    0,                // SDL_SCANCODE_F9
-    0,                // SDL_SCANCODE_F10
-    0,                // SDL_SCANCODE_F11
-    0,                // SDL_SCANCODE_F12
-    0,                // SDL_SCANCODE_PRINTSCREEN
-    0,                // SDL_SCANCODE_SCROLLLOCK
-    0,                // SDL_SCANCODE_PAUSE
-    0,                // SDL_SCANCODE_INSERT
-    0,                // SDL_SCANCODE_HOME
-    0,                // SDL_SCANCODE_PAGEUP
-    0,                // SDL_SCANCODE_DELETE
-    0,                // SDL_SCANCODE_END
-    0,                // SDL_SCANCODE_PAGEDOWN
+    K_NONE,                // SDL_SCANCODE_NONUSHASH
+    K_NONE,                // SDL_SCANCODE_SEMICOLON
+    K_NONE,                // SDL_SCANCODE_APOSTROPHE
+    K_NONE,                // SDL_SCANCODE_GRAVE
+    K_NONE,                // SDL_SCANCODE_COMMA
+    K_NONE,                // SDL_SCANCODE_PERIOD
+    K_NONE,                // SDL_SCANCODE_SLASH
+    K_NONE,                // SDL_SCANCODE_CAPSLOCK
+    K_NONE,                // SDL_SCANCODE_F1
+    K_NONE,                // SDL_SCANCODE_F2
+    K_NONE,                // SDL_SCANCODE_F3
+    K_NONE,                // SDL_SCANCODE_F4
+    K_NONE,                // SDL_SCANCODE_F5
+    K_NONE,                // SDL_SCANCODE_F6
+    K_NONE,                // SDL_SCANCODE_F7
+    K_NONE,                // SDL_SCANCODE_F8
+    K_NONE,                // SDL_SCANCODE_F9
+    K_NONE,                // SDL_SCANCODE_F10
+    K_NONE,                // SDL_SCANCODE_F11
+    K_NONE,                // SDL_SCANCODE_F12
+    K_NONE,                // SDL_SCANCODE_PRINTSCREEN
+    K_NONE,                // SDL_SCANCODE_SCROLLLOCK
+    K_NONE,                // SDL_SCANCODE_PAUSE
+    K_NONE,                // SDL_SCANCODE_INSERT
+    K_NONE,                // SDL_SCANCODE_HOME
+    K_NONE,                // SDL_SCANCODE_PAGEUP
+    K_NONE,                // SDL_SCANCODE_DELETE
+    K_NONE,                // SDL_SCANCODE_END
+    K_NONE,                // SDL_SCANCODE_PAGEDOWN
 
     K_RIGHT,          // SDL_SCANCODE_RIGHT
     K_LEFT,           // SDL_SCANCODE_LEFT
     K_DOWN,           // SDL_SCANCODE_DOWN
     K_UP,             // SDL_SCANCODE_UP
 
-    0,                // SDL_SCANCODE_NUMLOCKCLEAR
-    0,                // SDL_SCANCODE_KP_DIVIDE
-    0,                // SDL_SCANCODE_KP_MULTIPLY
-    0,                // SDL_SCANCODE_KP_MINUS
-    0,                // SDL_SCANCODE_KP_PLUS
-    0,                // SDL_SCANCODE_KP_ENTER
-    0,                // SDL_SCANCODE_KP_1
-    0,                // SDL_SCANCODE_KP_2
-    0,                // SDL_SCANCODE_KP_3
-    0,                // SDL_SCANCODE_KP_4
-    0,                // SDL_SCANCODE_KP_5
-    0,                // SDL_SCANCODE_KP_6
-    0,                // SDL_SCANCODE_KP_7
-    0,                // SDL_SCANCODE_KP_8
-    0,                // SDL_SCANCODE_KP_9
-    0,                // SDL_SCANCODE_KP_0
-    0,                // SDL_SCANCODE_KP_PERIOD
+    K_NONE,                // SDL_SCANCODE_NUMLOCKCLEAR
+    K_NONE,                // SDL_SCANCODE_KP_DIVIDE
+    K_NONE,                // SDL_SCANCODE_KP_MULTIPLY
+    K_NONE,                // SDL_SCANCODE_KP_MINUS
+    K_NONE,                // SDL_SCANCODE_KP_PLUS
+    K_NONE,                // SDL_SCANCODE_KP_ENTER
+    K_NONE,                // SDL_SCANCODE_KP_1
+    K_NONE,                // SDL_SCANCODE_KP_2
+    K_NONE,                // SDL_SCANCODE_KP_3
+    K_NONE,                // SDL_SCANCODE_KP_4
+    K_NONE,                // SDL_SCANCODE_KP_5
+    K_NONE,                // SDL_SCANCODE_KP_6
+    K_NONE,                // SDL_SCANCODE_KP_7
+    K_NONE,                // SDL_SCANCODE_KP_8
+    K_NONE,                // SDL_SCANCODE_KP_9
+    K_NONE,                // SDL_SCANCODE_KP_0
+    K_NONE,                // SDL_SCANCODE_KP_PERIOD
 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE,
+    K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE,
+    K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE,
+    K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE,
+    K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE,
+    K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE, K_NONE,
 
     K_LCTRL,          // SDL_SCANCODE_LCTRL
     K_LSHIFT,         // SDL_SCANCODE_LSHIFT
@@ -130,7 +130,7 @@ static const enum InputKey key_map[SDL_SCANCODE_COUNT] = {
 };
 
 static const enum InputButton button_map[] = {
-    0,
+    B_NONE,
     B_LEFT,           // SDL_BUTTON_LEFT
     B_MIDDLE,         // SDL_BUTTON_MIDDLE
     B_RIGHT,          // SDL_BUTTON_RIGHT
@@ -157,7 +157,7 @@ static struct
 
     int                 text_buffer_count;
     char                text_buffer[VCP_MAX_STRING_LEN];
-} state = { 0 };
+} state = {};
 
 
 
@@ -447,7 +447,7 @@ struct InputState input_button_state(enum InputButton button)
 
 void input_warp_mouse(float x, float y)
 {
-    SDL_WarpMouseInWindow(window_handle(), x, y);
+    SDL_WarpMouseInWindow((SDL_Window *)window_handle(), x, y);
 }
 
 void input_warp_mouse_global(float x, float y)

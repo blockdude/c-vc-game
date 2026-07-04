@@ -56,6 +56,7 @@ static const char *const level_colors[] = {
 
 static void stdout_callback(struct LogEvent *ev)
 {
+    FILE *f = (FILE *)ev->udata;
     char buf[16];
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
 
@@ -63,7 +64,7 @@ static void stdout_callback(struct LogEvent *ev)
 #ifdef VCP_LOG_USE_COLOR
 
     fprintf(
-        ev->udata, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
+        f, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
         buf, level_colors[ev->level], level_strings[ev->level],
         ev->file, ev->line
     );
@@ -71,7 +72,7 @@ static void stdout_callback(struct LogEvent *ev)
 #else
 
     fprintf(
-        ev->udata, "%s %-5s %s:%d: ",
+        f, "%s %-5s %s:%d: ",
         buf, level_strings[ev->level], ev->file, ev->line
     );
 
@@ -80,37 +81,38 @@ static void stdout_callback(struct LogEvent *ev)
 #ifdef VCP_LOG_USE_COLOR
 
     fprintf(
-        ev->udata, "%s %s%-5s\x1b[0m \x1b[90m|\x1b[0m ",
+        f, "%s %s%-5s\x1b[0m \x1b[90m|\x1b[0m ",
         buf, level_colors[ev->level], level_strings[ev->level]
     );
 
 #else
 
     fprintf(
-        ev->udata, "%s %-5s | ",
+        f, "%s %-5s | ",
         buf, level_strings[ev->level]
     );
 
 #endif
 #endif
 
-    vfprintf(ev->udata, ev->fmt, ev->ap);
-    fprintf(ev->udata, "\n");
-    fflush(ev->udata);
+    vfprintf(f, ev->fmt, ev->ap);
+    fprintf(f, "\n");
+    fflush(f);
 }
 
 
 static void file_callback(struct LogEvent *ev)
 {
+    FILE *f = (FILE *)ev->udata;
     char buf[64];
     buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
     fprintf(
-        ev->udata, "%s %-5s %s:%d: ",
+        f, "%s %-5s %s:%d: ",
         buf, level_strings[ev->level], ev->file, ev->line
     );
-    vfprintf(ev->udata, ev->fmt, ev->ap);
-    fprintf(ev->udata, "\n");
-    fflush(ev->udata);
+    vfprintf(f, ev->fmt, ev->ap);
+    fprintf(f, "\n");
+    fflush(f);
 }
 
 
@@ -157,7 +159,7 @@ int log_add_callback(LogCallbackFn fn, void *udata, int level)
     {
         if (!state.callbacks[i].fn)
         {
-            state.callbacks[i] = (struct Callback){ fn, udata, level };
+            state.callbacks[i] = Callback{ fn, udata, level };
             return 0;
         }
     }

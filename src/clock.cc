@@ -148,7 +148,7 @@ void clock_stats_reset(struct ClockStats *s)
     if (!s)
         return;
 
-    *s = (struct ClockStats){ 0 };
+    *s = ClockStats{};
 }
 
 void clock_stats_sample(struct ClockStats *s, struct ClockConfig c, f64 delta, u64 ticks)

@@ -17,7 +17,7 @@ static struct
     int height;
     u32 id;
     bool keep_open;
-} state = { .id = 0, .title = "Application", .width = 700, .height = 700, .aspect = 1.0f };
+} state = { .title = "Application", .aspect = 1.0f, .width = 700, .height = 700, .id = 0 };
 
 /*
  * =============================
@@ -34,13 +34,13 @@ int window_init(void)
         return 0;
     }
 
+    SDL_WindowFlags sdl_window_flags = 0;
+
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) == false)
     {
         log_warn("Unable to initialize SDL video system: %s", SDL_GetError());
         goto cleanup;
     }
-
-    SDL_WindowFlags sdl_window_flags = 0;
 
 #ifdef VCP_WINDOW_OPENGL
     sdl_window_flags = SDL_WINDOW_OPENGL;

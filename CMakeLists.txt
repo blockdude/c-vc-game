@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(platform LANGUAGES C)
+project(platform LANGUAGES CXX)
 
 # --- Dependencies ---
 
@@ -28,14 +28,14 @@ set(platform_headers
 	"include/vcp/vcp.h")
 
 set(platform_sources
-	"src/math.c"
-	"src/audio.c"
-	"src/input.c"
-	"src/time.c"
-	"src/window.c"
-	"src/clock.c"
-	"src/log.c"
-	"src/platform.c")
+	"src/math.cc"
+	"src/audio.cc"
+	"src/input.cc"
+	"src/time.cc"
+	"src/window.cc"
+	"src/clock.cc"
+	"src/log.cc"
+	"src/platform.cc")
 
 add_library(platform STATIC ${platform_sources} ${glad_sources} ${stb_sources})
 target_include_directories(platform PUBLIC ${platform_include} ${glad_include} ${stb_include})
@@ -49,14 +49,15 @@ target_compile_definitions(platform PRIVATE
 )
 
 set_target_properties(platform PROPERTIES
-    LANGUAGE C
-    C_STANDARD 17
+    LANGUAGE CXX
+    CXX_STANDARD 23
+    CXX_STANDARD_REQUIRED ON
 )
 
 # --- Version generation ---
 
 set(version_script "${CMAKE_CURRENT_BINARY_DIR}/generated/embed_version.cmake")
-set(version_c     "${CMAKE_CURRENT_BINARY_DIR}/generated/version.generated.c")
+set(version_cc    "${CMAKE_CURRENT_BINARY_DIR}/generated/version.generated.cc")
 
 file(WRITE ${version_script} [=[
 execute_process(
@@ -116,8 +117,7 @@ else()
 endif()
 
 set(CONTENT
-"#include <stdbool.h>
-extern const int VCP_VERSION_MAJOR = ${VERSION_MAJOR};
+"extern const int VCP_VERSION_MAJOR = ${VERSION_MAJOR};
 extern const int VCP_VERSION_MINOR = ${VERSION_MINOR};
 extern const int VCP_VERSION_PATCH = ${VERSION_PATCH};
 extern const int VCP_VERSION_BUILD = ${VERSION_RELATIVE};
@@ -141,13 +141,13 @@ file(WRITE "${out}" "${CONTENT}")
 ]=])
 
 add_custom_target(generate_vcp_version ALL
-    COMMAND ${CMAKE_COMMAND} "-Dout=${version_c}" "-DSRC_DIR=${CMAKE_CURRENT_SOURCE_DIR}" -P ${version_script}
-    BYPRODUCTS ${version_c}
+    COMMAND ${CMAKE_COMMAND} "-Dout=${version_cc}" "-DSRC_DIR=${CMAKE_CURRENT_SOURCE_DIR}" -P ${version_script}
+    BYPRODUCTS ${version_cc}
     COMMENT "Generating version info..."
 )
 add_dependencies(platform generate_vcp_version)
-set_source_files_properties(${version_c} PROPERTIES GENERATED TRUE)
-target_sources(platform PRIVATE ${version_c})
+set_source_files_properties(${version_cc} PROPERTIES GENERATED TRUE)
+target_sources(platform PRIVATE ${version_cc})
 target_include_directories(platform PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 # --- Tests ---
@@ -155,7 +155,7 @@ target_include_directories(platform PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generate
 include(CTest)
 
 add_executable(test-platform
-	"tests/test-all.c"
+	"tests/test-all.cc"
 )
 target_include_directories(test-platform PRIVATE
 	${platform_include}
@@ -165,5 +165,5 @@ target_link_libraries(test-platform PRIVATE
 	platform
 	SDL3::SDL3
 )
-set_property(TARGET test-platform PROPERTY C_STANDARD 17)
+set_property(TARGET test-platform PROPERTY CXX_STANDARD 23)
 add_test(NAME test-platform COMMAND test-platform)

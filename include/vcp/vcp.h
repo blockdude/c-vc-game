@@ -4,14 +4,10 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
+
 #include <math.h>
 
 #define VCP_MAX_STRING_LEN 128
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 // =============================
 // -----------------------------
@@ -564,9 +560,5 @@ int audio_init(void);
 void audio_deinit(void);
 
 // =============================
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* VCP_LIB_H */
