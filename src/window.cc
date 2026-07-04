@@ -17,7 +17,7 @@ static struct
     int height;
     u32 id;
     bool keep_open;
-} state = { .title = "Application", .aspect = 1.0f, .width = 700, .height = 700, .id = 0 };
+} state = {};
 
 /*
  * =============================
@@ -33,6 +33,11 @@ int window_init(void)
         log_info("Window already initialized");
         return 0;
     }
+
+    std::snprintf(state.title, VCP_MAX_STRING_LEN, "%s", "Application");
+    state.aspect = 1.0f;
+    state.width = 700;
+    state.height = 700;
 
     SDL_WindowFlags sdl_window_flags = 0;
 
@@ -245,7 +250,7 @@ void *window_handle(void)
 void window_set_title(const char *title)
 {
     SDL_SetWindowTitle(state.handle, title);
-    snprintf(state.title, VCP_MAX_STRING_LEN, "%s", title);
+    std::snprintf(state.title, VCP_MAX_STRING_LEN, "%s", title);
 }
 
 void window_set_size(int w, int h)

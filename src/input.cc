@@ -1,5 +1,6 @@
 #include <vcp/vcp.h>
 #include <cassert>
+#include <cstring>
 #include <SDL3/SDL.h>
 #include "window.h"
 
@@ -176,7 +177,7 @@ int input_init(void)
         return -1;
     }
 
-    memset(&state, 0, sizeof(state));
+    std::memset(&state, 0, sizeof(state));
     state.initialized = true;
     return 0;
 }
@@ -237,7 +238,7 @@ void input_poll_events(bool capture_text)
     state.m_history_count = 0;
 
     // reset text input
-    memset(state.text_buffer, 0, VCP_MAX_STRING_LEN);
+    std::memset(state.text_buffer, 0, VCP_MAX_STRING_LEN);
     state.text_buffer_count = 0;
 
     // reset mouse events
@@ -326,7 +327,7 @@ void input_poll_events(bool capture_text)
 
         case SDL_EVENT_TEXT_INPUT:
 
-            state.text_buffer_count += snprintf(&state.text_buffer[state.text_buffer_count], VCP_MAX_STRING_LEN - state.text_buffer_count, "%s", event.text.text);
+            state.text_buffer_count += std::snprintf(&state.text_buffer[state.text_buffer_count], VCP_MAX_STRING_LEN - state.text_buffer_count, "%s", event.text.text);
             state.text_buffer_count = MIN(state.text_buffer_count, VCP_MAX_STRING_LEN - 1);
 
             break;
@@ -381,7 +382,7 @@ int input_text_history_buffer(char *buffer, size_t buffer_size)
     if ((buffer == NULL) || (buffer_size <= 0))
         return state.text_buffer_count;
 
-    const int result = snprintf(buffer, buffer_size, "%.*s", state.text_buffer_count, state.text_buffer);
+    const int result = std::snprintf(buffer, buffer_size, "%.*s", state.text_buffer_count, state.text_buffer);
     return MIN(result, (int)buffer_size - 1);
 }
 
@@ -417,7 +418,7 @@ int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size)
         return state.k_history_count;
 
     const size_t count = MIN((size_t)state.k_history_count, buffer_size);
-    memcpy(buffer, state.k_history, sizeof(*buffer) * count);
+    std::memcpy(buffer, state.k_history, sizeof(*buffer) * count);
     return (int)count;
 }
 
@@ -427,7 +428,7 @@ int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size)
         return state.m_history_count;
 
     const size_t count = MIN((size_t)state.m_history_count, buffer_size);
-    memcpy(buffer, state.m_history, sizeof(*buffer) * count);
+    std::memcpy(buffer, state.m_history, sizeof(*buffer) * count);
     return (int)count;
 }
 

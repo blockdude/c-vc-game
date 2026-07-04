@@ -4,7 +4,7 @@
 UTEST(clock, frame_create_60fps)
 {
     struct FrameClock fc = frame_clock_create(60.0);
-    EXPECT_TRUE(fabs(fc.interval - 1.0 / 60.0) < 0.0001);
+    EXPECT_TRUE(std::fabs(fc.interval - 1.0 / 60.0) < 0.0001);
 }
 
 UTEST(clock, frame_create_zero_rate)
@@ -23,7 +23,7 @@ UTEST(clock, frame_set_rate)
 {
     struct FrameClock fc = frame_clock_create(30.0);
     frame_clock_set_rate(&fc, 60.0);
-    EXPECT_TRUE(fabs(fc.interval - 1.0 / 60.0) < 0.0001);
+    EXPECT_TRUE(std::fabs(fc.interval - 1.0 / 60.0) < 0.0001);
 }
 
 UTEST(clock, frame_set_rate_zero)
@@ -36,27 +36,27 @@ UTEST(clock, frame_set_rate_zero)
 UTEST(clock, fixed_create_60fps)
 {
     struct FixedClock fc = fixed_clock_create(60.0);
-    EXPECT_TRUE(fabs(fc.interval - 1.0 / 60.0) < 0.0001);
+    EXPECT_TRUE(std::fabs(fc.interval - 1.0 / 60.0) < 0.0001);
 }
 
 UTEST(clock, fixed_create_zero_rate)
 {
     struct FixedClock fc = fixed_clock_create(0.0);
-    EXPECT_TRUE(fabs(fc.interval - 1.0 / 60.0) < 0.0001);
+    EXPECT_TRUE(std::fabs(fc.interval - 1.0 / 60.0) < 0.0001);
 }
 
 UTEST(clock, fixed_set_rate)
 {
     struct FixedClock fc = fixed_clock_create(30.0);
     fixed_clock_set_rate(&fc, 60.0);
-    EXPECT_TRUE(fabs(fc.interval - 1.0 / 60.0) < 0.0001);
+    EXPECT_TRUE(std::fabs(fc.interval - 1.0 / 60.0) < 0.0001);
 }
 
 UTEST(clock, fixed_set_rate_zero)
 {
     struct FixedClock fc = fixed_clock_create(30.0);
     fixed_clock_set_rate(&fc, 0.0);
-    EXPECT_TRUE(fabs(fc.interval - 1.0 / 60.0) < 0.0001);
+    EXPECT_TRUE(std::fabs(fc.interval - 1.0 / 60.0) < 0.0001);
 }
 
 UTEST(clock, fixed_consume)
@@ -71,7 +71,7 @@ UTEST(clock, fixed_alpha)
 {
     struct FixedClock fc = fixed_clock_create(60.0);
     fixed_clock_accumulate(&fc, 1.0 / 120.0);
-    EXPECT_TRUE(fabs(fixed_clock_alpha(&fc) - 0.5) < 0.0001);
+    EXPECT_TRUE(std::fabs(fixed_clock_alpha(&fc) - 0.5) < 0.0001);
 }
 
 UTEST(clock, clock_stats_sample_frame)

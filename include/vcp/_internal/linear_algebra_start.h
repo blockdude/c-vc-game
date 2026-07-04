@@ -108,28 +108,28 @@
 #define _MAX _la_i64_max
 #elif defined(LINEAR_ALGEBRA_FLT) || defined(LINEAR_ALGEBRA_F32)
 #define _FEQ _la_f32_equals
-#define _SIN sinf
-#define _COS cosf
-#define _TAN tanf
-#define _ASIN asinf
-#define _ACOS acosf
-#define _ATAN2 atan2f
-#define _SQRT sqrtf
-#define _ABS fabsf
-#define _MIN fminf
-#define _MAX fmaxf
+#define _SIN std::sinf
+#define _COS std::cosf
+#define _TAN std::tanf
+#define _ASIN std::asinf
+#define _ACOS std::acosf
+#define _ATAN2 std::atan2f
+#define _SQRT std::sqrtf
+#define _ABS std::fabsf
+#define _MIN std::fminf
+#define _MAX std::fmaxf
 #elif defined(LINEAR_ALGEBRA_F64)
 #define _FEQ _la_f64_equals
-#define _SIN sin
-#define _COS cos
-#define _TAN tan
-#define _ASIN asin
-#define _ACOS acos
-#define _ATAN2 atan2
-#define _SQRT sqrt
-#define _ABS fabs
-#define _MIN fmin
-#define _MAX fmax
+#define _SIN std::sin
+#define _COS std::cos
+#define _TAN std::tan
+#define _ASIN std::asin
+#define _ACOS std::acos
+#define _ATAN2 std::atan2
+#define _SQRT std::sqrt
+#define _ABS std::fabs
+#define _MIN std::fmin
+#define _MAX std::fmax
 #endif
 
 // IF NO SPECIFIC IMPLEMENTATION IS DEFINED THEN DEFINE ALL OF THEM
@@ -321,18 +321,18 @@ static inline i32 _la_i32_sqrt(i32 a)
 static inline i64 _la_i64_sqrt(i64 a)
 {
     assert(a >= 0);
-    return (i64) sqrt((double) a);
+    return (i64) std::sqrt((double) a);
 }
 
 static inline int _la_f32_equals(f32 a, f32 b, f32 epsilon)
 {
-    int result = (fabsf(a - b)) <= (epsilon * fmaxf(1.0f, fmaxf(fabsf(a), fabsf(b))));
+    int result = (std::fabsf(a - b)) <= (epsilon * std::fmaxf(1.0f, std::fmaxf(std::fabsf(a), std::fabsf(b))));
     return result;
 }
 
 static inline int _la_f64_equals(f64 a, f64 b, f64 epsilon)
 {
-    int result = (fabs(a - b)) <= (epsilon * fmax(1.0, fmax(fabs(a), fabs(b))));
+    int result = (std::fabs(a - b)) <= (epsilon * std::fmax(1.0, std::fmax(std::fabs(a), std::fabs(b))));
     return result;
 }
 

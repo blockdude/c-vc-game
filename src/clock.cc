@@ -6,7 +6,7 @@
 
 struct FrameClock frame_clock_create(f64 rate)
 {
-    struct FrameClock fc = { 0 };
+    struct FrameClock fc = {};
     fc.interval = (rate > 0.0) ? 1.0 / rate : 0.0;
     return fc;
 }
@@ -44,7 +44,7 @@ void frame_clock_set_rate(struct FrameClock *fc, f64 rate)
 
 struct FixedClock fixed_clock_create(f64 rate)
 {
-    struct FixedClock sc = { 0 };
+    struct FixedClock sc = {};
     sc.interval = (rate > 0.0) ? 1.0 / rate : 1.0 / 60.0;
     return sc;
 }
@@ -92,8 +92,8 @@ struct ClockConfig clock_config_default(void)
 struct ClockConfig clock_config_create(f64 delta, f64 time_constant)
 {
     struct ClockConfig config = {
-        .rise_alpha = 1.0 - exp(-delta / time_constant),
-        .fall_alpha = 1.0 - exp(-delta / time_constant),
+        .rise_alpha = 1.0 - std::exp(-delta / time_constant),
+        .fall_alpha = 1.0 - std::exp(-delta / time_constant),
         .interval = 1.0
     };
 
@@ -139,7 +139,7 @@ void clock_config_set_fall_alpha(struct ClockConfig *c, f64 fall_alpha)
 
 struct ClockStats clock_stats_create(void)
 {
-    struct ClockStats s = { 0 };
+    struct ClockStats s = {};
     return s;
 }
 

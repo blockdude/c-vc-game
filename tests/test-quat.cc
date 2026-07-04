@@ -23,7 +23,7 @@ UTEST(quat, mul_identity)
 
 UTEST(quat, from_axis_angle_180)
 {
-    struct Quat q = quat_from_axis_angle((struct Vec3){ 0.0f, 1.0f, 0.0f }, PI);
+    struct Quat q = quat_from_axis_angle(Vec3{ 0.0f, 1.0f, 0.0f }, PI);
     EXPECT_TRUE(fabsf(q.x - 0.0f) < 0.0001f);
     EXPECT_TRUE(fabsf(q.y - 1.0f) < 0.0001f);
     EXPECT_TRUE(fabsf(q.z - 0.0f) < 0.0001f);
@@ -33,7 +33,7 @@ UTEST(quat, from_axis_angle_180)
 UTEST(quat, rotate_vec3)
 {
     struct Vec3 v = { 1.0f, 0.0f, 0.0f };
-    struct Quat q = quat_from_axis_angle((struct Vec3){ 0.0f, 0.0f, 1.0f }, PI / 2.0f);
+    struct Quat q = quat_from_axis_angle(Vec3{ 0.0f, 0.0f, 1.0f }, PI / 2.0f);
     struct Vec3 r = vec3_rotate(v, q);
     EXPECT_TRUE(fabsf(r.x - 0.0f) < 0.0001f);
     EXPECT_TRUE(fabsf(r.y - 1.0f) < 0.0001f);
@@ -42,7 +42,7 @@ UTEST(quat, rotate_vec3)
 
 UTEST(quat, invert)
 {
-    struct Quat q = quat_from_axis_angle((struct Vec3){ 0.0f, 1.0f, 0.0f }, PI / 4.0f);
+    struct Quat q = quat_from_axis_angle(Vec3{ 0.0f, 1.0f, 0.0f }, PI / 4.0f);
     struct Quat inv = quat_invert(q);
     struct Quat result = quat_mul(q, inv);
     EXPECT_TRUE(fabsf(result.x - 0.0f) < 0.0001f);

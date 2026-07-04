@@ -58,12 +58,12 @@ static void stdout_callback(struct LogEvent *ev)
 {
     FILE *f = (FILE *)ev->udata;
     char buf[16];
-    buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
+    buf[std::strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
 
 #ifdef VCP_LOG_CALLER
 #ifdef VCP_LOG_USE_COLOR
 
-    fprintf(
+    std::fprintf(
         f, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
         buf, level_colors[ev->level], level_strings[ev->level],
         ev->file, ev->line
@@ -71,7 +71,7 @@ static void stdout_callback(struct LogEvent *ev)
 
 #else
 
-    fprintf(
+    std::fprintf(
         f, "%s %-5s %s:%d: ",
         buf, level_strings[ev->level], ev->file, ev->line
     );
@@ -80,14 +80,14 @@ static void stdout_callback(struct LogEvent *ev)
 #else
 #ifdef VCP_LOG_USE_COLOR
 
-    fprintf(
+    std::fprintf(
         f, "%s %s%-5s\x1b[0m \x1b[90m|\x1b[0m ",
         buf, level_colors[ev->level], level_strings[ev->level]
     );
 
 #else
 
-    fprintf(
+    std::fprintf(
         f, "%s %-5s | ",
         buf, level_strings[ev->level]
     );
@@ -95,9 +95,9 @@ static void stdout_callback(struct LogEvent *ev)
 #endif
 #endif
 
-    vfprintf(f, ev->fmt, ev->ap);
-    fprintf(f, "\n");
-    fflush(f);
+    std::vfprintf(f, ev->fmt, ev->ap);
+    std::fprintf(f, "\n");
+    std::fflush(f);
 }
 
 
@@ -105,14 +105,14 @@ static void file_callback(struct LogEvent *ev)
 {
     FILE *f = (FILE *)ev->udata;
     char buf[64];
-    buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
-    fprintf(
+    buf[std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
+    std::fprintf(
         f, "%s %-5s %s:%d: ",
         buf, level_strings[ev->level], ev->file, ev->line
     );
-    vfprintf(f, ev->fmt, ev->ap);
-    fprintf(f, "\n");
-    fflush(f);
+    std::vfprintf(f, ev->fmt, ev->ap);
+    std::fprintf(f, "\n");
+    std::fflush(f);
 }
 
 
@@ -178,7 +178,7 @@ static void init_event(struct LogEvent *ev, void *udata)
     if (!ev->time)
     {
         const time_t t = time(NULL);
-        ev->time = localtime(&t);
+        ev->time = std::localtime(&t);
     }
     ev->udata = udata;
 }
@@ -186,12 +186,11 @@ static void init_event(struct LogEvent *ev, void *udata)
 
 void log_log(int level, const char *file, int line, const char *fmt, ...)
 {
-    struct LogEvent ev = {
-        .fmt = fmt,
-        .file = file,
-        .line = line,
-        .level = level,
-    };
+    struct LogEvent ev = {};
+    ev.fmt = fmt;
+    ev.file = file;
+    ev.line = line;
+    ev.level = level;
 
     lock();
 

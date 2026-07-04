@@ -23,7 +23,7 @@ UTEST(mat4, mul_identity)
 
 UTEST(mat4, translate)
 {
-    struct Mat4 m = mat4_translate((struct Vec3){ 2.0f, 3.0f, 4.0f });
+    struct Mat4 m = mat4_translate(Vec3{ 2.0f, 3.0f, 4.0f });
     EXPECT_EQ(m.m03, 2.0f);
     EXPECT_EQ(m.m13, 3.0f);
     EXPECT_EQ(m.m23, 4.0f);
@@ -31,7 +31,7 @@ UTEST(mat4, translate)
 
 UTEST(mat4, scale)
 {
-    struct Mat4 m = mat4_scale((struct Vec3){ 2.0f, 3.0f, 4.0f });
+    struct Mat4 m = mat4_scale(Vec3{ 2.0f, 3.0f, 4.0f });
     EXPECT_EQ(m.m00, 2.0f);
     EXPECT_EQ(m.m11, 3.0f);
     EXPECT_EQ(m.m22, 4.0f);
