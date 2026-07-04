@@ -4,21 +4,21 @@
 // FrameClock
 // ==============
 
-struct FrameClock frame_clock_create(f64 rate)
+FrameClock frame_clock_create(f64 rate)
 {
-    struct FrameClock fc = {};
+    FrameClock fc = {};
     fc.interval = (rate > 0.0) ? 1.0 / rate : 0.0;
     return fc;
 }
 
-void frame_clock_start(struct FrameClock *fc)
+void frame_clock_start(FrameClock *fc)
 {
     f64 now = time_now_s();
     fc->last = fc->last == 0.0 ? now : fc->last + fc->delta;
     fc->delta = now - fc->last;
 }
 
-void frame_clock_wait(struct FrameClock *fc)
+void frame_clock_wait(FrameClock *fc)
 {
     if (fc->delta < fc->interval)
     {
@@ -27,13 +27,13 @@ void frame_clock_wait(struct FrameClock *fc)
     }
 }
 
-void frame_clock_tick(struct FrameClock *fc)
+void frame_clock_tick(FrameClock *fc)
 {
     frame_clock_start(fc);
     frame_clock_wait(fc);
 }
 
-void frame_clock_set_rate(struct FrameClock *fc, f64 rate)
+void frame_clock_set_rate(FrameClock *fc, f64 rate)
 {
     fc->interval = (rate > 0.0) ? 1.0 / rate : 0.0;
 }
@@ -42,24 +42,24 @@ void frame_clock_set_rate(struct FrameClock *fc, f64 rate)
 // FixedClock
 // ==============
 
-struct FixedClock fixed_clock_create(f64 rate)
+FixedClock fixed_clock_create(f64 rate)
 {
-    struct FixedClock sc = {};
+    FixedClock sc = {};
     sc.interval = (rate > 0.0) ? 1.0 / rate : 1.0 / 60.0;
     return sc;
 }
 
-void fixed_clock_set_rate(struct FixedClock *sc, f64 rate)
+void fixed_clock_set_rate(FixedClock *sc, f64 rate)
 {
     sc->interval = (rate > 0.0) ? 1.0 / rate : 1.0 / 60.0;
 }
 
-void fixed_clock_accumulate(struct FixedClock *sc, f64 delta)
+void fixed_clock_accumulate(FixedClock *sc, f64 delta)
 {
     sc->accumulator += delta;
 }
 
-bool fixed_clock_consume(struct FixedClock *sc)
+bool fixed_clock_consume(FixedClock *sc)
 {
     if (sc->accumulator >= sc->interval)
     {
@@ -69,7 +69,7 @@ bool fixed_clock_consume(struct FixedClock *sc)
     return false;
 }
 
-f64 fixed_clock_alpha(struct FixedClock *sc)
+f64 fixed_clock_alpha(FixedClock *sc)
 {
     return sc->accumulator / sc->interval;
 }
@@ -78,9 +78,9 @@ f64 fixed_clock_alpha(struct FixedClock *sc)
 // ClockConfig
 // ==============
 
-struct ClockConfig clock_config_default(void)
+ClockConfig clock_config_default(void)
 {
-    struct ClockConfig config = {
+    ClockConfig config = {
         .rise_alpha = 0.1,
         .fall_alpha = 0.1,
         .interval = 1.0
@@ -89,9 +89,9 @@ struct ClockConfig clock_config_default(void)
     return config;
 }
 
-struct ClockConfig clock_config_create(f64 delta, f64 time_constant)
+ClockConfig clock_config_create(f64 delta, f64 time_constant)
 {
-    struct ClockConfig config = {
+    ClockConfig config = {
         .rise_alpha = 1.0 - std::exp(-delta / time_constant),
         .fall_alpha = 1.0 - std::exp(-delta / time_constant),
         .interval = 1.0
@@ -100,7 +100,7 @@ struct ClockConfig clock_config_create(f64 delta, f64 time_constant)
     return config;
 }
 
-void clock_config_set_alpha(struct ClockConfig *c, f64 alpha)
+void clock_config_set_alpha(ClockConfig *c, f64 alpha)
 {
     if (!c)
         return;
@@ -109,7 +109,7 @@ void clock_config_set_alpha(struct ClockConfig *c, f64 alpha)
     c->fall_alpha = alpha;
 }
 
-void clock_config_set_interval(struct ClockConfig *c, f64 interval)
+void clock_config_set_interval(ClockConfig *c, f64 interval)
 {
     if (!c)
         return;
@@ -117,7 +117,7 @@ void clock_config_set_interval(struct ClockConfig *c, f64 interval)
     c->interval = interval;
 }
 
-void clock_config_set_rise_alpha(struct ClockConfig *c, f64 rise_alpha)
+void clock_config_set_rise_alpha(ClockConfig *c, f64 rise_alpha)
 {
     if (!c)
         return;
@@ -125,7 +125,7 @@ void clock_config_set_rise_alpha(struct ClockConfig *c, f64 rise_alpha)
     c->rise_alpha = rise_alpha;
 }
 
-void clock_config_set_fall_alpha(struct ClockConfig *c, f64 fall_alpha)
+void clock_config_set_fall_alpha(ClockConfig *c, f64 fall_alpha)
 {
     if (!c)
         return;
@@ -137,13 +137,13 @@ void clock_config_set_fall_alpha(struct ClockConfig *c, f64 fall_alpha)
 // ClockStats
 // ==============
 
-struct ClockStats clock_stats_create(void)
+ClockStats clock_stats_create(void)
 {
-    struct ClockStats s = {};
+    ClockStats s = {};
     return s;
 }
 
-void clock_stats_reset(struct ClockStats *s)
+void clock_stats_reset(ClockStats *s)
 {
     if (!s)
         return;
@@ -151,7 +151,7 @@ void clock_stats_reset(struct ClockStats *s)
     *s = ClockStats{};
 }
 
-void clock_stats_sample(struct ClockStats *s, struct ClockConfig c, f64 delta, u64 ticks)
+void clock_stats_sample(ClockStats *s, ClockConfig c, f64 delta, u64 ticks)
 {
     if (!s)
         return;

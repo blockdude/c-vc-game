@@ -245,28 +245,28 @@ struct ClockStats
     u64 timer_count;
 };
 
-struct FrameClock frame_clock_create(f64 rate);
-void frame_clock_start(struct FrameClock *fc);
-void frame_clock_wait(struct FrameClock *fc);
-void frame_clock_tick(struct FrameClock *fc);
-void frame_clock_set_rate(struct FrameClock *fc, f64 rate);
+FrameClock frame_clock_create(f64 rate);
+void frame_clock_start(FrameClock *fc);
+void frame_clock_wait(FrameClock *fc);
+void frame_clock_tick(FrameClock *fc);
+void frame_clock_set_rate(FrameClock *fc, f64 rate);
 
-struct FixedClock fixed_clock_create(f64 rate);
-void fixed_clock_set_rate(struct FixedClock *sc, f64 rate);
-void fixed_clock_accumulate(struct FixedClock *sc, f64 delta);
-bool fixed_clock_consume(struct FixedClock *sc);
-f64 fixed_clock_alpha(struct FixedClock *sc);
+FixedClock fixed_clock_create(f64 rate);
+void fixed_clock_set_rate(FixedClock *sc, f64 rate);
+void fixed_clock_accumulate(FixedClock *sc, f64 delta);
+bool fixed_clock_consume(FixedClock *sc);
+f64 fixed_clock_alpha(FixedClock *sc);
 
-struct ClockConfig clock_config_default(void);
-struct ClockConfig clock_config_create(f64 delta, f64 time_constant);
-void clock_config_set_alpha(struct ClockConfig *c, f64 alpha);
-void clock_config_set_interval(struct ClockConfig *c, f64 interval);
-void clock_config_set_rise_alpha(struct ClockConfig *c, f64 rise_alpha);
-void clock_config_set_fall_alpha(struct ClockConfig *c, f64 fall_alpha);
+ClockConfig clock_config_default(void);
+ClockConfig clock_config_create(f64 delta, f64 time_constant);
+void clock_config_set_alpha(ClockConfig *c, f64 alpha);
+void clock_config_set_interval(ClockConfig *c, f64 interval);
+void clock_config_set_rise_alpha(ClockConfig *c, f64 rise_alpha);
+void clock_config_set_fall_alpha(ClockConfig *c, f64 fall_alpha);
 
-struct ClockStats clock_stats_create(void);
-void clock_stats_reset(struct ClockStats *s);
-void clock_stats_sample(struct ClockStats *s, struct ClockConfig c, f64 delta, u64 ticks);
+ClockStats clock_stats_create(void);
+void clock_stats_reset(ClockStats *s);
+void clock_stats_sample(ClockStats *s, ClockConfig c, f64 delta, u64 ticks);
 
 // =============================
 
@@ -282,13 +282,13 @@ struct LogEvent
     va_list ap;
     const char *fmt;
     const char *file;
-    struct tm *time;
+    std::tm *time;
     void *udata;
     int line;
     int level;
 };
 
-typedef void (*LogCallbackFn)(struct LogEvent *ev);
+typedef void (*LogCallbackFn)(LogEvent *ev);
 typedef void (*LogLockFn)(bool lock, void *udata);
 
 enum LogLevel
@@ -399,7 +399,7 @@ void window_deinit(void);
 void window_swap_buffer(void);
 bool window_keep_open(void);
 void window_request_close(void);
-struct Vec2I window_size(void);
+Vec2I window_size(void);
 int window_width(void);
 int window_height(void);
 float window_aspect(void);
@@ -532,22 +532,22 @@ char input_text_history(int i);
 int input_text_history_buffer(char *buffer, size_t buffer_size);
 int input_key_history_size(void);
 int input_button_history_size(void);
-enum InputKey input_key_history(int i);
-enum InputButton input_button_history(int i);
+InputKey input_key_history(int i);
+InputButton input_button_history(int i);
 #define input_last_key_pressed() input_key_history(input_key_history_size() - 1)
 #define input_last_button_pressed() input_button_history(input_button_history_size() - 1)
-int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size);
-int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size);
-struct InputState input_key_state(enum InputKey key);
-struct InputState input_button_state(enum InputButton btn);
+int input_key_history_buffer(InputKey *buffer, size_t buffer_size);
+int input_button_history_buffer(InputButton *buffer, size_t buffer_size);
+InputState input_key_state(InputKey key);
+InputState input_button_state(InputButton btn);
 void input_warp_mouse(float x, float y); // moves mouse to position in window
 void input_warp_mouse_global(float x, float y);
 bool input_mouse_moved(void);
-struct Vec2 input_mouse_position(void);
-struct Vec2 input_mouse_global_position(void);
-struct Vec2 input_mouse_motion_position(void); // position from last mouse motion
-struct Vec2 input_mouse_delta(void);
-struct Vec2 input_mouse_scroll(void);
+Vec2 input_mouse_position(void);
+Vec2 input_mouse_global_position(void);
+Vec2 input_mouse_motion_position(void); // position from last mouse motion
+Vec2 input_mouse_delta(void);
+Vec2 input_mouse_scroll(void);
 
 // =============================
 

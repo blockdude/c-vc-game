@@ -159,12 +159,12 @@
 #define LINEAR_ALGEBRA_MAT4_HEADER
 #endif
 
-#define _VEC2_TYPE struct _VEC2_TYPE_NAME
-#define _VEC3_TYPE struct _VEC3_TYPE_NAME
-#define _VEC4_TYPE struct _VEC4_TYPE_NAME
-#define _QUAT_TYPE struct _QUAT_TYPE_NAME
-#define _MAT4_TYPE struct _MAT4_TYPE_NAME
-#define _FMAT4_TYPE struct _FMAT4_TYPE_NAME
+#define _VEC2_TYPE _VEC2_TYPE_NAME
+#define _VEC3_TYPE _VEC3_TYPE_NAME
+#define _VEC4_TYPE _VEC4_TYPE_NAME
+#define _QUAT_TYPE _QUAT_TYPE_NAME
+#define _MAT4_TYPE _MAT4_TYPE_NAME
+#define _FMAT4_TYPE _FMAT4_TYPE_NAME
 #define _CONCAT(_a, _b) _a##_b
 #define _STATIC_CAST(T, _e) ((T)(_e))
 #define _NAME_HELPER(_prefix, _fn) _CONCAT(_prefix, _##_fn)

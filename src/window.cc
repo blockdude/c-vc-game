@@ -184,9 +184,9 @@ void window_request_close(void)
     state.keep_open = false;
 }
 
-struct Vec2I window_size(void)
+Vec2I window_size(void)
 {
-    struct Vec2I result = {
+    Vec2I result = {
         state.width,
         state.height
     };

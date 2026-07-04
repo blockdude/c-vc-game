@@ -6,7 +6,7 @@
 
 #define INPUT_HISTORY_LEN 64
 
-static const enum InputKey key_map[SDL_SCANCODE_COUNT] = {
+static const InputKey key_map[SDL_SCANCODE_COUNT] = {
     K_NONE,           // SDL_SCANCODE_UNKNOWN
 
     K_NONE, K_NONE, K_NONE,
@@ -130,7 +130,7 @@ static const enum InputKey key_map[SDL_SCANCODE_COUNT] = {
     K_RMETA,          // SDL_SCANCODE_RGUI
 };
 
-static const enum InputButton button_map[] = {
+static const InputButton button_map[] = {
     B_NONE,
     B_LEFT,           // SDL_BUTTON_LEFT
     B_MIDDLE,         // SDL_BUTTON_MIDDLE
@@ -141,23 +141,23 @@ static const enum InputButton button_map[] = {
 
 static struct
 {
-    bool         	    initialized;
-    struct InputState   k_state[K_COUNT];
-    struct InputState   m_state[B_COUNT];
-    bool         	    m_moved;
-    struct Vec2         m_wheel;
-    struct Vec2         m_pos_rel;
-    struct Vec2         m_pos_global;
-    struct Vec2         m_pos_delta;
-    bool                e_quit;
+    bool        initialized;
+    InputState  k_state[K_COUNT];
+    InputState  m_state[B_COUNT];
+    bool        m_moved;
+    Vec2        m_wheel;
+    Vec2        m_pos_rel;
+    Vec2        m_pos_global;
+    Vec2        m_pos_delta;
+    bool        e_quit;
 
-    int                 k_history_count;
-    int                 m_history_count;
-    enum InputKey       k_history[INPUT_HISTORY_LEN];
-    enum InputButton    m_history[INPUT_HISTORY_LEN];
+    int         k_history_count;
+    int         m_history_count;
+    InputKey    k_history[INPUT_HISTORY_LEN];
+    InputButton m_history[INPUT_HISTORY_LEN];
 
-    int                 text_buffer_count;
-    char                text_buffer[VCP_MAX_STRING_LEN];
+    int         text_buffer_count;
+    char        text_buffer[VCP_MAX_STRING_LEN];
 } state = {};
 
 
@@ -396,7 +396,7 @@ int input_button_history_size(void)
     return state.m_history_count;
 }
 
-enum InputKey input_key_history(int i)
+InputKey input_key_history(int i)
 {
     if (i < 0 || i >= state.k_history_count)
         return K_NONE;
@@ -404,7 +404,7 @@ enum InputKey input_key_history(int i)
     return state.k_history[i];
 }
 
-enum InputButton input_button_history(int i)
+InputButton input_button_history(int i)
 {
     if (i < 0 || i >= state.m_history_count)
         return B_NONE;
@@ -412,7 +412,7 @@ enum InputButton input_button_history(int i)
     return state.m_history[i];
 }
 
-int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size)
+int input_key_history_buffer(InputKey *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return state.k_history_count;
@@ -422,7 +422,7 @@ int input_key_history_buffer(enum InputKey *buffer, size_t buffer_size)
     return (int)count;
 }
 
-int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size)
+int input_button_history_buffer(InputButton *buffer, size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return state.m_history_count;
@@ -432,14 +432,14 @@ int input_button_history_buffer(enum InputButton *buffer, size_t buffer_size)
     return (int)count;
 }
 
-struct InputState input_key_state(enum InputKey key)
+InputState input_key_state(InputKey key)
 {
     size_t index = (size_t)key;
     assert((index >= 0) && (index < K_COUNT));
     return state.k_state[index];
 }
 
-struct InputState input_button_state(enum InputButton button)
+InputState input_button_state(InputButton button)
 {
     size_t index = (size_t)button;
     assert((index >= 0) && (index < B_COUNT));
@@ -461,31 +461,31 @@ bool input_mouse_moved(void)
     return state.m_moved;
 }
 
-struct Vec2 input_mouse_position(void)
+Vec2 input_mouse_position(void)
 {
-    struct Vec2 res;
+    Vec2 res;
     SDL_GetMouseState(&res.x, &res.y);
     return res;
 }
 
-struct Vec2 input_mouse_global_position(void)
+Vec2 input_mouse_global_position(void)
 {
-    struct Vec2 res;
+    Vec2 res;
     SDL_GetGlobalMouseState(&res.x, &res.y);
     return res;
 }
 
-struct Vec2 input_mouse_motion_position(void)
+Vec2 input_mouse_motion_position(void)
 {
     return state.m_pos_rel;
 }
 
-struct Vec2 input_mouse_delta(void)
+Vec2 input_mouse_delta(void)
 {
     return state.m_pos_delta;
 }
 
-struct Vec2 input_mouse_scroll(void)
+Vec2 input_mouse_scroll(void)
 {
     return state.m_wheel;
 }

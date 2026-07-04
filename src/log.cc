@@ -39,7 +39,7 @@ static struct
     LogLockFn lock;
     int level;
     bool quiet;
-    struct Callback callbacks[MAX_CALLBACKS];
+    Callback callbacks[MAX_CALLBACKS];
 } state;
 
 
@@ -54,7 +54,7 @@ static const char *const level_colors[] = {
 #endif
 
 
-static void stdout_callback(struct LogEvent *ev)
+static void stdout_callback(LogEvent *ev)
 {
     FILE *f = (FILE *)ev->udata;
     char buf[16];
@@ -101,7 +101,7 @@ static void stdout_callback(struct LogEvent *ev)
 }
 
 
-static void file_callback(struct LogEvent *ev)
+static void file_callback(LogEvent *ev)
 {
     FILE *f = (FILE *)ev->udata;
     char buf[64];
@@ -173,7 +173,7 @@ int log_add_fp(FILE *fp, int level)
 }
 
 
-static void init_event(struct LogEvent *ev, void *udata)
+static void init_event(LogEvent *ev, void *udata)
 {
     if (!ev->time)
     {
@@ -186,7 +186,7 @@ static void init_event(struct LogEvent *ev, void *udata)
 
 void log_log(int level, const char *file, int line, const char *fmt, ...)
 {
-    struct LogEvent ev = {};
+    LogEvent ev = {};
     ev.fmt = fmt;
     ev.file = file;
     ev.line = line;
@@ -204,7 +204,7 @@ void log_log(int level, const char *file, int line, const char *fmt, ...)
 
     for (int i = 0; i < MAX_CALLBACKS && state.callbacks[i].fn; i++)
     {
-        struct Callback *cb = &state.callbacks[i];
+        Callback *cb = &state.callbacks[i];
         if (level >= cb->level)
         {
             init_event(&ev, cb->udata);
