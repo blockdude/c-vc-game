@@ -175,7 +175,7 @@ Other conventions:
   - No `using namespace std`; type aliases with `using` are acceptable
   - Include order: own header first (`""`), then standard library (`<>`), then external/vendored libraries (`<>`), then internal project headers (`""`).
     - Own header: the `.h` matching the current `.cc` — always first, always quotes
-    - Standard library: `<memory>`, `<vector>`, `<cassert>`, `<string>`
+    - Standard library: `<memory>`, `<vector>`, `<string>`, `<cmath>`, `<cstdio>`, `<cstring>`, `<cstdint>`, `<ctime>`, `<cassert>` — use the `c`-prefix form, never `<*.h>`
     - External/vendored: `<SDL3/SDL.h>`, `<stb_image.h>`, `<vcp/vcp.h>`
     - Internal project: `"core/common.h"`, `"world/world.h"`, `"entity/entity.h"` — full path from the source root (`game/src/`), no `../` traversal
   - Include guards: same as C — `#ifndef` / `#define` / `#endif`
@@ -186,6 +186,9 @@ Other conventions:
   - `this->` required when accessing member variables or calling member functions inside methods
   - `= default` for explicitly-defaulted special member functions
   - Avoid runtime exceptions (try / catch / throw)
+  - C standard library headers use the C++ `<c*>` form: `<cmath>`, `<cstdio>`, `<cstring>` — never `<math.h>`, `<stdio.h>`, etc.
+  - Qualify all C standard library names with `std::` — functions and types: `std::sqrt`, `std::memset`, `std::fprintf`, `std::size_t`, `std::FILE`, `std::va_list`
+  - Zero-initialize structs with `= {}` not `= { 0 }`: `FrameClock fc = {}`
 
 ## Files and Directories Naming Conventions
 

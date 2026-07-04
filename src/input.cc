@@ -366,7 +366,7 @@ char input_text_history(int i)
     return state.text_buffer[i];
 }
 
-int input_text_history_buffer(char *buffer, size_t buffer_size)
+int input_text_history_buffer(char *buffer, std::size_t buffer_size)
 {
     /*
     * Returns: the number of characters copied to
@@ -412,36 +412,36 @@ InputButton input_button_history(int i)
     return state.m_history[i];
 }
 
-int input_key_history_buffer(InputKey *buffer, size_t buffer_size)
+int input_key_history_buffer(InputKey *buffer, std::size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return state.k_history_count;
 
-    const size_t count = MIN((size_t)state.k_history_count, buffer_size);
+    const std::size_t count = MIN((std::size_t)state.k_history_count, buffer_size);
     std::memcpy(buffer, state.k_history, sizeof(*buffer) * count);
     return (int)count;
 }
 
-int input_button_history_buffer(InputButton *buffer, size_t buffer_size)
+int input_button_history_buffer(InputButton *buffer, std::size_t buffer_size)
 {
     if (buffer == NULL || buffer_size == 0)
         return state.m_history_count;
 
-    const size_t count = MIN((size_t)state.m_history_count, buffer_size);
+    const std::size_t count = MIN((std::size_t)state.m_history_count, buffer_size);
     std::memcpy(buffer, state.m_history, sizeof(*buffer) * count);
     return (int)count;
 }
 
 InputState input_key_state(InputKey key)
 {
-    size_t index = (size_t)key;
+    std::size_t index = (std::size_t)key;
     assert((index >= 0) && (index < K_COUNT));
     return state.k_state[index];
 }
 
 InputState input_button_state(InputButton button)
 {
-    size_t index = (size_t)button;
+    std::size_t index = (std::size_t)button;
     assert((index >= 0) && (index < B_COUNT));
     return state.m_state[index];
 }

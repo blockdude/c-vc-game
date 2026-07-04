@@ -35,15 +35,15 @@ extern const long long VCP_VERSION_EPOCH;
 // TYPES
 // -----------------------------
 
-typedef int8_t i8;
-typedef int16_t i16;
-typedef int32_t i32;
-typedef int64_t i64;
+typedef std::int8_t i8;
+typedef std::int16_t i16;
+typedef std::int32_t i32;
+typedef std::int64_t i64;
 
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
+typedef std::uint8_t u8;
+typedef std::uint16_t u16;
+typedef std::uint32_t u32;
+typedef std::uint64_t u64;
 
 typedef float f32;
 typedef double f64;
@@ -279,7 +279,7 @@ void clock_stats_sample(ClockStats *s, ClockConfig c, f64 delta, u64 ticks);
 
 struct LogEvent
 {
-    va_list ap;
+    std::va_list ap;
     const char *fmt;
     const char *file;
     std::tm *time;
@@ -313,7 +313,7 @@ void log_set_lock(LogLockFn fn, void *udata);
 void log_set_level(int level);
 void log_set_quiet(bool enable);
 int log_add_callback(LogCallbackFn fn, void *udata, int level);
-int log_add_fp(FILE *fp, int level);
+int log_add_fp(std::FILE *fp, int level);
 void log_log(int level, const char *file, int line, const char *fmt, ...);
 
 // =============================
@@ -529,15 +529,15 @@ void input_poll_events(bool capture_text);
 bool input_quit_event(void);
 int input_text_history_size(void);
 char input_text_history(int i);
-int input_text_history_buffer(char *buffer, size_t buffer_size);
+int input_text_history_buffer(char *buffer, std::size_t buffer_size);
 int input_key_history_size(void);
 int input_button_history_size(void);
 InputKey input_key_history(int i);
 InputButton input_button_history(int i);
 #define input_last_key_pressed() input_key_history(input_key_history_size() - 1)
 #define input_last_button_pressed() input_button_history(input_button_history_size() - 1)
-int input_key_history_buffer(InputKey *buffer, size_t buffer_size);
-int input_button_history_buffer(InputButton *buffer, size_t buffer_size);
+int input_key_history_buffer(InputKey *buffer, std::size_t buffer_size);
+int input_button_history_buffer(InputButton *buffer, std::size_t buffer_size);
 InputState input_key_state(InputKey key);
 InputState input_button_state(InputButton btn);
 void input_warp_mouse(float x, float y); // moves mouse to position in window

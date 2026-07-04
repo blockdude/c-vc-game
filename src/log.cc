@@ -56,7 +56,7 @@ static const char *const level_colors[] = {
 
 static void stdout_callback(LogEvent *ev)
 {
-    FILE *f = (FILE *)ev->udata;
+    std::FILE *f = (std::FILE *)ev->udata;
     char buf[16];
     buf[std::strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
 
@@ -103,7 +103,7 @@ static void stdout_callback(LogEvent *ev)
 
 static void file_callback(LogEvent *ev)
 {
-    FILE *f = (FILE *)ev->udata;
+    std::FILE *f = (std::FILE *)ev->udata;
     char buf[64];
     buf[std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
     std::fprintf(
@@ -167,7 +167,7 @@ int log_add_callback(LogCallbackFn fn, void *udata, int level)
 }
 
 
-int log_add_fp(FILE *fp, int level)
+int log_add_fp(std::FILE *fp, int level)
 {
     return log_add_callback(file_callback, fp, level);
 }
@@ -177,7 +177,7 @@ static void init_event(LogEvent *ev, void *udata)
 {
     if (!ev->time)
     {
-        const time_t t = time(NULL);
+        const std::time_t t = std::time(NULL);
         ev->time = std::localtime(&t);
     }
     ev->udata = udata;
