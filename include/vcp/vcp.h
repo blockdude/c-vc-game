@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <cstdarg>
 #include <ctime>
-
 #include <cmath>
 
 #define VCP_MAX_STRING_LEN 128
@@ -31,39 +30,76 @@ extern const char *const VCP_VERSION_STRING;
 extern const long long VCP_VERSION_EPOCH;
 
 // =============================
+
+
+
+// =============================
 // -----------------------------
 // TYPES
 // -----------------------------
 
-typedef std::int8_t i8;
-typedef std::int16_t i16;
-typedef std::int32_t i32;
-typedef std::int64_t i64;
+using i8 = std::int8_t;
+using i16 = std::int16_t;
+using i32 = std::int32_t;
+using i64 = std::int64_t;
+using u8 = std::uint8_t;
+using u16 = std::uint16_t;
+using u32 = std::uint32_t;
+using u64 = std::uint64_t;
+using f32 = float;
+using f64 = double;
 
-typedef std::uint8_t u8;
-typedef std::uint16_t u16;
-typedef std::uint32_t u32;
-typedef std::uint64_t u64;
+template<typename T>
+struct Vec2T
+{
+    T x, y;
+};
 
-typedef float f32;
-typedef double f64;
+using Vec2   = Vec2T<float>;
+using Vec2I  = Vec2T<int>;
+using Vec2I32 = Vec2T<i32>;
+using Vec2I64 = Vec2T<i64>;
+using Vec2F32 = Vec2T<f32>;
+using Vec2F64 = Vec2T<f64>;
 
-#define _EXTENT_TEMPLATE(T) { T w, h; }
-#define _LINE_TEMPLATE(T) { T x0, y0; T x1, y1; }
-#define _POINT_TEMPLATE(T) { T x, y; }
-#define _CIRCLE_TEMPLATE(T) { T x, y; T r; }
-#define _TRIANGLE_TEMPLATE(T) { T x0, y0; T x1, y1; T x2, y2; }
-#define _RECTANGLE_TEMPLATE(T) { T x, y; T w, h; }
-#define _COLOR_TEMPLATE(T) { T r, g, b, a; }
-#define _VEC2_TEMPLATE(T)  { T x, y; }
-#define _VEC3_TEMPLATE(T)  { T x, y, z; }
-#define _VEC4_TEMPLATE(T)  { T x, y, z, w; }
-#define _QUAT_TEMPLATE(T)  { T x, y, z, w; }
-#define _FMAT4_TEMPLATE(T) { T m[16];}
-#define _MAT4_TEMPLATE(T)  { T m00, m01, m02, m03; \
-                             T m10, m11, m12, m13; \
-                             T m20, m21, m22, m23; \
-                             T m30, m31, m32, m33; }
+template<typename T>
+struct Vec3T
+{
+    T x, y, z;
+};
+
+using Vec3   = Vec3T<float>;
+using Vec3I  = Vec3T<int>;
+using Vec3I32 = Vec3T<i32>;
+using Vec3I64 = Vec3T<i64>;
+using Vec3F32 = Vec3T<f32>;
+using Vec3F64 = Vec3T<f64>;
+
+template<typename T>
+struct Vec4T
+{
+    T x, y, z, w;
+};
+
+using Vec4   = Vec4T<float>;
+using Vec4I  = Vec4T<int>;
+using Vec4I32 = Vec4T<i32>;
+using Vec4I64 = Vec4T<i64>;
+using Vec4F32 = Vec4T<f32>;
+using Vec4F64 = Vec4T<f64>;
+
+template<typename T>
+struct QuatT
+{
+    T x, y, z, w;
+};
+
+using Quat   = QuatT<float>;
+using QuatI  = QuatT<int>;
+using QuatI32 = QuatT<i32>;
+using QuatI64 = QuatT<i64>;
+using QuatF32 = QuatT<f32>;
+using QuatF64 = QuatT<f64>;
 
 /*
  * Memory layout of matrix is row major.
@@ -76,91 +112,99 @@ typedef double f64;
  *	   { m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33 }
  */
 
-struct Vec2 _VEC2_TEMPLATE(float);
-struct Vec2I _VEC2_TEMPLATE(int);
-struct Vec2I32 _VEC2_TEMPLATE(i32);
-struct Vec2I64 _VEC2_TEMPLATE(i64);
-struct Vec2F32 _VEC2_TEMPLATE(f32);
-struct Vec2F64 _VEC2_TEMPLATE(f64);
+template<typename T>
+struct Mat4T
+{
+    T m00, m01, m02, m03;
+    T m10, m11, m12, m13;
+    T m20, m21, m22, m23;
+    T m30, m31, m32, m33;
+};
 
-struct Vec3 _VEC3_TEMPLATE(float);
-struct Vec3I _VEC3_TEMPLATE(int);
-struct Vec3I32 _VEC3_TEMPLATE(i32);
-struct Vec3I64 _VEC3_TEMPLATE(i64);
-struct Vec3F32 _VEC3_TEMPLATE(f32);
-struct Vec3F64 _VEC3_TEMPLATE(f64);
+using Mat4   = Mat4T<float>;
+using Mat4I  = Mat4T<int>;
+using Mat4I32 = Mat4T<i32>;
+using Mat4I64 = Mat4T<i64>;
+using Mat4F32 = Mat4T<f32>;
+using Mat4F64 = Mat4T<f64>;
 
-struct Vec4 _VEC4_TEMPLATE(float);
-struct Vec4I _VEC4_TEMPLATE(int);
-struct Vec4I32 _VEC4_TEMPLATE(i32);
-struct Vec4I64 _VEC4_TEMPLATE(i64);
-struct Vec4F32 _VEC4_TEMPLATE(f32);
-struct Vec4F64 _VEC4_TEMPLATE(f64);
+template<typename T>
+struct FMat4T
+{
+    T m[16];
+};
 
-struct Quat _QUAT_TEMPLATE(float);
-struct QuatI _QUAT_TEMPLATE(int);
-struct QuatI32 _QUAT_TEMPLATE(i32);
-struct QuatI64 _QUAT_TEMPLATE(i64);
-struct QuatF32 _QUAT_TEMPLATE(f32);
-struct QuatF64 _QUAT_TEMPLATE(f64);
+using FMat4   = FMat4T<float>;
+using FMat4I  = FMat4T<int>;
+using FMat4I32 = FMat4T<i32>;
+using FMat4I64 = FMat4T<i64>;
+using FMat4F32 = FMat4T<f32>;
+using FMat4F64 = FMat4T<f64>;
 
-struct Mat4 _MAT4_TEMPLATE(float);
-struct Mat4I _MAT4_TEMPLATE(int);
-struct Mat4I32 _MAT4_TEMPLATE(i32);
-struct Mat4I64 _MAT4_TEMPLATE(i64);
-struct Mat4F32 _MAT4_TEMPLATE(f32);
-struct Mat4F64 _MAT4_TEMPLATE(f64);
+template<typename T>
+struct LineT
+{
+    T x0, y0;
+    T x1, y1;
+};
 
-struct FMat4 _FMAT4_TEMPLATE(float);
-struct FMat4I _FMAT4_TEMPLATE(int);
-struct FMat4I32 _FMAT4_TEMPLATE(i32);
-struct FMat4I64 _FMAT4_TEMPLATE(i64);
-struct FMat4F32 _FMAT4_TEMPLATE(f32);
-struct FMat4F64 _FMAT4_TEMPLATE(f64);
+using Line   = LineT<float>;
+using LineI32 = LineT<i32>;
+using LineI64 = LineT<i64>;
+using LineF32 = LineT<f32>;
+using LineF64 = LineT<f64>;
 
-struct Line _LINE_TEMPLATE(float);
-struct LineI32 _LINE_TEMPLATE(i32);
-struct LineI64 _LINE_TEMPLATE(i64);
-struct LineF32 _LINE_TEMPLATE(f32);
-struct LineF64 _LINE_TEMPLATE(f64);
+template<typename T>
+struct CircleT
+{
+    T x, y;
+    T r;
+};
 
-struct Circle _CIRCLE_TEMPLATE(float);
-struct CircleI32 _CIRCLE_TEMPLATE(i32);
-struct CircleI64 _CIRCLE_TEMPLATE(i64);
-struct CircleF32 _CIRCLE_TEMPLATE(f32);
-struct CircleF64 _CIRCLE_TEMPLATE(f64);
+using Circle   = CircleT<float>;
+using CircleI32 = CircleT<i32>;
+using CircleI64 = CircleT<i64>;
+using CircleF32 = CircleT<f32>;
+using CircleF64 = CircleT<f64>;
 
-struct Triangle _TRIANGLE_TEMPLATE(float);
-struct TriangleI32 _TRIANGLE_TEMPLATE(i32);
-struct TriangleI64 _TRIANGLE_TEMPLATE(i64);
-struct TriangleF32 _TRIANGLE_TEMPLATE(f32);
-struct TriangleF64 _TRIANGLE_TEMPLATE(f64);
+template<typename T>
+struct TriangleT
+{
+    T x0, y0;
+    T x1, y1;
+    T x2, y2;
+};
 
-struct Rectangle _RECTANGLE_TEMPLATE(float);
-struct RectangleI32 _RECTANGLE_TEMPLATE(i32);
-struct RectangleI64 _RECTANGLE_TEMPLATE(i64);
-struct RectangleF32 _RECTANGLE_TEMPLATE(f32);
-struct RectangleF64 _RECTANGLE_TEMPLATE(f64);
+using Triangle   = TriangleT<float>;
+using TriangleI32 = TriangleT<i32>;
+using TriangleI64 = TriangleT<i64>;
+using TriangleF32 = TriangleT<f32>;
+using TriangleF64 = TriangleT<f64>;
 
-struct Color _COLOR_TEMPLATE(float);
-struct ColorU8 _COLOR_TEMPLATE(u8);
-struct ColorU16 _COLOR_TEMPLATE(u16);
-struct ColorF32 _COLOR_TEMPLATE(f32);
-struct ColorF64 _COLOR_TEMPLATE(f64);
+template<typename T>
+struct RectangleT
+{
+    T x, y;
+    T w, h;
+};
 
-#undef _EXTENT_TEMPLATE
-#undef _LINE_TEMPLATE
-#undef _POINT_TEMPLATE
-#undef _CIRCLE_TEMPLATE
-#undef _TRIANGLE_TEMPLATE
-#undef _RECTANGLE_TEMPLATE
-#undef _COLOR_TEMPLATE
-#undef _VEC2_TEMPLATE
-#undef _VEC3_TEMPLATE
-#undef _VEC4_TEMPLATE
-#undef _QUAT_TEMPLATE
-#undef _FMAT4_TEMPLATE
-#undef _MAT4_TEMPLATE
+using Rectangle   = RectangleT<float>;
+using RectangleI32 = RectangleT<i32>;
+using RectangleI64 = RectangleT<i64>;
+using RectangleF32 = RectangleT<f32>;
+using RectangleF64 = RectangleT<f64>;
+
+template<typename T>
+struct ColorT
+{
+    T r, g, b, a;
+};
+
+using Color   = ColorT<float>;
+using ColorU8  = ColorT<u8>;
+using ColorU16 = ColorT<u16>;
+using ColorF32 = ColorT<f32>;
+using ColorF64 = ColorT<f64>;
 
 // =============================
 
