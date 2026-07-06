@@ -7,6 +7,16 @@ namespace vcp::math
 using dimension = int;
 
 // =============================
+// Constants
+// =============================
+
+constexpr double EULER   = 2.71828182845904523536028747135266249;
+constexpr double PI_2    = 1.57079632679489661923132169163975144;
+constexpr double PI      = 3.14159265358979323846264338327950288;
+constexpr double TAU     = 6.28318530717958647692528676655900576;
+constexpr double EPSILON = 0.0001;
+
+// =============================
 // Vector<N, T>
 // =============================
 
@@ -15,10 +25,10 @@ struct Vector
 {
     T data[N];
 
-    constexpr T& operator()(dimension i);
-    constexpr const T& operator()(dimension i) const;
-    constexpr T& operator[](dimension i);
-    constexpr const T& operator[](dimension i) const;
+    constexpr T &operator()(dimension i);
+    constexpr const T &operator()(dimension i) const;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -32,10 +42,10 @@ struct Vector<1, T>
         T r;
     };
 
-    constexpr T& operator()(dimension i);
-    constexpr const T& operator()(dimension i) const;
-    constexpr T& operator[](dimension i);
-    constexpr const T& operator[](dimension i) const;
+    constexpr T &operator()(dimension i);
+    constexpr const T &operator()(dimension i) const;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -49,10 +59,10 @@ struct Vector<2, T>
         struct { T r, g; };
     };
 
-    constexpr T& operator()(dimension i);
-    constexpr const T& operator()(dimension i) const;
-    constexpr T& operator[](dimension i);
-    constexpr const T& operator[](dimension i) const;
+    constexpr T &operator()(dimension i);
+    constexpr const T &operator()(dimension i) const;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -65,10 +75,10 @@ struct Vector<3, T>
         struct { T r, g, b; };
     };
 
-    constexpr T& operator()(dimension i);
-    constexpr const T& operator()(dimension i) const;
-    constexpr T& operator[](dimension i);
-    constexpr const T& operator[](dimension i) const;
+    constexpr T &operator()(dimension i);
+    constexpr const T &operator()(dimension i) const;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -81,10 +91,10 @@ struct Vector<4, T>
         struct { T s, t, p, q; };
     };
 
-    constexpr T& operator()(dimension i);
-    constexpr const T& operator()(dimension i) const;
-    constexpr T& operator[](dimension i);
-    constexpr const T& operator[](dimension i) const;
+    constexpr T &operator()(dimension i);
+    constexpr const T &operator()(dimension i) const;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -96,10 +106,10 @@ struct Quaternion
 {
     T x, y, z, w;
 
-    constexpr T& operator()(dimension i);
-    constexpr const T& operator()(dimension i) const;
-    constexpr T& operator[](dimension i);
-    constexpr const T& operator[](dimension i) const;
+    constexpr T &operator()(dimension i);
+    constexpr const T &operator()(dimension i) const;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -119,15 +129,26 @@ struct Matrix
 {
     T data[N * M];
 
-    constexpr T& operator()(dimension r, dimension c);
-    constexpr const T& operator()(dimension r, dimension c) const;
+    constexpr T &operator()(dimension r, dimension c);
+    constexpr const T &operator()(dimension r, dimension c) const;
     constexpr T &operator[](dimension i);
     constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
-// Geometry primitives (dimension-agnostic)
+// Color<T>
 // =============================
+
+template<typename T>
+struct Color
+{
+    T r, g, b, a;
+
+    constexpr T &operator()(dimension i);
+    constexpr const T &operator()(dimension i) const;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
+};
 
 // =============================
 // Line<N, T>
@@ -138,6 +159,9 @@ struct Line
 {
     Vector<N, T> a;
     Vector<N, T> b;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -150,6 +174,9 @@ struct Triangle
     Vector<N, T> a;
     Vector<N, T> b;
     Vector<N, T> c;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -161,6 +188,9 @@ struct Ray
 {
     Vector<N, T> origin;
     Vector<N, T> direction;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -172,6 +202,9 @@ struct Ball
 {
     Vector<N, T> center;
     T r;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -184,6 +217,9 @@ struct Ball<1, T>
     };
 
     T r;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -200,6 +236,9 @@ struct Ball<2, T>
     };
 
     T r;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -216,6 +255,9 @@ struct Ball<3, T>
     };
 
     T r;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -227,6 +269,9 @@ struct Box
 {
     Vector<N, T> position;
     Vector<N, T> size;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -246,6 +291,9 @@ struct Box<1, T>
             Vector<1, T> size;
         };
     };
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -265,6 +313,9 @@ struct Box<2, T>
             Vector<2, T> size;
         };
     };
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 template<typename T>
@@ -284,16 +335,9 @@ struct Box<3, T>
             Vector<3, T> size;
         };
     };
-};
 
-// =============================
-// Color<T>
-// =============================
-
-template<typename T>
-struct Color
-{
-    T r, g, b, a;
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -305,6 +349,9 @@ struct AABB
 {
     Vector<N, T> min;
     Vector<N, T> max;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
 
 // =============================
@@ -317,7 +364,124 @@ struct OBB
     Vector<N, T> center;
     Vector<N, T> extent;
     R orientation;
+
+    constexpr T &operator[](dimension i);
+    constexpr const T &operator[](dimension i) const;
 };
+
+// =============================
+// Scalar utilities
+// =============================
+
+template<typename T> constexpr T min(T a, T b);
+template<typename T> constexpr T max(T a, T b);
+template<typename T> constexpr T clamp(T v, T lo, T hi);
+template<typename T> constexpr T sign(T v);
+template<typename T> constexpr T lerp(T a, T b, T t);
+template<typename T> constexpr T radians(T degrees);
+template<typename T> constexpr T degrees(T radians);
+
+// =============================
+// Vector math
+// =============================
+
+template<dimension N, typename T> constexpr Vector<N, T> zero();
+template<dimension N, typename T> constexpr Vector<N, T> one();
+template<dimension N, typename T> constexpr Vector<N, T> add(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> add_val(Vector<N, T>, T);
+template<dimension N, typename T> constexpr Vector<N, T> sub(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> sub_val(Vector<N, T>, T);
+template<dimension N, typename T> constexpr Vector<N, T> scale(Vector<N, T>, T);
+template<dimension N, typename T> constexpr Vector<N, T> mul(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> negate(Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> div(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> lerp(Vector<N, T>, Vector<N, T>, T);
+template<dimension N, typename T> constexpr Vector<N, T> reflect(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> move_towards(Vector<N, T>, Vector<N, T>, T);
+template<dimension N, typename T> constexpr Vector<N, T> invert(Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> clamp_len(Vector<N, T>, T, T);
+template<dimension N, typename T> constexpr Vector<N, T> min(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> max(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> clamp(Vector<N, T>, Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> clamp_val(Vector<N, T>, T, T);
+template<dimension N, typename T> constexpr T length(Vector<N, T>);
+template<dimension N, typename T> constexpr T length_sq(Vector<N, T>);
+template<dimension N, typename T> constexpr T dot(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr T dist(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr T dist_sq(Vector<N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr bool equals(Vector<N, T>, Vector<N, T>, T);
+template<dimension N, typename T> constexpr Vector<N, T> normalize(Vector<N, T>);
+
+// =============================
+// Vec2-specific
+// =============================
+
+template<typename T> constexpr T cross(Vector<2, T>, Vector<2, T>);
+template<typename T> constexpr Vector<2, T> rotate(Vector<2, T>, T);
+template<typename T> constexpr T angle(Vector<2, T>, Vector<2, T>);
+template<typename T> constexpr T line_angle(Vector<2, T>, Vector<2, T>);
+
+// =============================
+// Vec3-specific
+// =============================
+
+template<typename T> constexpr Vector<3, T> cross(Vector<3, T>, Vector<3, T>);
+template<typename T> constexpr Vector<3, T> project(Vector<3, T>, Vector<3, T>);
+template<typename T> constexpr Vector<3, T> reject(Vector<3, T>, Vector<3, T>);
+template<typename T> constexpr Vector<3, T> perpendicular(Vector<3, T>);
+template<typename T> constexpr Vector<3, T> center(Vector<3, T>, Vector<3, T>);
+template<typename T> constexpr Vector<3, T> rotate(Vector<3, T>, Quaternion<T>);
+template<typename T> constexpr Vector<3, T> rotate_around_axis(Vector<3, T>, Vector<3, T>, T);
+
+// =============================
+// Quaternion
+// =============================
+
+template<typename T> constexpr Quaternion<T> quat_identity();
+template<typename T> constexpr Quaternion<T> add(Quaternion<T>, Quaternion<T>);
+template<typename T> constexpr Quaternion<T> sub(Quaternion<T>, Quaternion<T>);
+template<typename T> constexpr Quaternion<T> mul(Quaternion<T>, Quaternion<T>);
+template<typename T> constexpr Quaternion<T> scale(Quaternion<T>, T);
+template<typename T> constexpr T length(Quaternion<T>);
+template<typename T> constexpr Quaternion<T> normalize(Quaternion<T>);
+template<typename T> constexpr Quaternion<T> invert(Quaternion<T>);
+template<typename T> constexpr Quaternion<T> lerp(Quaternion<T>, Quaternion<T>, T);
+template<typename T> constexpr Quaternion<T> slerp(Quaternion<T>, Quaternion<T>, T, T epsilon);
+template<typename T> constexpr Quaternion<T> from_euler(T pitch, T yaw, T roll);
+template<typename T> constexpr Vector<3, T> to_euler(Quaternion<T>);
+template<typename T> constexpr Quaternion<T> from_axis_angle(Vector<3, T>, T);
+template<typename T> constexpr Quaternion<T> from_mat4(Matrix<4, 4, T>);
+template<typename T> constexpr Matrix<4, 4, T> to_mat4(Quaternion<T>);
+template<typename T> constexpr bool equals(Quaternion<T>, Quaternion<T>, T);
+
+// =============================
+// Matrix
+// =============================
+
+template<dimension N, typename T> constexpr Matrix<N, N, T> mat_identity();
+template<dimension N, dimension K, dimension M, typename T> constexpr Matrix<N, M, T> mul(Matrix<N, K, T>, Matrix<K, M, T>);
+template<dimension N, typename T> constexpr Vector<N, T> mul(Matrix<N, N, T>, Vector<N, T>);
+template<dimension N, typename T> constexpr Vector<N, T> transform(Vector<N, T>, Matrix<N, N, T>);
+template<dimension N, typename T> constexpr Matrix<N, N, T> add(Matrix<N, N, T>, Matrix<N, N, T>);
+template<dimension N, typename T> constexpr Matrix<N, N, T> sub(Matrix<N, N, T>, Matrix<N, N, T>);
+template<dimension N, typename T> constexpr T det(Matrix<N, N, T>);
+template<dimension N, typename T> constexpr T trace(Matrix<N, N, T>);
+template<dimension N, typename T> constexpr Matrix<N, N, T> transpose(Matrix<N, N, T>);
+template<dimension N, typename T> constexpr Matrix<N, N, T> invert(Matrix<N, N, T>);
+
+// =============================
+// Matrix 4x4
+// =============================
+
+template<typename T> constexpr Matrix<4, 4, T> translate(Vector<3, T>);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Vector<3, T>, T);
+template<typename T> constexpr Matrix<4, 4, T> rotate_x(T);
+template<typename T> constexpr Matrix<4, 4, T> rotate_y(T);
+template<typename T> constexpr Matrix<4, 4, T> rotate_z(T);
+template<typename T> constexpr Matrix<4, 4, T> scale(Vector<3, T>);
+template<typename T> constexpr Matrix<4, 4, T> perspective(T fovy, T aspect, T near, T far);
+template<typename T> constexpr Matrix<4, 4, T> ortho(T left, T right, T bottom, T top, T near, T far);
+template<typename T> constexpr Matrix<4, 4, T> lookat(Vector<3, T> eye, Vector<3, T> target, Vector<3, T> up);
 
 } // namespace vcp::math
 
