@@ -478,6 +478,7 @@ template<dimension N, typename T> constexpr Matrix<N, N, T> transpose(Matrix<N, 
 template<dimension N, typename T> constexpr Matrix<N, N, T> invert(Matrix<N, N, T>);
 template<dimension N, dimension R, dimension C, typename T> constexpr Matrix<N, N, T> resize(Matrix<R, C, T>);
 template<dimension N, dimension M, dimension R, dimension C, typename T> constexpr Matrix<N, M, T> resize(Matrix<R, C, T>);
+template<dimension RA, dimension CA, dimension RB, dimension CB, typename T> constexpr Matrix<max(RA, RB), max(CA, CB), T> embed(Matrix<RA, CA, T>, Matrix<RB, CB, T>);
 
 // =============================
 // Affine transforms
@@ -510,6 +511,20 @@ template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, Vector<
 template<typename T> constexpr Matrix<4, 4, T> rotate_x(Matrix<4, 4, T> m, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate_y(Matrix<4, 4, T> m, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate_z(Matrix<4, 4, T> m, T angle);
+
+// Pre Apply
+template<dimension N, typename T> constexpr Matrix<N + 1, N + 1, T> translate(Vector<N, T> v, Matrix<N + 1, N + 1, T> m);
+template<dimension N, typename T> constexpr Matrix<N + 1, N + 1, T> scale(Vector<N, T> v, Matrix<N + 1, N + 1, T> m);
+template<dimension N, typename T> constexpr Matrix<N + 1, N + 1, T> rotate(Vector<N, T> u, Vector<N, T> v, T angle, Matrix<N + 1, N + 1, T> m);
+template<dimension N, typename T> constexpr Matrix<N + 1, N + 1, T> rotate(Vector<N, T> from, Vector<N, T> to, Matrix<N + 1, N + 1, T> m);
+template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(Vector<N, T> u, Vector<N, T> v, T angle, Matrix<N, N, T> m);
+template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(Vector<N, T> from, Vector<N, T> to, Matrix<N, N, T> m);
+template<typename T> constexpr Matrix<2, 2, T> linear_rotate(T angle, Matrix<2, 2, T> m);
+template<typename T> constexpr Matrix<3, 3, T> rotate(T angle, Matrix<3, 3, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Vector<3, T> axis, T angle, Matrix<4, 4, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate_x(T angle, Matrix<4, 4, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate_y(T angle, Matrix<4, 4, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate_z(T angle, Matrix<4, 4, T> m);
 
 // =============================
 // Matrix 4x4
