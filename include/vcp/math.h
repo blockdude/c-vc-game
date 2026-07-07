@@ -480,7 +480,7 @@ template<dimension N, typename T> constexpr Vector<N, T> modulo(Vector<N, T>, Ve
 template<dimension N, typename T> constexpr Vector<N, T> truncated_modulo(Vector<N, T>, T);
 template<dimension N, typename T> constexpr Vector<N, T> truncated_modulo(Vector<N, T>, Vector<N, T>);
 template<dimension N, typename T> constexpr Vector<N, T> smoothstep(Vector<N, T>, Vector<N, T>, Vector<N, T>);
-template<dimension N, dimension M, typename T> constexpr Vector<N, T> resize(Vector<M, T>);
+template<dimension N, dimension M, typename T> constexpr Vector<N, T> resize(Vector<M, T>, T fill = T{});
 template<typename T, dimension N, dimension... Ns> constexpr Vector<(N + ... + Ns), T> concat(Vector<N, T>, Vector<Ns, T>...);
 template<dimension N, typename T, typename... Scalars> constexpr Vector<N + 1 + sizeof...(Scalars), T> concat(Vector<N, T>, T, Scalars...);
 template<dimension N, typename T> constexpr Vector<N + 1, T> concat(T, Vector<N, T>);
@@ -502,6 +502,8 @@ template<typename T> constexpr T line_angle(Vector<2, T>, Vector<2, T>);
 template<typename T> constexpr Vector<3, T> cross(Vector<3, T>, Vector<3, T>);
 template<typename T> constexpr Vector<3, T> rotate(Vector<3, T>, Quaternion<T>);
 template<typename T> constexpr Vector<3, T> rotate(Vector<3, T>, Vector<3, T>, T);
+template<typename T> constexpr Vector<3, T> rotate(Vector<3, T>, T pitch, T yaw, T roll);
+template<typename T> constexpr Vector<3, T> rotate(Vector<3, T>, Vector<3, T> euler);
 
 // =============================
 // Vec4-specific
@@ -538,12 +540,23 @@ template<typename T> constexpr Quaternion<T> slerp(Quaternion<T>, Quaternion<T>,
 template<typename T> constexpr Quaternion<T> from_euler(T pitch, T yaw, T roll);
 template<typename T> constexpr Vector<3, T> to_euler(Quaternion<T>);
 template<typename T> constexpr Quaternion<T> from_axis_angle(Vector<3, T>, T);
+template<typename T> constexpr Quaternion<T> exp_map(Vector<3, T>);
+template<typename T> constexpr Vector<3, T> log_map(Quaternion<T>);
 template<typename T> constexpr Quaternion<T> from_mat4(Matrix<4, 4, T>);
 template<typename T> constexpr bool equals(Quaternion<T>, Quaternion<T>, T);
 
 // =============================
 // Matrix
 // =============================
+
+#ifdef VCP_MATH_CONVENIENCE_MUL
+template<typename T> constexpr Vector<3, T> mul(Matrix<4, 4, T>, Vector<3, T>);
+template<typename T> constexpr Vector<3, T> mul(Vector<3, T>, Matrix<4, 4, T>);
+template<typename T> constexpr Vector<2, T> mul(Matrix<4, 4, T>, Vector<2, T>);
+template<typename T> constexpr Vector<2, T> mul(Vector<2, T>, Matrix<4, 4, T>);
+template<typename T> constexpr Vector<2, T> mul(Matrix<3, 3, T>, Vector<2, T>);
+template<typename T> constexpr Vector<2, T> mul(Vector<2, T>, Matrix<3, 3, T>);
+#endif
 
 template<dimension N, dimension K, dimension M, typename T> constexpr Matrix<N, M, T> mul(Matrix<N, K, T>, Matrix<K, M, T>);
 template<dimension N, dimension M, typename T> constexpr Vector<N, T> mul(Matrix<N, M, T>, Vector<M, T>);
@@ -569,8 +582,8 @@ template<dimension N, typename T> constexpr T determinant(Matrix<N, N, T>);
 template<dimension N, typename T> constexpr T trace(Matrix<N, N, T>);
 template<dimension N, dimension M, typename T> constexpr Matrix<M, N, T> transpose(Matrix<N, M, T>);
 template<dimension N, typename T> constexpr Matrix<N, N, T> invert(Matrix<N, N, T>);
-template<dimension N, dimension R, dimension C, typename T> constexpr Matrix<N, N, T> resize(Matrix<R, C, T>);
-template<dimension N, dimension M, dimension R, dimension C, typename T> constexpr Matrix<N, M, T> resize(Matrix<R, C, T>);
+template<dimension N, dimension R, dimension C, typename T> constexpr Matrix<N, N, T> resize(Matrix<R, C, T>, T fill = T{});
+template<dimension N, dimension M, dimension R, dimension C, typename T> constexpr Matrix<N, M, T> resize(Matrix<R, C, T>, T fill = T{});
 template<dimension RA, dimension CA, dimension RB, dimension CB, typename T> constexpr Matrix<max(RA, RB), max(CA, CB), T> embed(Matrix<RA, CA, T>, Matrix<RB, CB, T>);
 template<dimension N, dimension M, typename T> constexpr Matrix<N, M, T> outer_product(Vector<N, T>, Vector<M, T>);
 
@@ -588,9 +601,13 @@ template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotation(Vect
 template<typename T> constexpr Matrix<2, 2, T> linear_rotation(T angle);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotation(Quaternion<T>);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotation(Vector<3, T> axis, T angle);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotation(T pitch, T yaw, T roll);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotation(Vector<3, T> euler);
 template<typename T> constexpr Matrix<3, 3, T> rotation(T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotation(Vector<3, T> axis, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotation(Quaternion<T>);
+template<typename T> constexpr Matrix<4, 4, T> rotation(T pitch, T yaw, T roll);
+template<typename T> constexpr Matrix<4, 4, T> rotation(Vector<3, T> euler);
 template<typename T> constexpr Matrix<4, 4, T> rotation_x(T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotation_y(T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotation_z(T angle);
@@ -605,9 +622,13 @@ template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(Matrix
 template<typename T> constexpr Matrix<2, 2, T> linear_rotate(Matrix<2, 2, T> m, T angle);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, Quaternion<T> q);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, Vector<3, T> axis, T angle);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, T pitch, T yaw, T roll);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, Vector<3, T> euler);
 template<typename T> constexpr Matrix<3, 3, T> rotate(Matrix<3, 3, T> m, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, Vector<3, T> axis, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, Quaternion<T> q);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, T pitch, T yaw, T roll);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, Vector<3, T> euler);
 template<typename T> constexpr Matrix<4, 4, T> rotate_x(Matrix<4, 4, T> m, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate_y(Matrix<4, 4, T> m, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate_z(Matrix<4, 4, T> m, T angle);
@@ -622,9 +643,13 @@ template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(Vector
 template<typename T> constexpr Matrix<2, 2, T> linear_rotate(T angle, Matrix<2, 2, T> m);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Quaternion<T> q, Matrix<3, 3, T> m);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Vector<3, T> axis, T angle, Matrix<3, 3, T> m);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(T pitch, T yaw, T roll, Matrix<3, 3, T> m);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Vector<3, T> euler, Matrix<3, 3, T> m);
 template<typename T> constexpr Matrix<3, 3, T> rotate(T angle, Matrix<3, 3, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate(Vector<3, T> axis, T angle, Matrix<4, 4, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate(Quaternion<T> q, Matrix<4, 4, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate(T pitch, T yaw, T roll, Matrix<4, 4, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Vector<3, T> euler, Matrix<4, 4, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate_x(T angle, Matrix<4, 4, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate_y(T angle, Matrix<4, 4, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate_z(T angle, Matrix<4, 4, T> m);
