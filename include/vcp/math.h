@@ -10,11 +10,11 @@ using dimension = int;
 // Constants
 // =============================
 
-//constexpr double EULER   = 2.71828182845904523536028747135266249;
-//constexpr double PI_2    = 1.57079632679489661923132169163975144;
-//constexpr double PI      = 3.14159265358979323846264338327950288;
-//constexpr double TAU     = 6.28318530717958647692528676655900576;
-//constexpr double EPSILON = 0.0001;
+template<typename T> constexpr T EULER   = T(2.71828182845904523536028747135266249);
+template<typename T> constexpr T PI      = T(3.14159265358979323846264338327950288);
+template<typename T> constexpr T PI_2    = PI<T> / T(2);
+template<typename T> constexpr T TAU     = PI<T> * T(2);
+template<typename T> constexpr T EPSILON = T(0.0001);
 
 // =============================
 // Vector<N, T>
@@ -177,6 +177,50 @@ struct Basis
     constexpr const E &operator()(dimension i) const;
     constexpr E &operator[](dimension i);
     constexpr const E &operator[](dimension i) const;
+};
+
+// =============================
+// Cardinal<N, T>
+// =============================
+
+template<dimension N, typename T>
+struct Cardinal
+{
+    static constexpr Vector<N, T> get(dimension i);
+};
+
+template<typename T>
+struct Cardinal<1, T>
+{
+    static constexpr Vector<1, T> X = { T(1) };
+    static constexpr Vector<1, T> get(dimension i);
+};
+
+template<typename T>
+struct Cardinal<2, T>
+{
+    static constexpr Vector<2, T> X = { T(1), T(0) };
+    static constexpr Vector<2, T> Y = { T(0), T(1) };
+    static constexpr Vector<2, T> get(dimension i);
+};
+
+template<typename T>
+struct Cardinal<3, T>
+{
+    static constexpr Vector<3, T> X = { T(1), T(0), T(0) };
+    static constexpr Vector<3, T> Y = { T(0), T(1), T(0) };
+    static constexpr Vector<3, T> Z = { T(0), T(0), T(1) };
+    static constexpr Vector<3, T> get(dimension i);
+};
+
+template<typename T>
+struct Cardinal<4, T>
+{
+    static constexpr Vector<4, T> X = { T(1), T(0), T(0), T(0) };
+    static constexpr Vector<4, T> Y = { T(0), T(1), T(0), T(0) };
+    static constexpr Vector<4, T> Z = { T(0), T(0), T(1), T(0) };
+    static constexpr Vector<4, T> W = { T(0), T(0), T(0), T(1) };
+    static constexpr Vector<4, T> get(dimension i);
 };
 
 // =============================
@@ -482,6 +526,7 @@ template<dimension N, typename T> constexpr Vector<N, T> truncated_modulo(Vector
 template<dimension N, typename T> constexpr Vector<N, T> truncated_modulo(Vector<N, T>, Vector<N, T>);
 template<dimension N, typename T> constexpr Vector<N, T> smoothstep(Vector<N, T>, Vector<N, T>, Vector<N, T>);
 template<dimension N, dimension M, typename T> constexpr Vector<N, T> resize(Vector<M, T>, T fill = T{});
+template<dimension N, typename T = float> constexpr Vector<N, T> cardinal(dimension i);
 template<typename T, dimension N, dimension... Ns> constexpr Vector<(N + ... + Ns), T> concat(Vector<N, T>, Vector<Ns, T>...);
 template<dimension N, typename T, typename... Scalars> constexpr Vector<N + 1 + sizeof...(Scalars), T> concat(Vector<N, T>, T, Scalars...);
 template<dimension N, typename T> constexpr Vector<N + 1, T> concat(T, Vector<N, T>);
