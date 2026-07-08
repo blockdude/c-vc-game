@@ -687,19 +687,19 @@ template<dimension N, typename T> constexpr T reject_angle(Matrix<N, N, T> m, Ve
 // =============================
 
 // Returns the principal rotation angle of a 2x2 rotation matrix
-template<typename T> constexpr T angle(Matrix<2, 2, T>);
+template<typename T> constexpr T angle(Matrix<2, 2, T> m);
 
 // =============================
 // Matrix 3x3
 // =============================
 
 // Creates a 3x3 skew-symmetric cross product matrix from a 3D vector
-template<typename T> constexpr Matrix<3, 3, T> skew(Vector<3, T>);
+template<typename T> constexpr Matrix<3, 3, T> skew(Vector<3, T> v);
 // Returns the principal rotation angle of a 3x3 rotation matrix
-template<typename T> constexpr T angle(Matrix<3, 3, T>);
+template<typename T> constexpr T angle(Matrix<3, 3, T> m);
 // Returns the rotation angle parallel/perpendicular to a given axis
-template<typename T> constexpr T project_angle(Matrix<3, 3, T>, Vector<3, T>);
-template<typename T> constexpr T reject_angle(Matrix<3, 3, T>, Vector<3, T>);
+template<typename T> constexpr T project_angle(Matrix<3, 3, T> m, Vector<3, T> axis);
+template<typename T> constexpr T reject_angle(Matrix<3, 3, T> m, Vector<3, T> axis);
 
 // =============================
 // Matrix 4x4
@@ -709,8 +709,8 @@ template<typename T> constexpr Matrix<4, 4, T> perspective(T fovy, T aspect, T n
 template<typename T> constexpr Matrix<4, 4, T> orthographic(T left, T right, T bottom, T top, T near, T far);
 template<typename T> constexpr Matrix<4, 4, T> frustum(T left, T right, T bottom, T top, T near, T far);
 template<typename T> constexpr Matrix<4, 4, T> lookat(Vector<3, T> eye, Vector<3, T> target, Vector<3, T> up);
-template<typename T> constexpr T project_angle(Matrix<4, 4, T>, Vector<3, T>);
-template<typename T> constexpr T reject_angle(Matrix<4, 4, T>, Vector<3, T>);
+template<typename T> constexpr T project_angle(Matrix<4, 4, T> m, Vector<3, T> axis);
+template<typename T> constexpr T reject_angle(Matrix<4, 4, T> m, Vector<3, T> axis);
 
 // =============================
 // Affine transforms
@@ -724,15 +724,15 @@ template<dimension N, typename T> constexpr Matrix<N + 1, N + 1, T> rotation(Vec
 template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotation(T angle, Vector<N, T> u, Vector<N, T> v);
 template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotation(Vector<N, T> from, Vector<N, T> to);
 template<typename T> constexpr Matrix<2, 2, T> linear_rotation(T angle);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotation(Quaternion<T>);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotation(T, Vector<3, T>);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotation(T pitch, T yaw, T roll, Vector<3, T> a1 = Cardinal<3, T>::Z, Vector<3, T> a2 = Cardinal<3, T>::Y, Vector<3, T> a3 = Cardinal<3, T>::X);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotation(Vector<3, T> euler);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotation(Quaternion<T> q);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotation(T angle, Vector<3, T> axis);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotation(T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotation(Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
 template<typename T> constexpr Matrix<3, 3, T> rotation(T angle);
-template<typename T> constexpr Matrix<4, 4, T> rotation(T, Vector<3, T>);
-template<typename T> constexpr Matrix<4, 4, T> rotation(Quaternion<T>);
-template<typename T> constexpr Matrix<4, 4, T> rotation(T pitch, T yaw, T roll, Vector<3, T> a1 = Cardinal<3, T>::Z, Vector<3, T> a2 = Cardinal<3, T>::Y, Vector<3, T> a3 = Cardinal<3, T>::X);
-template<typename T> constexpr Matrix<4, 4, T> rotation(Vector<3, T> euler);
+template<typename T> constexpr Matrix<4, 4, T> rotation(T angle, Vector<3, T> axis);
+template<typename T> constexpr Matrix<4, 4, T> rotation(Quaternion<T> q);
+template<typename T> constexpr Matrix<4, 4, T> rotation(T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Matrix<4, 4, T> rotation(Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
 template<typename T> constexpr Matrix<4, 4, T> rotation_x(T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotation_y(T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotation_z(T angle);
@@ -762,14 +762,14 @@ template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(Matrix
 template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(Matrix<N, N, T> m, Vector<N, T> from, Vector<N, T> to);
 template<typename T> constexpr Matrix<2, 2, T> linear_rotate(Matrix<2, 2, T> m, T angle);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, Quaternion<T> q);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, T, Vector<3, T>);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, T pitch, T yaw, T roll, Vector<3, T> a1 = Cardinal<3, T>::Z, Vector<3, T> a2 = Cardinal<3, T>::Y, Vector<3, T> a3 = Cardinal<3, T>::X);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, Vector<3, T> euler);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, T angle, Vector<3, T> axis);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Matrix<3, 3, T> m, Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
 template<typename T> constexpr Matrix<3, 3, T> rotate(Matrix<3, 3, T> m, T angle);
-template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, T, Vector<3, T>);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, T angle, Vector<3, T> axis);
 template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, Quaternion<T> q);
-template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, T pitch, T yaw, T roll, Vector<3, T> a1 = Cardinal<3, T>::Z, Vector<3, T> a2 = Cardinal<3, T>::Y, Vector<3, T> a3 = Cardinal<3, T>::X);
-template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, Vector<3, T> euler);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Matrix<4, 4, T> m, Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
 template<typename T> constexpr Matrix<4, 4, T> rotate_x(Matrix<4, 4, T> m, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate_y(Matrix<4, 4, T> m, T angle);
 template<typename T> constexpr Matrix<4, 4, T> rotate_z(Matrix<4, 4, T> m, T angle);
@@ -783,14 +783,14 @@ template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(T angl
 template<dimension N, typename T> constexpr Matrix<N, N, T> linear_rotate(Vector<N, T> from, Vector<N, T> to, Matrix<N, N, T> m);
 template<typename T> constexpr Matrix<2, 2, T> linear_rotate(T angle, Matrix<2, 2, T> m);
 template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Quaternion<T> q, Matrix<3, 3, T> m);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotate(T, Vector<3, T>, Matrix<3, 3, T> m);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotate(T pitch, T yaw, T roll, Matrix<3, 3, T> m, Vector<3, T> a1 = Cardinal<3, T>::Z, Vector<3, T> a2 = Cardinal<3, T>::Y, Vector<3, T> a3 = Cardinal<3, T>::X);
-template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Vector<3, T> euler, Matrix<3, 3, T> m);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(T angle, Vector<3, T> axis, Matrix<3, 3, T> m);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(T pitch, T yaw, T roll, Matrix<3, 3, T> m, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Matrix<3, 3, T> linear_rotate(Vector<3, T> euler, Matrix<3, 3, T> m, EulerOrder<T> order = Cardinal<3, T>::ZYX);
 template<typename T> constexpr Matrix<3, 3, T> rotate(T angle, Matrix<3, 3, T> m);
-template<typename T> constexpr Matrix<4, 4, T> rotate(T, Vector<3, T>, Matrix<4, 4, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate(T angle, Vector<3, T> axis, Matrix<4, 4, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate(Quaternion<T> q, Matrix<4, 4, T> m);
-template<typename T> constexpr Matrix<4, 4, T> rotate(T pitch, T yaw, T roll, Matrix<4, 4, T> m, Vector<3, T> a1 = Cardinal<3, T>::Z, Vector<3, T> a2 = Cardinal<3, T>::Y, Vector<3, T> a3 = Cardinal<3, T>::X);
-template<typename T> constexpr Matrix<4, 4, T> rotate(Vector<3, T> euler, Matrix<4, 4, T> m);
+template<typename T> constexpr Matrix<4, 4, T> rotate(T pitch, T yaw, T roll, Matrix<4, 4, T> m, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Matrix<4, 4, T> rotate(Vector<3, T> euler, Matrix<4, 4, T> m, EulerOrder<T> order = Cardinal<3, T>::ZYX);
 template<typename T> constexpr Matrix<4, 4, T> rotate_x(T angle, Matrix<4, 4, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate_y(T angle, Matrix<4, 4, T> m);
 template<typename T> constexpr Matrix<4, 4, T> rotate_z(T angle, Matrix<4, 4, T> m);
@@ -799,10 +799,10 @@ template<typename T> constexpr Matrix<4, 4, T> rotate_z(T angle, Matrix<4, 4, T>
 // Basis math
 // =============================
 
-template<dimension K, dimension N, typename T> constexpr Basis<K, Vector<N, T>> orthonormalize(Basis<K, Vector<N, T>>);
-template<dimension K, dimension N, typename T> constexpr Vector<K, T> project(Vector<N, T>, Basis<K, Vector<N, T>>);
-template<dimension K, dimension N, typename T> constexpr Vector<N, T> reject(Vector<N, T>, Basis<K, Vector<N, T>>);
-template<dimension K, dimension N, typename T> constexpr Matrix<N, K, T> to_matrix(Basis<K, Vector<N, T>>);
+template<dimension K, dimension N, typename T> constexpr Basis<K, Vector<N, T>> orthonormalize(Basis<K, Vector<N, T>> b);
+template<dimension K, dimension N, typename T> constexpr Vector<K, T> project(Vector<N, T> v, Basis<K, Vector<N, T>> b);
+template<dimension K, dimension N, typename T> constexpr Vector<N, T> reject(Vector<N, T> v, Basis<K, Vector<N, T>> b);
+template<dimension K, dimension N, typename T> constexpr Matrix<N, K, T> matrix(Basis<K, Vector<N, T>> b);
 
 } // namespace vcp::math
 
