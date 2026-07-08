@@ -180,12 +180,26 @@ struct Basis
 };
 
 // =============================
+// EulerOrder<T>
+// =============================
+
+template<typename T>
+struct EulerOrder
+{
+    Vector<3, T> a0, a1, a2;
+};
+
+// =============================
 // Cardinal<N, T>
 // =============================
 
 template<dimension N, typename T>
 struct Cardinal
 {
+    static constexpr Vector<N, T> X = [](){ Vector<N, T> v{}; v(0) = T(1); return v; }();
+    static constexpr Vector<N, T> Y = [](){ Vector<N, T> v{}; v(1) = T(1); return v; }();
+    static constexpr Vector<N, T> Z = [](){ Vector<N, T> v{}; v(2) = T(1); return v; }();
+    static constexpr Vector<N, T> W = [](){ Vector<N, T> v{}; v(3) = T(1); return v; }();
     static constexpr Vector<N, T> get(dimension i);
 };
 
@@ -210,6 +224,12 @@ struct Cardinal<3, T>
     static constexpr Vector<3, T> X = { T(1), T(0), T(0) };
     static constexpr Vector<3, T> Y = { T(0), T(1), T(0) };
     static constexpr Vector<3, T> Z = { T(0), T(0), T(1) };
+    static constexpr EulerOrder<T> ZYX = { Z, Y, X };
+    static constexpr EulerOrder<T> XYZ = { X, Y, Z };
+    static constexpr EulerOrder<T> XZY = { X, Z, Y };
+    static constexpr EulerOrder<T> YXZ = { Y, X, Z };
+    static constexpr EulerOrder<T> YZX = { Y, Z, X };
+    static constexpr EulerOrder<T> ZXY = { Z, X, Y };
     static constexpr Vector<3, T> get(dimension i);
 };
 
