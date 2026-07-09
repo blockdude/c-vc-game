@@ -12,11 +12,15 @@ using Dimension = int;
 // Constants
 // =============================
 
-template<typename T> constexpr T EULER   = T(2.71828182845904523536028747135266249);
-template<typename T> constexpr T PI      = T(3.14159265358979323846264338327950288);
-template<typename T> constexpr T PI_2    = PI<T> / T(2);
-template<typename T> constexpr T TAU     = PI<T> * T(2);
-template<typename T> constexpr T EPSILON = T(0.0001);
+template<typename T>
+struct Constant
+{
+    static constexpr T EULER = T(2.71828182845904523536028747135266249);
+    static constexpr T PI = T(3.14159265358979323846264338327950288);
+    static constexpr T PI_2 = PI / T(2);
+    static constexpr T TAU = PI * T(2);
+    static constexpr T EPSILON = T(0.0001);
+};
 
 // =============================
 // Vector<N, T>
@@ -678,7 +682,7 @@ template<Dimension N, typename T> constexpr T dot(Vector<N, T> a, Vector<N, T> b
 template<Dimension N, typename T> constexpr T distance(Vector<N, T> a, Vector<N, T> b);
 template<Dimension N, typename T> constexpr T distance_squared(Vector<N, T> a, Vector<N, T> b);
 template<Dimension N, typename T> constexpr T angle(Vector<N, T> a, Vector<N, T> b);
-template<Dimension N, typename T> constexpr bool equals(Vector<N, T> a, Vector<N, T> b, T epsilon = EPSILON<T>);
+template<Dimension N, typename T> constexpr bool equals(Vector<N, T> a, Vector<N, T> b, T epsilon = Constant<T>::EPSILON);
 template<Dimension N, typename T> constexpr Vector<N, T> normalize(Vector<N, T> v);
 template<Dimension N, typename T> constexpr Vector<N, T> rotate(Vector<N, T> vec, T angle, Vector<N, T> u, Vector<N, T> v);
 template<Dimension N, typename T> constexpr Vector<N, T> rotate(Vector<N, T> v, Vector<N, T> from, Vector<N, T> to);
@@ -794,7 +798,7 @@ template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, T angle, Ve
 template<typename T> constexpr Quaternion<T> orient(T angle, Vector<3, T> axis, Quaternion<T> q);
 template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, Matrix<4, 4, T> m);
 template<typename T> constexpr Quaternion<T> orient(Matrix<4, 4, T> m, Quaternion<T> q);
-template<typename T> constexpr bool equals(Quaternion<T> a, Quaternion<T> b, T epsilon = EPSILON<T>);
+template<typename T> constexpr bool equals(Quaternion<T> a, Quaternion<T> b, T epsilon = Constant<T>::EPSILON);
 
 // =============================
 // Matrix
@@ -1024,7 +1028,5 @@ template<Dimension N, typename T> constexpr Vector<N, T> support(Triangle<N, T> 
 template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB<N, T, R> shape, Vector<N, T> dir);
 
 } // namespace vcp::math
-
-
 
 #endif // VCP_MATH_H
