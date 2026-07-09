@@ -1,6 +1,8 @@
 #ifndef VCP_MATH_H
 #define VCP_MATH_H
 
+#include <cmath>
+
 namespace vcp::math
 {
 
@@ -204,31 +206,32 @@ struct EulerOrder
 template<Dimension N, typename T>
 struct Cardinal
 {
-    static constexpr Vector<N, T> X = []() { Vector<N, T> v{}; v(0) = T(1); return v; }();
-    static constexpr Vector<N, T> Y = []() { Vector<N, T> v{}; v(1) = T(1); return v; }();
-    static constexpr Vector<N, T> Z = []() { Vector<N, T> v{}; v(2) = T(1); return v; }();
-    static constexpr Vector<N, T> W = []() { Vector<N, T> v{}; v(3) = T(1); return v; }();
     static constexpr Vector<N, T> get(Dimension i);
+    static constexpr Vector<N, T> X = get(0);
+    static constexpr Vector<N, T> Y = get(1);
+    static constexpr Vector<N, T> Z = get(2);
+    static constexpr Vector<N, T> W = get(3);
 };
 
 template<typename T>
 struct Cardinal<1, T>
 {
-    static constexpr Vector<1, T> X = { T(1) };
     static constexpr Vector<1, T> get(Dimension i);
+    static constexpr Vector<1, T> X = { T(1) };
 };
 
 template<typename T>
 struct Cardinal<2, T>
 {
+    static constexpr Vector<2, T> get(Dimension i);
     static constexpr Vector<2, T> X = { T(1), T(0) };
     static constexpr Vector<2, T> Y = { T(0), T(1) };
-    static constexpr Vector<2, T> get(Dimension i);
 };
 
 template<typename T>
 struct Cardinal<3, T>
 {
+    static constexpr Vector<3, T> get(Dimension i);
     static constexpr Vector<3, T> X = { T(1), T(0), T(0) };
     static constexpr Vector<3, T> Y = { T(0), T(1), T(0) };
     static constexpr Vector<3, T> Z = { T(0), T(0), T(1) };
@@ -238,17 +241,16 @@ struct Cardinal<3, T>
     static constexpr EulerOrder<T> YXZ = { Y, X, Z };
     static constexpr EulerOrder<T> YZX = { Y, Z, X };
     static constexpr EulerOrder<T> ZXY = { Z, X, Y };
-    static constexpr Vector<3, T> get(Dimension i);
 };
 
 template<typename T>
 struct Cardinal<4, T>
 {
+    static constexpr Vector<4, T> get(Dimension i);
     static constexpr Vector<4, T> X = { T(1), T(0), T(0), T(0) };
     static constexpr Vector<4, T> Y = { T(0), T(1), T(0), T(0) };
     static constexpr Vector<4, T> Z = { T(0), T(0), T(1), T(0) };
     static constexpr Vector<4, T> W = { T(0), T(0), T(0), T(1) };
-    static constexpr Vector<4, T> get(Dimension i);
 };
 
 // =============================
@@ -947,6 +949,21 @@ template<Dimension N, typename T> constexpr Vector<N, T> separation(Ball<N, T> a
 template<Dimension N, typename T> constexpr Vector<N, T> separation(AABB<N, T> a, Ball<N, T> b);
 template<Dimension N, typename T> constexpr Vector<N, T> separation(Box<N, T> a, Box<N, T> b);
 
+/// Generic GJK+EPA separation for any convex shapes with ADL `support()`.
+/// Per-pair overloads above are preferred when available.
+template<typename S1, typename S2> constexpr Vector<S1::dimension, typename S1::scalar> separation(S1 a, S2 b);
+
+/// Support function — farthest point of a convex shape in a given direction.
+///
+/// Used by GJK/EPA for generic convex-convex collision detection.
+template<Dimension N, typename T> constexpr Vector<N, T> support(Ball<N, T> shape, Vector<N, T> dir);
+template<Dimension N, typename T> constexpr Vector<N, T> support(AABB<N, T> shape, Vector<N, T> dir);
+template<Dimension N, typename T> constexpr Vector<N, T> support(Box<N, T> shape, Vector<N, T> dir);
+template<Dimension N, typename T> constexpr Vector<N, T> support(Triangle<N, T> shape, Vector<N, T> dir);
+template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB<N, T, R> shape, Vector<N, T> dir);
+
 } // namespace vcp::math
+
+
 
 #endif // VCP_MATH_H
