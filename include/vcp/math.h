@@ -204,10 +204,10 @@ struct EulerOrder
 template<Dimension N, typename T>
 struct Cardinal
 {
-    static constexpr Vector<N, T> X = [](){ Vector<N, T> v{}; v(0) = T(1); return v; }();
-    static constexpr Vector<N, T> Y = [](){ Vector<N, T> v{}; v(1) = T(1); return v; }();
-    static constexpr Vector<N, T> Z = [](){ Vector<N, T> v{}; v(2) = T(1); return v; }();
-    static constexpr Vector<N, T> W = [](){ Vector<N, T> v{}; v(3) = T(1); return v; }();
+    static constexpr Vector<N, T> X = []() { Vector<N, T> v{}; v(0) = T(1); return v; }();
+    static constexpr Vector<N, T> Y = []() { Vector<N, T> v{}; v(1) = T(1); return v; }();
+    static constexpr Vector<N, T> Z = []() { Vector<N, T> v{}; v(2) = T(1); return v; }();
+    static constexpr Vector<N, T> W = []() { Vector<N, T> v{}; v(3) = T(1); return v; }();
     static constexpr Vector<N, T> get(Dimension i);
 };
 
@@ -259,11 +259,101 @@ template<typename T>
 struct Color
 {
     T r, g, b, a;
-
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
+};
+
+enum class BlendMode
+{
+    OVER,
+    ADD,
+    MULTIPLY,
+    SCREEN,
+    PREMUL,
+    SUBTRACT,
+    DIFFERENCE,
+    DARKEN,
+    LIGHTEN,
+    DIVIDE,
+    EXCLUSION,
+    OVERLAY,
+    HARD_LIGHT,
+    SOFT_LIGHT,
+    COLOR_DODGE,
+    COLOR_BURN,
+    LINEAR_DODGE,
+    LINEAR_BURN,
+    HUE,
+    SATURATION,
+    COLOR,
+    LUMINOSITY
+};
+
+template<typename T>
+struct Luminance
+{
+    // BT.601 — Standard-definition TV (NTSC)
+    static constexpr Vector<3, T> BT601  = { T(0.2990), T(0.5870), T(0.1140) };
+
+    // BT.709 — HDTV, sRGB (the universal default)
+    static constexpr Vector<3, T> BT709  = { T(0.2126), T(0.7152), T(0.0722) };
+
+    // BT.2020 — UHD, wide gamut
+    static constexpr Vector<3, T> BT2020 = { T(0.2627), T(0.6780), T(0.0593) };
+
+    // ACEScg — Linear ACES workspace (film/VFX, used by Unreal & HDRP)
+    static constexpr Vector<3, T> ACEScg = { T(0.2723), T(0.7181), T(0.0095) };
+
+    // SMPTE 240M — Early HDTV standard
+    static constexpr Vector<3, T> SMPTE240M = { T(0.2120), T(0.7010), T(0.0870) };
+};
+
+struct Gamma
+{
+    // Generic gamma curve — gamma(c, Gamma::curve(2.2f))
+    template<typename T>
+    static auto curve(T exp)
+    {
+        return [exp](T x) { return std::pow(x, exp); };
+    }
+
+    // True sRGB encode (linear → sRGB)
+    template<typename T>
+    static auto encode_sRGB()
+    {
+        return [](T x) -> T
+        {
+            return x <= T(0.0031308) ? x * T(12.92)
+                 : T(1.055) * std::pow(x, T(1.0) / T(2.4)) - T(0.055);
+        };
+    }
+
+    // True sRGB decode (sRGB → linear)
+    template<typename T>
+    static auto decode_sRGB()
+    {
+        return [](T x) -> T
+        {
+            return x <= T(0.04045) ? x / T(12.92)
+                 : std::pow((x + T(0.055)) / T(1.055), T(2.4));
+        };
+    }
+
+    // BT.1886 encode (linear → display)
+    template<typename T>
+    static auto encode_BT1886()
+    {
+        return [](T x) { return std::pow(x, T(1.0) / T(2.4)); };
+    }
+
+    // BT.1886 decode (display → linear)
+    template<typename T>
+    static auto decode_BT1886()
+    {
+        return [](T x) { return std::pow(x, T(2.4)); };
+    }
 };
 
 // =============================
@@ -811,6 +901,38 @@ template<Dimension K, Dimension N, typename T> constexpr Basis<K, Vector<N, T>> 
 template<Dimension K, Dimension N, typename T> constexpr Vector<K, T> project(Vector<N, T> v, Basis<K, Vector<N, T>> b);
 template<Dimension K, Dimension N, typename T> constexpr Vector<N, T> reject(Vector<N, T> v, Basis<K, Vector<N, T>> b);
 template<Dimension K, Dimension N, typename T> constexpr Matrix<N, K, T> matrix(Basis<K, Vector<N, T>> b);
+
+// =============================
+// Color math
+// =============================
+
+// Perceptual extraction
+template<typename T> constexpr T hue(Color<T> c);
+template<typename T> constexpr T saturation(Color<T> c);
+template<typename T> constexpr T brightness(Color<T> c);
+template<typename T> constexpr T lightness(Color<T> c);
+template<typename T> constexpr T luminance(Color<T> c, Vector<3, T> weights = Luminance<T>::BT709);
+
+// Gamma
+template<typename T> constexpr Color<T> gamma(Color<T> c, T exp);
+template<typename T, typename F> constexpr Color<T> gamma(Color<T> c, F fn);
+
+// Modifiers
+template<typename T> constexpr Color<T> invert(Color<T> c);
+template<typename T> constexpr Color<T> grayscale(Color<T> c);
+template<typename T> constexpr Color<T> tint(Color<T> a, Color<T> b);
+template<typename T> constexpr Color<T> lerp(Color<T> a, Color<T> b, T t);
+template<typename T> constexpr Color<T> blend(Color<T> src, Color<T> dst, BlendMode mode);
+
+// =============================
+// Penetration
+// =============================
+
+template<Dimension N, typename T> constexpr Vector<N, T> penetration(Ball<N, T> a, Ball<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> penetration(AABB<N, T> a, AABB<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> penetration(Ball<N, T> a, AABB<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> penetration(AABB<N, T> a, Ball<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> penetration(Box<N, T> a, Box<N, T> b);
 
 } // namespace vcp::math
 
