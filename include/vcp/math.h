@@ -25,6 +25,7 @@ struct Vector
 {
     T data[N];
 
+    static constexpr dimension size = N;
     constexpr T &operator()(dimension i);
     constexpr const T &operator()(dimension i) const;
     constexpr T &operator[](dimension i);
@@ -46,6 +47,7 @@ struct Vector<1, T>
         T r;
     };
 
+    static constexpr dimension size = 1;
     constexpr T &operator()(dimension i);
     constexpr const T &operator()(dimension i) const;
     constexpr T &operator[](dimension i);
@@ -67,6 +69,7 @@ struct Vector<2, T>
         struct { T r, g; };
     };
 
+    static constexpr dimension size = 2;
     constexpr T &operator()(dimension i);
     constexpr const T &operator()(dimension i) const;
     constexpr T &operator[](dimension i);
@@ -87,6 +90,7 @@ struct Vector<3, T>
         struct { T r, g, b; };
     };
 
+    static constexpr dimension size = 3;
     constexpr T &operator()(dimension i);
     constexpr const T &operator()(dimension i) const;
     constexpr T &operator[](dimension i);
@@ -107,6 +111,7 @@ struct Vector<4, T>
         struct { T s, t, p, q; };
     };
 
+    static constexpr dimension size = 4;
     constexpr T &operator()(dimension i);
     constexpr const T &operator()(dimension i) const;
     constexpr T &operator[](dimension i);
@@ -126,6 +131,7 @@ struct Quaternion
 {
     T x, y, z, w;
 
+    static constexpr dimension size = 4;
     constexpr T &operator()(dimension i);
     constexpr const T &operator()(dimension i) const;
     constexpr T &operator[](dimension i);
@@ -152,6 +158,8 @@ struct Matrix
 {
     T data[N * M];
 
+    static constexpr dimension rows = N;
+    static constexpr dimension cols = M;
     constexpr T &operator()(dimension r, dimension c);
     constexpr const T &operator()(dimension r, dimension c) const;
     constexpr T &operator[](dimension i);
