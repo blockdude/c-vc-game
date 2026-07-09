@@ -591,6 +591,7 @@ template<typename T> constexpr T degrees(T radians);
 template<typename T> constexpr T saturate(T v);
 template<typename T> constexpr T modulo(T a, T b);
 template<typename T> constexpr T truncated_modulo(T a, T b);
+template<typename T> constexpr T closest_offset(T from, T to, T period);
 template<typename T> constexpr T smoothstep(T edge0, T edge1, T x);
 
 // =============================
@@ -642,6 +643,8 @@ template<Dimension N, typename T> constexpr Vector<N, T> modulo(Vector<N, T> v, 
 template<Dimension N, typename T> constexpr Vector<N, T> modulo(Vector<N, T> a, Vector<N, T> b);
 template<Dimension N, typename T> constexpr Vector<N, T> truncated_modulo(Vector<N, T> v, T d);
 template<Dimension N, typename T> constexpr Vector<N, T> truncated_modulo(Vector<N, T> a, Vector<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> closest_offset(Vector<N, T> from, Vector<N, T> to, T period);
+template<Dimension N, typename T> constexpr Vector<N, T> closest_offset(Vector<N, T> from, Vector<N, T> to, Vector<N, T> period);
 template<Dimension N, typename T> constexpr Vector<N, T> smoothstep(Vector<N, T> edge0, Vector<N, T> edge1, Vector<N, T> x);
 template<Dimension N, Dimension M, typename T> constexpr Vector<N, T> resize(Vector<M, T> v, T fill = T{});
 template<Dimension N, typename T = float> constexpr Vector<N, T> cardinal(Dimension i);
@@ -777,8 +780,8 @@ template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> project
 template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> reject(Matrix<N, M, T> a, Matrix<N, M, T> b);
 template<Dimension N, typename T> constexpr void svd(Matrix<N, N, T> m, Matrix<N, N, T> &u, Vector<N, T> &sigma, Matrix<N, N, T> &v);
 template<Dimension N, typename T> constexpr Vector<N / 2, T> principal_angles(Matrix<N, N, T> m);
-template<Dimension N, typename T> constexpr T project_angle(Matrix<N, N, T> m, Vector<N, T> a, Vector<N, T> b);
-template<Dimension N, typename T> constexpr T reject_angle(Matrix<N, N, T> m, Vector<N, T> a, Vector<N, T> b);
+template<Dimension N, typename T> constexpr T project_angle(Matrix<N, N, T> m, Vector<N, T> u, Vector<N, T> v);
+template<Dimension N, typename T> constexpr T reject_angle(Matrix<N, N, T> m, Vector<N, T> u, Vector<N, T> v);
 
 // =============================
 // Matrix 2x2
@@ -925,14 +928,24 @@ template<typename T> constexpr Color<T> lerp(Color<T> a, Color<T> b, T t);
 template<typename T> constexpr Color<T> blend(Color<T> src, Color<T> dst, BlendMode mode);
 
 // =============================
-// Penetration
+// Collision
 // =============================
 
-template<Dimension N, typename T> constexpr Vector<N, T> penetration(Ball<N, T> a, Ball<N, T> b);
-template<Dimension N, typename T> constexpr Vector<N, T> penetration(AABB<N, T> a, AABB<N, T> b);
-template<Dimension N, typename T> constexpr Vector<N, T> penetration(Ball<N, T> a, AABB<N, T> b);
-template<Dimension N, typename T> constexpr Vector<N, T> penetration(AABB<N, T> a, Ball<N, T> b);
-template<Dimension N, typename T> constexpr Vector<N, T> penetration(Box<N, T> a, Box<N, T> b);
+/// Returns the per-axis signed separation vector between two shapes.
+///
+/// Each component of the result is:
+///   positive  — shapes are separated along that axis (gap)
+///   zero      — shapes are exactly touching along that axis
+///   negative  — shapes are overlapping along that axis (penetration)
+///
+/// To resolve overlap, add the result to the first shape's position.
+/// The result subsumes the minimum translation vector (MTV):
+/// when any component is negative, the result IS the MTV.
+template<Dimension N, typename T> constexpr Vector<N, T> separation(Ball<N, T> a, Ball<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> separation(AABB<N, T> a, AABB<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> separation(Ball<N, T> a, AABB<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> separation(AABB<N, T> a, Ball<N, T> b);
+template<Dimension N, typename T> constexpr Vector<N, T> separation(Box<N, T> a, Box<N, T> b);
 
 } // namespace vcp::math
 
