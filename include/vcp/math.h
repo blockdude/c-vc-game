@@ -27,6 +27,7 @@ struct Vector
 {
     T data[N];
 
+    using Scalar = T;
     static constexpr Dimension size = N;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
@@ -49,6 +50,7 @@ struct Vector<1, T>
         T r;
     };
 
+    using Scalar = T;
     static constexpr Dimension size = 1;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
@@ -71,6 +73,7 @@ struct Vector<2, T>
         struct { T r, g; };
     };
 
+    using Scalar = T;
     static constexpr Dimension size = 2;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
@@ -92,6 +95,7 @@ struct Vector<3, T>
         struct { T r, g, b; };
     };
 
+    using Scalar = T;
     static constexpr Dimension size = 3;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
@@ -113,6 +117,7 @@ struct Vector<4, T>
         struct { T s, t, p, q; };
     };
 
+    using Scalar = T;
     static constexpr Dimension size = 4;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
@@ -133,6 +138,7 @@ struct Quaternion
 {
     T x, y, z, w;
 
+    using Scalar = T;
     static constexpr Dimension size = 4;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
@@ -160,6 +166,7 @@ struct Matrix
 {
     T data[N * M];
 
+    using Scalar = T;
     static constexpr Dimension rows = N;
     static constexpr Dimension cols = M;
     constexpr T &operator()(Dimension r, Dimension c);
@@ -261,6 +268,8 @@ template<typename T>
 struct Color
 {
     T r, g, b, a;
+
+    using Scalar = T;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -368,6 +377,8 @@ struct Line
     Vector<N, T> a;
     Vector<N, T> b;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -383,6 +394,8 @@ struct Triangle
     Vector<N, T> b;
     Vector<N, T> c;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -397,8 +410,25 @@ struct Ray
     Vector<N, T> origin;
     Vector<N, T> direction;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
+};
+
+// =============================
+// Hit<N, T>
+// =============================
+
+template<Dimension N, typename T>
+struct Hit
+{
+    bool hit;
+    T t;
+    Vector<N, T> normal;
+
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
 };
 
 // =============================
@@ -411,6 +441,8 @@ struct Ball
     Vector<N, T> center;
     T r;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -426,6 +458,8 @@ struct Ball<1, T>
 
     T r;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = 1;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -445,6 +479,8 @@ struct Ball<2, T>
 
     T r;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = 2;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -464,6 +500,8 @@ struct Ball<3, T>
 
     T r;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = 3;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -478,6 +516,8 @@ struct Box
     Vector<N, T> position;
     Vector<N, T> size;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -500,6 +540,8 @@ struct Box<1, T>
         };
     };
 
+    using Scalar = T;
+    static constexpr Dimension dimension = 1;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -522,6 +564,8 @@ struct Box<2, T>
         };
     };
 
+    using Scalar = T;
+    static constexpr Dimension dimension = 2;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -544,6 +588,8 @@ struct Box<3, T>
         };
     };
 
+    using Scalar = T;
+    static constexpr Dimension dimension = 3;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -558,6 +604,8 @@ struct AABB
     Vector<N, T> min;
     Vector<N, T> max;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -573,6 +621,8 @@ struct OBB
     Vector<N, T> extent;
     R orientation;
 
+    using Scalar = T;
+    static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
 };
@@ -951,7 +1001,18 @@ template<Dimension N, typename T> constexpr Vector<N, T> separation(Box<N, T> a,
 
 /// Generic GJK+EPA separation for any convex shapes with ADL `support()`.
 /// Per-pair overloads above are preferred when available.
-template<typename S1, typename S2> constexpr Vector<S1::dimension, typename S1::scalar> separation(S1 a, S2 b);
+template<typename S1, typename S2> constexpr Vector<S1::dimension, typename S1::Scalar> separation(S1 a, S2 b);
+template<Dimension N, typename T, typename S1, typename S2> constexpr Vector<N, T> separation(S1 a, S2 b);
+
+/// Ray-shape intersection. Returns the first hit, or `t = -1` if no hit.
+template<Dimension N, typename T> constexpr Hit<N, T> intersection(Ray<N, T> ray, Ball<N, T> shape);
+template<Dimension N, typename T> constexpr Hit<N, T> intersection(Ray<N, T> ray, AABB<N, T> shape);
+template<Dimension N, typename T> constexpr Hit<N, T> intersection(Ray<N, T> ray, Box<N, T> shape);
+template<Dimension N, typename T> constexpr Hit<N, T> intersection(Ray<N, T> ray, Triangle<N, T> shape);
+template<Dimension N, typename T, typename R> constexpr Hit<N, T> intersection(Ray<N, T> ray, OBB<N, T, R> shape);
+
+/// Generic ray-shape intersection via GJK Ray Cast for any convex shape with ADL `support()`.
+template<typename S, Dimension N, typename T> constexpr Hit<N, T> intersection(Ray<N, T> ray, S shape);
 
 /// Support function — farthest point of a convex shape in a given direction.
 ///
