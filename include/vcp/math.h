@@ -38,10 +38,6 @@ struct Vector
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
-
-    static constexpr Vector filled(T value);
-    static constexpr Vector one();
-    static constexpr Vector zero();
 };
 
 template<typename T>
@@ -62,10 +58,6 @@ struct Vector<1, T>
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
-
-    static constexpr Vector filled(T value);
-    static constexpr Vector one();
-    static constexpr Vector zero();
 };
 
 template<typename T>
@@ -86,10 +78,6 @@ struct Vector<2, T>
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
-
-    static constexpr Vector filled(T value);
-    static constexpr Vector one();
-    static constexpr Vector zero();
 };
 
 template<typename T>
@@ -109,10 +97,6 @@ struct Vector<3, T>
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
-
-    static constexpr Vector filled(T value);
-    static constexpr Vector one();
-    static constexpr Vector zero();
 };
 
 template<typename T>
@@ -132,10 +116,6 @@ struct Vector<4, T>
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
-
-    static constexpr Vector filled(T value);
-    static constexpr Vector one();
-    static constexpr Vector zero();
 };
 
 // =============================
@@ -154,9 +134,6 @@ struct Quaternion
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
-
-    static constexpr Quaternion identity();
-    static constexpr Quaternion filled(T value);
 };
 
 // =============================
@@ -184,12 +161,6 @@ struct Matrix
     constexpr const T &operator()(Dimension r, Dimension c) const;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
-
-    static constexpr Matrix identity();
-    static constexpr Matrix diagonal(T value);
-    static constexpr Matrix filled(T value);
-    static constexpr Matrix zero();
-    static constexpr Matrix one();
 };
 
 // =============================
@@ -533,7 +504,7 @@ template<Dimension N, typename T>
 struct Box
 {
     Vector<N, T> position;
-    Vector<N, T> size;
+    Vector<N, T> extent;
 
     using Scalar = T;
     static constexpr Dimension size = N * 2;
@@ -556,7 +527,7 @@ struct Box<1, T>
         struct
         {
             Vector<1, T> position;
-            Vector<1, T> size;
+            Vector<1, T> extent;
         };
     };
 
@@ -581,7 +552,7 @@ struct Box<2, T>
         struct
         {
             Vector<2, T> position;
-            Vector<2, T> size;
+            Vector<2, T> extent;
         };
     };
 
@@ -606,7 +577,7 @@ struct Box<3, T>
         struct
         {
             Vector<3, T> position;
-            Vector<3, T> size;
+            Vector<3, T> extent;
         };
     };
 
@@ -681,8 +652,24 @@ template<typename T> constexpr T atan(T x);
 template<typename T> constexpr T atan2(T y, T x);
 
 // =============================
+// General
+// =============================
+
+template<typename V> constexpr V make();
+template<typename V> constexpr V filled(typename V::Scalar value);
+template<typename V> constexpr V one();
+template<typename V> constexpr V zero();
+template<typename V> constexpr V identity();
+template<typename V> constexpr V diagonal(typename V::Scalar value);
+
+// =============================
 // Vector math
 // =============================
+
+template<Dimension N, typename T> constexpr Vector<N, T> make(const Vector<N, T> &pattern);
+template<Dimension N, typename T> constexpr Vector<N, T> filled(const Vector<N, T> &pattern, T value);
+template<Dimension N, typename T> constexpr Vector<N, T> one(const Vector<N, T> &pattern);
+template<Dimension N, typename T> constexpr Vector<N, T> zero(const Vector<N, T> &pattern);
 
 template<Dimension N, typename T> constexpr Vector<N, T> add(Vector<N, T> a, Vector<N, T> b);
 template<Dimension N, typename T> constexpr Vector<N, T> add(Vector<N, T> v, T s);
@@ -782,6 +769,10 @@ template<typename T> constexpr Vector<3, T> perspective_divide(Vector<4, T> v);
 // Quaternion
 // =============================
 
+template<typename T> constexpr Quaternion<T> make(const Quaternion<T> &pattern);
+template<typename T> constexpr Quaternion<T> filled(const Quaternion<T> &pattern, T value);
+template<typename T> constexpr Quaternion<T> identity(const Quaternion<T> &pattern);
+
 template<typename T> constexpr Quaternion<T> add(Quaternion<T> a, Quaternion<T> b);
 template<typename T> constexpr Quaternion<T> add(Quaternion<T> q, T s);
 template<typename T> constexpr Quaternion<T> add(T s, Quaternion<T> q);
@@ -833,6 +824,13 @@ template<typename T> constexpr bool equals(Quaternion<T> a, Quaternion<T> b, T e
 // =============================
 // Matrix
 // =============================
+
+template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> make(const Matrix<N, M, T> &pattern);
+template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> filled(const Matrix<N, M, T> &pattern, T value);
+template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> zero(const Matrix<N, M, T> &pattern);
+template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> one(const Matrix<N, M, T> &pattern);
+template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> identity(const Matrix<N, M, T> &pattern);
+template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> diagonal(const Matrix<N, M, T> &pattern, T value);
 
 template<Dimension N, Dimension K, Dimension M, typename T> constexpr Matrix<N, M, T> mul(Matrix<N, K, T> a, Matrix<K, M, T> b);
 template<Dimension N, Dimension M, typename T> constexpr Vector<N, T> mul(Matrix<N, M, T> m, Vector<M, T> v);
@@ -1103,29 +1101,6 @@ constexpr const T &Vector<N, T>::operator[](Dimension i) const
     return this->data[i];
 }
 
-template<Dimension N, typename T>
-constexpr Vector<N, T> Vector<N, T>::filled(T value)
-{
-    Vector<N, T> v;
-    for (Dimension i = 0; i < N; ++i)
-    {
-        v.data[i] = value;
-    }
-    return v;
-}
-
-template<Dimension N, typename T>
-constexpr Vector<N, T> Vector<N, T>::one()
-{
-    return filled(T(1));
-}
-
-template<Dimension N, typename T>
-constexpr Vector<N, T> Vector<N, T>::zero()
-{
-    return Vector<N, T>{};
-}
-
 // =============================
 // Vector<1, T>
 // =============================
@@ -1152,24 +1127,6 @@ template<typename T>
 constexpr const T &Vector<1, T>::operator[](Dimension i) const
 {
     return this->x;
-}
-
-template<typename T>
-constexpr Vector<1, T> Vector<1, T>::filled(T value)
-{
-    return { value };
-}
-
-template<typename T>
-constexpr Vector<1, T> Vector<1, T>::one()
-{
-    return { T(1) };
-}
-
-template<typename T>
-constexpr Vector<1, T> Vector<1, T>::zero()
-{
-    return {};
 }
 
 // =============================
@@ -1218,24 +1175,6 @@ constexpr const T &Vector<2, T>::operator[](Dimension i) const
     case 1: return this->y;
     }
     return this->x;
-}
-
-template<typename T>
-constexpr Vector<2, T> Vector<2, T>::filled(T value)
-{
-    return { value, value };
-}
-
-template<typename T>
-constexpr Vector<2, T> Vector<2, T>::one()
-{
-    return { T(1), T(1) };
-}
-
-template<typename T>
-constexpr Vector<2, T> Vector<2, T>::zero()
-{
-    return {};
 }
 
 // =============================
@@ -1288,24 +1227,6 @@ constexpr const T &Vector<3, T>::operator[](Dimension i) const
     case 2: return this->z;
     }
     return this->x;
-}
-
-template<typename T>
-constexpr Vector<3, T> Vector<3, T>::filled(T value)
-{
-    return { value, value, value };
-}
-
-template<typename T>
-constexpr Vector<3, T> Vector<3, T>::one()
-{
-    return { T(1), T(1), T(1) };
-}
-
-template<typename T>
-constexpr Vector<3, T> Vector<3, T>::zero()
-{
-    return {};
 }
 
 // =============================
@@ -1364,24 +1285,6 @@ constexpr const T &Vector<4, T>::operator[](Dimension i) const
     return this->x;
 }
 
-template<typename T>
-constexpr Vector<4, T> Vector<4, T>::filled(T value)
-{
-    return { value, value, value, value };
-}
-
-template<typename T>
-constexpr Vector<4, T> Vector<4, T>::one()
-{
-    return { T(1), T(1), T(1), T(1) };
-}
-
-template<typename T>
-constexpr Vector<4, T> Vector<4, T>::zero()
-{
-    return {};
-}
-
 // =============================
 // Quaternion<T>
 // =============================
@@ -1438,18 +1341,6 @@ constexpr const T &Quaternion<T>::operator[](Dimension i) const
     return this->x;
 }
 
-template<typename T>
-constexpr Quaternion<T> Quaternion<T>::identity()
-{
-    return { T(0), T(0), T(0), T(1) };
-}
-
-template<typename T>
-constexpr Quaternion<T> Quaternion<T>::filled(T value)
-{
-    return { value, value, value, value };
-}
-
 // =============================
 // Matrix<N, M, T>
 // =============================
@@ -1476,53 +1367,6 @@ template<Dimension N, Dimension M, typename T>
 constexpr const T &Matrix<N, M, T>::operator[](Dimension i) const
 {
     return this->data[i];
-}
-
-template<Dimension N, Dimension M, typename T>
-constexpr Matrix<N, M, T> Matrix<N, M, T>::identity()
-{
-    Matrix<N, M, T> m{};
-    Dimension k = N < M ? N : M;
-    for (Dimension i = 0; i < k; ++i)
-    {
-        m.data[i + i * N] = T(1);
-    }
-    return m;
-}
-
-template<Dimension N, Dimension M, typename T>
-constexpr Matrix<N, M, T> Matrix<N, M, T>::diagonal(T value)
-{
-    Matrix<N, M, T> m{};
-    Dimension k = N < M ? N : M;
-    for (Dimension i = 0; i < k; ++i)
-    {
-        m.data[i + i * N] = value;
-    }
-    return m;
-}
-
-template<Dimension N, Dimension M, typename T>
-constexpr Matrix<N, M, T> Matrix<N, M, T>::filled(T value)
-{
-    Matrix<N, M, T> m;
-    for (Dimension i = 0; i < N * M; ++i)
-    {
-        m.data[i] = value;
-    }
-    return m;
-}
-
-template<Dimension N, Dimension M, typename T>
-constexpr Matrix<N, M, T> Matrix<N, M, T>::zero()
-{
-    return {};
-}
-
-template<Dimension N, Dimension M, typename T>
-constexpr Matrix<N, M, T> Matrix<N, M, T>::one()
-{
-    return filled(T(1));
 }
 
 } // namespace vcp::math
