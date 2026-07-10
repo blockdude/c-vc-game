@@ -1082,25 +1082,25 @@ template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB
 template<Dimension N, typename T>
 constexpr T &Vector<N, T>::operator()(Dimension i)
 {
-    return data[i];
+    return this->data[i];
 }
 
 template<Dimension N, typename T>
 constexpr const T &Vector<N, T>::operator()(Dimension i) const
 {
-    return data[i];
+    return this->data[i];
 }
 
 template<Dimension N, typename T>
 constexpr T &Vector<N, T>::operator[](Dimension i)
 {
-    return data[i];
+    return this->data[i];
 }
 
 template<Dimension N, typename T>
 constexpr const T &Vector<N, T>::operator[](Dimension i) const
 {
-    return data[i];
+    return this->data[i];
 }
 
 template<Dimension N, typename T>
@@ -1133,41 +1133,25 @@ constexpr Vector<N, T> Vector<N, T>::zero()
 template<typename T>
 constexpr T &Vector<1, T>::operator()(Dimension i)
 {
-    switch (i)
-    {
-    case 0: return x;
-    }
-    return x;
+    return this->x;
 }
 
 template<typename T>
 constexpr const T &Vector<1, T>::operator()(Dimension i) const
 {
-    switch (i)
-    {
-    case 0: return x;
-    }
-    return x;
+    return this->x;
 }
 
 template<typename T>
 constexpr T &Vector<1, T>::operator[](Dimension i)
 {
-    switch (i)
-    {
-    case 0: return x;
-    }
-    return x;
+    return this->x;
 }
 
 template<typename T>
 constexpr const T &Vector<1, T>::operator[](Dimension i) const
 {
-    switch (i)
-    {
-    case 0: return x;
-    }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1197,10 +1181,10 @@ constexpr T &Vector<2, T>::operator()(Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
+    case 0: return this->x;
+    case 1: return this->y;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1208,10 +1192,10 @@ constexpr const T &Vector<2, T>::operator()(Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
+    case 0: return this->x;
+    case 1: return this->y;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1219,10 +1203,10 @@ constexpr T &Vector<2, T>::operator[](Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
+    case 0: return this->x;
+    case 1: return this->y;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1230,10 +1214,10 @@ constexpr const T &Vector<2, T>::operator[](Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
+    case 0: return this->x;
+    case 1: return this->y;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1263,11 +1247,11 @@ constexpr T &Vector<3, T>::operator()(Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1275,11 +1259,11 @@ constexpr const T &Vector<3, T>::operator()(Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1287,11 +1271,11 @@ constexpr T &Vector<3, T>::operator[](Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1299,11 +1283,11 @@ constexpr const T &Vector<3, T>::operator[](Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1333,12 +1317,12 @@ constexpr T &Vector<4, T>::operator()(Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1346,12 +1330,12 @@ constexpr const T &Vector<4, T>::operator()(Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1359,12 +1343,12 @@ constexpr T &Vector<4, T>::operator[](Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1372,12 +1356,12 @@ constexpr const T &Vector<4, T>::operator[](Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1407,12 +1391,12 @@ constexpr T &Quaternion<T>::operator()(Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1420,12 +1404,12 @@ constexpr const T &Quaternion<T>::operator()(Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1433,12 +1417,12 @@ constexpr T &Quaternion<T>::operator[](Dimension i)
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1446,12 +1430,12 @@ constexpr const T &Quaternion<T>::operator[](Dimension i) const
 {
     switch (i)
     {
-    case 0: return x;
-    case 1: return y;
-    case 2: return z;
-    case 3: return w;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    case 3: return this->w;
     }
-    return x;
+    return this->x;
 }
 
 template<typename T>
@@ -1473,25 +1457,25 @@ constexpr Quaternion<T> Quaternion<T>::filled(T value)
 template<Dimension N, Dimension M, typename T>
 constexpr T &Matrix<N, M, T>::operator()(Dimension r, Dimension c)
 {
-    return data[r + c * N];
+    return this->data[r + c * N];
 }
 
 template<Dimension N, Dimension M, typename T>
 constexpr const T &Matrix<N, M, T>::operator()(Dimension r, Dimension c) const
 {
-    return data[r + c * N];
+    return this->data[r + c * N];
 }
 
 template<Dimension N, Dimension M, typename T>
 constexpr T &Matrix<N, M, T>::operator[](Dimension i)
 {
-    return data[i];
+    return this->data[i];
 }
 
 template<Dimension N, Dimension M, typename T>
 constexpr const T &Matrix<N, M, T>::operator[](Dimension i) const
 {
-    return data[i];
+    return this->data[i];
 }
 
 template<Dimension N, Dimension M, typename T>
