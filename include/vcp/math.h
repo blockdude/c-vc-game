@@ -650,6 +650,15 @@ template<typename T> constexpr T truncated_modulo(T a, T b);
 template<typename T> constexpr T closest_offset(T from, T to, T period);
 template<typename T> constexpr T smoothstep(T edge0, T edge1, T x);
 
+template<typename T> constexpr T sqrt(T x);
+template<typename T> constexpr T sin(T x);
+template<typename T> constexpr T cos(T x);
+template<typename T> constexpr T tan(T x);
+template<typename T> constexpr T asin(T x);
+template<typename T> constexpr T acos(T x);
+template<typename T> constexpr T atan(T x);
+template<typename T> constexpr T atan2(T y, T x);
+
 // =============================
 // Vector math
 // =============================
