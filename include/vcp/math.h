@@ -6,6 +6,33 @@
 namespace vcp::math
 {
 
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// 
+//  _______   _____ ___ ___ 
+// |_   _\ \ / / _ \ __/ __|
+//   | |  \ V /|  _/ _|\__ \
+//   |_|   |_| |_| |___|___/
+// 
+//   All types live below.
+//   https://patorjk.com/software/taag/#p=display&f=Small&t=TYPES&x=none&v=4&h=4&w=80&we=false
+// 
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+
+// =============================
+// Dimension
+// =============================
+
 using Dimension = int;
 
 // =============================
@@ -623,6 +650,29 @@ struct OBB
     constexpr const T &operator[](Dimension i) const;
 };
 
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// 
+//  ___ _  _ _____ ___ ___ ___ _   ___ ___ 
+// |_ _| \| |_   _| __| _ \ __/_\ / __| __|
+//  | || .` | | | | _||   / _/ _ \ (__| _| 
+// |___|_|\_| |_| |___|_|_\_/_/ \_\___|___|
+// 
+//   All function protoypes/interface lives below.
+//   https://patorjk.com/software/taag/#p=display&f=Small&t=INTERFACE&x=none&v=4&h=4&w=80&we=false
+// 
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+
 // =============================
 // Scalar utilities
 // =============================
@@ -670,6 +720,12 @@ template<Dimension N, typename T> constexpr Vector<N, T> make(const Vector<N, T>
 template<Dimension N, typename T> constexpr Vector<N, T> filled(const Vector<N, T> &pattern, T value);
 template<Dimension N, typename T> constexpr Vector<N, T> one(const Vector<N, T> &pattern);
 template<Dimension N, typename T> constexpr Vector<N, T> zero(const Vector<N, T> &pattern);
+template<Dimension N, Dimension M, typename T> constexpr Vector<N, T> resize(Vector<M, T> v, T fill = T{});
+template<Dimension N, typename T = float> constexpr Vector<N, T> cardinal(Dimension i);
+template<typename T, Dimension N, Dimension... Ns> constexpr Vector<(N + ... + Ns), T> concat(Vector<N, T> a, Vector<Ns, T>... rest);
+template<Dimension N, typename T, typename... Scalars> constexpr Vector<N + 1 + sizeof...(Scalars), T> concat(Vector<N, T> v, T s, Scalars... rest);
+template<Dimension N, typename T> constexpr Vector<N + 1, T> concat(T s, Vector<N, T> v);
+template<typename T, typename... Scalars> constexpr Vector<1 + sizeof...(Scalars), T> concat(T first, Scalars... rest);
 
 template<Dimension N, typename T> constexpr Vector<N, T> add(Vector<N, T> a, Vector<N, T> b);
 template<Dimension N, typename T> constexpr Vector<N, T> add(Vector<N, T> v, T s);
@@ -719,12 +775,6 @@ template<Dimension N, typename T> constexpr Vector<N, T> truncated_modulo(Vector
 template<Dimension N, typename T> constexpr Vector<N, T> closest_offset(Vector<N, T> from, Vector<N, T> to, T period);
 template<Dimension N, typename T> constexpr Vector<N, T> closest_offset(Vector<N, T> from, Vector<N, T> to, Vector<N, T> period);
 template<Dimension N, typename T> constexpr Vector<N, T> smoothstep(Vector<N, T> edge0, Vector<N, T> edge1, Vector<N, T> x);
-template<Dimension N, Dimension M, typename T> constexpr Vector<N, T> resize(Vector<M, T> v, T fill = T{});
-template<Dimension N, typename T = float> constexpr Vector<N, T> cardinal(Dimension i);
-template<typename T, Dimension N, Dimension... Ns> constexpr Vector<(N + ... + Ns), T> concat(Vector<N, T> a, Vector<Ns, T>... rest);
-template<Dimension N, typename T, typename... Scalars> constexpr Vector<N + 1 + sizeof...(Scalars), T> concat(Vector<N, T> v, T s, Scalars... rest);
-template<Dimension N, typename T> constexpr Vector<N + 1, T> concat(T s, Vector<N, T> v);
-template<typename T, typename... Scalars> constexpr Vector<1 + sizeof...(Scalars), T> concat(T first, Scalars... rest);
 
 // =============================
 // Vec2-specific
@@ -831,6 +881,9 @@ template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> zero(co
 template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> one(const Matrix<N, M, T> &pattern);
 template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> identity(const Matrix<N, M, T> &pattern);
 template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> diagonal(const Matrix<N, M, T> &pattern, T value);
+template<Dimension N, Dimension R, Dimension C, typename T> constexpr Matrix<N, N, T> resize(Matrix<R, C, T> m, T fill = T{});
+template<Dimension N, Dimension M, Dimension R, Dimension C, typename T> constexpr Matrix<N, M, T> resize(Matrix<R, C, T> m, T fill = T{});
+template<Dimension RA, Dimension CA, Dimension RB, Dimension CB, typename T> constexpr Matrix<max(RA, RB), max(CA, CB), T> embed(Matrix<RA, CA, T> a, Matrix<RB, CB, T> b);
 
 template<Dimension N, Dimension K, Dimension M, typename T> constexpr Matrix<N, M, T> mul(Matrix<N, K, T> a, Matrix<K, M, T> b);
 template<Dimension N, Dimension M, typename T> constexpr Vector<N, T> mul(Matrix<N, M, T> m, Vector<M, T> v);
@@ -856,9 +909,6 @@ template<Dimension N, typename T> constexpr T determinant(Matrix<N, N, T> m);
 template<Dimension N, typename T> constexpr T trace(Matrix<N, N, T> m);
 template<Dimension N, Dimension M, typename T> constexpr Matrix<M, N, T> transpose(Matrix<N, M, T> m);
 template<Dimension N, typename T> constexpr Matrix<N, N, T> invert(Matrix<N, N, T> m);
-template<Dimension N, Dimension R, Dimension C, typename T> constexpr Matrix<N, N, T> resize(Matrix<R, C, T> m, T fill = T{});
-template<Dimension N, Dimension M, Dimension R, Dimension C, typename T> constexpr Matrix<N, M, T> resize(Matrix<R, C, T> m, T fill = T{});
-template<Dimension RA, Dimension CA, Dimension RB, Dimension CB, typename T> constexpr Matrix<max(RA, RB), max(CA, CB), T> embed(Matrix<RA, CA, T> a, Matrix<RB, CB, T> b);
 template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> outer_product(Vector<N, T> a, Vector<M, T> b);
 template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> project(Matrix<N, M, T> a, Matrix<N, M, T> b);
 template<Dimension N, Dimension M, typename T> constexpr Matrix<N, M, T> reject(Matrix<N, M, T> a, Matrix<N, M, T> b);
@@ -1055,8 +1105,10 @@ template<Dimension N, typename T> constexpr Vector<N, T> support(Box<N, T> shape
 template<Dimension N, typename T> constexpr Vector<N, T> support(Triangle<N, T> shape, Vector<N, T> dir);
 template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB<N, T, R> shape, Vector<N, T> dir);
 
-
-
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
 // ============================================================================
 // ============================================================================
 // ============================================================================
@@ -1066,9 +1118,12 @@ template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB
 //  | || |\/| |  _/ |__| _|| |\/| | _|| .` | | |/ _ \| |  | | (_) | .` |
 // |___|_|  |_|_| |____|___|_|  |_|___|_|\_| |_/_/ \_\_| |___\___/|_|\_|
 // 
-//   All function bodies live below. Prototypes are above.
+//   All function bodies live below.
 //   https://patorjk.com/software/taag/#p=display&f=Small&t=IMPLEMENTATION&x=none&v=4&h=4&w=80&we=false
 // 
+// ============================================================================
+// ============================================================================
+// ============================================================================
 // ============================================================================
 // ============================================================================
 // ============================================================================
@@ -1367,6 +1422,148 @@ template<Dimension N, Dimension M, typename T>
 constexpr const T &Matrix<N, M, T>::operator[](Dimension i) const
 {
     return this->data[i];
+}
+
+// =============================
+// Basis<K, E>
+// =============================
+
+template<Dimension K, typename E>
+constexpr E &Basis<K, E>::operator()(Dimension i)
+{
+    return this->v[i];
+}
+
+template<Dimension K, typename E>
+constexpr const E &Basis<K, E>::operator()(Dimension i) const
+{
+    return this->v[i];
+}
+
+template<Dimension K, typename E>
+constexpr E &Basis<K, E>::operator[](Dimension i)
+{
+    return this->v[i];
+}
+
+template<Dimension K, typename E>
+constexpr const E &Basis<K, E>::operator[](Dimension i) const
+{
+    return this->v[i];
+}
+
+// =============================
+// Cardinal<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr Vector<N, T> Cardinal<N, T>::get(Dimension i)
+{
+    Vector<N, T> v{};
+    v(i) = T(1);
+    return v;
+}
+
+template<typename T>
+constexpr Vector<1, T> Cardinal<1, T>::get(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return Cardinal::X;
+    }
+    return {};
+}
+
+template<typename T>
+constexpr Vector<2, T> Cardinal<2, T>::get(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return Cardinal::X;
+    case 1: return Cardinal::Y;
+    }
+    return {};
+}
+
+template<typename T>
+constexpr Vector<3, T> Cardinal<3, T>::get(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return Cardinal::X;
+    case 1: return Cardinal::Y;
+    case 2: return Cardinal::Z;
+    }
+    return {};
+}
+
+template<typename T>
+constexpr Vector<4, T> Cardinal<4, T>::get(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return Cardinal::X;
+    case 1: return Cardinal::Y;
+    case 2: return Cardinal::Z;
+    case 3: return Cardinal::W;
+    }
+    return {};
+}
+
+// =============================
+// Color<T>
+// =============================
+
+template<typename T>
+constexpr T &Color<T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
+}
+
+template<typename T>
+constexpr const T &Color<T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
+}
+
+template<typename T>
+constexpr T &Color<T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
+}
+
+template<typename T>
+constexpr const T &Color<T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
 }
 
 } // namespace vcp::math
