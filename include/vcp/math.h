@@ -652,7 +652,7 @@ template<typename T> constexpr T clamp(T v, T lo, T hi);
 template<typename T> constexpr T sign(T v);
 template<typename T> constexpr T abs(T v);
 template<typename T> constexpr T lerp(T a, T b, T t);
-template<typename T> constexpr T normalize(T v, T min, T max);
+template<typename T> constexpr T normalize(T v, T lo, T hi);
 template<typename T> constexpr T radians(T degrees);
 template<typename T> constexpr T degrees(T radians);
 template<typename T> constexpr T saturate(T v);
@@ -1820,6 +1820,97 @@ constexpr const T &OBB<N, T, R>::operator[](Dimension i) const
     if (i < N) return this->center(i);
     if (i < N * 2) return this->extent(i - N);
     return this->orientation(i - N * 2);
+}
+
+// =============================
+// Scalar utilities
+// =============================
+
+template<typename T>
+constexpr T min(T a, T b)
+{
+    return a < b ? a : b;
+}
+
+template<typename T>
+constexpr T max(T a, T b)
+{
+    return a < b ? b : a;
+}
+
+template<typename T>
+constexpr T clamp(T v, T lo, T hi)
+{
+    return v < lo ? lo : hi < v ? hi : v;
+}
+
+template<typename T>
+constexpr T sign(T v)
+{
+    return v > T(0) ? T(1) : v < T(0) ? T(-1) : T(0);
+}
+
+template<typename T>
+constexpr T abs(T v)
+{
+    return v == T(0) ? T(0) : v < T(0) ? -v : v;
+}
+
+template<typename T>
+constexpr T lerp(T a, T b, T t)
+{
+    return a + (b - a) * t;
+}
+
+template<typename T>
+constexpr T normalize(T v, T lo, T hi)
+{
+    return (v - lo) / (hi - lo);
+}
+
+template<typename T>
+constexpr T radians(T degrees)
+{
+    return degrees * Constant<T>::PI / T(180);
+}
+
+template<typename T>
+constexpr T degrees(T radians)
+{
+    return radians * T(180) / Constant<T>::PI;
+}
+
+template<typename T>
+constexpr T saturate(T v)
+{
+    return v < T(0) ? T(0) : v > T(1) ? T(1) : v;
+}
+
+template<typename T>
+constexpr T modulo(T a, T b)
+{
+    return ((a % b) + b) % b;
+}
+
+template<typename T>
+constexpr T truncated_modulo(T a, T b)
+{
+    return a % b;
+}
+
+template<typename T>
+constexpr T closest_offset(T from, T to, T period)
+{
+    T h = period / T(2);
+    T r = modulo(to - from, period);
+    return r > h ? r - period : r;
+}
+
+template<typename T>
+constexpr T smoothstep(T edge0, T edge1, T x)
+{
+    T t = saturate((x - edge0) / (edge1 - edge0));
+    return t * t * (T(3) - T(2) * t);
 }
 
 } // namespace vcp::math
