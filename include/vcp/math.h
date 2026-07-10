@@ -33,6 +33,7 @@ struct Vector
 
     using Scalar = T;
     static constexpr Dimension size = N;
+    static constexpr Dimension dimension = N;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -56,6 +57,7 @@ struct Vector<1, T>
 
     using Scalar = T;
     static constexpr Dimension size = 1;
+    static constexpr Dimension dimension = 1;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -79,6 +81,7 @@ struct Vector<2, T>
 
     using Scalar = T;
     static constexpr Dimension size = 2;
+    static constexpr Dimension dimension = 2;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -101,6 +104,7 @@ struct Vector<3, T>
 
     using Scalar = T;
     static constexpr Dimension size = 3;
+    static constexpr Dimension dimension = 3;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -123,6 +127,7 @@ struct Vector<4, T>
 
     using Scalar = T;
     static constexpr Dimension size = 4;
+    static constexpr Dimension dimension = 4;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -144,6 +149,7 @@ struct Quaternion
 
     using Scalar = T;
     static constexpr Dimension size = 4;
+    static constexpr Dimension dimension = 3;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -173,6 +179,7 @@ struct Matrix
     using Scalar = T;
     static constexpr Dimension rows = N;
     static constexpr Dimension cols = M;
+    static constexpr Dimension size = N * M;
     constexpr T &operator()(Dimension r, Dimension c);
     constexpr const T &operator()(Dimension r, Dimension c) const;
     constexpr T &operator[](Dimension i);
@@ -274,6 +281,7 @@ struct Color
     T r, g, b, a;
 
     using Scalar = T;
+    static constexpr Dimension size = 4;
     constexpr T &operator()(Dimension i);
     constexpr const T &operator()(Dimension i) const;
     constexpr T &operator[](Dimension i);
@@ -382,6 +390,7 @@ struct Line
     Vector<N, T> b;
 
     using Scalar = T;
+    static constexpr Dimension size = N * 2;
     static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -399,6 +408,7 @@ struct Triangle
     Vector<N, T> c;
 
     using Scalar = T;
+    static constexpr Dimension size = N * 3;
     static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -415,6 +425,7 @@ struct Ray
     Vector<N, T> direction;
 
     using Scalar = T;
+    static constexpr Dimension size = N * 2;
     static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -427,11 +438,11 @@ struct Ray
 template<Dimension N, typename T>
 struct Hit
 {
-    bool hit;
     T t;
     Vector<N, T> normal;
 
     using Scalar = T;
+    static constexpr Dimension size = N + 1;
     static constexpr Dimension dimension = N;
 };
 
@@ -446,6 +457,7 @@ struct Ball
     T r;
 
     using Scalar = T;
+    static constexpr Dimension size = N + 1;
     static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -463,6 +475,7 @@ struct Ball<1, T>
     T r;
 
     using Scalar = T;
+    static constexpr Dimension size = 2;
     static constexpr Dimension dimension = 1;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -484,6 +497,7 @@ struct Ball<2, T>
     T r;
 
     using Scalar = T;
+    static constexpr Dimension size = 3;
     static constexpr Dimension dimension = 2;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -505,6 +519,7 @@ struct Ball<3, T>
     T r;
 
     using Scalar = T;
+    static constexpr Dimension size = 4;
     static constexpr Dimension dimension = 3;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -521,6 +536,7 @@ struct Box
     Vector<N, T> size;
 
     using Scalar = T;
+    static constexpr Dimension size = N * 2;
     static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -545,6 +561,7 @@ struct Box<1, T>
     };
 
     using Scalar = T;
+    static constexpr Dimension size = 2;
     static constexpr Dimension dimension = 1;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -569,6 +586,7 @@ struct Box<2, T>
     };
 
     using Scalar = T;
+    static constexpr Dimension size = 4;
     static constexpr Dimension dimension = 2;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -593,6 +611,7 @@ struct Box<3, T>
     };
 
     using Scalar = T;
+    static constexpr Dimension size = 6;
     static constexpr Dimension dimension = 3;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -609,6 +628,7 @@ struct AABB
     Vector<N, T> max;
 
     using Scalar = T;
+    static constexpr Dimension size = N * 2;
     static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -626,6 +646,7 @@ struct OBB
     R orientation;
 
     using Scalar = T;
+    static constexpr Dimension size = N * 2 + R::size;
     static constexpr Dimension dimension = N;
     constexpr T &operator[](Dimension i);
     constexpr const T &operator[](Dimension i) const;
@@ -1375,6 +1396,149 @@ template<typename T>
 constexpr Vector<4, T> Vector<4, T>::zero()
 {
     return {};
+}
+
+// =============================
+// Quaternion<T>
+// =============================
+
+template<typename T>
+constexpr T &Quaternion<T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Quaternion<T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr T &Quaternion<T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Quaternion<T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr Quaternion<T> Quaternion<T>::identity()
+{
+    return { T(0), T(0), T(0), T(1) };
+}
+
+template<typename T>
+constexpr Quaternion<T> Quaternion<T>::filled(T value)
+{
+    return { value, value, value, value };
+}
+
+// =============================
+// Matrix<N, M, T>
+// =============================
+
+template<Dimension N, Dimension M, typename T>
+constexpr T &Matrix<N, M, T>::operator()(Dimension r, Dimension c)
+{
+    return data[r + c * N];
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr const T &Matrix<N, M, T>::operator()(Dimension r, Dimension c) const
+{
+    return data[r + c * N];
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr T &Matrix<N, M, T>::operator[](Dimension i)
+{
+    return data[i];
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr const T &Matrix<N, M, T>::operator[](Dimension i) const
+{
+    return data[i];
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr Matrix<N, M, T> Matrix<N, M, T>::identity()
+{
+    Matrix<N, M, T> m{};
+    Dimension k = N < M ? N : M;
+    for (Dimension i = 0; i < k; ++i)
+    {
+        m.data[i + i * N] = T(1);
+    }
+    return m;
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr Matrix<N, M, T> Matrix<N, M, T>::diagonal(T value)
+{
+    Matrix<N, M, T> m{};
+    Dimension k = N < M ? N : M;
+    for (Dimension i = 0; i < k; ++i)
+    {
+        m.data[i + i * N] = value;
+    }
+    return m;
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr Matrix<N, M, T> Matrix<N, M, T>::filled(T value)
+{
+    Matrix<N, M, T> m;
+    for (Dimension i = 0; i < N * M; ++i)
+    {
+        m.data[i] = value;
+    }
+    return m;
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr Matrix<N, M, T> Matrix<N, M, T>::zero()
+{
+    return {};
+}
+
+template<Dimension N, Dimension M, typename T>
+constexpr Matrix<N, M, T> Matrix<N, M, T>::one()
+{
+    return filled(T(1));
 }
 
 } // namespace vcp::math
