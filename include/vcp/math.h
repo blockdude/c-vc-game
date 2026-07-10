@@ -2,6 +2,7 @@
 #define VCP_MATH_H
 
 #include <cmath>
+#include "vcp/traits.h"
 
 namespace vcp::math
 {
@@ -1889,13 +1890,28 @@ constexpr T saturate(T v)
 template<typename T>
 constexpr T modulo(T a, T b)
 {
-    return ((a % b) + b) % b;
+    T r = truncated_modulo(a, b);
+    return r < T(0) ? r + b : r;
 }
 
 template<typename T>
 constexpr T truncated_modulo(T a, T b)
 {
-    return a % b;
+    if constexpr (requires { a % b; })
+    {
+        return a % b;
+    }
+    else if consteval
+    {
+        if constexpr (vcp::is_constexpr([] { return std::fmod(T(1), T(2)); }))
+            return std::fmod(a, b);
+        else
+            return a - static_cast<long long>(a / b) * b;
+    }
+    else
+    {
+        return std::fmod(a, b);
+    }
 }
 
 template<typename T>
