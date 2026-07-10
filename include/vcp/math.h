@@ -317,16 +317,12 @@ struct Luminance
 {
     // BT.601 — Standard-definition TV (NTSC)
     static constexpr Vector<3, T> BT601  = { T(0.2990), T(0.5870), T(0.1140) };
-
     // BT.709 — HDTV, sRGB (the universal default)
     static constexpr Vector<3, T> BT709  = { T(0.2126), T(0.7152), T(0.0722) };
-
     // BT.2020 — UHD, wide gamut
     static constexpr Vector<3, T> BT2020 = { T(0.2627), T(0.6780), T(0.0593) };
-
     // ACEScg — Linear ACES workspace (film/VFX, used by Unreal & HDRP)
     static constexpr Vector<3, T> ACEScg = { T(0.2723), T(0.7181), T(0.0095) };
-
     // SMPTE 240M — Early HDTV standard
     static constexpr Vector<3, T> SMPTE240M = { T(0.2120), T(0.7010), T(0.0870) };
 };
@@ -334,47 +330,15 @@ struct Luminance
 struct Gamma
 {
     // Generic gamma curve — gamma(c, Gamma::curve(2.2f))
-    template<typename T>
-    static auto curve(T exp)
-    {
-        return [exp](T x) { return std::pow(x, exp); };
-    }
-
+    template<typename T> static auto curve(T exp);
     // True sRGB encode (linear → sRGB)
-    template<typename T>
-    static auto encode_sRGB()
-    {
-        return [](T x) -> T
-        {
-            return x <= T(0.0031308) ? x * T(12.92)
-                 : T(1.055) * std::pow(x, T(1.0) / T(2.4)) - T(0.055);
-        };
-    }
-
+    template<typename T> static auto encode_sRGB();
     // True sRGB decode (sRGB → linear)
-    template<typename T>
-    static auto decode_sRGB()
-    {
-        return [](T x) -> T
-        {
-            return x <= T(0.04045) ? x / T(12.92)
-                 : std::pow((x + T(0.055)) / T(1.055), T(2.4));
-        };
-    }
-
+    template<typename T> static auto decode_sRGB();
     // BT.1886 encode (linear → display)
-    template<typename T>
-    static auto encode_BT1886()
-    {
-        return [](T x) { return std::pow(x, T(1.0) / T(2.4)); };
-    }
-
+    template<typename T> static auto encode_BT1886();
     // BT.1886 decode (display → linear)
-    template<typename T>
-    static auto decode_BT1886()
-    {
-        return [](T x) { return std::pow(x, T(2.4)); };
-    }
+    template<typename T> static auto decode_BT1886();
 };
 
 // =============================
@@ -442,6 +406,11 @@ struct Hit
     using Scalar = T;
     static constexpr Dimension size = N + 1;
     static constexpr Dimension dimension = N;
+    constexpr T &operator[](Dimension i);
+    constexpr const T &operator[](Dimension i) const;
+
+    constexpr bool hit() const;
+    constexpr Vector<N, T> point(Ray<N, T> ray) const;
 };
 
 // =============================
@@ -720,8 +689,9 @@ template<Dimension N, typename T> constexpr Vector<N, T> make(const Vector<N, T>
 template<Dimension N, typename T> constexpr Vector<N, T> filled(const Vector<N, T> &pattern, T value);
 template<Dimension N, typename T> constexpr Vector<N, T> one(const Vector<N, T> &pattern);
 template<Dimension N, typename T> constexpr Vector<N, T> zero(const Vector<N, T> &pattern);
+template<Dimension N, typename T> constexpr Vector<N, T> cardinal(Dimension i);
+template<Dimension N, typename T> constexpr Vector<N, T> cardinal(const Vector<N, T> &pattern, Dimension i);
 template<Dimension N, Dimension M, typename T> constexpr Vector<N, T> resize(Vector<M, T> v, T fill = T{});
-template<Dimension N, typename T = float> constexpr Vector<N, T> cardinal(Dimension i);
 template<typename T, Dimension N, Dimension... Ns> constexpr Vector<(N + ... + Ns), T> concat(Vector<N, T> a, Vector<Ns, T>... rest);
 template<Dimension N, typename T, typename... Scalars> constexpr Vector<N + 1 + sizeof...(Scalars), T> concat(Vector<N, T> v, T s, Scalars... rest);
 template<Dimension N, typename T> constexpr Vector<N + 1, T> concat(T s, Vector<N, T> v);
@@ -1564,6 +1534,292 @@ constexpr const T &Color<T>::operator[](Dimension i) const
     case 3: return this->a;
     }
     return this->r;
+}
+
+// =============================
+// Gamma
+// =============================
+
+template<typename T>
+auto Gamma::curve(T exp)
+{
+    return [exp](T x) { return std::pow(x, exp); };
+}
+
+template<typename T>
+auto Gamma::encode_sRGB()
+{
+    return [](T x) -> T
+    {
+        return x <= T(0.0031308) ? x * T(12.92)
+             : T(1.055) * std::pow(x, T(1.0) / T(2.4)) - T(0.055);
+    };
+}
+
+template<typename T>
+auto Gamma::decode_sRGB()
+{
+    return [](T x) -> T
+    {
+        return x <= T(0.04045) ? x / T(12.92)
+             : std::pow((x + T(0.055)) / T(1.055), T(2.4));
+    };
+}
+
+template<typename T>
+auto Gamma::encode_BT1886()
+{
+    return [](T x) { return std::pow(x, T(1.0) / T(2.4)); };
+}
+
+template<typename T>
+auto Gamma::decode_BT1886()
+{
+    return [](T x) { return std::pow(x, T(2.4)); };
+}
+
+// =============================
+// Line<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &Line<N, T>::operator[](Dimension i)
+{
+    if (i < N) return this->a(i);
+    return this->b(i - N);
+}
+
+template<Dimension N, typename T>
+constexpr const T &Line<N, T>::operator[](Dimension i) const
+{
+    if (i < N) return this->a(i);
+    return this->b(i - N);
+}
+
+// =============================
+// Triangle<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &Triangle<N, T>::operator[](Dimension i)
+{
+    if (i < N) return this->a(i);
+    if (i < N * 2) return this->b(i - N);
+    return this->c(i - N * 2);
+}
+
+template<Dimension N, typename T>
+constexpr const T &Triangle<N, T>::operator[](Dimension i) const
+{
+    if (i < N) return this->a(i);
+    if (i < N * 2) return this->b(i - N);
+    return this->c(i - N * 2);
+}
+
+// =============================
+// Ray<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &Ray<N, T>::operator[](Dimension i)
+{
+    if (i < N) return this->origin(i);
+    return this->direction(i - N);
+}
+
+template<Dimension N, typename T>
+constexpr const T &Ray<N, T>::operator[](Dimension i) const
+{
+    if (i < N) return this->origin(i);
+    return this->direction(i - N);
+}
+
+// =============================
+// Hit<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &Hit<N, T>::operator[](Dimension i)
+{
+    if (i == 0) return this->t;
+    return this->normal(i - 1);
+}
+
+template<Dimension N, typename T>
+constexpr const T &Hit<N, T>::operator[](Dimension i) const
+{
+    if (i == 0) return this->t;
+    return this->normal(i - 1);
+}
+
+template<Dimension N, typename T>
+constexpr bool Hit<N, T>::hit() const
+{
+    return this->t >= T(0);
+}
+
+template<Dimension N, typename T>
+constexpr Vector<N, T> Hit<N, T>::point(Ray<N, T> ray) const
+{
+    return ray.origin + ray.direction * this->t;
+}
+
+// =============================
+// Ball<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &Ball<N, T>::operator[](Dimension i)
+{
+    if (i < N) return this->center(i);
+    return this->r;
+}
+
+template<Dimension N, typename T>
+constexpr const T &Ball<N, T>::operator[](Dimension i) const
+{
+    if (i < N) return this->center(i);
+    return this->r;
+}
+
+template<typename T>
+constexpr T &Ball<1, T>::operator[](Dimension i)
+{
+    if (i < 1) return this->center(i);
+    return this->r;
+}
+
+template<typename T>
+constexpr const T &Ball<1, T>::operator[](Dimension i) const
+{
+    if (i < 1) return this->center(i);
+    return this->r;
+}
+
+template<typename T>
+constexpr T &Ball<2, T>::operator[](Dimension i)
+{
+    if (i < 2) return this->center(i);
+    return this->r;
+}
+
+template<typename T>
+constexpr const T &Ball<2, T>::operator[](Dimension i) const
+{
+    if (i < 2) return this->center(i);
+    return this->r;
+}
+
+template<typename T>
+constexpr T &Ball<3, T>::operator[](Dimension i)
+{
+    if (i < 3) return this->center(i);
+    return this->r;
+}
+
+template<typename T>
+constexpr const T &Ball<3, T>::operator[](Dimension i) const
+{
+    if (i < 3) return this->center(i);
+    return this->r;
+}
+
+// =============================
+// Box<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &Box<N, T>::operator[](Dimension i)
+{
+    if (i < N) return this->position(i);
+    return this->extent(i - N);
+}
+
+template<Dimension N, typename T>
+constexpr const T &Box<N, T>::operator[](Dimension i) const
+{
+    if (i < N) return this->position(i);
+    return this->extent(i - N);
+}
+
+template<typename T>
+constexpr T &Box<1, T>::operator[](Dimension i)
+{
+    if (i < 1) return this->position(i);
+    return this->extent(i - 1);
+}
+
+template<typename T>
+constexpr const T &Box<1, T>::operator[](Dimension i) const
+{
+    if (i < 1) return this->position(i);
+    return this->extent(i - 1);
+}
+
+template<typename T>
+constexpr T &Box<2, T>::operator[](Dimension i)
+{
+    if (i < 2) return this->position(i);
+    return this->extent(i - 2);
+}
+
+template<typename T>
+constexpr const T &Box<2, T>::operator[](Dimension i) const
+{
+    if (i < 2) return this->position(i);
+    return this->extent(i - 2);
+}
+
+template<typename T>
+constexpr T &Box<3, T>::operator[](Dimension i)
+{
+    if (i < 3) return this->position(i);
+    return this->extent(i - 3);
+}
+
+template<typename T>
+constexpr const T &Box<3, T>::operator[](Dimension i) const
+{
+    if (i < 3) return this->position(i);
+    return this->extent(i - 3);
+}
+
+// =============================
+// AABB<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &AABB<N, T>::operator[](Dimension i)
+{
+    if (i < N) return this->min(i);
+    return this->max(i - N);
+}
+
+template<Dimension N, typename T>
+constexpr const T &AABB<N, T>::operator[](Dimension i) const
+{
+    if (i < N) return this->min(i);
+    return this->max(i - N);
+}
+
+// =============================
+// OBB<N, T, R>
+// =============================
+
+template<Dimension N, typename T, typename R>
+constexpr T &OBB<N, T, R>::operator[](Dimension i)
+{
+    if (i < N) return this->center(i);
+    if (i < N * 2) return this->extent(i - N);
+    return this->orientation(i - N * 2);
+}
+
+template<Dimension N, typename T, typename R>
+constexpr const T &OBB<N, T, R>::operator[](Dimension i) const
+{
+    if (i < N) return this->center(i);
+    if (i < N * 2) return this->extent(i - N);
+    return this->orientation(i - N * 2);
 }
 
 } // namespace vcp::math
