@@ -1048,12 +1048,334 @@ template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB
 // |___|_|  |_|_| |____|___|_|  |_|___|_|\_| |_/_/ \_\_| |___\___/|_|\_|
 // 
 //   All function bodies live below. Prototypes are above.
+//   https://patorjk.com/software/taag/#p=display&f=Small&t=IMPLEMENTATION&x=none&v=4&h=4&w=80&we=false
 // 
 // ============================================================================
 // ============================================================================
 // ============================================================================
 
+// =============================
+// Vector<N, T>
+// =============================
 
+template<Dimension N, typename T>
+constexpr T &Vector<N, T>::operator()(Dimension i)
+{
+    return data[i];
+}
+
+template<Dimension N, typename T>
+constexpr const T &Vector<N, T>::operator()(Dimension i) const
+{
+    return data[i];
+}
+
+template<Dimension N, typename T>
+constexpr T &Vector<N, T>::operator[](Dimension i)
+{
+    return data[i];
+}
+
+template<Dimension N, typename T>
+constexpr const T &Vector<N, T>::operator[](Dimension i) const
+{
+    return data[i];
+}
+
+template<Dimension N, typename T>
+constexpr Vector<N, T> Vector<N, T>::filled(T value)
+{
+    Vector<N, T> v;
+    for (Dimension i = 0; i < N; ++i)
+    {
+        v.data[i] = value;
+    }
+    return v;
+}
+
+template<Dimension N, typename T>
+constexpr Vector<N, T> Vector<N, T>::one()
+{
+    return filled(T(1));
+}
+
+template<Dimension N, typename T>
+constexpr Vector<N, T> Vector<N, T>::zero()
+{
+    return Vector<N, T>{};
+}
+
+// =============================
+// Vector<1, T>
+// =============================
+
+template<typename T>
+constexpr T &Vector<1, T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<1, T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr T &Vector<1, T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<1, T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr Vector<1, T> Vector<1, T>::filled(T value)
+{
+    return { value };
+}
+
+template<typename T>
+constexpr Vector<1, T> Vector<1, T>::one()
+{
+    return { T(1) };
+}
+
+template<typename T>
+constexpr Vector<1, T> Vector<1, T>::zero()
+{
+    return {};
+}
+
+// =============================
+// Vector<2, T>
+// =============================
+
+template<typename T>
+constexpr T &Vector<2, T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<2, T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr T &Vector<2, T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<2, T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr Vector<2, T> Vector<2, T>::filled(T value)
+{
+    return { value, value };
+}
+
+template<typename T>
+constexpr Vector<2, T> Vector<2, T>::one()
+{
+    return { T(1), T(1) };
+}
+
+template<typename T>
+constexpr Vector<2, T> Vector<2, T>::zero()
+{
+    return {};
+}
+
+// =============================
+// Vector<3, T>
+// =============================
+
+template<typename T>
+constexpr T &Vector<3, T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<3, T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr T &Vector<3, T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<3, T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr Vector<3, T> Vector<3, T>::filled(T value)
+{
+    return { value, value, value };
+}
+
+template<typename T>
+constexpr Vector<3, T> Vector<3, T>::one()
+{
+    return { T(1), T(1), T(1) };
+}
+
+template<typename T>
+constexpr Vector<3, T> Vector<3, T>::zero()
+{
+    return {};
+}
+
+// =============================
+// Vector<4, T>
+// =============================
+
+template<typename T>
+constexpr T &Vector<4, T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<4, T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr T &Vector<4, T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr const T &Vector<4, T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    case 3: return w;
+    }
+    return x;
+}
+
+template<typename T>
+constexpr Vector<4, T> Vector<4, T>::filled(T value)
+{
+    return { value, value, value, value };
+}
+
+template<typename T>
+constexpr Vector<4, T> Vector<4, T>::one()
+{
+    return { T(1), T(1), T(1), T(1) };
+}
+
+template<typename T>
+constexpr Vector<4, T> Vector<4, T>::zero()
+{
+    return {};
+}
 
 } // namespace vcp::math
 
