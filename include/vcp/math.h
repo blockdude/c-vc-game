@@ -2,6 +2,7 @@
 #define VCP_MATH_H
 
 #include <cmath>
+#include <type_traits>
 #include "vcp/traits.h"
 
 namespace vcp::math
@@ -657,19 +658,25 @@ template<typename T> constexpr T normalize(T v, T lo, T hi);
 template<typename T> constexpr T radians(T degrees);
 template<typename T> constexpr T degrees(T radians);
 template<typename T> constexpr T saturate(T v);
-template<typename T> constexpr T modulo(T a, T b);
-template<typename T> constexpr T truncated_modulo(T a, T b);
 template<typename T> constexpr T closest_offset(T from, T to, T period);
 template<typename T> constexpr T smoothstep(T edge0, T edge1, T x);
+
+template<typename T> constexpr T truncate(T x);
+template<typename T> constexpr T floor(T x);
+template<typename T> constexpr T ceil(T x);
+template<typename T> constexpr T round(T x);
+
+template<typename T> constexpr T truncated_modulo(T a, T b);
+template<typename T> constexpr T modulo(T a, T b);
 
 template<typename T> constexpr T sqrt(T x);
 template<typename T> constexpr T sin(T x);
 template<typename T> constexpr T cos(T x);
 template<typename T> constexpr T tan(T x);
-template<typename T> constexpr T asin(T x);
-template<typename T> constexpr T acos(T x);
 template<typename T> constexpr T atan(T x);
 template<typename T> constexpr T atan2(T y, T x);
+template<typename T> constexpr T asin(T x);
+template<typename T> constexpr T acos(T x);
 
 // =============================
 // General
@@ -1888,33 +1895,6 @@ constexpr T saturate(T v)
 }
 
 template<typename T>
-constexpr T modulo(T a, T b)
-{
-    T r = truncated_modulo(a, b);
-    return r < T(0) ? r + b : r;
-}
-
-template<typename T>
-constexpr T truncated_modulo(T a, T b)
-{
-    if constexpr (requires { a % b; })
-    {
-        return a % b;
-    }
-    else if consteval
-    {
-        if constexpr (vcp::is_constexpr([] { return std::fmod(T(1), T(2)); }))
-            return std::fmod(a, b);
-        else
-            return a - static_cast<long long>(a / b) * b;
-    }
-    else
-    {
-        return std::fmod(a, b);
-    }
-}
-
-template<typename T>
 constexpr T closest_offset(T from, T to, T period)
 {
     T h = period / T(2);
@@ -1927,6 +1907,216 @@ constexpr T smoothstep(T edge0, T edge1, T x)
 {
     T t = saturate((x - edge0) / (edge1 - edge0));
     return t * t * (T(3) - T(2) * t);
+}
+
+template<typename T>
+constexpr T truncate(T x)
+{
+    constexpr auto fallback = [](T v) -> T
+    {
+        if (v >= T(0))
+        {
+            T r = T(0);
+            T p = T(1);
+            while (p * T(2) <= v) p = p * T(2);
+            while (p >= T(1))
+            {
+                if (r + p <= v) r = r + p;
+                p = p / T(2);
+            }
+            return r;
+        }
+        else
+        {
+            T n = T(0);
+            T p = T(1);
+            while (p * T(2) <= -v) p = p * T(2);
+            while (p >= T(1))
+            {
+                if (n - p >= v) n = n - p;
+                p = p / T(2);
+            }
+            return n;
+        }
+    };
+
+    if constexpr (std::is_integral_v<T>)
+    {
+        return x;
+    }
+    else if constexpr (requires { std::trunc(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::trunc(T(1)); }))
+            {
+                return std::trunc(x);
+            }
+            else
+            {
+                if (x != x) return x;
+                if (x == T(1) / T(0)) return x;
+                if (x == -T(1) / T(0)) return x;
+                return fallback(x);
+            }
+        }
+        else
+        {
+            return std::trunc(x);
+        }
+    }
+    else
+    {
+        return fallback(x);
+    }
+}
+
+template<typename T>
+constexpr T floor(T x)
+{
+    if constexpr (std::is_integral_v<T>)
+    {
+        return x;
+    }
+    else if constexpr (requires { std::floor(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::floor(T(1)); }))
+            {
+                return std::floor(x);
+            }
+            else
+            {
+                if (x != x) return x;
+                if (x == T(1) / T(0)) return x;
+                if (x == -T(1) / T(0)) return x;
+                T t = truncate(x);
+                return t > x ? t - T(1) : t;
+            }
+        }
+        else
+        {
+            return std::floor(x);
+        }
+    }
+    else
+    {
+        T t = truncate(x);
+        return t > x ? t - T(1) : t;
+    }
+}
+
+template<typename T>
+constexpr T ceil(T x)
+{
+    if constexpr (std::is_integral_v<T>)
+    {
+        return x;
+    }
+    else if constexpr (requires { std::ceil(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::ceil(T(1)); }))
+            {
+                return std::ceil(x);
+            }
+            else
+            {
+                if (x != x) return x;
+                if (x == T(1) / T(0)) return x;
+                if (x == -T(1) / T(0)) return x;
+                T t = truncate(x);
+                return t < x ? t + T(1) : t;
+            }
+        }
+        else
+        {
+            return std::ceil(x);
+        }
+    }
+    else
+    {
+        T t = truncate(x);
+        return t < x ? t + T(1) : t;
+    }
+}
+
+template<typename T>
+constexpr T round(T x)
+{
+    if constexpr (std::is_integral_v<T>)
+    {
+        return x;
+    }
+    else if constexpr (requires { std::round(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::round(T(1)); }))
+            {
+                return std::round(x);
+            }
+            else
+            {
+                if (x != x) return x;
+                if (x == T(1) / T(0)) return x;
+                if (x == -T(1) / T(0)) return x;
+                T t = truncate(x);
+                if (x > T(0)) return x - t >= T(0.5) ? t + T(1) : t;
+                return t - x >= T(0.5) ? t - T(1) : t;
+            }
+        }
+        else
+        {
+            return std::round(x);
+        }
+    }
+    else
+    {
+        T t = truncate(x);
+        if (x > T(0)) return x - t >= T(0.5) ? t + T(1) : t;
+        return t - x >= T(0.5) ? t - T(1) : t;
+    }
+}
+
+template<typename T>
+constexpr T truncated_modulo(T a, T b)
+{
+    if constexpr (std::is_integral_v<T>)
+    {
+        return a % b;
+    }
+    else if constexpr (requires { std::fmod(a, b); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::fmod(T(1), T(2)); }))
+            {
+                return std::fmod(a, b);
+            }
+            else
+            {
+                return a - truncate(a / b) * b;
+            }
+        }
+        else
+        {
+            return std::fmod(a, b);
+        }
+    }
+    else
+    {
+        return a - truncate(a / b) * b;
+    }
+}
+
+template<typename T>
+constexpr T modulo(T a, T b)
+{
+    T r = truncated_modulo(a, b);
+    return r < T(0) ? r + b : r;
 }
 
 } // namespace vcp::math
