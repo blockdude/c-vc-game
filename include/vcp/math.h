@@ -55,7 +55,7 @@ struct Constant
 // Vector<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct Vector
 {
     T data[N];
@@ -69,8 +69,8 @@ struct Vector
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Vector<1, T>
+template<typename T, typename A>
+struct Vector<1, T, A>
 {
     union
     {
@@ -89,8 +89,8 @@ struct Vector<1, T>
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Vector<2, T>
+template<typename T, typename A>
+struct Vector<2, T, A>
 {
     union
     {
@@ -109,8 +109,8 @@ struct Vector<2, T>
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Vector<3, T>
+template<typename T, typename A>
+struct Vector<3, T, A>
 {
     union
     {
@@ -128,8 +128,8 @@ struct Vector<3, T>
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Vector<4, T>
+template<typename T, typename A>
+struct Vector<4, T, A>
 {
     union
     {
@@ -177,7 +177,7 @@ struct Quaternion
  * GPU-ready: data is contiguous in column-major order.
  */
 
-template<Dimension N, Dimension M, typename T>
+template<Dimension N, Dimension M, typename T, typename A = std::allocator<T>>
 struct Matrix
 {
     T data[N * M];
@@ -196,7 +196,7 @@ struct Matrix
 // Basis<K, E>
 // =============================
 
-template<Dimension K, typename E>
+template<Dimension K, typename E, typename A = std::allocator<E>>
 struct Basis
 {
     E v[K];
@@ -347,11 +347,11 @@ struct Gamma
 // Line<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct Line
 {
-    Vector<N, T> a;
-    Vector<N, T> b;
+    Vector<N, T, A> a;
+    Vector<N, T, A> b;
 
     using Scalar = T;
     static constexpr Dimension size = N * 2;
@@ -364,12 +364,12 @@ struct Line
 // Triangle<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct Triangle
 {
-    Vector<N, T> a;
-    Vector<N, T> b;
-    Vector<N, T> c;
+    Vector<N, T, A> a;
+    Vector<N, T, A> b;
+    Vector<N, T, A> c;
 
     using Scalar = T;
     static constexpr Dimension size = N * 3;
@@ -382,11 +382,11 @@ struct Triangle
 // Ray<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct Ray
 {
-    Vector<N, T> origin;
-    Vector<N, T> direction;
+    Vector<N, T, A> origin;
+    Vector<N, T, A> direction;
 
     using Scalar = T;
     static constexpr Dimension size = N * 2;
@@ -399,11 +399,11 @@ struct Ray
 // Hit<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct Hit
 {
     T t;
-    Vector<N, T> normal;
+    Vector<N, T, A> normal;
 
     using Scalar = T;
     static constexpr Dimension size = N + 1;
@@ -412,17 +412,17 @@ struct Hit
     constexpr const T &operator[](Dimension i) const;
 
     constexpr bool hit() const;
-    constexpr Vector<N, T> point(Ray<N, T> ray) const;
+    constexpr Vector<N, T, A> point(Ray<N, T, A> ray) const;
 };
 
 // =============================
 // Ball<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct Ball
 {
-    Vector<N, T> center;
+    Vector<N, T, A> center;
     T r;
 
     using Scalar = T;
@@ -432,13 +432,13 @@ struct Ball
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Ball<1, T>
+template<typename T, typename A>
+struct Ball<1, T, A>
 {
     union
     {
         T x;
-        Vector<1, T> center;
+        Vector<1, T, A> center;
     };
 
     T r;
@@ -450,8 +450,8 @@ struct Ball<1, T>
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Ball<2, T>
+template<typename T, typename A>
+struct Ball<2, T, A>
 {
     union
     {
@@ -460,7 +460,7 @@ struct Ball<2, T>
             T x, y;
         };
 
-        Vector<2, T> center;
+        Vector<2, T, A> center;
     };
 
     T r;
@@ -472,8 +472,8 @@ struct Ball<2, T>
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Ball<3, T>
+template<typename T, typename A>
+struct Ball<3, T, A>
 {
     union
     {
@@ -482,7 +482,7 @@ struct Ball<3, T>
             T x, y, z;
         };
 
-        Vector<3, T> center;
+        Vector<3, T, A> center;
     };
 
     T r;
@@ -498,11 +498,11 @@ struct Ball<3, T>
 // Box<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct Box
 {
-    Vector<N, T> position;
-    Vector<N, T> extent;
+    Vector<N, T, A> position;
+    Vector<N, T, A> extent;
 
     using Scalar = T;
     static constexpr Dimension size = N * 2;
@@ -511,8 +511,8 @@ struct Box
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Box<1, T>
+template<typename T, typename A>
+struct Box<1, T, A>
 {
     union
     {
@@ -524,8 +524,8 @@ struct Box<1, T>
 
         struct
         {
-            Vector<1, T> position;
-            Vector<1, T> extent;
+            Vector<1, T, A> position;
+            Vector<1, T, A> extent;
         };
     };
 
@@ -536,8 +536,8 @@ struct Box<1, T>
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Box<2, T>
+template<typename T, typename A>
+struct Box<2, T, A>
 {
     union
     {
@@ -549,8 +549,8 @@ struct Box<2, T>
 
         struct
         {
-            Vector<2, T> position;
-            Vector<2, T> extent;
+            Vector<2, T, A> position;
+            Vector<2, T, A> extent;
         };
     };
 
@@ -561,8 +561,8 @@ struct Box<2, T>
     constexpr const T &operator[](Dimension i) const;
 };
 
-template<typename T>
-struct Box<3, T>
+template<typename T, typename A>
+struct Box<3, T, A>
 {
     union
     {
@@ -574,8 +574,8 @@ struct Box<3, T>
 
         struct
         {
-            Vector<3, T> position;
-            Vector<3, T> extent;
+            Vector<3, T, A> position;
+            Vector<3, T, A> extent;
         };
     };
 
@@ -590,11 +590,11 @@ struct Box<3, T>
 // AABB<N, T>
 // =============================
 
-template<Dimension N, typename T>
+template<Dimension N, typename T, typename A = std::allocator<T>>
 struct AABB
 {
-    Vector<N, T> min;
-    Vector<N, T> max;
+    Vector<N, T, A> min;
+    Vector<N, T, A> max;
 
     using Scalar = T;
     static constexpr Dimension size = N * 2;
@@ -607,11 +607,11 @@ struct AABB
 // OBB<N, T, R>
 // =============================
 
-template<Dimension N, typename T, typename R = Matrix<N, N, T>>
+template<Dimension N, typename T, typename A = std::allocator<T>, typename R = Matrix<N, N, T, A>>
 struct OBB
 {
-    Vector<N, T> center;
-    Vector<N, T> extent;
+    Vector<N, T, A> center;
+    Vector<N, T, A> extent;
     R orientation;
 
     using Scalar = T;
