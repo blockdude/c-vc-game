@@ -1110,26 +1110,26 @@ template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB
 // Vector<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &Vector<N, T>::operator()(Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Vector<N, T, A>::operator()(Dimension i)
 {
     return this->data[i];
 }
 
-template<Dimension N, typename T>
-constexpr const T &Vector<N, T>::operator()(Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Vector<N, T, A>::operator()(Dimension i) const
 {
     return this->data[i];
 }
 
-template<Dimension N, typename T>
-constexpr T &Vector<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Vector<N, T, A>::operator[](Dimension i)
 {
     return this->data[i];
 }
 
-template<Dimension N, typename T>
-constexpr const T &Vector<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Vector<N, T, A>::operator[](Dimension i) const
 {
     return this->data[i];
 }
@@ -1138,26 +1138,26 @@ constexpr const T &Vector<N, T>::operator[](Dimension i) const
 // Vector<1, T>
 // =============================
 
-template<typename T>
-constexpr T &Vector<1, T>::operator()(Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<1, T, A>::operator()(Dimension i)
 {
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<1, T>::operator()(Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<1, T, A>::operator()(Dimension i) const
 {
     return this->x;
 }
 
-template<typename T>
-constexpr T &Vector<1, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<1, T, A>::operator[](Dimension i)
 {
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<1, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<1, T, A>::operator[](Dimension i) const
 {
     return this->x;
 }
@@ -1166,8 +1166,8 @@ constexpr const T &Vector<1, T>::operator[](Dimension i) const
 // Vector<2, T>
 // =============================
 
-template<typename T>
-constexpr T &Vector<2, T>::operator()(Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<2, T, A>::operator()(Dimension i)
 {
     switch (i)
     {
@@ -1177,8 +1177,8 @@ constexpr T &Vector<2, T>::operator()(Dimension i)
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<2, T>::operator()(Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<2, T, A>::operator()(Dimension i) const
 {
     switch (i)
     {
@@ -1188,8 +1188,8 @@ constexpr const T &Vector<2, T>::operator()(Dimension i) const
     return this->x;
 }
 
-template<typename T>
-constexpr T &Vector<2, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<2, T, A>::operator[](Dimension i)
 {
     switch (i)
     {
@@ -1199,8 +1199,8 @@ constexpr T &Vector<2, T>::operator[](Dimension i)
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<2, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<2, T, A>::operator[](Dimension i) const
 {
     switch (i)
     {
@@ -1214,8 +1214,8 @@ constexpr const T &Vector<2, T>::operator[](Dimension i) const
 // Vector<3, T>
 // =============================
 
-template<typename T>
-constexpr T &Vector<3, T>::operator()(Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<3, T, A>::operator()(Dimension i)
 {
     switch (i)
     {
@@ -1226,8 +1226,8 @@ constexpr T &Vector<3, T>::operator()(Dimension i)
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<3, T>::operator()(Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<3, T, A>::operator()(Dimension i) const
 {
     switch (i)
     {
@@ -1238,8 +1238,8 @@ constexpr const T &Vector<3, T>::operator()(Dimension i) const
     return this->x;
 }
 
-template<typename T>
-constexpr T &Vector<3, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<3, T, A>::operator[](Dimension i)
 {
     switch (i)
     {
@@ -1250,8 +1250,8 @@ constexpr T &Vector<3, T>::operator[](Dimension i)
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<3, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<3, T, A>::operator[](Dimension i) const
 {
     switch (i)
     {
@@ -1266,8 +1266,8 @@ constexpr const T &Vector<3, T>::operator[](Dimension i) const
 // Vector<4, T>
 // =============================
 
-template<typename T>
-constexpr T &Vector<4, T>::operator()(Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<4, T, A>::operator()(Dimension i)
 {
     switch (i)
     {
@@ -1279,8 +1279,8 @@ constexpr T &Vector<4, T>::operator()(Dimension i)
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<4, T>::operator()(Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<4, T, A>::operator()(Dimension i) const
 {
     switch (i)
     {
@@ -1292,8 +1292,8 @@ constexpr const T &Vector<4, T>::operator()(Dimension i) const
     return this->x;
 }
 
-template<typename T>
-constexpr T &Vector<4, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Vector<4, T, A>::operator[](Dimension i)
 {
     switch (i)
     {
@@ -1305,8 +1305,8 @@ constexpr T &Vector<4, T>::operator[](Dimension i)
     return this->x;
 }
 
-template<typename T>
-constexpr const T &Vector<4, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Vector<4, T, A>::operator[](Dimension i) const
 {
     switch (i)
     {
@@ -1378,26 +1378,26 @@ constexpr const T &Quaternion<T>::operator[](Dimension i) const
 // Matrix<N, M, T>
 // =============================
 
-template<Dimension N, Dimension M, typename T>
-constexpr T &Matrix<N, M, T>::operator()(Dimension r, Dimension c)
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr T &Matrix<N, M, T, A>::operator()(Dimension r, Dimension c)
 {
     return this->data[r + c * N];
 }
 
-template<Dimension N, Dimension M, typename T>
-constexpr const T &Matrix<N, M, T>::operator()(Dimension r, Dimension c) const
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr const T &Matrix<N, M, T, A>::operator()(Dimension r, Dimension c) const
 {
     return this->data[r + c * N];
 }
 
-template<Dimension N, Dimension M, typename T>
-constexpr T &Matrix<N, M, T>::operator[](Dimension i)
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr T &Matrix<N, M, T, A>::operator[](Dimension i)
 {
     return this->data[i];
 }
 
-template<Dimension N, Dimension M, typename T>
-constexpr const T &Matrix<N, M, T>::operator[](Dimension i) const
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr const T &Matrix<N, M, T, A>::operator[](Dimension i) const
 {
     return this->data[i];
 }
@@ -1406,26 +1406,26 @@ constexpr const T &Matrix<N, M, T>::operator[](Dimension i) const
 // Basis<K, E>
 // =============================
 
-template<Dimension K, typename E>
-constexpr E &Basis<K, E>::operator()(Dimension i)
+template<Dimension K, typename E, typename A>
+constexpr E &Basis<K, E, A>::operator()(Dimension i)
 {
     return this->v[i];
 }
 
-template<Dimension K, typename E>
-constexpr const E &Basis<K, E>::operator()(Dimension i) const
+template<Dimension K, typename E, typename A>
+constexpr const E &Basis<K, E, A>::operator()(Dimension i) const
 {
     return this->v[i];
 }
 
-template<Dimension K, typename E>
-constexpr E &Basis<K, E>::operator[](Dimension i)
+template<Dimension K, typename E, typename A>
+constexpr E &Basis<K, E, A>::operator[](Dimension i)
 {
     return this->v[i];
 }
 
-template<Dimension K, typename E>
-constexpr const E &Basis<K, E>::operator[](Dimension i) const
+template<Dimension K, typename E, typename A>
+constexpr const E &Basis<K, E, A>::operator[](Dimension i) const
 {
     return this->v[i];
 }
@@ -1590,15 +1590,15 @@ auto Gamma::decode_BT1886()
 // Line<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &Line<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Line<N, T, A>::operator[](Dimension i)
 {
     if (i < N) return this->a(i);
     return this->b(i - N);
 }
 
-template<Dimension N, typename T>
-constexpr const T &Line<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Line<N, T, A>::operator[](Dimension i) const
 {
     if (i < N) return this->a(i);
     return this->b(i - N);
@@ -1608,16 +1608,16 @@ constexpr const T &Line<N, T>::operator[](Dimension i) const
 // Triangle<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &Triangle<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Triangle<N, T, A>::operator[](Dimension i)
 {
     if (i < N) return this->a(i);
     if (i < N * 2) return this->b(i - N);
     return this->c(i - N * 2);
 }
 
-template<Dimension N, typename T>
-constexpr const T &Triangle<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Triangle<N, T, A>::operator[](Dimension i) const
 {
     if (i < N) return this->a(i);
     if (i < N * 2) return this->b(i - N);
@@ -1628,15 +1628,15 @@ constexpr const T &Triangle<N, T>::operator[](Dimension i) const
 // Ray<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &Ray<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Ray<N, T, A>::operator[](Dimension i)
 {
     if (i < N) return this->origin(i);
     return this->direction(i - N);
 }
 
-template<Dimension N, typename T>
-constexpr const T &Ray<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Ray<N, T, A>::operator[](Dimension i) const
 {
     if (i < N) return this->origin(i);
     return this->direction(i - N);
@@ -1646,28 +1646,28 @@ constexpr const T &Ray<N, T>::operator[](Dimension i) const
 // Hit<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &Hit<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Hit<N, T, A>::operator[](Dimension i)
 {
     if (i == 0) return this->t;
     return this->normal(i - 1);
 }
 
-template<Dimension N, typename T>
-constexpr const T &Hit<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Hit<N, T, A>::operator[](Dimension i) const
 {
     if (i == 0) return this->t;
     return this->normal(i - 1);
 }
 
-template<Dimension N, typename T>
-constexpr bool Hit<N, T>::hit() const
+template<Dimension N, typename T, typename A>
+constexpr bool Hit<N, T, A>::hit() const
 {
     return this->t >= T(0);
 }
 
-template<Dimension N, typename T>
-constexpr Vector<N, T> Hit<N, T>::point(Ray<N, T> ray) const
+template<Dimension N, typename T, typename A>
+constexpr Vector<N, T, A> Hit<N, T, A>::point(Ray<N, T, A> ray) const
 {
     return ray.origin + ray.direction * this->t;
 }
@@ -1676,57 +1676,57 @@ constexpr Vector<N, T> Hit<N, T>::point(Ray<N, T> ray) const
 // Ball<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &Ball<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Ball<N, T, A>::operator[](Dimension i)
 {
     if (i < N) return this->center(i);
     return this->r;
 }
 
-template<Dimension N, typename T>
-constexpr const T &Ball<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Ball<N, T, A>::operator[](Dimension i) const
 {
     if (i < N) return this->center(i);
     return this->r;
 }
 
-template<typename T>
-constexpr T &Ball<1, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Ball<1, T, A>::operator[](Dimension i)
 {
     if (i < 1) return this->center(i);
     return this->r;
 }
 
-template<typename T>
-constexpr const T &Ball<1, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Ball<1, T, A>::operator[](Dimension i) const
 {
     if (i < 1) return this->center(i);
     return this->r;
 }
 
-template<typename T>
-constexpr T &Ball<2, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Ball<2, T, A>::operator[](Dimension i)
 {
     if (i < 2) return this->center(i);
     return this->r;
 }
 
-template<typename T>
-constexpr const T &Ball<2, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Ball<2, T, A>::operator[](Dimension i) const
 {
     if (i < 2) return this->center(i);
     return this->r;
 }
 
-template<typename T>
-constexpr T &Ball<3, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Ball<3, T, A>::operator[](Dimension i)
 {
     if (i < 3) return this->center(i);
     return this->r;
 }
 
-template<typename T>
-constexpr const T &Ball<3, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Ball<3, T, A>::operator[](Dimension i) const
 {
     if (i < 3) return this->center(i);
     return this->r;
@@ -1736,57 +1736,57 @@ constexpr const T &Ball<3, T>::operator[](Dimension i) const
 // Box<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &Box<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &Box<N, T, A>::operator[](Dimension i)
 {
     if (i < N) return this->position(i);
     return this->extent(i - N);
 }
 
-template<Dimension N, typename T>
-constexpr const T &Box<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &Box<N, T, A>::operator[](Dimension i) const
 {
     if (i < N) return this->position(i);
     return this->extent(i - N);
 }
 
-template<typename T>
-constexpr T &Box<1, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Box<1, T, A>::operator[](Dimension i)
 {
     if (i < 1) return this->position(i);
     return this->extent(i - 1);
 }
 
-template<typename T>
-constexpr const T &Box<1, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Box<1, T, A>::operator[](Dimension i) const
 {
     if (i < 1) return this->position(i);
     return this->extent(i - 1);
 }
 
-template<typename T>
-constexpr T &Box<2, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Box<2, T, A>::operator[](Dimension i)
 {
     if (i < 2) return this->position(i);
     return this->extent(i - 2);
 }
 
-template<typename T>
-constexpr const T &Box<2, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Box<2, T, A>::operator[](Dimension i) const
 {
     if (i < 2) return this->position(i);
     return this->extent(i - 2);
 }
 
-template<typename T>
-constexpr T &Box<3, T>::operator[](Dimension i)
+template<typename T, typename A>
+constexpr T &Box<3, T, A>::operator[](Dimension i)
 {
     if (i < 3) return this->position(i);
     return this->extent(i - 3);
 }
 
-template<typename T>
-constexpr const T &Box<3, T>::operator[](Dimension i) const
+template<typename T, typename A>
+constexpr const T &Box<3, T, A>::operator[](Dimension i) const
 {
     if (i < 3) return this->position(i);
     return this->extent(i - 3);
@@ -1796,15 +1796,15 @@ constexpr const T &Box<3, T>::operator[](Dimension i) const
 // AABB<N, T>
 // =============================
 
-template<Dimension N, typename T>
-constexpr T &AABB<N, T>::operator[](Dimension i)
+template<Dimension N, typename T, typename A>
+constexpr T &AABB<N, T, A>::operator[](Dimension i)
 {
     if (i < N) return this->min(i);
     return this->max(i - N);
 }
 
-template<Dimension N, typename T>
-constexpr const T &AABB<N, T>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A>
+constexpr const T &AABB<N, T, A>::operator[](Dimension i) const
 {
     if (i < N) return this->min(i);
     return this->max(i - N);
@@ -1814,16 +1814,16 @@ constexpr const T &AABB<N, T>::operator[](Dimension i) const
 // OBB<N, T, R>
 // =============================
 
-template<Dimension N, typename T, typename R>
-constexpr T &OBB<N, T, R>::operator[](Dimension i)
+template<Dimension N, typename T, typename A, typename R>
+constexpr T &OBB<N, T, A, R>::operator[](Dimension i)
 {
     if (i < N) return this->center(i);
     if (i < N * 2) return this->extent(i - N);
     return this->orientation(i - N * 2);
 }
 
-template<Dimension N, typename T, typename R>
-constexpr const T &OBB<N, T, R>::operator[](Dimension i) const
+template<Dimension N, typename T, typename A, typename R>
+constexpr const T &OBB<N, T, A, R>::operator[](Dimension i) const
 {
     if (i < N) return this->center(i);
     if (i < N * 2) return this->extent(i - N);
