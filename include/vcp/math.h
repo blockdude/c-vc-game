@@ -1593,15 +1593,15 @@ auto Gamma::decode_BT1886()
 template<Dimension N, typename T, typename A>
 constexpr T &Line<N, T, A>::operator[](Dimension i)
 {
-    if (i < N) return this->a(i);
-    return this->b(i - N);
+    if (i < N) return this->a[i];
+    return this->b[i - N];
 }
 
 template<Dimension N, typename T, typename A>
 constexpr const T &Line<N, T, A>::operator[](Dimension i) const
 {
-    if (i < N) return this->a(i);
-    return this->b(i - N);
+    if (i < N) return this->a[i];
+    return this->b[i - N];
 }
 
 // =============================
@@ -1611,17 +1611,17 @@ constexpr const T &Line<N, T, A>::operator[](Dimension i) const
 template<Dimension N, typename T, typename A>
 constexpr T &Triangle<N, T, A>::operator[](Dimension i)
 {
-    if (i < N) return this->a(i);
-    if (i < N * 2) return this->b(i - N);
-    return this->c(i - N * 2);
+    if (i < N) return this->a[i];
+    if (i < N * 2) return this->b[i - N];
+    return this->c[i - N * 2];
 }
 
 template<Dimension N, typename T, typename A>
 constexpr const T &Triangle<N, T, A>::operator[](Dimension i) const
 {
-    if (i < N) return this->a(i);
-    if (i < N * 2) return this->b(i - N);
-    return this->c(i - N * 2);
+    if (i < N) return this->a[i];
+    if (i < N * 2) return this->b[i - N];
+    return this->c[i - N * 2];
 }
 
 // =============================
@@ -1631,15 +1631,15 @@ constexpr const T &Triangle<N, T, A>::operator[](Dimension i) const
 template<Dimension N, typename T, typename A>
 constexpr T &Ray<N, T, A>::operator[](Dimension i)
 {
-    if (i < N) return this->origin(i);
-    return this->direction(i - N);
+    if (i < N) return this->origin[i];
+    return this->direction[i - N];
 }
 
 template<Dimension N, typename T, typename A>
 constexpr const T &Ray<N, T, A>::operator[](Dimension i) const
 {
-    if (i < N) return this->origin(i);
-    return this->direction(i - N);
+    if (i < N) return this->origin[i];
+    return this->direction[i - N];
 }
 
 // =============================
@@ -1650,14 +1650,14 @@ template<Dimension N, typename T, typename A>
 constexpr T &Hit<N, T, A>::operator[](Dimension i)
 {
     if (i == 0) return this->t;
-    return this->normal(i - 1);
+    return this->normal[i - 1];
 }
 
 template<Dimension N, typename T, typename A>
 constexpr const T &Hit<N, T, A>::operator[](Dimension i) const
 {
     if (i == 0) return this->t;
-    return this->normal(i - 1);
+    return this->normal[i - 1];
 }
 
 template<Dimension N, typename T, typename A>
@@ -1679,56 +1679,56 @@ constexpr Vector<N, T, A> Hit<N, T, A>::point(Ray<N, T, A> ray) const
 template<Dimension N, typename T, typename A>
 constexpr T &Ball<N, T, A>::operator[](Dimension i)
 {
-    if (i < N) return this->center(i);
+    if (i < N) return this->center[i];
     return this->r;
 }
 
 template<Dimension N, typename T, typename A>
 constexpr const T &Ball<N, T, A>::operator[](Dimension i) const
 {
-    if (i < N) return this->center(i);
+    if (i < N) return this->center[i];
     return this->r;
 }
 
 template<typename T, typename A>
 constexpr T &Ball<1, T, A>::operator[](Dimension i)
 {
-    if (i < 1) return this->center(i);
+    if (i < 1) return this->center[i];
     return this->r;
 }
 
 template<typename T, typename A>
 constexpr const T &Ball<1, T, A>::operator[](Dimension i) const
 {
-    if (i < 1) return this->center(i);
+    if (i < 1) return this->center[i];
     return this->r;
 }
 
 template<typename T, typename A>
 constexpr T &Ball<2, T, A>::operator[](Dimension i)
 {
-    if (i < 2) return this->center(i);
+    if (i < 2) return this->center[i];
     return this->r;
 }
 
 template<typename T, typename A>
 constexpr const T &Ball<2, T, A>::operator[](Dimension i) const
 {
-    if (i < 2) return this->center(i);
+    if (i < 2) return this->center[i];
     return this->r;
 }
 
 template<typename T, typename A>
 constexpr T &Ball<3, T, A>::operator[](Dimension i)
 {
-    if (i < 3) return this->center(i);
+    if (i < 3) return this->center[i];
     return this->r;
 }
 
 template<typename T, typename A>
 constexpr const T &Ball<3, T, A>::operator[](Dimension i) const
 {
-    if (i < 3) return this->center(i);
+    if (i < 3) return this->center[i];
     return this->r;
 }
 
@@ -1739,57 +1739,57 @@ constexpr const T &Ball<3, T, A>::operator[](Dimension i) const
 template<Dimension N, typename T, typename A>
 constexpr T &Box<N, T, A>::operator[](Dimension i)
 {
-    if (i < N) return this->position(i);
-    return this->extent(i - N);
+    if (i < N) return this->position[i];
+    return this->extent[i - N];
 }
 
 template<Dimension N, typename T, typename A>
 constexpr const T &Box<N, T, A>::operator[](Dimension i) const
 {
-    if (i < N) return this->position(i);
-    return this->extent(i - N);
+    if (i < N) return this->position[i];
+    return this->extent[i - N];
 }
 
 template<typename T, typename A>
 constexpr T &Box<1, T, A>::operator[](Dimension i)
 {
-    if (i < 1) return this->position(i);
-    return this->extent(i - 1);
+    if (i < 1) return this->position[i];
+    return this->extent[i - 1];
 }
 
 template<typename T, typename A>
 constexpr const T &Box<1, T, A>::operator[](Dimension i) const
 {
-    if (i < 1) return this->position(i);
-    return this->extent(i - 1);
+    if (i < 1) return this->position[i];
+    return this->extent[i - 1];
 }
 
 template<typename T, typename A>
 constexpr T &Box<2, T, A>::operator[](Dimension i)
 {
-    if (i < 2) return this->position(i);
-    return this->extent(i - 2);
+    if (i < 2) return this->position[i];
+    return this->extent[i - 2];
 }
 
 template<typename T, typename A>
 constexpr const T &Box<2, T, A>::operator[](Dimension i) const
 {
-    if (i < 2) return this->position(i);
-    return this->extent(i - 2);
+    if (i < 2) return this->position[i];
+    return this->extent[i - 2];
 }
 
 template<typename T, typename A>
 constexpr T &Box<3, T, A>::operator[](Dimension i)
 {
-    if (i < 3) return this->position(i);
-    return this->extent(i - 3);
+    if (i < 3) return this->position[i];
+    return this->extent[i - 3];
 }
 
 template<typename T, typename A>
 constexpr const T &Box<3, T, A>::operator[](Dimension i) const
 {
-    if (i < 3) return this->position(i);
-    return this->extent(i - 3);
+    if (i < 3) return this->position[i];
+    return this->extent[i - 3];
 }
 
 // =============================
@@ -1799,15 +1799,15 @@ constexpr const T &Box<3, T, A>::operator[](Dimension i) const
 template<Dimension N, typename T, typename A>
 constexpr T &AABB<N, T, A>::operator[](Dimension i)
 {
-    if (i < N) return this->min(i);
-    return this->max(i - N);
+    if (i < N) return this->min[i];
+    return this->max[i - N];
 }
 
 template<Dimension N, typename T, typename A>
 constexpr const T &AABB<N, T, A>::operator[](Dimension i) const
 {
-    if (i < N) return this->min(i);
-    return this->max(i - N);
+    if (i < N) return this->min[i];
+    return this->max[i - N];
 }
 
 // =============================
@@ -1817,17 +1817,17 @@ constexpr const T &AABB<N, T, A>::operator[](Dimension i) const
 template<Dimension N, typename T, typename A, typename R>
 constexpr T &OBB<N, T, A, R>::operator[](Dimension i)
 {
-    if (i < N) return this->center(i);
-    if (i < N * 2) return this->extent(i - N);
-    return this->orientation(i - N * 2);
+    if (i < N) return this->center[i];
+    if (i < N * 2) return this->extent[i - N];
+    return this->orientation[i - N * 2];
 }
 
 template<Dimension N, typename T, typename A, typename R>
 constexpr const T &OBB<N, T, A, R>::operator[](Dimension i) const
 {
-    if (i < N) return this->center(i);
-    if (i < N * 2) return this->extent(i - N);
-    return this->orientation(i - N * 2);
+    if (i < N) return this->center[i];
+    if (i < N * 2) return this->extent[i - N];
+    return this->orientation[i - N * 2];
 }
 
 // =============================
