@@ -2619,7 +2619,6 @@ constexpr T tan(T x)
 
         if (qi == T(1) || qi == T(3))
         {
-            if (s == T(0)) return T(1) / T(0);
             return -c / s;
         }
 
