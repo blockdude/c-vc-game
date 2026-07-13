@@ -47,6 +47,7 @@ struct Constant
     static constexpr T EULER = T(2.71828182845904523536028747135266249);
     static constexpr T PI = T(3.14159265358979323846264338327950288);
     static constexpr T HALF_PI = PI / T(2);
+    static constexpr T QUARTER_PI = PI / T(4);
     static constexpr T TAU = PI * T(2);
     static constexpr T EPSILON = T(0.0001);
 };
@@ -2659,6 +2660,92 @@ constexpr T tan(T x)
         else
         {
             return std::tan(x);
+        }
+    }
+    else
+    {
+        return fallback(x);
+    }
+}
+
+template<typename T>
+constexpr T atan(T x)
+{
+    constexpr auto fallback = [](T x) -> T
+    {
+        constexpr T PI = Constant<T>::PI;
+        constexpr T HALF_PI = Constant<T>::HALF_PI;
+        constexpr T QUARTER_PI = Constant<T>::QUARTER_PI;
+        constexpr T TAN_PI_8 = T(0.41421356237309504880);
+
+        bool negate = x < T(0);
+        if (negate) x = -x;
+
+        T offset = T(0);
+        T sign = T(1);
+
+        if (x > T(1))
+        {
+            offset = HALF_PI;
+            x = T(1) / x;
+            sign = T(-1);
+        }
+
+        if (x > TAN_PI_8)
+        {
+            offset = offset + QUARTER_PI * sign;
+            sign = -sign;
+            x = (T(1) - x) / (T(1) + x);
+        }
+
+        T y = x * x;
+        T poly = T(0);
+        for (int n = 19; n >= 0; n--)
+        {
+            T term = ((n & 1) ? T(-1) : T(1)) / T(2 * n + 1);
+            poly = poly * y + term;
+        }
+        poly = x * poly;
+
+        T result = offset + sign * poly;
+        if (negate) result = -result;
+        return result;
+    };
+
+    if constexpr (std::is_integral_v<T>)
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::atan(double(1)); }))
+            {
+                return static_cast<T>(round(std::atan(static_cast<double>(x))));
+            }
+            else
+            {
+                return static_cast<T>(round(fallback(static_cast<double>(x))));
+            }
+        }
+        else
+        {
+            return static_cast<T>(std::round(std::atan(static_cast<double>(x))));
+        }
+    }
+    else if constexpr (requires { std::atan(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::atan(T(1)); }))
+            {
+                return std::atan(x);
+            }
+            else
+            {
+                return fallback(x);
+            }
+        }
+        else
+        {
+            return std::atan(x);
         }
     }
     else
