@@ -46,7 +46,7 @@ struct Constant
 {
     static constexpr T EULER = T(2.71828182845904523536028747135266249);
     static constexpr T PI = T(3.14159265358979323846264338327950288);
-    static constexpr T PI_2 = PI / T(2);
+    static constexpr T HALF_PI = PI / T(2);
     static constexpr T TAU = PI * T(2);
     static constexpr T EPSILON = T(0.0001);
 };
@@ -148,24 +148,6 @@ struct Vector<4, T, A>
 };
 
 // =============================
-// Quaternion<T>
-// =============================
-
-template<typename T>
-struct Quaternion
-{
-    T x, y, z, w;
-
-    using Scalar = T;
-    static constexpr Dimension size = 4;
-    static constexpr Dimension dimension = 3;
-    constexpr T &operator()(Dimension i);
-    constexpr const T &operator()(Dimension i) const;
-    constexpr T &operator[](Dimension i);
-    constexpr const T &operator[](Dimension i) const;
-};
-
-// =============================
 // Matrix<N, M, T>
 // =============================
 
@@ -205,6 +187,99 @@ struct Basis
     constexpr const E &operator()(Dimension i) const;
     constexpr E &operator[](Dimension i);
     constexpr const E &operator[](Dimension i) const;
+};
+
+// =============================
+// Quaternion<T>
+// =============================
+
+template<typename T>
+struct Quaternion
+{
+    T x, y, z, w;
+
+    using Scalar = T;
+    static constexpr Dimension size = 4;
+    static constexpr Dimension dimension = 3;
+    constexpr T &operator()(Dimension i);
+    constexpr const T &operator()(Dimension i) const;
+    constexpr T &operator[](Dimension i);
+    constexpr const T &operator[](Dimension i) const;
+};
+
+// =============================
+// Rotor<N, T>
+// =============================
+
+template<Dimension N, typename T>
+struct Rotor
+{
+    T data[N * (N - 1) / 2 + 1];
+
+    using Scalar = T;
+    static constexpr Dimension size = N * (N - 1) / 2 + 1;
+    static constexpr Dimension dimension = N;
+    constexpr T &operator()(Dimension i);
+    constexpr const T &operator()(Dimension i) const;
+    constexpr T &operator[](Dimension i);
+    constexpr const T &operator[](Dimension i) const;
+};
+
+template<typename T>
+struct Rotor<2, T>
+{
+    union
+    {
+        struct { T s, b; };
+        struct { T a, b; };
+        struct { T w, z; };
+    };
+
+    using Scalar = T;
+    static constexpr Dimension size = 2;
+    static constexpr Dimension dimension = 2;
+    constexpr T &operator()(Dimension i);
+    constexpr const T &operator()(Dimension i) const;
+    constexpr T &operator[](Dimension i);
+    constexpr const T &operator[](Dimension i) const;
+};
+
+template<typename T>
+struct Rotor<3, T>
+{
+    union
+    {
+        struct { T s, xy, xz, yz; };
+        struct { T a, b, c, d; };
+        struct { T w, x, y, z; };
+    };
+
+    using Scalar = T;
+    static constexpr Dimension size = 4;
+    static constexpr Dimension dimension = 3;
+    constexpr T &operator()(Dimension i);
+    constexpr const T &operator()(Dimension i) const;
+    constexpr T &operator[](Dimension i);
+    constexpr const T &operator[](Dimension i) const;
+};
+
+// =============================
+// Motor<N, T>
+// =============================
+
+template<Dimension N, typename T>
+struct Motor
+{
+    Rotor<N, T> real;
+    Rotor<N, T> dual;
+
+    using Scalar = T;
+    static constexpr Dimension size = Rotor<N, T>::size * 2;
+    static constexpr Dimension dimension = N;
+    constexpr T &operator()(Dimension i);
+    constexpr const T &operator()(Dimension i) const;
+    constexpr T &operator[](Dimension i);
+    constexpr const T &operator[](Dimension i) const;
 };
 
 // =============================
@@ -269,78 +344,6 @@ struct Cardinal<4, T>
     static constexpr Vector<4, T> Y = { T(0), T(1), T(0), T(0) };
     static constexpr Vector<4, T> Z = { T(0), T(0), T(1), T(0) };
     static constexpr Vector<4, T> W = { T(0), T(0), T(0), T(1) };
-};
-
-// =============================
-// Color<T>
-// =============================
-
-template<typename T>
-struct Color
-{
-    T r, g, b, a;
-
-    using Scalar = T;
-    static constexpr Dimension size = 4;
-    constexpr T &operator()(Dimension i);
-    constexpr const T &operator()(Dimension i) const;
-    constexpr T &operator[](Dimension i);
-    constexpr const T &operator[](Dimension i) const;
-};
-
-enum class BlendMode
-{
-    OVER,
-    ADD,
-    MULTIPLY,
-    SCREEN,
-    PREMUL,
-    SUBTRACT,
-    DIFFERENCE,
-    DARKEN,
-    LIGHTEN,
-    DIVIDE,
-    EXCLUSION,
-    OVERLAY,
-    HARD_LIGHT,
-    SOFT_LIGHT,
-    COLOR_DODGE,
-    COLOR_BURN,
-    LINEAR_DODGE,
-    LINEAR_BURN,
-    HUE,
-    SATURATION,
-    COLOR,
-    LUMINOSITY
-};
-
-template<typename T>
-struct Luminance
-{
-    // BT.601 — Standard-definition TV (NTSC)
-    static constexpr Vector<3, T> BT601  = { T(0.2990), T(0.5870), T(0.1140) };
-    // BT.709 — HDTV, sRGB (the universal default)
-    static constexpr Vector<3, T> BT709  = { T(0.2126), T(0.7152), T(0.0722) };
-    // BT.2020 — UHD, wide gamut
-    static constexpr Vector<3, T> BT2020 = { T(0.2627), T(0.6780), T(0.0593) };
-    // ACEScg — Linear ACES workspace (film/VFX, used by Unreal & HDRP)
-    static constexpr Vector<3, T> ACEScg = { T(0.2723), T(0.7181), T(0.0095) };
-    // SMPTE 240M — Early HDTV standard
-    static constexpr Vector<3, T> SMPTE240M = { T(0.2120), T(0.7010), T(0.0870) };
-};
-
-struct Gamma
-{
-    // Generic gamma curve — gamma(c, Gamma::curve(2.2f))
-    template<typename T> static auto curve(T exp);
-    // True sRGB encode (linear → sRGB)
-    template<typename T> static auto encode_sRGB();
-    // True sRGB decode (sRGB → linear)
-    template<typename T> static auto decode_sRGB();
-    // BT.1886 encode (linear → display)
-    template<typename T> static auto encode_BT1886();
-    // BT.1886 decode (display → linear)
-    template<typename T> static auto decode_BT1886();
 };
 
 // =============================
@@ -621,6 +624,78 @@ struct OBB
     constexpr const T &operator[](Dimension i) const;
 };
 
+// =============================
+// Color<T>
+// =============================
+
+template<typename T>
+struct Color
+{
+    T r, g, b, a;
+
+    using Scalar = T;
+    static constexpr Dimension size = 4;
+    constexpr T &operator()(Dimension i);
+    constexpr const T &operator()(Dimension i) const;
+    constexpr T &operator[](Dimension i);
+    constexpr const T &operator[](Dimension i) const;
+};
+
+enum class BlendMode
+{
+    OVER,
+    ADD,
+    MULTIPLY,
+    SCREEN,
+    PREMUL,
+    SUBTRACT,
+    DIFFERENCE,
+    DARKEN,
+    LIGHTEN,
+    DIVIDE,
+    EXCLUSION,
+    OVERLAY,
+    HARD_LIGHT,
+    SOFT_LIGHT,
+    COLOR_DODGE,
+    COLOR_BURN,
+    LINEAR_DODGE,
+    LINEAR_BURN,
+    HUE,
+    SATURATION,
+    COLOR,
+    LUMINOSITY
+};
+
+template<typename T>
+struct Luminance
+{
+    // BT.601 — Standard-definition TV (NTSC)
+    static constexpr Vector<3, T> BT601 = { T(0.2990), T(0.5870), T(0.1140) };
+    // BT.709 — HDTV, sRGB (the universal default)
+    static constexpr Vector<3, T> BT709 = { T(0.2126), T(0.7152), T(0.0722) };
+    // BT.2020 — UHD, wide gamut
+    static constexpr Vector<3, T> BT2020 = { T(0.2627), T(0.6780), T(0.0593) };
+    // ACEScg — Linear ACES workspace (film/VFX, used by Unreal & HDRP)
+    static constexpr Vector<3, T> ACEScg = { T(0.2723), T(0.7181), T(0.0095) };
+    // SMPTE 240M — Early HDTV standard
+    static constexpr Vector<3, T> SMPTE240M = { T(0.2120), T(0.7010), T(0.0870) };
+};
+
+struct Gamma
+{
+    // Generic gamma curve — gamma(c, Gamma::curve(2.2f))
+    template<typename T> static auto curve(T exp);
+    // True sRGB encode (linear → sRGB)
+    template<typename T> static auto encode_sRGB();
+    // True sRGB decode (sRGB → linear)
+    template<typename T> static auto decode_sRGB();
+    // BT.1886 encode (linear → display)
+    template<typename T> static auto encode_BT1886();
+    // BT.1886 decode (display → linear)
+    template<typename T> static auto decode_BT1886();
+};
+
 // ============================================================================
 // ============================================================================
 // ============================================================================
@@ -794,62 +869,6 @@ template<typename T> constexpr Vector<4, T> rotate(Vector<4, T> v, Quaternion<T>
 template<typename T> constexpr Vector<3, T> perspective_divide(Vector<4, T> v);
 
 // =============================
-// Quaternion
-// =============================
-
-template<typename T> constexpr Quaternion<T> make(const Quaternion<T> &pattern);
-template<typename T> constexpr Quaternion<T> filled(const Quaternion<T> &pattern, T value);
-template<typename T> constexpr Quaternion<T> identity(const Quaternion<T> &pattern);
-
-template<typename T> constexpr Quaternion<T> add(Quaternion<T> a, Quaternion<T> b);
-template<typename T> constexpr Quaternion<T> add(Quaternion<T> q, T s);
-template<typename T> constexpr Quaternion<T> add(T s, Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> sub(Quaternion<T> a, Quaternion<T> b);
-template<typename T> constexpr Quaternion<T> sub(Quaternion<T> q, T s);
-template<typename T> constexpr Quaternion<T> sub(T s, Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> mul(Quaternion<T> a, Quaternion<T> b);
-template<typename T> constexpr Quaternion<T> mul(Quaternion<T> q, T s);
-template<typename T> constexpr Quaternion<T> mul(T s, Quaternion<T> q);
-template<typename T> constexpr Vector<3, T> mul(Quaternion<T> q, Vector<3, T> v);
-template<typename T> constexpr Vector<4, T> mul(Quaternion<T> q, Vector<4, T> v);
-template<typename T> constexpr Quaternion<T> project(Quaternion<T> a, Quaternion<T> b);
-template<typename T> constexpr Quaternion<T> reject(Quaternion<T> a, Quaternion<T> b);
-template<typename T> constexpr Quaternion<T> div(Quaternion<T> q, T s);
-template<typename T> constexpr Quaternion<T> div(T s, Quaternion<T> q);
-template<typename T> constexpr T length(Quaternion<T> q);
-template<typename T> constexpr T angle(Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> conjugate(Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> negate(Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> normalize(Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> invert(Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> lerp(Quaternion<T> a, Quaternion<T> b, T t);
-template<typename T> constexpr Quaternion<T> nlerp(Quaternion<T> a, Quaternion<T> b, T t);
-template<typename T> constexpr Quaternion<T> slerp(Quaternion<T> a, Quaternion<T> b, T t, T epsilon);
-template<typename T> constexpr Quaternion<T> exp_map(Vector<3, T> v);
-template<typename T> constexpr Vector<3, T> log_map(Quaternion<T> q);
-template<typename T> constexpr T dot(Quaternion<T> a, Quaternion<T> b);
-template<typename T> constexpr T project_angle(Quaternion<T> q, Vector<3, T> axis);        // rotation angle around axis
-template<typename T> constexpr T reject_angle(Quaternion<T> q, Vector<3, T> axis);    // rotation angle perpendicular to axis
-template<typename T> constexpr Quaternion<T> project(Quaternion<T> q, Vector<3, T> axis);
-template<typename T> constexpr Quaternion<T> reject(Quaternion<T> q, Vector<3, T> axis);
-template<typename T> constexpr Quaternion<T> quaternion(Vector<4, T> v);
-template<typename T> constexpr Quaternion<T> orientation(T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
-template<typename T> constexpr Quaternion<T> orientation(Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
-template<typename T> constexpr Quaternion<T> orientation(T angle, Vector<3, T> axis);
-template<typename T> constexpr Quaternion<T> orientation(Matrix<4, 4, T> m);
-template<typename T> constexpr Quaternion<T> orientation(Matrix<3, 3, T> m);
-template<typename T> constexpr Quaternion<T> orientation(Vector<3, T> from, Vector<3, T> to);
-template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
-template<typename T> constexpr Quaternion<T> orient(T pitch, T yaw, T roll, Quaternion<T> q, EulerOrder<T> order = Cardinal<3, T>::ZYX);
-template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
-template<typename T> constexpr Quaternion<T> orient(Vector<3, T> euler, Quaternion<T> q, EulerOrder<T> order = Cardinal<3, T>::ZYX);
-template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, T angle, Vector<3, T> axis);
-template<typename T> constexpr Quaternion<T> orient(T angle, Vector<3, T> axis, Quaternion<T> q);
-template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, Matrix<4, 4, T> m);
-template<typename T> constexpr Quaternion<T> orient(Matrix<4, 4, T> m, Quaternion<T> q);
-template<typename T> constexpr bool equals(Quaternion<T> a, Quaternion<T> b, T epsilon = Constant<T>::EPSILON);
-
-// =============================
 // Matrix
 // =============================
 
@@ -1018,29 +1037,63 @@ template<Dimension K, Dimension N, typename T> constexpr Vector<N, T> reject(Vec
 template<Dimension K, Dimension N, typename T> constexpr Matrix<N, K, T> matrix(Basis<K, Vector<N, T>> b);
 
 // =============================
-// Color math
+// Quaternion
 // =============================
 
-// Perceptual extraction
-template<typename T> constexpr T hue(Color<T> c);
-template<typename T> constexpr T saturation(Color<T> c);
-template<typename T> constexpr T brightness(Color<T> c);
-template<typename T> constexpr T lightness(Color<T> c);
-template<typename T> constexpr T luminance(Color<T> c, Vector<3, T> weights = Luminance<T>::BT709);
+template<typename T> constexpr Quaternion<T> make(const Quaternion<T> &pattern);
+template<typename T> constexpr Quaternion<T> filled(const Quaternion<T> &pattern, T value);
+template<typename T> constexpr Quaternion<T> identity(const Quaternion<T> &pattern);
 
-// Gamma
-template<typename T> constexpr Color<T> gamma(Color<T> c, T exp);
-template<typename T, typename F> constexpr Color<T> gamma(Color<T> c, F fn);
-
-// Modifiers
-template<typename T> constexpr Color<T> invert(Color<T> c);
-template<typename T> constexpr Color<T> grayscale(Color<T> c);
-template<typename T> constexpr Color<T> tint(Color<T> a, Color<T> b);
-template<typename T> constexpr Color<T> lerp(Color<T> a, Color<T> b, T t);
-template<typename T> constexpr Color<T> blend(Color<T> src, Color<T> dst, BlendMode mode);
+template<typename T> constexpr Quaternion<T> add(Quaternion<T> a, Quaternion<T> b);
+template<typename T> constexpr Quaternion<T> add(Quaternion<T> q, T s);
+template<typename T> constexpr Quaternion<T> add(T s, Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> sub(Quaternion<T> a, Quaternion<T> b);
+template<typename T> constexpr Quaternion<T> sub(Quaternion<T> q, T s);
+template<typename T> constexpr Quaternion<T> sub(T s, Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> mul(Quaternion<T> a, Quaternion<T> b);
+template<typename T> constexpr Quaternion<T> mul(Quaternion<T> q, T s);
+template<typename T> constexpr Quaternion<T> mul(T s, Quaternion<T> q);
+template<typename T> constexpr Vector<3, T> mul(Quaternion<T> q, Vector<3, T> v);
+template<typename T> constexpr Vector<4, T> mul(Quaternion<T> q, Vector<4, T> v);
+template<typename T> constexpr Quaternion<T> project(Quaternion<T> a, Quaternion<T> b);
+template<typename T> constexpr Quaternion<T> reject(Quaternion<T> a, Quaternion<T> b);
+template<typename T> constexpr Quaternion<T> div(Quaternion<T> q, T s);
+template<typename T> constexpr Quaternion<T> div(T s, Quaternion<T> q);
+template<typename T> constexpr T length(Quaternion<T> q);
+template<typename T> constexpr T angle(Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> conjugate(Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> negate(Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> normalize(Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> invert(Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> lerp(Quaternion<T> a, Quaternion<T> b, T t);
+template<typename T> constexpr Quaternion<T> nlerp(Quaternion<T> a, Quaternion<T> b, T t);
+template<typename T> constexpr Quaternion<T> slerp(Quaternion<T> a, Quaternion<T> b, T t, T epsilon);
+template<typename T> constexpr Quaternion<T> exp_map(Vector<3, T> v);
+template<typename T> constexpr Vector<3, T> log_map(Quaternion<T> q);
+template<typename T> constexpr T dot(Quaternion<T> a, Quaternion<T> b);
+template<typename T> constexpr T project_angle(Quaternion<T> q, Vector<3, T> axis);        // rotation angle around axis
+template<typename T> constexpr T reject_angle(Quaternion<T> q, Vector<3, T> axis);    // rotation angle perpendicular to axis
+template<typename T> constexpr Quaternion<T> project(Quaternion<T> q, Vector<3, T> axis);
+template<typename T> constexpr Quaternion<T> reject(Quaternion<T> q, Vector<3, T> axis);
+template<typename T> constexpr Quaternion<T> quaternion(Vector<4, T> v);
+template<typename T> constexpr Quaternion<T> orientation(T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Quaternion<T> orientation(Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Quaternion<T> orientation(T angle, Vector<3, T> axis);
+template<typename T> constexpr Quaternion<T> orientation(Matrix<4, 4, T> m);
+template<typename T> constexpr Quaternion<T> orientation(Matrix<3, 3, T> m);
+template<typename T> constexpr Quaternion<T> orientation(Vector<3, T> from, Vector<3, T> to);
+template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, T pitch, T yaw, T roll, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Quaternion<T> orient(T pitch, T yaw, T roll, Quaternion<T> q, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, Vector<3, T> euler, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Quaternion<T> orient(Vector<3, T> euler, Quaternion<T> q, EulerOrder<T> order = Cardinal<3, T>::ZYX);
+template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, T angle, Vector<3, T> axis);
+template<typename T> constexpr Quaternion<T> orient(T angle, Vector<3, T> axis, Quaternion<T> q);
+template<typename T> constexpr Quaternion<T> orient(Quaternion<T> q, Matrix<4, 4, T> m);
+template<typename T> constexpr Quaternion<T> orient(Matrix<4, 4, T> m, Quaternion<T> q);
+template<typename T> constexpr bool equals(Quaternion<T> a, Quaternion<T> b, T epsilon = Constant<T>::EPSILON);
 
 // =============================
-// Collision
+// Geometry
 // =============================
 
 /// Returns the per-axis signed separation vector between two shapes.
@@ -1082,6 +1135,28 @@ template<Dimension N, typename T> constexpr Vector<N, T> support(AABB<N, T> shap
 template<Dimension N, typename T> constexpr Vector<N, T> support(Box<N, T> shape, Vector<N, T> dir);
 template<Dimension N, typename T> constexpr Vector<N, T> support(Triangle<N, T> shape, Vector<N, T> dir);
 template<Dimension N, typename T, typename R> constexpr Vector<N, T> support(OBB<N, T, R> shape, Vector<N, T> dir);
+
+// =============================
+// Color math
+// =============================
+
+// Perceptual extraction
+template<typename T> constexpr T hue(Color<T> c);
+template<typename T> constexpr T saturation(Color<T> c);
+template<typename T> constexpr T brightness(Color<T> c);
+template<typename T> constexpr T lightness(Color<T> c);
+template<typename T> constexpr T luminance(Color<T> c, Vector<3, T> weights = Luminance<T>::BT709);
+
+// Gamma
+template<typename T> constexpr Color<T> gamma(Color<T> c, T exp);
+template<typename T, typename F> constexpr Color<T> gamma(Color<T> c, F fn);
+
+// Modifiers
+template<typename T> constexpr Color<T> invert(Color<T> c);
+template<typename T> constexpr Color<T> grayscale(Color<T> c);
+template<typename T> constexpr Color<T> tint(Color<T> a, Color<T> b);
+template<typename T> constexpr Color<T> lerp(Color<T> a, Color<T> b, T t);
+template<typename T> constexpr Color<T> blend(Color<T> src, Color<T> dst, BlendMode mode);
 
 // ============================================================================
 // ============================================================================
@@ -1319,6 +1394,62 @@ constexpr const T &Vector<4, T, A>::operator[](Dimension i) const
 }
 
 // =============================
+// Matrix<N, M, T>
+// =============================
+
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr T &Matrix<N, M, T, A>::operator()(Dimension r, Dimension c)
+{
+    return this->data[r + c * N];
+}
+
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr const T &Matrix<N, M, T, A>::operator()(Dimension r, Dimension c) const
+{
+    return this->data[r + c * N];
+}
+
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr T &Matrix<N, M, T, A>::operator[](Dimension i)
+{
+    return this->data[i];
+}
+
+template<Dimension N, Dimension M, typename T, typename A>
+constexpr const T &Matrix<N, M, T, A>::operator[](Dimension i) const
+{
+    return this->data[i];
+}
+
+// =============================
+// Basis<K, E>
+// =============================
+
+template<Dimension K, typename E, typename A>
+constexpr E &Basis<K, E, A>::operator()(Dimension i)
+{
+    return this->v[i];
+}
+
+template<Dimension K, typename E, typename A>
+constexpr const E &Basis<K, E, A>::operator()(Dimension i) const
+{
+    return this->v[i];
+}
+
+template<Dimension K, typename E, typename A>
+constexpr E &Basis<K, E, A>::operator[](Dimension i)
+{
+    return this->v[i];
+}
+
+template<Dimension K, typename E, typename A>
+constexpr const E &Basis<K, E, A>::operator[](Dimension i) const
+{
+    return this->v[i];
+}
+
+// =============================
 // Quaternion<T>
 // =============================
 
@@ -1375,59 +1506,171 @@ constexpr const T &Quaternion<T>::operator[](Dimension i) const
 }
 
 // =============================
-// Matrix<N, M, T>
+// Rotor<N, T>
 // =============================
 
-template<Dimension N, Dimension M, typename T, typename A>
-constexpr T &Matrix<N, M, T, A>::operator()(Dimension r, Dimension c)
-{
-    return this->data[r + c * N];
-}
-
-template<Dimension N, Dimension M, typename T, typename A>
-constexpr const T &Matrix<N, M, T, A>::operator()(Dimension r, Dimension c) const
-{
-    return this->data[r + c * N];
-}
-
-template<Dimension N, Dimension M, typename T, typename A>
-constexpr T &Matrix<N, M, T, A>::operator[](Dimension i)
+template<Dimension N, typename T>
+constexpr T &Rotor<N, T>::operator()(Dimension i)
 {
     return this->data[i];
 }
 
-template<Dimension N, Dimension M, typename T, typename A>
-constexpr const T &Matrix<N, M, T, A>::operator[](Dimension i) const
+template<Dimension N, typename T>
+constexpr const T &Rotor<N, T>::operator()(Dimension i) const
+{
+    return this->data[i];
+}
+
+template<Dimension N, typename T>
+constexpr T &Rotor<N, T>::operator[](Dimension i)
+{
+    return this->data[i];
+}
+
+template<Dimension N, typename T>
+constexpr const T &Rotor<N, T>::operator[](Dimension i) const
 {
     return this->data[i];
 }
 
 // =============================
-// Basis<K, E>
+// Rotor<2, T>
 // =============================
 
-template<Dimension K, typename E, typename A>
-constexpr E &Basis<K, E, A>::operator()(Dimension i)
+template<typename T>
+constexpr T &Rotor<2, T>::operator()(Dimension i)
 {
-    return this->v[i];
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->b;
+    }
+    return this->s;
 }
 
-template<Dimension K, typename E, typename A>
-constexpr const E &Basis<K, E, A>::operator()(Dimension i) const
+template<typename T>
+constexpr const T &Rotor<2, T>::operator()(Dimension i) const
 {
-    return this->v[i];
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->b;
+    }
+    return this->s;
 }
 
-template<Dimension K, typename E, typename A>
-constexpr E &Basis<K, E, A>::operator[](Dimension i)
+template<typename T>
+constexpr T &Rotor<2, T>::operator[](Dimension i)
 {
-    return this->v[i];
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->b;
+    }
+    return this->s;
 }
 
-template<Dimension K, typename E, typename A>
-constexpr const E &Basis<K, E, A>::operator[](Dimension i) const
+template<typename T>
+constexpr const T &Rotor<2, T>::operator[](Dimension i) const
 {
-    return this->v[i];
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->b;
+    }
+    return this->s;
+}
+
+// =============================
+// Rotor<3, T>
+// =============================
+
+template<typename T>
+constexpr T &Rotor<3, T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->xy;
+    case 2: return this->xz;
+    case 3: return this->yz;
+    }
+    return this->s;
+}
+
+template<typename T>
+constexpr const T &Rotor<3, T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->xy;
+    case 2: return this->xz;
+    case 3: return this->yz;
+    }
+    return this->s;
+}
+
+template<typename T>
+constexpr T &Rotor<3, T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->xy;
+    case 2: return this->xz;
+    case 3: return this->yz;
+    }
+    return this->s;
+}
+
+template<typename T>
+constexpr const T &Rotor<3, T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return this->s;
+    case 1: return this->xy;
+    case 2: return this->xz;
+    case 3: return this->yz;
+    }
+    return this->s;
+}
+
+// =============================
+// Motor<N, T>
+// =============================
+
+template<Dimension N, typename T>
+constexpr T &Motor<N, T>::operator()(Dimension i)
+{
+    if (i < Rotor<N, T>::size)
+        return this->real(i);
+    return this->dual(i - Rotor<N, T>::size);
+}
+
+template<Dimension N, typename T>
+constexpr const T &Motor<N, T>::operator()(Dimension i) const
+{
+    if (i < Rotor<N, T>::size)
+        return this->real(i);
+    return this->dual(i - Rotor<N, T>::size);
+}
+
+template<Dimension N, typename T>
+constexpr T &Motor<N, T>::operator[](Dimension i)
+{
+    if (i < Rotor<N, T>::size)
+        return this->real[i];
+    return this->dual[i - Rotor<N, T>::size];
+}
+
+template<Dimension N, typename T>
+constexpr const T &Motor<N, T>::operator[](Dimension i) const
+{
+    if (i < Rotor<N, T>::size)
+        return this->real[i];
+    return this->dual[i - Rotor<N, T>::size];
 }
 
 // =============================
@@ -1486,104 +1729,6 @@ constexpr Vector<4, T> Cardinal<4, T>::get(Dimension i)
     case 3: return Cardinal::W;
     }
     return {};
-}
-
-// =============================
-// Color<T>
-// =============================
-
-template<typename T>
-constexpr T &Color<T>::operator()(Dimension i)
-{
-    switch (i)
-    {
-    case 0: return this->r;
-    case 1: return this->g;
-    case 2: return this->b;
-    case 3: return this->a;
-    }
-    return this->r;
-}
-
-template<typename T>
-constexpr const T &Color<T>::operator()(Dimension i) const
-{
-    switch (i)
-    {
-    case 0: return this->r;
-    case 1: return this->g;
-    case 2: return this->b;
-    case 3: return this->a;
-    }
-    return this->r;
-}
-
-template<typename T>
-constexpr T &Color<T>::operator[](Dimension i)
-{
-    switch (i)
-    {
-    case 0: return this->r;
-    case 1: return this->g;
-    case 2: return this->b;
-    case 3: return this->a;
-    }
-    return this->r;
-}
-
-template<typename T>
-constexpr const T &Color<T>::operator[](Dimension i) const
-{
-    switch (i)
-    {
-    case 0: return this->r;
-    case 1: return this->g;
-    case 2: return this->b;
-    case 3: return this->a;
-    }
-    return this->r;
-}
-
-// =============================
-// Gamma
-// =============================
-
-template<typename T>
-auto Gamma::curve(T exp)
-{
-    return [exp](T x) { return std::pow(x, exp); };
-}
-
-template<typename T>
-auto Gamma::encode_sRGB()
-{
-    return [](T x) -> T
-    {
-        return x <= T(0.0031308) ? x * T(12.92)
-             : T(1.055) * std::pow(x, T(1.0) / T(2.4)) - T(0.055);
-    };
-}
-
-template<typename T>
-auto Gamma::decode_sRGB()
-{
-    return [](T x) -> T
-    {
-        return x <= T(0.04045) ? x / T(12.92)
-             : std::pow((x + T(0.055)) / T(1.055), T(2.4));
-    };
-}
-
-template<typename T>
-auto Gamma::encode_BT1886()
-{
-    return [](T x) { return std::pow(x, T(1.0) / T(2.4)); };
-}
-
-template<typename T>
-auto Gamma::decode_BT1886()
-{
-    return [](T x) { return std::pow(x, T(2.4)); };
 }
 
 // =============================
@@ -1828,6 +1973,104 @@ constexpr const T &OBB<N, T, A, R>::operator[](Dimension i) const
     if (i < N) return this->center[i];
     if (i < N * 2) return this->extent[i - N];
     return this->orientation[i - N * 2];
+}
+
+// =============================
+// Color<T>
+// =============================
+
+template<typename T>
+constexpr T &Color<T>::operator()(Dimension i)
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
+}
+
+template<typename T>
+constexpr const T &Color<T>::operator()(Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
+}
+
+template<typename T>
+constexpr T &Color<T>::operator[](Dimension i)
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
+}
+
+template<typename T>
+constexpr const T &Color<T>::operator[](Dimension i) const
+{
+    switch (i)
+    {
+    case 0: return this->r;
+    case 1: return this->g;
+    case 2: return this->b;
+    case 3: return this->a;
+    }
+    return this->r;
+}
+
+// =============================
+// Gamma
+// =============================
+
+template<typename T>
+auto Gamma::curve(T exp)
+{
+    return [exp](T x) { return std::pow(x, exp); };
+}
+
+template<typename T>
+auto Gamma::encode_sRGB()
+{
+    return [](T x) -> T
+    {
+        return x <= T(0.0031308) ? x * T(12.92)
+            : T(1.055) * std::pow(x, T(1.0) / T(2.4)) - T(0.055);
+    };
+}
+
+template<typename T>
+auto Gamma::decode_sRGB()
+{
+    return [](T x) -> T
+    {
+        return x <= T(0.04045) ? x / T(12.92)
+            : std::pow((x + T(0.055)) / T(1.055), T(2.4));
+    };
+}
+
+template<typename T>
+auto Gamma::encode_BT1886()
+{
+    return [](T x) { return std::pow(x, T(1.0) / T(2.4)); };
+}
+
+template<typename T>
+auto Gamma::decode_BT1886()
+{
+    return [](T x) { return std::pow(x, T(2.4)); };
 }
 
 // =============================
@@ -2117,6 +2360,312 @@ constexpr T modulo(T a, T b)
 {
     T r = truncated_modulo(a, b);
     return r < T(0) ? r + b : r;
+}
+
+// =============================
+// Transcendental
+// =============================
+
+template<typename T>
+constexpr T sqrt(T x)
+{
+    constexpr auto fallback = [](T x) -> T
+    {
+        T guess = x;
+        for (int i = 0; i < 64; i++)
+        {
+            T next = (guess + x / guess) / T(2);
+            if (next == guess) break;
+            guess = next;
+        }
+        return guess;
+    };
+
+    if constexpr (std::is_integral_v<T>)
+    {
+        if consteval
+        {
+            if (x <= T(0)) return T(0);
+            return fallback(x);
+        }
+        else
+        {
+            return static_cast<T>(std::sqrt(static_cast<double>(x)));
+        }
+    }
+    else if constexpr (requires { std::sqrt(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::sqrt(T(1)); }))
+            {
+                return std::sqrt(x);
+            }
+            else
+            {
+                if (x != x) return x;
+                if (x == T(1) / T(0)) return x;
+                if (x < T(0) || x == -T(1) / T(0)) return T(0) / T(0);
+                if (x == T(0)) return T(0);
+                return fallback(x);
+            }
+        }
+        else
+        {
+            return std::sqrt(x);
+        }
+    }
+    else
+    {
+        if (x <= T(0)) return T(0);
+        return fallback(x);
+    }
+}
+
+template<typename T>
+constexpr T sin(T x)
+{
+    constexpr auto sin_poly = [](T r) -> T
+    {
+        T r2 = r * r;
+        return r * (T(1)
+            + r2 * (T(-1) / T(6)
+            + r2 * (T(1) / T(120)
+            + r2 * (T(-1) / T(5040)
+            + r2 * (T(1) / T(362880)
+            + r2 * (T(-1) / T(39916800)
+            + r2 * (T(1) / T(6227020800))))))));
+    };
+
+    constexpr auto cos_poly = [](T r) -> T
+    {
+        T r2 = r * r;
+        return T(1)
+            + r2 * (T(-1) / T(2)
+            + r2 * (T(1) / T(24)
+            + r2 * (T(-1) / T(720)
+            + r2 * (T(1) / T(40320)
+            + r2 * (T(-1) / T(3628800)
+            + r2 * (T(1) / T(479001600)))))));
+    };
+
+    constexpr auto fallback = [](T x) -> T
+    {
+        constexpr T PI = Constant<T>::PI;
+        constexpr T HALF_PI = Constant<T>::HALF_PI;
+        constexpr T TWO_PI = Constant<T>::TAU;
+
+        x = modulo(x + PI, TWO_PI) - PI;
+
+        T q = round(x / HALF_PI);
+        T r = x - q * HALF_PI;
+
+        T qi = modulo(truncate(q), T(4));
+
+        if (qi == T(0)) return  sin_poly(r);
+        if (qi == T(1)) return  cos_poly(r);
+        if (qi == T(2)) return -sin_poly(r);
+        return -cos_poly(r);
+    };
+
+    if constexpr (std::is_integral_v<T>)
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::sin(double(1)); }))
+            {
+                return static_cast<T>(round(std::sin(static_cast<double>(x))));
+            }
+            else
+            {
+                return static_cast<T>(round(fallback(static_cast<double>(x))));
+            }
+        }
+        else
+        {
+            return static_cast<T>(std::round(std::sin(static_cast<double>(x))));
+        }
+    }
+    else if constexpr (requires { std::sin(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::sin(T(1)); }))
+            {
+                return std::sin(x);
+            }
+            else
+            {
+                return fallback(x);
+            }
+        }
+        else
+        {
+            return std::sin(x);
+        }
+    }
+    else
+    {
+        return fallback(x);
+    }
+}
+
+template<typename T>
+constexpr T cos(T x)
+{
+    constexpr auto sin_poly = [](T r) -> T
+    {
+        T r2 = r * r;
+        return r * (T(1)
+            + r2 * (T(-1) / T(6)
+            + r2 * (T(1) / T(120)
+            + r2 * (T(-1) / T(5040)
+            + r2 * (T(1) / T(362880)
+            + r2 * (T(-1) / T(39916800)
+            + r2 * (T(1) / T(6227020800))))))));
+    };
+
+    constexpr auto cos_poly = [](T r) -> T
+    {
+        T r2 = r * r;
+        return T(1)
+            + r2 * (T(-1) / T(2)
+            + r2 * (T(1) / T(24)
+            + r2 * (T(-1) / T(720)
+            + r2 * (T(1) / T(40320)
+            + r2 * (T(-1) / T(3628800)
+            + r2 * (T(1) / T(479001600)))))));
+    };
+
+    constexpr auto fallback = [](T x) -> T
+    {
+        constexpr T PI = Constant<T>::PI;
+        constexpr T HALF_PI = Constant<T>::HALF_PI;
+        constexpr T TWO_PI = Constant<T>::TAU;
+
+        x = modulo(x + PI, TWO_PI) - PI;
+
+        T q = round(x / HALF_PI);
+        T r = x - q * HALF_PI;
+
+        T qi = modulo(truncate(q), T(4));
+
+        if (qi == T(0)) return  cos_poly(r);
+        if (qi == T(1)) return -sin_poly(r);
+        if (qi == T(2)) return -cos_poly(r);
+        return  sin_poly(r);
+    };
+
+    if constexpr (std::is_integral_v<T>)
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::cos(double(1)); }))
+            {
+                return static_cast<T>(round(std::cos(static_cast<double>(x))));
+            }
+            else
+            {
+                return static_cast<T>(round(fallback(static_cast<double>(x))));
+            }
+        }
+        else
+        {
+            return static_cast<T>(std::round(std::cos(static_cast<double>(x))));
+        }
+    }
+    else if constexpr (requires { std::cos(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::cos(T(1)); }))
+            {
+                return std::cos(x);
+            }
+            else
+            {
+                return fallback(x);
+            }
+        }
+        else
+        {
+            return std::cos(x);
+        }
+    }
+    else
+    {
+        return fallback(x);
+    }
+}
+
+template<typename T>
+constexpr T tan(T x)
+{
+    constexpr auto fallback = [](T x) -> T
+    {
+        constexpr T PI = Constant<T>::PI;
+        constexpr T HALF_PI = Constant<T>::HALF_PI;
+        constexpr T TWO_PI = Constant<T>::TAU;
+
+        x = modulo(x + PI, TWO_PI) - PI;
+
+        T q = round(x / HALF_PI);
+        T r = x - q * HALF_PI;
+
+        T qi = modulo(truncate(q), T(4));
+
+        T s = sin(r);
+        T c = cos(r);
+
+        if (qi == T(1) || qi == T(3))
+        {
+            if (s == T(0)) return T(1) / T(0);
+            return -c / s;
+        }
+
+        return s / c;
+    };
+
+    if constexpr (std::is_integral_v<T>)
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::tan(double(1)); }))
+            {
+                return static_cast<T>(round(std::tan(static_cast<double>(x))));
+            }
+            else
+            {
+                return static_cast<T>(round(fallback(static_cast<double>(x))));
+            }
+        }
+        else
+        {
+            return static_cast<T>(std::round(std::tan(static_cast<double>(x))));
+        }
+    }
+    else if constexpr (requires { std::tan(x); })
+    {
+        if consteval
+        {
+            if constexpr (vcp::is_constexpr([] { return std::tan(T(1)); }))
+            {
+                return std::tan(x);
+            }
+            else
+            {
+                return fallback(x);
+            }
+        }
+        else
+        {
+            return std::tan(x);
+        }
+    }
+    else
+    {
+        return fallback(x);
+    }
 }
 
 } // namespace vcp::math
